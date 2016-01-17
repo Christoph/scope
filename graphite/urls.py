@@ -45,3 +45,4 @@ urlpatterns = [
    url(r'artsy$',views.artsy,name='artsy'),   
    url(r'happybday$',views.martin,name='martin'),
 ]
+
