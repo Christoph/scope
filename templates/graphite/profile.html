@@ -1,0 +1,68 @@
+{% extends "graphite/base.html" %}
+
+
+{% block content %}
+
+<h1 align=center class="page-title">Hi, {{user.first_name}} {{user.last_name}}</h1><!-- .entry-header -->
+			<div id="content" class="site-content" role="main">
+
+		<div ALIGN=CENTER>
+            
+            {{state}}
+
+            <h1> Grews alerts: </h1>
+            
+            Create a new alert <a href="{% url 'grews_alert'%}" >here</a>.
+            
+                 
+{% if alert_info %}
+    {% for alert, form in alert_info %}
+				
+                            <form action="{% url 'profile' %}" class="module aligned wide" method="post">
+                                <h3 class="entry-title"><a href={{alert.latest_url}}>{{alert.query}}</a></h3>
+    {% csrf_token %}
+    {{ form }} 
+                                <p>
+    <input type="submit" value="Save Change" name="save"/>
+                                    <input type="submit" value="Delete alert" name="delete"/></p>
+</form>       
+      {% endfor %}      
+           
+{% else %}
+            <p>No grews alerts yet. </p>
+{% endif %}           
+            
+            <h1> Recent searches: </h1>
+   {% if recent_queries %}
+            <div ALIGN=CENTER>
+            <table alignment=center text-align=center>
+                <tr>
+                    <th>Query</th>
+                    <th>Search Time</th>
+    {% for query in recent_queries %}
+                <tr>
+                    <td><h3 class="entry-title"><a href={{query.url}}>{{query.query}}</a></h3></td>
+                    <td>  {{query.time}} </td>
+                </tr>
+
+      {% endfor %}      
+           </table>
+            </div>
+{% else %}
+            <p>No searches yet. Perform one <a href="" >here</a></p>
+{% endif %} 
+            
+            <h1> Personal Details: </h1>
+            
+           {{state_profile}}
+            
+            <form action="{% url 'profile' %}" class="module aligned wide" method="post">
+    {% csrf_token %}
+    {{ form2 }} 
+    <input type="submit" value="Save Change" name="save_profile"/>
+    <input type="submit" value="Delete profile" name="delete_profile"/>
+</form>   
+            <p>In order to change your password, please click <a href="{% url 'password_change'%}">here</a>.</p>
+    </div>
+</div>
+{% endblock content %}

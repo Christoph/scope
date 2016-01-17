@@ -1,0 +1,24 @@
+{% extends "graphite/base.html" %}
+
+
+{% block content %}
+
+<h1 align=center class="page-title">Grews alerts</h1><!-- .entry-header -->
+			<div id="content" class="site-content" role="main">
+
+		<div ALIGN=CENTER>
+			<p>Here you can create your own custom grews alert (or many of them)</p>
+   
+    
+       
+    <p><b>  {{ state }} </b></p>
+    
+    <form class="form" action="{% url 'grews_alert' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Set alert" />
+</form>
+  </div> 
+</div>
+                                
+{% endblock content %}

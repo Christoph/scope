@@ -1,0 +1,172 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<style>
+    #container {min-height:100%;
+        position:relative;}
+    #body {padding-bottom:60px;}
+    #footer {height: 60x;
+        position:absolute;
+   bottom:0;
+    width:100%;}
+.colophon2 {
+	color: #818181;
+	font-size: .7em;
+	margin: 0 auto;
+    max-width: 1300px;
+    padding: 10px}
+    
+.menu-footer {
+    background: #2b2b2b;
+    width: 100%;}
+.menu-left {
+  float:left;
+    width:450px;}
+    
+.menu-right {
+  float:right;
+ /* width:300px;
+    padding: 20px;}*/}
+.node circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+text {
+  font: 10px "Raleway", sans-serif;
+  pointer-events: none;
+  text-align:center;
+  position:absolute;
+  
+}
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+
+div.tooltip {   
+  position: absolute;           
+  text-align: center;                        
+  font: 12px "Raleway", sans-serif;           
+  border: 2px;      
+  border-radius: 8px;
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: #fff;          
+  pointer-events: none;
+  color: #2b2b2b;
+  border-color: #2b2b2b;
+  border-style: solid;
+}
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 12px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+ pop.popup {
+  position: absolute;           
+  text-align: left;                        
+  font: 12px "Raleway", sans-serif;           
+  border: 2px;
+  width: 200px;
+  border-radius: 8px;
+  line-height: 1;
+  padding: 12px;
+  background: #fff;
+  color: #2b2b2b;
+  border-color: #2b2b2b;
+  border-style: solid;
+}  
+
+form {        
+  text-align: left;                        
+  font: 12px "Raleway", sans-serif;           
+  border: 2px;
+  width: 700px;
+  border-radius: 8px;
+  line-height: 2;
+    margin: 20px; 
+  padding: 20px;
+  background: #2b2b2b;
+  color: #fff;
+  border-color: #2b2b2b;
+  border-style: solid;
+  display: block;
+}
+    
+/* Creates a small triangle extender for the tooltip */
+</style>
+
+<head>
+
+    <title>{{name}} | maximise relevance, minimise redundancy</title>
+    <link rel="stylesheet" href="{% static 'last24h/style_unt.css' %}">
+
+</head>
+<body class="home blog mp6 customizer-styles-applied highlander-enabled highlander-light demo-site infinite-scroll">
+    <div id="container">
+    <div id="body">
+        
+	<div id="page" class="hfeed site">
+				<div id="masthead-wrap">
+			<header id="masthead" class="site-header" role="banner">
+				<div id="logo">
+										<h1 class="site-title"><a href="{% url 'last24h:index' %}" title="Untitled" rel="home">{{name}} <font color=#999 size='8px' face='Raleway'>- max relevance, min redundancy</font></a></h1><h1 class="site-title">  </h1>
+									</div>
+				<div class="nav-wrap">
+					<nav role="navigation" class="site-navigation main-navigation">
+						<h1 class="assistive-text">Menu</h1>
+						<div class="assistive-text skip-link"><a href="#content" title="Skip to content">Skip to content</a></div>
+
+						<div class="menu-short-container"><ul id="menu-short" class="menu"><li id="menu-item-132" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-132"><a href="{% url 'last24h:index' %}">≤24h</a></li>
+<li id="menu-item-133" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-133"><a href="{% url 'customsearch' %}">custom search</a></li>
+<li id="menu-item-135" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-135"><a href="{% url 'grews_alert' %}">alerts</a></li>
+<li id="menu-item-133" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-133"><a href="{% url 'how_it_works' %}">how it works</a></li>
+<li id="menu-item-136" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-136"><a href="{% with log_link|first as name %}{% url name %}{% endwith %}">{{log_inf|first}}</a></li>
+<li id="menu-item-136" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-136">
+<a href="{% with log_link|last as name %}{% url name %}{% endwith %}">{{log_inf|last}}</a>
+</li>
+</ul></div>					</nav><!-- .site-navigation -->
+                    				</div><!-- .nav-wrap -->
+			</header><!-- #masthead -->
+		</div><!-- #masthead-wrap -->
+    </div>     
+        
+              
+              	<div id="main" class="site-main">
+		<div id="primary" class="content-area">
+
+ 
+{% block content %}
+{% endblock %}                
+            
+   
+</div>       
+        </div>
+    
+            </div>   
+      
+        
+
+            <div id="footer">
+    	<div id="colophon-wrap">
+		<footer id="colophon" class="site-footer" role="contentinfo">
+			<div class="site-info">
+								&copy; Copyright 2015, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a>.
+                <a href="{% url 'about' %}">About</a>, <a href="{% url 'contact' %}">Contact</a>, <a href="{% url 'disclaimer' %}" rel="designer">Disclaimer/License</a>.			</div><!-- .site-info -->
+		</footer><!-- #colophon -->
+	</div><!-- #colophon-wrap -->       
+</div>
+     </div>
+   
+    </body>
+        
+</html>
+

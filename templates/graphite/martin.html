@@ -1,0 +1,40 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <style>
+#texto {
+	font-size: 10em;
+	margin: 0 auto;
+    max-width: 1300px;
+    padding: 200px}
+
+</style>
+    
+    
+    <head>
+<!-- Optional theme -->
+<link rel="stylesheet" href="{% static 'last24h/style_unt.css' %}">
+
+    </head>
+
+<body>
+
+<div id="content" class="site-content" role="main">
+
+		<div ALIGN=CENTER>
+    <div id="texto">  {{ state }} 
+    </div>
+    
+ <form action = "{% url 'martin' %}" method = "post">
+     {% csrf_token %}
+        <input type="submit" name="add" value="Next" />
+        <input type="submit" name="reset" value="Reset" />
+	<!-- <input type="text" />
+	<input type="submit" name="append" value="Add"/> -->
+    </form>
+           
+    </div>
+    </div>
+    </body>
+</html>

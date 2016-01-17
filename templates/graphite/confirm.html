@@ -1,0 +1,22 @@
+{% extends "graphite/base.html" %}
+
+
+{% block content %}
+
+<h1 align=center class="page-title">Confirm</h1><!-- .entry-header -->
+			<div id="content" class="site-content" role="main">
+		<div ALIGN=CENTER>
+            {% if expired %}
+            <p>Sorry, but the confirmation link expired, please <a href="{% url 'register' %}">register</a> again and click the link withing 48h this time.</p>
+            {% endif %}
+            {% if has_account %}
+            <p>Seems like we already have an account for those details. You can log in by clicking the link in the top right corner.</p>
+            {% endif %}
+            {% if success %}
+            <p>Congrats. Your profile with us is active now. Just log in at the top right corner and you're ready to roll!</p>
+           {% endif%}
+    </div>
+</div>        
+ 
+{% endblock content %}
+

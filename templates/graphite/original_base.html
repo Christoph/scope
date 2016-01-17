@@ -1,0 +1,41 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>{% block title %}{% endblock %}</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1404.11">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px Times}
+    p.p2 {margin: 0.0px 0.0px 16.1px 0.0px; line-height: 28.0px; font: 24.0px Times}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px Times; min-height: 14.0px}
+    li.li1 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px Times}
+    span.s1 {font-kerning: none}
+    span.s2 {text-decoration: underline ; font-kerning: none; color: #042eee}
+    ul.ul1 {list-style-type: disc}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">{% load i18n admin_static %} {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %} {% block extrastyle %}{% endblock %} {% if LANGUAGE_BIDI %}{% endif %} {% block extrahead %}{% endblock %} {% block blockbots %}{% endblock %} {% load i18n %}</span></p>
+<p class="p1"><span class="s1">{% if not is_popup %}</span></p>
+<p class="p1"><span class="s1">{% block branding %}{% endblock %}<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{% block usertools %} {% if has_permission %}</span></p>
+<p class="p1"><span class="s1">{% block welcome-msg %} {% trans 'Welcome,' %} <b>{% firstof user.get_short_name user.get_username %}</b>. {% endblock %} {% block userlinks %} {% if site_url %} <a href="file:///usr/local/lib/python2.7/site-packages/django/contrib/admin/templates/admin/%7B%7B%20site_url%20%7D%7D"><span class="s2">{% trans 'View site' %}</span></a> / {% endif %} {% if user.is_active and user.is_staff %} {% url 'django-admindocs-docroot' as docsroot %} {% if docsroot %} <a href="file:///usr/local/lib/python2.7/site-packages/django/contrib/admin/templates/admin/%7B%7B%20docsroot%20%7D%7D"><span class="s2">{% trans 'Documentation' %}</span></a> / {% endif %} {% endif %} {% if user.has_usable_password %} <a href="file:///usr/local/lib/python2.7/site-packages/django/contrib/admin/templates/admin/%7B%25%20url%20'admin:password_change'%20%25%7D"><span class="s2">{% trans 'Change password' %}</span></a> / {% endif %} <a href="file:///usr/local/lib/python2.7/site-packages/django/contrib/admin/templates/admin/%7B%25%20url%20'admin:logout'%20%25%7D"><span class="s2">{% trans 'Log out' %}</span></a> {% endblock %}<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{% endif %} {% endblock %} {% block nav-global %}{% endblock %}<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{% block breadcrumbs %}</span></p>
+<p class="p1"><span class="s2"><a href="file:///usr/local/lib/python2.7/site-packages/django/contrib/admin/templates/admin/%7B%25%20url%20'admin:index'%20%25%7D">{% trans 'Home' %}</a></span><span class="s1"> {% if title %} › {{ title }}{% endif %}<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{% endblock %} {% endif %} {% block messages %} {% if messages %}</span></p>
+<ul class="ul1">
+  <li class="li1"><span class="s1">{% for message in messages %} {{ message|capfirst }} {% endfor %}</span></li>
+</ul>
+<p class="p1"><span class="s1">{% endif %} {% endblock messages %}</span></p>
+<p class="p1"><span class="s1">{% block pretitle %}{% endblock %} {% block content_title %}{% if title %}</span></p>
+<p class="p2"><span class="s1"><b>{{ title }}</b></span></p>
+<p class="p1"><span class="s1">{% endif %}{% endblock %} {% block content %} {% block object-tools %}{% endblock %} {{ content }} {% endblock %} {% block sidebar %}{% endblock %}<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{% block footer %}</span></p>
+<p class="p3"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">{% endblock %}<span class="Apple-converted-space"> </span></span></p>
+</body>
+</html>

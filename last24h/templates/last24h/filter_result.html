@@ -1,0 +1,301 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<style>
+    
+.colophon2 {
+	color: #818181;
+	font-size: .7em;
+	margin: 0 auto;
+    max-width: 1300px;
+    padding: 10px}
+    
+.menu-footer {
+    background: #2b2b2b;
+    width: 100%;}
+.menu-left {
+  float:left;
+    width:450px;}
+    
+.menu-right {
+  float:right;
+ /* width:300px;
+    padding: 20px;}*/}
+.node circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+text {
+  font: 10px "Raleway", sans-serif;
+  pointer-events: none;
+  text-align:center;
+  position:absolute;
+  
+}
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+
+div.tooltip {   
+  position: absolute;           
+  text-align: center;                        
+  font: 12px "Raleway", sans-serif;           
+  border: 2px;      
+  border-radius: 8px;
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: #fff;          
+  pointer-events: none;
+  color: #2b2b2b;
+  border-color: #2b2b2b;
+  border-style: solid;
+}
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 12px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+ pop.popup {
+  position: absolute;           
+  text-align: left;                        
+  font: 12px "Raleway", sans-serif;           
+  border: 2px;
+  width: 200px;
+  border-radius: 8px;
+  line-height: 1;
+  padding: 12px;
+  background: #fff;
+  color: #2b2b2b;
+  border-color: #2b2b2b;
+  border-style: solid;
+}  
+
+/* Creates a small triangle extender for the tooltip */
+</style>
+
+<head>
+
+    <title>grews | maximise relevance, minimise redundancy</title>
+    <link rel="stylesheet" href="{% static 'last24h/style_unt.css' %}">
+
+</head>
+
+<body class="home blog mp6 customizer-styles-applied highlander-enabled highlander-light demo-site infinite-scroll">
+	<div id="page" class="hfeed site">
+				<div id="masthead-wrap">
+			<header id="masthead" class="site-header" role="banner">
+				<div id="logo">
+										<h1 class="site-title"><a href="https://untitleddemo.wordpress.com/" title="Untitled" rel="home">grews <font color=#999 size='8px' face='Raleway'>- max relevance, min redundancy</font></a></h1><h1 class="site-title">  </h1>
+									</div>
+				<div class="nav-wrap">
+					<nav role="navigation" class="site-navigation main-navigation">
+						<h1 class="assistive-text">Menu</h1>
+						<div class="assistive-text skip-link"><a href="#content" title="Skip to content">Skip to content</a></div>
+
+						<div class="menu-short-container"><ul id="menu-short" class="menu"><li id="menu-item-132" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-132"><a href="https://untitleddemo.wordpress.com/about/">≤24h</a></li>
+<li id="menu-item-133" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-133"><a href="https://untitleddemo.wordpress.com/readability/">Custom search</a></li>
+<li id="menu-item-135" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-135"><a href="https://untitleddemo.wordpress.com/html-elements/">grews alerts</a></li>
+<li id="menu-item-133" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-133"><a href="https://untitleddemo.wordpress.com/readability/">How it works</a></li>
+<li id="menu-item-136" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-136"><a href="https://untitleddemo.wordpress.com/a-parent-page/">About</a>
+</li>
+</ul></div>					</nav><!-- .site-navigation -->
+                    
+<script align='center' type="text/javascript" src="{% static 'last24h/d3.min.js' %}"></script>
+<script>
+
+var width = 1000,
+    height = 800;
+
+var color = d3.scale.category20();
+
+var force = d3.layout.force()
+    .charge(-300)
+    .linkDistance(50)
+    .size([width, height]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+d3.json("{% with 'last24h/q/q_'|add:topic|add:'_nl.json' as user_query_path %}{% static user_query_path %}{% endwith %}", function(error, graph) {
+  if (error) throw error;
+    
+
+  force
+      .nodes(graph.nodes)
+      .links(graph.links)
+      .start();
+
+  var link = svg.selectAll(".link")
+      .data(graph.links)
+    .enter().append("line")
+      .attr("class", "link")
+      .style("stroke-width", function(d) { return Math.sqrt(d.weight); });
+
+  var node = svg.selectAll(".node")
+      .data(graph.nodes)
+    .enter().append("g")
+      .attr("class", "node")
+      .on("mouseover", function(d) {        
+           
+        pop.transition()
+               .duration(500)
+               .style("opacity", 0);
+       pop.style("pointer-events","none");
+        div.transition()
+            .duration(200)   
+            .style("opacity", .9);    
+        div .html(d.title) 
+            .style("left", (d3.event.pageX) + "px")             
+            .style("top", (d3.event.pageY - 28) + "px");})
+       .on("mouseout", function(d) {
+            div.transition()        
+                .duration(500)      
+                .style("opacity", 0);})
+       .on("mouseup", function(d) {
+           div.transition()        
+                .duration(500)      
+                .style("opacity", 0);
+            pop.transition()
+                .duration(200)
+                .style("opacity", .9)
+                .style("pointer-events","auto");    
+            pop .attr("id", "link")
+                .html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/><br/><b>Description:</b>' + d.summary + '...')        
+                .style("left", (d3.event.pageX) + "px")             
+                .style("top", (d3.event.pageY - 28) + "px");
+                })
+        .call(force.drag);
+    
+    node.append("circle")
+        .attr("r", 4)
+        .style("fill", function(d) { return color(d.suggest); })
+        .style("stroke",function(d) {return (d.suggest <= 15) && (d.suggest != 0) ? '#999' :'#fff';});;
+        
+
+    node.append("text")
+        .attr("x", 12)
+        .attr("dy", ".35em")
+        .text(function(d) { return (d.suggest <= 15) && (d.suggest != 0) ? d.title : '';});
+
+    var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 1e-6);
+    
+    var pop = d3.select("body").append("pop")
+    .attr("class", "popup")
+    .style("opacity", 1e-6);
+
+      resize();
+  d3.select(window).on("resize", resize); 
+
+   d3.select('#order').on('change', function() {
+        var showTitles = function(d) { return (d.suggest <= 15) && (d.suggest != 0) ? d.title : '';};
+        var showKeywords = function(d) { return d.suggest != 0  ? d.keywords[0]: '';};
+        var noShow = '';
+        if (this.value == "Keyword_check") {
+        d3.selectAll(".node text").text(showKeywords)}
+        else if (this.value == "Title_check") {d3.selectAll(".node text").text(showTitles)}
+        else if (this.value == 'None') {d3.selectAll(".node text").text('')}
+        });
+   /* d3.select('#Keyword_check').on('change', function() {
+        var showKeywords = function(d) { return d.suggest != 0  ? d.keywords[0]: '';};
+        var noShow = '';
+        /*var position = function(d) {vars = d.keywords[0]; return Math.round(vars.length/-2);};
+        d3.selectAll(".node text").attr("x",-10).text(this.checked ? showKeywords : noShow);
+        });*/
+            
+  force.on("tick", function() {
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+    
+    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+        
+  });
+    function resize() {
+    width = window.innerWidth, height = window.innerHeight;
+    svg.attr("width", width).attr("height", height);
+    force.size([width, height]).resume();
+  }
+
+});
+   
+</script>
+                    				</div><!-- .nav-wrap -->
+			</header><!-- #masthead -->
+		</div><!-- #masthead-wrap -->
+    </div> 
+    <div id="masthead-wrap">
+		<div class="colophon2" role="contentinfo" >
+			<div class="site-info">
+                    <div class=menu-left>
+ Viewing options: <select id="order">
+  <option value="Title_check">Show suggestions</option>
+  <option value="Keyword_check">Show keywords (beta)</option>
+  <option value="None">None</option>  
+</select>
+    </div> 
+			</div><!-- .site-info -->
+		</div><!-- #colophon -->
+    </div>
+
+      	<div id="main" class="site-main">
+		<div id="primary" class="content-area">
+<h1 align=center class="page-title">Grews suggestion output for filter "{{topic}}":</h1><!-- .entry-header -->
+             
+			<div id="content" class="site-content" role="main"> 
+
+                
+                
+{% if suggestions %}
+    {% for suggestion in suggestions %}
+				<article id="post-140" class="post-140 post type-post status-publish format-standard has-post-thumbnail sticky hentry category-photos post-thumb">
+	
+		<div class="single-thumbnail genericon genericon-link">
+			<a href="https://untitleddemo.wordpress.com/2013/01/28/lorem-ipsum-dolor-sit-amet-consectetuer-adipiscing-elit-aenean-commodo-ligula-eget-dolor-aenean-massa/" rel="bookmark">
+				<img width="300" height="168" src="{{suggestion.images}}" class="attachment-content-img wp-post-image" alt="dcp_2082-1440x400" />			</a>
+		</div><!-- .single-thumbnail -->
+		<div class="header-wrapper">
+						<div class="entry-meta">
+				<span class="byline"> by <span class="author vcard"><a class="url fn n" href="https://untitleddemo.wordpress.com/author/themedemos/" title="View all posts by Theme Buster" rel="author">Source Title here</a></span></span>							</div><!-- .entry-meta -->
+						<header class="entry-header">
+				<h1 class="entry-title"><a href="{{suggestion.url}}">{{ suggestion.title }}</a></h1>
+			</header><!-- .entry-header -->
+
+					</div><!-- .header-wrapper -->
+
+	</article><!-- #post-## -->
+      {% endfor %}      
+           
+{% else %}
+    <p>No suggestions are available.</p>
+{% endif %}
+    
+
+            </div>
+        </div>
+    </div>
+    
+
+    
+    </body>
+        	<div id="colophon-wrap">
+		<footer id="colophon" class="site-footer" role="contentinfo">
+			<div class="site-info">
+								<a href="https://beingbutlumps.wordpress.com">&copy; Copyright 2015, Paul Bo&euml;s</a>.
+				<a href="https://wordpress.com/themes/untitled/" title="Learn more about this theme">Contact</a>, <a href="https://wordpress.com/themes/" rel="designer">Disclaimer/License</a>.			</div><!-- .site-info -->
+		</footer><!-- #colophon -->
+	</div><!-- #colophon-wrap -->
+</html>
+

@@ -1,0 +1,12 @@
+#trying to not have a first row
+
+cs/
+q/
+
+*.py~
+
+*.pyc
+
+settings.py
+
+

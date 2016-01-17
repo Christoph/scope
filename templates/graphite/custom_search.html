@@ -1,0 +1,24 @@
+{% extends "graphite/base.html" %}
+
+
+{% block content %}
+
+<h1 align=center class="page-title">Custom search</h1><!-- .entry-header -->
+			<div id="content" class="site-content" role="main">
+
+		<div ALIGN=CENTER>
+			<p>Here you can start your own custom search that will produce a grews graph of around 100 articles customised to your query. As grews has to gather the information about the articles in real time, this will take around 1m30s - so bare with us.</p>
+   
+    </div>
+    
+<div ALIGN=CENTER> 
+    
+    <form action="{% url 'customsearch' %}" class="module aligned wide" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Create custom graph" />
+</form>
+  </div> 
+
+                                   </div>
+{% endblock content %}

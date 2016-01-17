@@ -1,0 +1,22 @@
+{% extends "graphite/base.html" %}
+
+
+{% block content %}
+
+<h1 align=center class="page-title">Register</h1><!-- .entry-header -->
+			<div id="content" class="site-content" role="main">
+
+		<div ALIGN=CENTER>
+            <p>{{state}}</p>
+           
+            {% if form %}
+    <form class="module aligned wide" action="{% url 'register' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Register" />
+</form>
+            {% endif %}
+  </div> 
+</div>
+                                
+{% endblock content %}

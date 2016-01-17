@@ -1,0 +1,23 @@
+{% extends "graphite/base.html" %}
+
+
+{% block content %}
+
+<h1 align=center class="page-title">Contact and Feedback</h1><!-- .entry-header -->
+			<div id="content" class="site-content" role="main">
+
+		<div ALIGN=CENTER>
+            {{ state }}
+            
+            {%if form %}
+	<form action="{% url 'contact' %}" method="post">
+        
+        {% csrf_token %}
+		{{form}}
+
+		<input type="submit" value="Send" />
+	</form>
+   {% endif %}
+    </div>
+</div>
+{% endblock content %}
