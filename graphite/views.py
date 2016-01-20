@@ -26,6 +26,8 @@ global workQueue, exitFlag, queueLock, current_name
 
 current_name = settings.CURRENT_NAME
 
+exitFlag = 0
+
 class myThread (threading.Thread):
     def __init__(self, threadID, name, q):
         threading.Thread.__init__(self)
@@ -51,7 +53,7 @@ class myThread (threading.Thread):
             print " %s release" % (threadName)
         time.sleep(1)
 
-exitFlag = 0
+
 
 def check_login(request):
     if request.user.is_authenticated():
