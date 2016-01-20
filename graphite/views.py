@@ -13,7 +13,6 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.templatetags.static import static
 from django.conf import settings
-
 import random, sha
 from django.core.mail import send_mail,EmailMessage
 
@@ -38,7 +37,6 @@ class myThread (threading.Thread):
         process_data(self.name, self.q)
         print "Exiting " + self.name
 
-def process_data(threadName, q):
     while not exitFlag:
         queueLock.acquire()
         if not workQueue.empty():
@@ -63,6 +61,7 @@ def check_login(request):
         log_inf = ['Register','Login']
         log_link = ['register','login_user']
     return log_inf, log_link
+    
 from random import randint
 
 def martin(request):
