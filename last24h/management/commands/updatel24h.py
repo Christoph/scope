@@ -227,10 +227,10 @@ class Command(BaseCommand):
         #lda_model = gensim.models.LdaModel(corpus_tfidf, id2word=dict, num_topics=20) #initialize an LSI transformation
         #index2 = gensim.similarities.SparseMatrixSimilarity(lda_model[corpus_tfidf], num_features = 50 )
 
-        gensim.corpora.MmCorpus.serialize('static/last24h/l24h.mm', corp)
-        dict.save('static/last24h/l24h.dict')
-        lsi_model.save('static/last24h/l24h.lsi')
-        index.save('static/last24h/l24h.index')
+        gensim.corpora.MmCorpus.serialize('/home/django/graphite/static/last24h/l24h.mm', corp)
+        dict.save('/home/django/graphite/static/last24h/l24h.dict')
+        lsi_model.save('/home/django/graphite/static/last24h/l24h.lsi')
+        index.save('/home/django/graphite/static/last24h/l24h.index')
         #lda_model.save('/tmp/model.lda') 
 
         #load from gensim objects
