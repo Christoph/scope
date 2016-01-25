@@ -332,7 +332,7 @@ class Command(BaseCommand):
         #ug_tree = json_graph.tree_data(ug) #hier soll noch rein, dass der Graph nach Keywords und query sortiert wird: In der Mitte die Query, dann die Keywords und dann die Artikel
         #ug_adj = json_graph.adjacency_data(ug)
 
-        with open('static/last24h/ug_nl.json', 'w') as fp:
+        with open('/home/django/graphite/static/last24h/ug_nl.json', 'w') as fp:
             json.dump(ug_nl,fp)
 
         #with open('ug_tree.json', 'w') as fp:
