@@ -39,6 +39,8 @@ class myThread (threading.Thread):
         process_data(self.name, self.q)
         print "Exiting " + self.name
 
+
+def process_data(threadName, q):
     while not exitFlag:
         queueLock.acquire()
         if not workQueue.empty():
