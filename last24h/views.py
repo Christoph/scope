@@ -115,7 +115,7 @@ def index(request):
     log_inf, log_link = check_login(request)
     suggestions = Suggest.objects.filter(custom = 'last24h').order_by('distance')[0:15]
     context = {'suggestions':suggestions,'name':current_name, 'form':form, 'form2':form2,'log_inf':log_inf, 'log_link':log_link}
-    return render(request, 'last24h/index_ff.html', context)
+    return render(request, 'last24h/sunburst1.html', context)
 
 
 
