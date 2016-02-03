@@ -128,5 +128,5 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-#STATIC_ROOT = '/home/django/graphite/static/'
+#STATIC_ROOT = '~/Documents/sonstige/Python/Seman_project/graphite_test_env/deployed/static/'
 STATIC_URL = '/static/'
