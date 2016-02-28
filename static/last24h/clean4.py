@@ -17,6 +17,8 @@ import json
 import urllib
 import math
 from django.core.mail import send_mail
+from time import mktime
+from datetime import datetime
 
 from last24h.models import Suggest
 
@@ -30,11 +32,11 @@ def return_articles(feeds,non_keywords):
                 ee = d.entries[i].summary[0:min(200,len(d.entries[i].summary))]
             else:
                 ee = ''
-            #  if hasattr(d.entries[i],'tags'):
-            #      ff = [tag['term'] for tag in d.entries[i].tags if tag['term'] not in non_keywords] 
-            # else: 
-            #    ff = ['']
-            articles_info.append([dd,ee])#,ff    
+            if hasattr(d.entries[i],'published_parsed'):
+                ff = datetime.fromtimestamp(mktime(d.entries[i].published_parsed))
+            else:
+                ff = None
+            articles_info.append([dd,ee,ff])#,ff    
     return articles_info
     
 # Determine scources and mode of extraction
@@ -138,6 +140,7 @@ keywords = []
 summary = []
 titles = []
 urls = []
+times = []
 images = []
 exclude = set(('', 'FT.com / Registration / Sign-up','Error','404 Page not found','Page no longer available', 'File or directory not found','Page not found','Content not found'))
 
@@ -150,6 +153,7 @@ for i in range(0,upper-1):
         titles.append(article.title)
         urls.append(article.url)
         images.append(article.top_image)
+        times.append(articles_info[i][2])
         if articles_info[i][1] != '':
             summary.append(articles_info[i][1])
         else: 
@@ -208,7 +212,7 @@ tfidf_model = gensim.models.TfidfModel( corp )
 
 #  Create pairwise document similarity index
 
-n = 250
+n = 100
 
 corpus_tfidf= tfidf_model[corp]
 
@@ -222,10 +226,10 @@ index = gensim.similarities.SparseMatrixSimilarity(corpus_lsi, num_features = n 
 #lda_model = gensim.models.LdaModel(corpus_tfidf, id2word=dict, num_topics=20) #initialize an LSI transformation
 #index2 = gensim.similarities.SparseMatrixSimilarity(lda_model[corpus_tfidf], num_features = 50 )
 
-gensim.corpora.MmCorpus.serialize('/home/django/graphite/static/last24h/l24h.mm', corp)
-dict.save('/home/django/graphite/static/last24h/l24h.dict')
-lsi_model.save('/home/django/graphite/static/last24h/l24h.lsi')
-index.save('/home/django/graphite/static/last24h/l24h.index')
+gensim.corpora.MmCorpus.serialize('static/last24h/l24h.mm',corp)#/home/django/graphite/static/last24h/l24h.mm', corp)
+dict.save('static/last24h/l24h.dict')
+lsi_model.save('static/last24h/l24h.lsi')
+index.save('static/last24h/l24h.index')
 #lda_model.save('/tmp/model.lda') 
 
 #load from gensim objects
@@ -245,10 +249,16 @@ index.save('/home/django/graphite/static/last24h/l24h.index')
 
 #Begin Graph visualisation
 
-thresh = 0.25#0.1/pow(upper/210,2)  #the higher the thresh, the more critical  
+thresh = 0.1#0.1/pow(upper/210,2)  #the higher the thresh, the more critical  
 ug = nx.Graph()
 for i in range(0, len(corp)):
-    ug.add_node(i,title=titles[i],url=urls[i],suggest=0, summary = summary[i],images = images[i], comp = 0,keywords='' )#,keywords=keywords[i])
+    if len(urls[i].split("www.")) != 0:
+        source = urls[i].split("www.")[1].split("/")[0]
+    elif len(urls[i].split("rss.")) != 0:  
+        source = urls[i].split("rss.")[1].split("/")[0]
+    else: 
+        source = urls[i].split("http://")[1].split("/")[0]
+    ug.add_node(i,title=titles[i],url=urls[i],suggest=0, summary = summary[i],images = images[i], comp = 0,source= source,keywords='', time = times[i])#,keywords=keywords[i])
 
 for i in range( 0, len( corpus_tfidf ) ):
   
@@ -273,22 +283,51 @@ big_list = []
 keywords_in = ['ms','.','cookies','cookie','mr','_','-']
 graphs = sorted(nx.connected_component_subgraphs(ug), key = len, reverse = True)
 for comp in graphs:
+    if len(comp) >= 4:
+        timespartition = sorted(list(set([ug.node[i]['time'] for i in comp.nodes() if ug.node[i]['time'] != None])))
+        first_time = timespartition[0]
+        last_time = timespartition[-1]
+        onlytimes = []
+        for a in timespartition:
+           onlytimes.append([i for i in comp.nodes() if ug.node[i]['time'] == a])
+        if first_time != last_time:
+            time_span = (last_time - first_time).total_seconds()
+        else:
+            time_span = 1
+
+        
+        notime = [ug.node[i]['time'] for i in comp.nodes() if ug.node[i]['time'] == None]
+        ratio = len(notime)/len(comp)
+        notime_count = 1
+        for a in onlytimes:
+            relcount = 0
+            for i in a:
+                if len(a) > 1:
+                    ug.node[i]['time_pos'] = (ug.node[i]['time'] - last_time).total_seconds()/time_span*350*(1-ratio) + 5 + ratio*175 + relcount/(len(a)-1)*3-3*len(a)/2
+                    ug.node[i]['time'] = ug.node[i]['time'].isoformat()
+                    relcount += 1
+                else:  
+                    ug.node[i]['time_pos'] = (ug.node[i]['time'] - last_time).total_seconds()/time_span*350*(1-ratio) + 5 + ratio*175
+                
+
+        for i in comp:
+            ug.node[i]['single'] = 0
+            ug.node[i]['comp'] = count_comp
+            if ug.node[i]['time'] == None:  
+                ug.node[i]['time_pos'] = 350*(1-ratio/2) + 5 + notime_count/(len(notime)+2)*(10+350*ratio)
+                notime_count += 1 
+
     closeness = nx.closeness_centrality(comp, distance=True)
     count_clique=1
-    for i in comp: 
-        ug.node[i]['comp'] = count_comp
-    count_comp += 1    
-    if len(comp) > 5:
-        for i in comp: 
-            ug.node[i]['single'] = 0
-        for i in sorted(list(nx.find_cliques(comp)),key = len, reverse=True):
-            if len(i) >= 3:
-                susvec = sorted([[closeness[r],r] for r in i], reverse=True)[0][1]
-                big_list.append([len(comp)*len(i)/count_clique,susvec])
+    count_comp += 1 
+    if len(comp) > 5: 
+        for y in sorted(list(nx.find_cliques(comp)),key = len, reverse=True):
+            if len(y) >= 3:
+                susvec = sorted([[closeness[r],r] for r in y], reverse=True)[0][1]
+                big_list.append([len(comp)*len(y)/count_clique,susvec])
                 count_clique += 0
-    elif len(comp) in [2,3,4,5]:
-        for i in comp: 
-            ug.node[i]['single'] = 0
+    elif len(comp) in [4,5]:
+        
         susvec = sorted(closeness.items(), key = lambda close:close[1],reverse=True)[0][0]                
         big_list.append([len(comp)^2,susvec])
     else: 
@@ -336,4 +375,4 @@ with open('static/last24h/ug_nl.json', 'w') as fp:
 #with open('last24h/static/last24h/ug_adj.json', 'w') as fp:
  #   json.dump(ug_adj, fp)
 
-send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])
+#send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])
