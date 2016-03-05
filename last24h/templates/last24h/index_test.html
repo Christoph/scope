@@ -220,6 +220,13 @@ bsuggest {
         
    }
 
+tim{
+  position: absolute;
+  opacity: 0;
+  text-align: center;  
+
+}
+
 titul {
    position: absolute;
  left:650px;
@@ -325,8 +332,8 @@ pop.popup img{max-width:200px}
 var width = 1000,
     height = 1000;
 
-var centerpointx = 530,
-centerpointy = 365;
+var centerx = 530,
+centery = 500;
 
 var color = d3.scale.category20();
 
@@ -350,8 +357,13 @@ var svg = d3.select("body").append("svg")
 
 
 
-
-
+var timestamp_arc = d3.svg.arc()
+    .startAngle(355)
+    .endAngle(5)
+    .innerRadius(radius + 50)
+    .outerRadius(radius + 48)
+        .padAngle(.01)
+    .padRadius(radius / 3 );
 
 
 var margin = {top: 500, right: 500, bottom: 500, left: 530},
@@ -371,12 +383,14 @@ var partition = d3.layout.partition()
     .sort(function(a, b) { return d3.ascending(a.id, b.id); })
     .size([2 * Math.PI, radius]);
 var arc = d3.svg.arc()
-    .startAngle(function(d) { return d.x; })
+    .startAngle(function(d) { return d.x ; })
     .endAngle(function(d) { return d.x + d.dx ; })
     .padAngle(.01)
-    .padRadius(radius / 3 )
+    .padRadius(radius /3 )
     .innerRadius(function(d) { return radius ; })
     .outerRadius(function(d) { return radius - 40; });
+
+
 d3.json("{% static "last24h/tgt_cluster.json" %}", function(error, root) {
   // Compute the initial layout on the entire tree to sum sizes.
   // Also compute the full name and fill color for each node,
@@ -410,6 +424,17 @@ d3.json("{% static "last24h/tgt_cluster.json" %}", function(error, root) {
       .style("fill", function(d) { return d.fill; })
       .each(function(d) { this._current = updateArc(d); })
       .on("click", zoomIn);
+
+    //var path2 = svg.append("path2").attr("d",timestamp_arc)
+           //.style("fill", "#bbb")
+
+        var timeline2 = svg.append("line").attr("class","tim").attr("x1",centerx + Math.cos(1.3*Math.PI)*radius*1.05).attr("x2",centerx + Math.cos(1.3*Math.PI)*radius*0.75).attr("y1",centery + Math.sin(1.3*Math.PI)*radius*1.05).attr("y2",centery + Math.sin(1.3*Math.PI)*radius*0.75).style("stroke-width","2px").style("stroke","#2b2b2b").style("opacity",0)
+        var timeline3 = svg.append("line").attr("class","tim").attr("x1",centerx + Math.cos(0.9*Math.PI)*radius*1.05).attr("x2",centerx + Math.cos(0.9*Math.PI)*radius*0.75).attr("y1",centery + Math.sin(0.9*Math.PI)*radius*1.05).attr("y2",centery + Math.sin(0.9*Math.PI)*radius*0.75).style("stroke-width","2px").style("stroke","#2b2b2b").style("opacity",0)
+        var timeline4 = svg.append("line").attr("class","tim").attr("x1",centerx + Math.cos(0.5*Math.PI)*radius*1.05).attr("x2",centerx + Math.cos(0.5*Math.PI)*radius*0.75).attr("y1",centery + Math.sin(0.5*Math.PI)*radius*1.05).attr("y2",centery + Math.sin(0.5*Math.PI)*radius*0.75).style("stroke-width","2px").style("stroke","#2b2b2b").style("opacity",0)
+        var timeline5 = svg.append("line").attr("class","tim").attr("x1",centerx + Math.cos(2.1*Math.PI)*radius*1.05).attr("x2",centerx + Math.cos(2.1*Math.PI)*radius*0.75).attr("y1",centery + Math.sin(2.1*Math.PI)*radius*1.05).attr("y2",centery + Math.sin(2.1*Math.PI)*radius*0.75).style("stroke-width","2px").style("stroke","#2b2b2b").style("opacity",0)
+        var timeline6 = svg.append("line").attr("class","tim").attr("x1",centerx + Math.cos(1.7*Math.PI)*radius*1.05).attr("x2",centerx + Math.cos(1.7*Math.PI)*radius*0.75).attr("y1",centery + Math.sin(1.7*Math.PI)*radius*1.05).attr("y2",centery + Math.sin(1.7*Math.PI)*radius*0.75).style("stroke-width","2px").style("stroke","#2b2b2b").style("opacity",0)
+       //var timepath =  svg.append("path").path("M 100 100 a 50 50 0 1 0 35 85").attr({stroke: "#2b2b2b", opacity: 1, "stroke-width" : 2})  // this is about 62.5% of a circle, and it shows on most any browsers
+  
 
     var recto = chart.selectAll("text")
       .data(partition.nodes(root).slice(1))
@@ -468,14 +493,41 @@ d3.json("{% static "last24h/tgt_cluster.json" %}", function(error, root) {
           return degree;*/
 
 }
-
+  var time1 = svg.append("text").attr("class","tim").attr("x", centerx + Math.cos(1.5*Math.PI)*radius*1.15).attr("y",centery + Math.sin(1.5*Math.PI)*radius*1.15).html('no timestamp').style("opacity",0)
+  var time2 = svg.append("text").attr("class","tim").attr("x", centerx + Math.cos(1.3*Math.PI)*radius*1.2).attr("y",centery + Math.sin(1.3*Math.PI)*radius*1.2).html('no timestamp').style("opacity",0)
+  var time3 = svg.append("text").attr("class","tim").attr("x", centerx + Math.cos(0.9*Math.PI)*radius*1.2).attr("y",centery + Math.sin(0.9*Math.PI)*radius*1.2).html('no timestamp').style("opacity",0)
+  var time4 = svg.append("text").attr("class","tim").attr("x", centerx + Math.cos(0.5*Math.PI)*radius*1.15).attr("y",centery + Math.sin(0.5*Math.PI)*radius*1.15).html('no timestamp').style("opacity",0)
+  var time5 = svg.append("text").attr("class","tim").attr("x", centerx + Math.cos(2.1*Math.PI)*radius*1.15).attr("y",centery + Math.sin(2.1*Math.PI)*radius*1.15).html('no timestamp').style("opacity",0)
+  var time6 = svg.append("text").attr("class","tim").attr("x", centerx + Math.cos(1.7*Math.PI)*radius*1.15).attr("y",centery + Math.sin(1.7*Math.PI)*radius*1.15).html('no timestamp').style("opacity",0)
   //d3.selectAll("text").attr("transform","rotate(45)");
   var zoomfac = 2,
     clock = 1;
   function zoomIn(p) {
     if (p.depth > 1) p = p.parent;
     if (!p.children) return;
+
+partition.size([1/6* Math.PI, radius]);
     zoom(p, p);
+
+/*arc.startAngle(0.75)
+    .outerRadius(radius - 50);*/
+
+var arc2 = d3.svg.arc()
+    .startAngle(3*Math.PI/8)
+    .endAngle(5*Math.PI/8)
+    .padAngle(.01)
+    .padRadius(radius /3 )
+    .innerRadius(function(d) { return radius *3; })
+    .outerRadius(function(d) { return radius*3 - 60; });
+
+    d3.select(this)
+               .transition()
+               .duration(1000)
+               .attr("d", arc2);             
+               //.attr("stroke-width",6);
+
+
+
     var g = d3.selectAll("circle").filter(function(e) {return e.comp == p.id && e.suggest != 0 ? this : null;}).node().__data__;//viscenter(p.id);//
     recto.transition().duration(2000).style("opacity",0)  // filter(function(e) {return e.id != p.id ? this : null;})
     div.transition().duration(500).style("opacity",0);
@@ -496,9 +548,18 @@ d3.selectAll(".link").filter(function(d) {return p.id == d.source.comp ? this : 
       cir.transition().duration(2000).attr("transform", function(d) {return aroundtheclock(d,530,500,radius);}).attr("r",function(d){return (d.suggest <= 15) && (d.suggest != 0) ? 15 : 10;});//.attr("transform", "scale(2,2)");
 d3.selectAll(".link").filter(function(d) {return p.id == d.source.comp ? this : null;}).transition().duration(2000)
         .attr("x1", function(d) {return aroundtheclock_link(d.source,530,radius,0);}) 
-        .attr("y1", function(d) {return aroundtheclock_link(d.target,500,radius,1);})
-        .attr("x2", function(d) {return aroundtheclock_link(d.source,530,radius,0);})
-        .attr("y2", function(d) {return aroundtheclock_link(d.target,500,radius,1);}); 
+        .attr("y1", function(d) {return aroundtheclock_link(d.source,500,radius,1);})
+        .attr("x2", function(d) {return aroundtheclock_link(d.target,530,radius,0);})
+        .attr("y2", function(d) {return aroundtheclock_link(d.target,500,radius,1);})
+        .attr("stroke-width", "2px"); 
+        time1.html(p.time_disclaim).transition().duration(2000).style("opacity",1);
+        time2.html(p.timeinf[0]).transition().duration(2000).style("opacity",1);
+        time3.html(p.timeinf[1]).transition().duration(2000).style("opacity",1);
+        time4.html(p.timeinf[2]).transition().duration(2000).style("opacity",1);
+        time5.html(p.timeinf[3]).transition().duration(2000).style("opacity",1);
+        time6.html(p.timeinf[4]).transition().duration(2000).style("opacity",1);
+        
+       
 
 
     } //end if clock==1 
@@ -507,7 +568,7 @@ d3.selectAll(".link").filter(function(d) {return p.id == d.source.comp ? this : 
 
 d3.selectAll("circle").filter(function(d) {return p.id != d.comp ? this : null;}).style("pointer-events","none").transition().duration(2000).style("opacity",0);
     d3.selectAll(".link").filter(function(d) {return p.id != d.source.comp ? this : null;}).transition().duration(1000).style("opacity",0);
-    topichead.style("border-color",color(g.comp)).style("font-color",color(g.comp)).html('<h3>topic</h3><br/><h1>'+ p.name +'</h1><br/><p># of articles:'+ cir.size()+ '<p>Heterogenity:' + p.clustering + '%').transition().duration(2000).style("opacity",1);
+    topichead.style("border-color",color(g.comp)).style("font-color",color(g.comp)).html('<h3>topic</h3><br/><h1>'+ p.name +'</h1><br/><p># of articles:'+ cir.size()+ '<p>Clustering:' + p.clustering + '%').transition().duration(2000).style("opacity",1);
     d3.selectAll("preart").style("border-color",color(g.comp));
     //preview1.html('<a href=' + g.url + '><b>' + g.title + '</b></a><br/><br/>' + g.summary + '...');
     //preview5.html('<a href=' + g.url + '><b>' + g.title + '</b></a><br/><br/>' + g.summary + '...');
@@ -525,11 +586,15 @@ var farthestx = cir.sort(function(f,e){return e.x-f.x;}).node().__data__;
 var farthesty = cir.sort(function(f,e){return e.y-f.y;}).node().__data__;
 var closestx = cir.sort(function(e,f){return e.x-f.x;}).node().__data__;
 var closesty = cir.sort(function(e,f){return e.y-f.y;}).node().__data__;
+var circleright = cir.sort(function(f,e){return Math.cos(e.time_pos)-Math.cos(f.time_pos);}).node().__data__;
+var circletop = cir.sort(function(f,e){return Math.sin(e.time_pos)-Math.sin(f.time_pos);}).node().__data__;
+var circleleft = cir.sort(function(e,f){return Math.cos(e.time_pos)-Math.cos(f.time_pos);}).node().__data__;
+var circlebottom = cir.sort(function(e,f){return Math.sin(e.time_pos)-Math.sin(f.time_pos);}).node().__data__;
 //closesty.style("stroke",color())
 
-
+if (clock == 0) {
 line2.attr("points","280,100 500,500");
-line4.attr("points", function(){return "280,290 " + (500+zoomfac*(farthestx.x-g.x)) + ","+ (500+zoomfac*(farthestx.y-g.y));});
+line4.attr("points", function(){return "280,290 " + (centerx + Math.cos(circelright.time_pos)*radius) + "," + (centery + Math.sin(d.time_pos)*radius);});
 line1.attr("points", function(){return "280,480 " + (500+zoomfac*(farthesty.x-g.x)) + ","+ (500+zoomfac*(farthesty.y-g.y));});
 line3.attr("points", function(){return "280,660 " + (500+zoomfac*(closestx.x-g.x)) + ","+ (500+zoomfac*(closestx.y-g.y));});
 line5.attr("points", function(){return "280,840 " + (500+zoomfac*(closesty.x-g.x)) + ","+ (500+zoomfac*(closesty.y-g.y));});
@@ -538,8 +603,25 @@ preview1.html('<a href=' + farthesty.url + '><b>' + farthesty.title + '</b></a><
 preview3.html('<a href=' + closestx.url + '><b>' + closestx.title + '</b></a><br/>' + closestx.source + '<br/>' + closestx.summary + '...');
 preview5.html('<a href=' + closesty.url + '><b>' + closesty.title + '</b></a><br/>' + closesty.source + '<br/>' + closesty.summary + '...');
 preview2.html('<a href=' + g.url + '><b>' + g.title + '</b></a><br/><br/>' + g.summary + '...');
-preview6.html('Hover over the nodes to find some information about the articles and their semantic neighbours or use our selection of articles on the left.');
+preview6.html('Hover over the nodes to find some information about the articles and their semantic neighbours or use our selection of articles on the left.'); }
 
+if (clock == 1) {
+line2.attr("points","280,100 500,500");
+line4.attr("points", function(){return "280,290 " + (530+zoomfac*(farthestx.x-g.x)) + ","+ (500+zoomfac*(farthestx.y-g.y));});
+line1.attr("points", function(){return "280,480 " + (500+zoomfac*(farthesty.x-g.x)) + ","+ (500+zoomfac*(farthesty.y-g.y));});
+line3.attr("points", function(){return "280,660 " + (500+zoomfac*(closestx.x-g.x)) + ","+ (500+zoomfac*(closestx.y-g.y));});
+line5.attr("points", function(){return "280,840 " + (500+zoomfac*(closesty.x-g.x)) + ","+ (500+zoomfac*(closesty.y-g.y));});
+preview4.html('<a href=' + farthestx.url + '><b>' + farthestx.title + '</b></a><br/>' + farthestx.source + '<br/>' + farthestx.summary + '...');
+preview1.html('<a href=' + farthesty.url + '><b>' + farthesty.title + '</b></a><br/>' + farthesty.source + '<br/>' + farthesty.summary + '...');
+preview3.html('<a href=' + closestx.url + '><b>' + closestx.title + '</b></a><br/>' + closestx.source + '<br/>' + closestx.summary + '...');
+preview5.html('<a href=' + closesty.url + '><b>' + closesty.title + '</b></a><br/>' + closesty.source + '<br/>' + closesty.summary + '...');
+preview2.html('<a href=' + g.url + '><b>' + g.title + '</b></a><br/><br/>' + g.summary + '...');
+preview6.html('Hover over the nodes to find some information about the articles and their semantic neighbours or use our selection of articles on the left.'); }
+    timeline2.transition().duration(2000).style("opacity",1)
+    timeline3.transition().duration(2000).style("opacity",1)
+    timeline4.transition().duration(2000).style("opacity",1)
+    timeline5.transition().duration(2000).style("opacity",1)
+    timeline6.transition().duration(2000).style("opacity",1)
 
 
  /*   var sizze = cir.size();
@@ -561,7 +643,7 @@ preview6.html('Hover over the nodes to find some information about the articles 
     previewleft.style("pointer-events","auto").transition().duration(2000).style("opacity",1);
     detail = p.id;
    //line1.attr("points", "280,100 480,480");
-   d3.selectAll(".linez").style("stroke",color(g.comp)).transition().duration(1000).transition().duration(1000).style("opacity",1);
+   //d3.selectAll(".linez").style("stroke",color(g.comp)).transition().duration(1000).transition().duration(1000).style("opacity",1);
    div.style("pointer-events","none")
 
    /*var prev= previewleft.append("g")
@@ -612,22 +694,24 @@ function movetocenter_link(g,d,zoomfac,center){
 return center+zoomfac*(d-g);}
 
   function aroundtheclock(d,centerx,centery,radius){
-    var radians = d.time_pos*Math.PI/180;
-if (0<= radians < 0.25) {return "translate(" + (centerx + Math.cos(d.time_pos)*radius) + "," + (centery + Math.sin(d.time_pos)*radius) + ")";}
+    var radians = d.time_pos*Math.PI/180 + Math.PI/2;
+return "translate(" + (centerx + Math.cos(radians)*radius) + "," + (centery + Math.sin(radians)*radius) + ")";}
+/*if (0<= radians < 0.25) {return "translate(" + (centerx + Math.cos(d.time_pos)*radius) + "," + (centery + Math.sin(d.time_pos)*radius) + ")";}
    else if (0.25 <= radians< 0.5) {return "translate(" + (centerx + Math.cos(d.time_pos)*radius) + "," + (centery + Math.sin(d.time_pos)*radius) + ")";}
    else if (0.5 <= radians< 0.75) {return "translate(" + (centerx + Math.cos(d.time_pos)*radius) + "," + (centery + Math.sin(d.time_pos)*radius) + ")";}
    else if (0.75 <= radians< 0.1){return "translate(" + (centerx + Math.cos(d.time_pos)*radius) + "," + (centery + Math.sin(d.time_pos)*radius) + ")";}
    else {return "translate(" + (centerx + Math.cos(d.time_pos)*radius) + "," + (centery + Math.sin(d.time_pos)*radius) + ")";}
-        }
+        }*/
 
   function aroundtheclock_link(d,center,radius,bin){
-    var radians = d.time_pos*Math.PI/180;
-if (0<= radians < 0.25) {return cetner + Math.cos(d.time_pos+Math.PI*bin)*radius;}
-   else if (0.25 <= radians< 0.5) {return center + Math.cos(d.time_pos+Math.PI*bin)*radius;}
-   else if (0.5 <= radians< 0.75) {return center + Math.cos(d.time_pos+Math.PI*bin)*radius;}
-   else if (0.75 <= radians< 0.1){return center + Math.cos(d.time_pos+Math.PI*bin)*radius;}
+    var radians = d.time_pos*Math.PI/180 + Math.PI/2;
+    return center + (1-bin)*Math.cos(radians)*radius + Math.sin(radians)*radius*bin;}
+/*if (0<= radians < 0.25) {return center + (1-bin)*Math.cos(d.time_pos)*radius + Math.sin(d.time_pos)*radius*bin;}
+   else if (0.25 <= radians< 0.5) {return center + (1-bin)*Math.cos(d.time_pos)*radius + Math.sin(d.time_pos)*radius*bin;}
+   else if (0.5 <= radians< 0.75) {return center + (1-bin)*Math.cos(d.time_pos)*radius + Math.sin(d.time_pos)*radius*bin;}
+   else if (0.75 <= radians< 0.1){return center + (1-bin)*Math.cos(d.time_pos)*radius + Math.sin(d.time_pos)*radius*bin;}
    else {return center + Math.cos(d.time_pos+Math.PI*bin)*radius;}
-        }
+        }*/
 
 
     function aroundbytheme(d,centerx,centery,radius){
@@ -666,6 +750,7 @@ function calc_pos(d){
    else {var T = Math.tan(2*Math.PI*x/y-3*Math.PI),TT = radius*2/Math.sqrt(1+Math.pow(T,2)); return [TT*T+d.x-f.x,-TT+d.y-f.y];}
         }
   function zoomOut(p) {
+    partition.size([2* Math.PI, radius]);
     detail = 0;
     if (!p.parent) return;
     zoom(p.parent, p);
@@ -679,13 +764,28 @@ d3.selectAll("circle").filter(function(d) {return p.id == d.comp ? this : null;}
 d3.selectAll(".link").filter(function(d) {return p.id == d.source.comp ? this : null;}).transition().duration(2000).attr("x1", function(d) {return 500+calc_pos(d.source)[0];}) 
         .attr("y1", function(d) {return 500+calc_pos(d.source)[1];})
         .attr("x2", function(d) {return 500+calc_pos(d.target)[0];})
-        .attr("y2", function(d) {return 500+calc_pos(d.target)[1];}); 
+        .attr("y2", function(d) {return 500+calc_pos(d.target)[1];})
+        .attr("stroke-width", "1.5px" ); 
 
   topichead.transition().duration(2000).style("opacity",0);
       previewright.style("pointer-events","none").transition().duration(2000).style("opacity",0);
     previewleft.style("pointer-events","none").transition().duration(2000).style("opacity",0);
     d3.selectAll(".linez").style("stroke",color(g.comp)).transition().duration(500).style("opacity",0);
     div.style("pointer-events","auto")
+
+
+    timeline2.style("opacity",0)
+    timeline3.style("opacity",0)
+    timeline4.style("opacity",0)
+    timeline5.style("opacity",0)
+    timeline6.style("opacity",0)
+
+     time1.style("opacity",0)
+    time2.style("opacity",0)
+    time3.style("opacity",0)
+    time4.style("opacity",0)
+    time5.style("opacity",0)
+    time6.style("opacity",0)
   }
 
 
@@ -697,7 +797,7 @@ d3.selectAll(".link").filter(function(d) {return p.id == d.source.comp ? this : 
     // Rescale outside angles to match the new layout.
     var enterArc,
         exitArc,
-        outsideAngle = d3.scale.linear().domain([0, 2 * Math.PI]);
+        outsideAngle = d3.scale.linear().domain([0, 2*Math.PI]); // [0, 2 * Math.PI]
     function insideArc(d) {
       return p.key > d.key
           ? {depth: d.depth - 1, x: 0, dx: 0} : p.key < d.key
@@ -723,11 +823,16 @@ d3.selectAll(".link").filter(function(d) {return p.id == d.source.comp ? this : 
       path.enter().append("path")
           .style("fill-opacity", function(d) { return d.depth === 2 - (root === p) ? 1 : 0; })
           .style("fill", function(d) { return d.fill; })
+          
           .on("click", zoomIn)
-          .each(function(d) { this._current = enterArc(d); });
+          .each(function(d) { this._current = enterArc(d); })
+          ;
       path.transition()
           .style("fill-opacity", 1)
+          //.attr("d",arc2)
           .attrTween("d", function(d) { return arcTween.call(this, updateArc(d)); });
+          //.each(function(d) { this._current = updateArc(d); });
+
     });
   }
 });
@@ -1114,7 +1219,45 @@ d3.json("{% static "last24h/ug_nl_cluster.json" %}", function(error, graph) {
       .attr("class", "link")
       .style("stroke-width", 1.5);//function(d) { return 2*Math.sqrt(d.weight); });
      
+
+
     //  .on("dblclick", connectedNodes); 
+var toggle = 0;
+var linkedByIndex = {};
+for (i = 0; i < graph.nodes.length; i++) {
+    linkedByIndex[i + "," + i] = 1;
+};
+graph.links.forEach(function (d) {
+    linkedByIndex[d.source.index + "," + d.target.index] = 1;
+});
+//This function looks up whether a pair are neighbours
+function neighboring(a, b) {
+    return linkedByIndex[a.index + "," + b.index];
+}
+function connectedNodes() {
+  if (toggle == 0) {
+        //Reduce the opacity of all but the neighbouring nodes
+        d = d3.select(this).node().__data__;
+        circle.style("opacity", function (o) {
+            return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;
+        });
+        link.style("opacity", function (o) {
+            return d.index==o.source.index | d.index==o.target.index ? 1 : 0.1;
+        });
+        //Reduce the op
+        toggle = 1;
+    } else {
+        //Put them back to opacity=1
+        circle.style("opacity", 1);
+        link.style("opacity", 1);
+        toggle = 0;
+    }
+    
+}
+
+
+
+
   var circle = svg.append("g")
     .attr("class", "nodes")
   .selectAll("circle")
@@ -1137,17 +1280,40 @@ d3.json("{% static "last24h/ug_nl_cluster.json" %}", function(error, graph) {
 
       if (detail != 0) {
 
-preview6.html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/>' + d.source  + '   ' + d.time.substr(5,2) + '/' + d.time.substr(8,2) + ' ' + d.time.substr(11,5) +'<br/>' + d.summary + '...');
+preview6.html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/><br/><b>' + d.source  + '<br/>' + d.time.substr(5,2) + '/' + d.time.substr(8,2) + ' ' + d.time.substr(11,5) +'</b><br/><br/>' + d.summary + '...');
+        //Reduce the opacity of all but the neighbouring nodes
+        e = d3.select(this).node().__data__;
+        var cir = d3.selectAll("circle").filter(function(d) {return e.comp == d.comp ? this : null;});
+        cir.style("opacity", function (o) {
+            return neighboring(d, o) | neighboring(o, e) ? 1 : 0.3;
+        });
+        var cirlink = d3.selectAll(".link").filter(function(d) {return e.comp == d.source.comp ? this : null;});
+        cirlink.style("opacity", function (o) {
+            return e.index==o.source.index | e.index==o.target.index ? 1 : 0;
+        }).style("stroke-width",function(o) {
 
+            return e.index==o.source.index | e.index==o.target.index ? "3px" : "2px";
+        });
+        //Reduce the op
 //distorder[0].x + "," + distorder[0].y;});
         }
 
 
 
-       div.html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/>' + d.source  + '   ' + d.time.substr(5,2) + '/' + d.time.substr(8,2) + ' ' + d.time.substr(11,5) + '<br/>' + d.summary + '...'); // 7,10,16
+       div.html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/><br/><b>' + d.source  + '   ' + d.time.substr(5,2) + '/' + d.time.substr(8,2) + ' ' + d.time.substr(11,5) + '</b><br/><br/>' + d.summary + '...'); // 7,10,16
          
 
       })
+        .on("dblclick", connectedNodes)
+        .on("mouseout",function(){
+          e = d3.select(this).node().__data__;
+          var cir = d3.selectAll("circle").filter(function(d) {return e.comp == d.comp ? this : null;});
+          cir.style("opacity", 1);
+          var cirlink = d3.selectAll(".link").filter(function(d) {return e.comp == d.source.comp ? this : null;});
+          cirlink.style("opacity",1).style("stroke-width","1.5px");
+
+        });
+
        /*centertext.html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/><br/>' + d.summary + '...');
         div.transition()
             .duration(200)   
@@ -1175,6 +1341,20 @@ preview6.html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/>' + d.source
                 .style("left", (d3.event.pageX + 10) + "px")             
                 .style("top", (d3.event.pageY - 28) + "px");
                 });    */                     
+    
+
+//Create an array logging what is connected to what
+
+
+
+
+
+
+
+
+
+
+
     var opac_labels = 0.6;
     var label = svg.selectAll(".node")
           .data(graph.nodes)
@@ -1687,11 +1867,11 @@ function init_positions() {
 
 /*var fisheye = d3.fisheye.circular()
       .radius(200);
-svg.on("mousemove", function() {if (freeze == 0){
+svg.on("mousemove", function() {
       fisheye.focus(d3.mouse(this));
      // d3.selectAll(".node").each(function(d) { d.fisheye = fisheye(d); }).attr("transform", function(d) { return "translate(" + d.fisheye.x + "," + d.fisheye.y + ")"; });
        d3.selectAll("circle").each(function(d) {d.fisheye = fisheye(d);}).attr("r", function(d) {return (d.suggest <= 15) && (d.suggest != 0) ? d.fisheye.z *10 :d.fisheye.z *6;});
-}});*/
+});*/
                                     
 arrangeLabels()    
     //Toggle stores whether the highlighting is on
