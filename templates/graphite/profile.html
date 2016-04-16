@@ -1,68 +1,157 @@
 {% extends "graphite/base.html" %}
-
+{% load widget_tweaks %}
 
 {% block content %}
 
-<h1 align=center class="page-title">Hi, {{user.first_name}} {{user.last_name}}</h1><!-- .entry-header -->
-			<div id="content" class="site-content" role="main">
+    <!-- Page Content -->
+<h1 align=center class="page-title">Profile</h1>
 
-		<div ALIGN=CENTER>
-            
-            {{state}}
 
-            <h1> Grews alerts: </h1>
+<div align="center">
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" id="profiletab" role="tablist">
+  <li role="presentation"><a href="#" aria-controls="" role="tab" data-toggle="tab"></a></li>
+    <li role="presentation" class="active"><a href="#personal" aria-controls="personal" role="tab" data-toggle="tab">Personal Settings</a></li>
+    <li role="presentation"><a href="#alerts" aria-controls="alerts" role="tab" data-toggle="tab" >Alerts</a></li>
+    <li role="presentation"><a href="#searches" aria-controls="searches" role="tab" data-toggle="tab" >Custom Searches</a></li>
+    <li role="presentation"><a href="#" aria-controls="" role="tab" data-toggle="tab"></a></li>
+  </ul>
+
+   <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="personal">
+
+            <p>To change your password, please click <a href="{% url 'password_change'%}">here</a>.</p>
+
+               {{state_profile}}
+            <div class="forms" id="form_details_light">
+                <form action="{% url 'profile' %}" method="post">
+                {% csrf_token %}
+
+                    {% if form2.first.errors %}
+                       <div class="form-group has-error"> 
+                       <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+                       {% else %}
+                       <div class="form-group">
+                        {{form2.first.label_tag}}
+                        {% endif %}
+                        {{form2.first|add_class:"form-control"}}
+                       </div>
+
+                     {% if form2.last.errors %}
+                       <div class="form-group has-error"> 
+                       <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+                       {% else %}
+                       <div class="form-group">
+                        {{form2.last.label_tag}}
+                        {% endif %}
+                        {{form2.last|add_class:"form-control"}}
+                       </div>
+
+                          {% if form2.username.errors %}
+                       <div class="form-group has-error"> 
+                       <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+                       {% else %}
+                       <div class="form-group">
+                        {{form2.username.label_tag}}
+                        {% endif %}
+                        {{form2.username|add_class:"form-control"}}
+                       </div>
+    
+                        {% if form2.email.errors %}
+                       <div class="form-group has-error"> 
+                       <label class="control-label" for="inputError1">Invalid email</label>
+                       {% else %}
+                       <div class="form-group">
+                        {{form2.email.label_tag}}
+                        {% endif %}
+                        {{form2.email|add_class:"form-control"}}
+                       </div>
+
             
-            Create a new alert <a href="{% url 'grews_alert'%}" >here</a>.
+                        <input class="btn btn-default" id="form_details_dark" type="submit" value="Save Change" name="save_profile"/>
+                        <input class="btn btn-default" id="form_details_dark" type="submit" value="Delete profile" name="delete_profile"/>
+                    </form> 
+                    </div>  
+                
+        
+            </div>
+
+
+
+        <div role="tabpanel" class="tab-pane" id="alerts">  
+            Manage your alerts here or <a href="{% url 'grews_alert'%}" >create a new one</a>.
             
                  
 {% if alert_info %}
     {% for alert, form in alert_info %}
-				
+                <div class="forms" id="form_alert_light">
                             <form action="{% url 'profile' %}" class="module aligned wide" method="post">
                                 <h3 class="entry-title"><a href={{alert.latest_url}}>{{alert.query}}</a></h3>
-    {% csrf_token %}
-    {{ form }} 
-                                <p>
-    <input type="submit" value="Save Change" name="save"/>
-                                    <input type="submit" value="Delete alert" name="delete"/></p>
-</form>       
+                                {% csrf_token %}
+                                {% if alert.feed_type %}
+                                <p> At the moment, alerts using feeds cannot be edited. Coming soon though! </p>
+                                {% else %}
+
+                                {% if form.query.errors %}
+                                       <div class="form-group has-error"> 
+                                       <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+                                       {% else %}
+                                       <div class="form-group">
+                                        {{form.query.label_tag}}
+                                        {% endif %}
+                                        {{form.query|add_class:"form-control"}}
+                                       </div>
+                                 
+                                 {% if form.frequency.errors %}
+                                       <div class="form-group has-error"> 
+                                       <label class="control-label" for="inputError1">Invalid frequency</label>
+                                       {% else %}
+                                       <div class="form-group">
+                                        {{form.frequency.label_tag}}
+                                        {% endif %}
+                                        {{form.frequency|add_class:"form-control"}}
+                                       </div>  
+                                        
+                                                            <p>
+                    <input class="btn btn-default" id="form_alert_dark" type="submit" value="Save Change" name="save"/>
+                    {% endif %}
+                                    <input class="btn btn-default" id="form_alert_dark" type="submit" value="Delete alert" name="delete"/></p>
+                    </form>   
+                </div>    
       {% endfor %}      
            
-{% else %}
+            {% else %}
             <p>No grews alerts yet. </p>
-{% endif %}           
-            
-            <h1> Recent searches: </h1>
+            {% endif %}           
+        
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="searches">
+
    {% if recent_queries %}
-            <div ALIGN=CENTER>
-            <table alignment=center text-align=center>
+    Click on the queries to go back to the search result
+
+            <table alignment=center class="table">
                 <tr>
-                    <th>Query</th>
-                    <th>Search Time</th>
+                    <th><strong>Query</strong></th>
+                    <th class="text-right"><strong>Search Time</strong></th>
+
+                    </tr>
     {% for query in recent_queries %}
                 <tr>
-                    <td><h3 class="entry-title"><a href={{query.url}}>{{query.query}}</a></h3></td>
-                    <td>  {{query.time}} </td>
+                    <td><a href={{query.url}}>{{ query.query|linebreaks }}</a></td>
+                    <td class="text-right">  {{query.time}} </td>
                 </tr>
 
       {% endfor %}      
-           </table>
+            </table>
             </div>
-{% else %}
+            </div>
+            {% else %}
             <p>No searches yet. Perform one <a href="" >here</a></p>
-{% endif %} 
-            
-            <h1> Personal Details: </h1>
-            
-           {{state_profile}}
-            
-            <form action="{% url 'profile' %}" class="module aligned wide" method="post">
-    {% csrf_token %}
-    {{ form2 }} 
-    <input type="submit" value="Save Change" name="save_profile"/>
-    <input type="submit" value="Delete profile" name="delete_profile"/>
-</form>   
-            <p>In order to change your password, please click <a href="{% url 'password_change'%}">here</a>.</p>
-    </div>
-</div>
+                {% endif %} 
+        </div>
+        </div>
+        
 {% endblock content %}

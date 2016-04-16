@@ -47,11 +47,24 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'last24h',
     'captcha',
+    'twitter_bootstrap',
 #	'django_cron',
 #'kronos',
 'django.contrib.sites',
-#'google_analytics'
+#'google_analytics',
+'widget_tweaks',
+'djcelery',
+'kombu.transport.django'
 )
+
+import djcelery
+djcelery.setup_loader()
+BROKER_URL = "amqp://admin:Istanbul@localhost:5672/80"
+
+
+#BROKER_URL = "django://"
+
+CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 
 SITE_ID = 1
 
@@ -103,10 +116,16 @@ WSGI_APPLICATION = 'graphite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'django',
+        'USER': 'admin',
+        'PASSWORD': '1+1istwo',
+        'HOST': '',
+        'PORT': '',
     }
 }
 
@@ -130,3 +149,5 @@ USE_TZ = True
 
 #STATIC_ROOT = '~/Documents/sonstige/Python/Seman_project/graphite_test_env/deployed/static/'
 STATIC_URL = '/static/'
+
+STATIC_BREV = 'last24h'

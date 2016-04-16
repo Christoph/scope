@@ -1,0 +1,25 @@
+{% extends "graphite/base.html" %}
+{% load staticfiles %}
+
+
+{% block head %}
+
+    <script align='center' type="text/javascript" src="{% static 'last24h/d3.min.js' %}"></script> 
+                    <script type='text/javascript' src="{% static 'last24h/fisheye.js' %}"> </script>
+    <script type='text/javascript'> var json =  "{% static 'last24h/ug_nl_cluster.json' %}",
+    tgt = "{% static 'last24h/tgt_cluster.json' %}",
+    custom = 0,
+    nodefac = 0.6,
+    linkdist = 60,
+    worksurl = "{% url 'how_it_works'%}",
+    customsearchurl = "{% url 'customsearch'%}",
+    grewsalerturl = "{% url 'grews_alert'%}",
+    registerurl = "{% url 'register'%}",
+    init_message = "<h3 align=center>Welcome to {{name}}</h3><p>{{name}} is a tool that helps you optimize the way you find and read news. In the graph you see, every circle corresponds to a news article (click on a circle to get to the article). Two circles share are link whenever their corresponding news articles have a strong thematic overlap. The resulting article clusters then comprise only articles that talk about some given topic, indicated by the keywords. Through their differing size and link structure, this graph gives you, at one glance, an overview over the current hot topics, as well as the polarisation or diversity of the reporting on them - highly connected clusters indicating high degree of consensus. Clicking on the colored sections of the central circle takes you into a detailed view with more interesting information about each cluster. <p> What's more, {{name}} also helps you with optimizing the efficiency of allocating your reading time, if your aim is to get an overview over what newspapers write about: For every topic cluster, {{name}} determines the most central article, the one whose content has strongest overlap with all others. These are the prominently marked articles in each cluster. So, if you have limited time for reading the news, your best method for staying on top of the news is to read these articles in the order of the size of the topic cluster, from the hottest to the coldest topics. In this way you minimise the redundancy between the articles you read and make sure to cover the biggest news first. The 'star' button at the top right takes you to a detail view of all these articles.<p> The current article is updated 3x a day and is created on the basis of analysing ~500 articles from more than 40 global newspapers. But you can also create your own <a href=" + customsearchurl + ">custom graph</a> in real time, or have one <a href=" + grewsalerturl + ">sent regularly to your inbox!</a> <p> To get more information about how {{name}} works and what it is and is not good for, check out <a href=" + worksurl + ">how it works</a>.  For further help with navigation check out the help button, at the top right!"
+     </script>
+{% endblock %}
+        
+
+{% block vis %}
+<script type='text/javascript' src="{% static 'last24h/vis.js' %}"> </script>
+{% endblock %}

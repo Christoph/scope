@@ -44,5 +44,10 @@ urlpatterns = [
     url(r'^contact$', views.contact, name = 'contact'),
    url(r'artsy$',views.artsy,name='artsy'),   
    url(r'happybday$',views.martin,name='martin'),
+   #url(r'^search_state$', views.search_state, name="search_state"),
+   url(r'^update_state$', views.update_state, name="update_state"),
+   url(r'^do_task$', views.do_task, name="do_task"),
+   url(r'^search_task_term$', views.search_task_term, name="search_task_term"),
+   url(r'^search_task_feeds$', views.search_task_feeds, name="search_task_feeds"),
 ]
 

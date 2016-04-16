@@ -25,18 +25,17 @@ from last24h.models import Suggest
 #Via Googlefeed
 articles = []
 #topic = raw_input("Which topic would you like to read about?")
-size = 100
 #topic = topic.lower()
 #topic = topic.replace(" ","_")
-for topic in topics:
-    d = feedparser.parse('http://news.google.co.uk/news/feeds?pz=1&cf=all&ned=en&hl=en&q=' + topic + '&output=rss&num=' + str(size))
+for feed in topics:
+    d = feedparser.parse(feed)
 
-    for i in range(0, size-1):
+    for i in range(0, len(d.entries)-1):
         dd = Article(d.entries[i].link.split('url=')[1], language='en', MAX_SUMMARY = 1000)
         articles.append(dd)
 
 #Threading stuff
-
+size = len(articles)
 #from last24h.mthreading import myThread, process_data
 exitFlag = 0
 

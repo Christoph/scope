@@ -250,6 +250,8 @@ var svg = d3.select("body").append("svg")
    // .attr("width", 0.8 * width)
   //  .attr("height", height);  
 
+var json;
+
 d3.json("{% with 'last24h/cs/cs_'|add:strin|add:'_nl.json' as user_query_path %}{% static user_query_path %}{% endwith %}", function(error, graph) {
   if (error) throw error;
     

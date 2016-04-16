@@ -1,0 +1,369 @@
+{
+        "comps": 16,
+        "children": [
+                {
+                        "clustering": "70",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "Lahore",
+                                "Pakistan"
+                        ],
+                        "id": 1,
+                        "timeinf": [
+                                "now",
+                                "8h",
+                                "17h",
+                                "1d 2h",
+                                "1d 10h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 15
+                                }
+                        ]
+                },
+                {
+                        "clustering": "67",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "Palmyra",
+                                "Syrian"
+                        ],
+                        "id": 2,
+                        "timeinf": [
+                                "now",
+                                "14h",
+                                "1d 5h",
+                                "1d 19h",
+                                "2d 10h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 200,
+                                        "size": 13
+                                }
+                        ]
+                },
+                {
+                        "clustering": "82",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "Brussels",
+                                "attacks"
+                        ],
+                        "id": 3,
+                        "timeinf": [
+                                "now",
+                                "1d 10h",
+                                "2d 20h",
+                                "4d 6h",
+                                "5d 16h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 300,
+                                        "size": 11
+                                }
+                        ]
+                },
+                {
+                        "clustering": "81",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "Sanders",
+                                "Bernie"
+                        ],
+                        "id": 4,
+                        "timeinf": [
+                                "now",
+                                "18h",
+                                "1d 13h",
+                                "2d 7h",
+                                "3d 2h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 400,
+                                        "size": 7
+                                }
+                        ]
+                },
+                {
+                        "clustering": "47",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "macri",
+                                "argentina"
+                        ],
+                        "id": 5,
+                        "timeinf": [
+                                "now",
+                                "6h",
+                                "12h",
+                                "18h",
+                                "1d 0h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 500,
+                                        "size": 6
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "kerry",
+                                "brussels"
+                        ],
+                        "id": 6,
+                        "timeinf": [
+                                "now",
+                                "21h",
+                                "1d 18h",
+                                "2d 16h",
+                                "3d 13h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 600,
+                                        "size": 5
+                                }
+                        ]
+                },
+                {
+                        "clustering": "6",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "brussels",
+                                "attacks"
+                        ],
+                        "id": 7,
+                        "timeinf": [
+                                "now",
+                                "2d 10h",
+                                "4d 20h",
+                                "7d 6h",
+                                "9d 16h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 700,
+                                        "size": 5
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "micro",
+                                "students"
+                        ],
+                        "id": 8,
+                        "timeinf": [
+                                "now",
+                                "0h",
+                                "0h",
+                                "0h",
+                                "0h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 800,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "brussels",
+                                "belgian"
+                        ],
+                        "id": 9,
+                        "timeinf": [
+                                "now",
+                                "4h",
+                                "9h",
+                                "14h",
+                                "18h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 900,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "cuba",
+                                "cuban"
+                        ],
+                        "id": 10,
+                        "timeinf": [
+                                "now",
+                                "1d 15h",
+                                "3d 7h",
+                                "4d 23h",
+                                "6d 15h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1000,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "eu",
+                                "osborne"
+                        ],
+                        "id": 11,
+                        "timeinf": [
+                                "now",
+                                "1d 12h",
+                                "3d ",
+                                "4d 12h",
+                                "6d 0h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1100,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "58",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "check",
+                                "brussels"
+                        ],
+                        "id": 12,
+                        "timeinf": [
+                                "now",
+                                "10h",
+                                "20h",
+                                "1d 6h",
+                                "1d 16h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1200,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "58",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "kerry",
+                                "laos"
+                        ],
+                        "id": 13,
+                        "timeinf": [
+                                "now",
+                                "1d 4h",
+                                "2d 8h",
+                                "3d 13h",
+                                "4d 17h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1300,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "58",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "osborne",
+                                "check"
+                        ],
+                        "id": 14,
+                        "timeinf": [
+                                "now",
+                                "3d 8h",
+                                "6d 17h",
+                                "10d 1h",
+                                "13d 10h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1400,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "58",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "brussels",
+                                "belgian"
+                        ],
+                        "id": 15,
+                        "timeinf": [
+                                "now",
+                                "18h",
+                                "1d 12h",
+                                "2d 6h",
+                                "3d 1h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1500,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "0",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "cuba",
+                                "cuban"
+                        ],
+                        "id": 16,
+                        "timeinf": [
+                                "now",
+                                "1d 13h",
+                                "3d 3h",
+                                "4d 17h",
+                                "6d 6h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1600,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "id": 50,
+                        "children": [
+                                {
+                                        "id": 5000,
+                                        "size": 0
+                                }
+                        ]
+                }
+        ],
+        "overall_size": 478,
+        "final_size": 98,
+        "id": 0
+}

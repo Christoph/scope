@@ -21,6 +21,7 @@ and Blueprint http://www.blueprintcss.org/
 */
 
 
+
 /* =Reset
 -------------------------------------------------------------- */
 
@@ -209,7 +210,7 @@ input,
 select,
 textarea {
 	color: #262626;
-	font-family: 'georgia', sans-serif;
+	font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
 	font-size: 20px;
 	font-size: 2.0rem;
 	font-weight: 400;
@@ -234,22 +235,22 @@ h1 {
 h2 {
 	font-size: 1.0em;
 	line-height: 1.3em;
-	font-family: arvo, georgia;
+	font-family: helvetica, arvo, georgia;
 	/*text-transform: uppercase;*/
 	margin: 0 0 30px;
 	padding: 0;
 }
 h3 {
 	font-size: 1.75em;
-	font-family: arvo, georgia;
+	font-family: helvetica, arvo, georgia;
 }
 h4 {
 	font-size: 1.5em;
-	font-family: arvo, georgia;
+	font-family: helvetica, arvo, georgia;
 }
 h5 {
 	font-size: 1.25em;
-	font-family: arvo, georgia;
+	font-family: helvetica, arvo, georgia;
 }
 hr {
 	background-color: #ccc;
@@ -563,7 +564,7 @@ a:active {
 	line-height: 1.7em;
 	margin: 0;
 	padding: 2px 0 0;
-	/*font-family:'arvo', georgia;
+	/*font-family:'Helvetica', helvetica, arial;
 	text-transform:uppercase;*/
 	letter-spacing:1px;
 }
@@ -608,7 +609,7 @@ body.page-template-page-full-width-php.widget-area .site-content{
 #colophon-wrap {
 	clear: both;
 	margin:0;
-	padding: 60px 0;
+	padding: 20px 0;
 	width: 100%;
 	background: #000000;
 }
@@ -637,7 +638,7 @@ body.page-template-page-full-width-php.widget-area .site-content{
 }
 .main-navigation {
 	float: right;
-	font-family: 'arvo', georgia;
+	font-family: 'Helvetica Neue', georgia;
 	padding-top: 2px;
 	text-transform: uppercase;
 }
@@ -756,7 +757,7 @@ body.page-template-page-full-width-php.widget-area .site-content{
 	margin: 0;
 	border: none;
 	line-height: 1.6;
-	font-family: 'arvo', georgia;
+	font-family: 'Helvetica', helvetica, arial;
 	font-weight: bold;
 	font-size: 28px;
 	letter-spacing: 1px;
@@ -1767,7 +1768,7 @@ img#wpstats {
 	}
 	.main-navigation {
 		float: left;
-		font-family: 'arvo', georgia;
+		font-family: 'Helvetica', helvetica, arial;
 		padding-top: 2px;
 		text-transform: uppercase;
 	}
@@ -1823,7 +1824,7 @@ img#wpstats {
 		list-style-type: none;
 		margin: 3% 3% 0 3%;
 		padding-bottom: 10px;
-		font-family: 'arvo', georgia;
+		font-family: 'Helvetica', helvetica, arial;
 		text-transform: uppercase;
 		font-size:13px;
 	}

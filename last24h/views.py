@@ -62,7 +62,7 @@ def check_login(request):
         log_link = ['register','login_user']
     return log_inf, log_link
 
-@login_required(login_url='/login')
+#@login_required(login_url='/login')
 def index(request):
 
     # if this is a POST request we need to process the form data
@@ -101,8 +101,8 @@ def index(request):
             if request.user.is_authenticated():
                 q = Query(user = User.objects.get(id =request.user.id), query = topic2, time = datetime.datetime.now(), string = strin, url = reverse('csr',args=[strin]))
                 q.save()
-            sys.argv = ['/home/django/graphite/static/last24h/cs.py', topics, strin]
-            execfile('/home/django/graphite/static/last24h/cs.py')
+            sys.argv = ['/home/django/graphite/static/last24h/cs2.py', topics, strin]
+            execfile('/home/django/graphite/static/last24h/cs2.py')
             #return returncode
             
         
@@ -114,8 +114,10 @@ def index(request):
         form2 = NameForm()
     log_inf, log_link = check_login(request)
     suggestions = Suggest.objects.filter(custom = 'last24h').order_by('distance')[0:15]
-    context = {'suggestions':suggestions,'name':current_name, 'form':form, 'form2':form2,'log_inf':log_inf, 'log_link':log_link}
-    return render(request, 'last24h/sunburst1.html', context)
+    json = 'last24h' + static('last24h/ug_nl_cluster.json')
+    tgt = 'last24h' + static('last24h/tgt_cluster.json')
+    context = {'json':json,'tgt': tgt, 'suggestions':suggestions,'name':current_name, 'form':form, 'form2':form2,'log_inf':log_inf, 'log_link':log_link}
+    return render(request, 'last24h/index_test3.html', context)
 
 
 
@@ -137,8 +139,8 @@ def csresults(request,topic):
             if request.user.is_authenticated():
                 q = Query(user = User.objects.get(id =request.user.id), query = topic2, time = datetime.datetime.now(), string = strin, url = reverse('csr',args=[strin]))
                 q.save()
-            sys.argv = ['/home/django/graphite/static/last24h/cs.py', topics, strin]
-            execfile('/home/django/graphite/static/last24h/cs.py')
+            sys.argv = ['/home/django/graphite/static/last24h/cs2.py', topics, strin]
+            execfile('/home/django/graphite/static/last24h/cs2.py')
             #return returncode
             
         
