@@ -1,0 +1,82 @@
+{
+        "name": "flare",
+        "description": "flare",
+        "children": [
+                {
+                        "name": "Agglomer",
+                        "description": "AgglomerativeCluster",
+                        "children": [
+                                {
+                                        "name": "Agglomer",
+                                        "description": "AgglomerativeCluster",
+                                        "size": 3938
+                                },
+                                {
+                                        "name": "Communit",
+                                        "description": "CommunityStructure",
+                                        "size": 3812
+                                },
+                                {
+                                        "name": "Hierarch",
+                                        "description": "HierarchicalCluster",
+                                        "size": 6714
+                                },
+                                {
+                                        "name": "MergeEdg",
+                                        "description": "MergeEdge",
+                                        "size": 743
+                                }
+                        ]
+                },
+                {
+                        "name": "Communit",
+                        "description": "CommunityStructure",
+                        "children": [
+                                {
+                                        "name": "Agglomer",
+                                        "description": "AgglomerativeCluster",
+                                        "size": 3938
+                                },
+                                {
+                                        "name": "Communit",
+                                        "description": "CommunityStructure",
+                                        "size": 3812
+                                },
+                                {
+                                        "name": "Hierarch",
+                                        "description": "HierarchicalCluster",
+                                        "size": 6714
+                                },
+                                {
+                                        "name": "MergeEdg",
+                                        "description": "MergeEdge",
+                                        "size": 743
+                                }
+                        ]
+                },
+                {
+                        "name": "Hierarch",
+                        "description": "HierarchicalCluster",
+                        "children": [
+                                
+                                {
+                                        "name": "MergeEdg",
+                                        "description": "MergeEdge",
+                                        "size": 743
+                                }
+                        ]
+                },
+                {
+                        "name": "MergeEdg",
+                        "description": "MergeEdge",
+                        "children": [
+                                {
+                                        "name": "Agglomer",
+                                        "description": "AgglomerativeCluster",
+                                        "size": 3938
+                                }
+                                
+                        ]
+                }
+        ]
+}

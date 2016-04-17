@@ -3,22 +3,27 @@
 
 {% block content %}
 
-<h1 align=center class="page-title">Login</h1><!-- .entry-header -->
-			<div id="content" class="site-content" role="main">
+<h1 align=center class="page-title">Login</h1>
 
-		<div ALIGN=CENTER>
+		<p> To make use of the more advanced features of {{name}} you require a profile. Please sign in here or create a new account:
             {{ state }}
-	<form action="{% url 'login_user' %}" class="module aligned wide" method="post">
+            <div class="forms" id="form_login_light">
+	<form action="{% url 'login_user' %}" method="post">
         
         {% csrf_token %}
-		username: 
-		<input type="text" name="username" value="{{ username}}" /><br />
-		password:
-		<input type="password" name="password" value="" /><br />
+         <div class="form-group">
+		<label> Username: </label>
+		<input class="form-control" type="text" name="username" value="{{ username}}" /><br />
+		<label> Password: </label>
+		<input class="form-control" type="password" name="password" value="" /><br />
 
-		<input type="submit" value="Log In" />
+		<input class="btn btn-default" id="form_login_dark" type="submit" value="Log In" />
 	</form>
+	</div>
             <p> Forgot your password or username? Click <a href="{% url 'password_reset' %}">here</a>.</p>
     </div>
-</div>
+    		</p>
+		<p><button class="btn btn-default" id="form_registration_light">
+		<a href="{% url 'register' %}">Create account</a></button>
+		</p>
 {% endblock content %}

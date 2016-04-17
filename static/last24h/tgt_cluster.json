@@ -1,0 +1,669 @@
+{
+        "comps": 23,
+        "children": [
+                {
+                        "clustering": "47",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "Refugee",
+                                "refugee"
+                        ],
+                        "id": 1,
+                        "timeinf": [
+                                "now",
+                                "3d 7h",
+                                "6d 14h",
+                                "9d 21h",
+                                "13d 4h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "name": "",
+                                        "size": 5
+                                },
+                                {
+                                        "id": 101,
+                                        "name": "",
+                                        "size": 5
+                                },
+                                {
+                                        "id": 102,
+                                        "name": "",
+                                        "size": 4
+                                },
+                                {
+                                        "id": 103,
+                                        "name": "",
+                                        "size": 4
+                                },
+                                {
+                                        "id": 104,
+                                        "name": "",
+                                        "size": 4
+                                },
+                                {
+                                        "id": 105,
+                                        "name": "",
+                                        "size": 4
+                                },
+                                {
+                                        "id": 106,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 107,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 108,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 109,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 110,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 111,
+                                        "size": -21
+                                }
+                        ]
+                },
+                {
+                        "clustering": "68",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "Sanders",
+                                "Bernie"
+                        ],
+                        "id": 2,
+                        "timeinf": [
+                                "now",
+                                "17h",
+                                "1d 11h",
+                                "2d 4h",
+                                "2d 22h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 200,
+                                        "name": "",
+                                        "size": 4
+                                },
+                                {
+                                        "id": 201,
+                                        "name": "",
+                                        "size": 4
+                                },
+                                {
+                                        "id": 202,
+                                        "name": "",
+                                        "size": 4
+                                },
+                                {
+                                        "id": 203,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 204,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 205,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 206,
+                                        "size": -8
+                                }
+                        ]
+                },
+                {
+                        "clustering": "46",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "attack",
+                                "Jerusalem"
+                        ],
+                        "id": 3,
+                        "timeinf": [
+                                "now",
+                                "14h",
+                                "1d 4h",
+                                "1d 18h",
+                                "2d 8h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 300,
+                                        "name": "",
+                                        "size": 4
+                                },
+                                {
+                                        "id": 301,
+                                        "name": "",
+                                        "size": 4
+                                },
+                                {
+                                        "id": 302,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 303,
+                                        "size": -2
+                                }
+                        ]
+                },
+                {
+                        "clustering": "54",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "ECB",
+                                "rates"
+                        ],
+                        "id": 4,
+                        "timeinf": [
+                                "now",
+                                "4d 6h",
+                                "8d 13h",
+                                "12d 19h",
+                                "17d 2h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 400,
+                                        "name": "",
+                                        "size": 5
+                                },
+                                {
+                                        "id": 401,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 402,
+                                        "size": 0
+                                }
+                        ]
+                },
+                {
+                        "clustering": "92",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "Trudeau",
+                                "Obama"
+                        ],
+                        "id": 5,
+                        "timeinf": [
+                                "now",
+                                "2h",
+                                "5h",
+                                "8h",
+                                "11h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 500,
+                                        "name": "",
+                                        "size": 6
+                                },
+                                {
+                                        "id": 501,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 502,
+                                        "size": -2
+                                }
+                        ]
+                },
+                {
+                        "clustering": "93",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "eu",
+                                "ecb"
+                        ],
+                        "id": 6,
+                        "timeinf": [
+                                "now",
+                                "2d 6h",
+                                "4d 13h",
+                                "6d 19h",
+                                "9d 2h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 600,
+                                        "name": "",
+                                        "size": 5
+                                },
+                                {
+                                        "id": 601,
+                                        "name": "",
+                                        "size": 5
+                                },
+                                {
+                                        "id": 602,
+                                        "size": -4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "9",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "customers",
+                                "energy"
+                        ],
+                        "id": 7,
+                        "timeinf": [
+                                "now",
+                                "3h",
+                                "6h",
+                                "9h",
+                                "12h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 700,
+                                        "name": "",
+                                        "size": 5
+                                },
+                                {
+                                        "id": 701,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 702,
+                                        "size": -2
+                                }
+                        ]
+                },
+                {
+                        "clustering": "76",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "iran",
+                                "nuclear"
+                        ],
+                        "id": 8,
+                        "timeinf": [
+                                "now",
+                                "10h",
+                                "21h",
+                                "1d 8h",
+                                "1d 18h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 800,
+                                        "name": "",
+                                        "size": 5
+                                },
+                                {
+                                        "id": 801,
+                                        "size": 1
+                                }
+                        ]
+                },
+                {
+                        "clustering": "47",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "clinton",
+                                "sanders"
+                        ],
+                        "id": 9,
+                        "timeinf": [
+                                "now",
+                                "17h",
+                                "1d 10h",
+                                "2d 4h",
+                                "2d 21h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 900,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 901,
+                                        "name": "",
+                                        "size": 3
+                                },
+                                {
+                                        "id": 902,
+                                        "size": 0
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "customers",
+                                "eu"
+                        ],
+                        "id": 10,
+                        "timeinf": [
+                                "now",
+                                "3h",
+                                "7h",
+                                "11h",
+                                "14h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1000,
+                                        "size": 5
+                                }
+                        ]
+                },
+                {
+                        "clustering": "86",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "border",
+                                "trade"
+                        ],
+                        "id": 11,
+                        "timeinf": [
+                                "now",
+                                "4h",
+                                "9h",
+                                "13h",
+                                "18h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1100,
+                                        "size": 5
+                                }
+                        ]
+                },
+                {
+                        "clustering": "7",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "saudi",
+                                "arabia"
+                        ],
+                        "id": 12,
+                        "timeinf": [
+                                "now",
+                                "11h",
+                                "23h",
+                                "1d 10h",
+                                "1d 22h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1200,
+                                        "size": 5
+                                }
+                        ]
+                },
+                {
+                        "clustering": "7",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "isis",
+                                "iraq"
+                        ],
+                        "id": 13,
+                        "timeinf": [
+                                "now",
+                                "3h",
+                                "6h",
+                                "9h",
+                                "12h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1300,
+                                        "size": 5
+                                }
+                        ]
+                },
+                {
+                        "clustering": "43",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "savchenko",
+                                "eu"
+                        ],
+                        "id": 14,
+                        "timeinf": [
+                                "now",
+                                "180d 22h",
+                                "361d 21h",
+                                "542d 19h",
+                                "723d 18h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1400,
+                                        "size": 5
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "korea",
+                                "north"
+                        ],
+                        "id": 15,
+                        "timeinf": [
+                                "now",
+                                "3d 11h",
+                                "6d 23h",
+                                "10d 10h",
+                                "13d 22h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1500,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "savchenko",
+                                "miah"
+                        ],
+                        "id": 16,
+                        "timeinf": [
+                                "now",
+                                "6h",
+                                "12h",
+                                "18h",
+                                "1d 0h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1600,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "shabab",
+                                "isis"
+                        ],
+                        "id": 17,
+                        "timeinf": [
+                                "now",
+                                "17h",
+                                "1d 10h",
+                                "2d 4h",
+                                "2d 21h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1700,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "lee",
+                                "ai"
+                        ],
+                        "id": 18,
+                        "timeinf": [
+                                "now",
+                                "15h",
+                                "1d 7h",
+                                "1d 23h",
+                                "2d 15h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1800,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "58",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "supermarket",
+                                "morrisons"
+                        ],
+                        "id": 19,
+                        "timeinf": [
+                                "now",
+                                "0h",
+                                "1h",
+                                "2h",
+                                "2h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 1900,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "58",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "obama",
+                                "iran"
+                        ],
+                        "id": 20,
+                        "timeinf": [
+                                "now",
+                                "3h",
+                                "6h",
+                                "9h",
+                                "12h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 2000,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "58",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "bbccomclick",
+                                "bbcclick"
+                        ],
+                        "id": 21,
+                        "timeinf": [
+                                "now",
+                                "4d 18h",
+                                "9d 12h",
+                                "14d 6h",
+                                "19d 0h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 2100,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "0",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "trump",
+                                "miah"
+                        ],
+                        "id": 22,
+                        "timeinf": [
+                                "now",
+                                "1h",
+                                "3h",
+                                "5h",
+                                "7h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 2200,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "0",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "turkey",
+                                "eu"
+                        ],
+                        "id": 23,
+                        "timeinf": [
+                                "now",
+                                "3d 4h",
+                                "6d 9h",
+                                "9d 13h",
+                                "12d 18h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 2300,
+                                        "size": 4
+                                }
+                        ]
+                }
+        ],
+        "overall_size": 491,
+        "final_size": 142,
+        "id": 0
+}

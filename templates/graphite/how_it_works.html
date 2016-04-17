@@ -2,18 +2,30 @@
 
 
 {% block content %}
-
-<h1 align=center class="page-title">How it works</h1><!-- .entry-header -->
-			<div id="content" class="site-content" role="main">
-
 		<div ALIGN=CENTER>
-            <h1>What is graphite</h1>
-			<p>Grahpite is Welcome to graphite. Here you can do this and that. Check out our custom site stuff</p>
+
+                    <h1>What is graphite?</h1>
+
+                    {{name}} is a tool that helps you optimize the way you find and read news. In our graphs, every circle corresponds to a news article. Two circles share are link whenever their corresponding news articles have a strong thematic overlap. The resulting article clusters then comprise only articles that talk about some given topic, indicated by the keywords. Through their differing size and link structure, the graphs gives you, at one glance, an overview over the current hot topics, as well as the polarisation or diversity of the reporting on them - highly connected clusters indicating high degree of consensus.  <p> What's more, {{name}} also helps you with optimizing the efficiency of allocating your reading time, if your aim is to get an overview over what newspapers write about: For every topic cluster, {{name}} determines the most central article, the one whose content has strongest overlap with all others. These are the prominently marked articles in each cluster. So, if you have limited time for reading the news, your best method for staying on top of the news is to read these articles in the order of the size of the topic cluster, from the hottest to the coldest topics. In this way you minimise the redundancy between the articles you read and make sure to cover the biggest news first. 
+
             <h1>How does it work?</h1>
-			<p>Grahpite is Welcome to graphite. Here you can do this and that. Check out our custom site stuff</p>
+            <p>At the heart of {{name}} lies - somewhat unsurprisingly - a combination of semantic and graph theoretical analysis. Standard semantic analysis techniques (LSI/LDA) are used to quantify the overlap between articles. Then a graph is constructed on the basis of this analysis: Two articles are linked if and only if their semantic similarity surpasses a certain dynamically determined threshold value. In this way you automatically obtain a graph with a bunch of unconnected components, the topic clusters, which are themselves subjected to a more detailed "intracomponental" analysis: keyword extraction, clustering information, etc. 
+
+            <h1>How and when is it useful?</h1>
+            <h3> How it is not useful</h3>
+            <p> It is very important to realise that {{name}} is only useful for certain things: The main criterion of similarity for {{name}} is word frequency. Of course, the actual methods are much more sophisticated than a mere direct comparison of word frequencies and display a good deal of context sensitivity, but at the end of the day two articles using the same words in more or less the same order to argue for very different things would be taken to have a high overlap. For this reason, {{name}} <em> cannot distinguish the kinds of subtleties that are at the heart of journalistic and political discourse</em>. More generally, it is blind to the <em>quality</em> of a text, by pretty much any measure of what "quality" here may mean.
+            <p> Moreover, {{name}} only looks at the publishing end of the journalistic food chain. It does not take into account reader reception. So if you think reader's votes are the only criterion for worthwhile reading material, {{name}} is not for you. 
+            <p> Like any data crunching algorithm almost by definition, the machinery of {{name}} only develops its full power if it has sufficient material to chew on. In concrete numbers, this means that custom searches with less than ~300 articles will in general not provide very good results, both in terms of the clusters, the keyword extraction and also the relevance of the reading suggestions. As such, {{name}} is not really a research tool to find specific or exotic articles. As usual, "garbage in, garbage out".
+            <h3> How it is useful</h3>
+            <p> {{name}} really works best as a mix between journalism analysis tool and two-click source of information about the rough and fine-grained newsscape - kind of like a historical analysis of the dynamics of the news, but actually in real time. 
+            <p> If, for example, you already have a fairly large number of news sources whose output you trust as read-worthy but don't want to lose time having to go through all their individual sites, just set up an alert and have them, together with a graph theoretically certified reading list, ready for you every morning. 
+            <p> If, on the other hand, you want to get an idea of how polarised a topic is, start a custom serach for terms related to this topic. The detail views options will allow you to conduct a quick first analysis.
+            <p> If you just want to see what's big, how big, and roughly who says what, just use the home-graph and with a number of clicks you're all up-to-date, having just taken in a massive amount of information on the fly... 
+            <p> Personally, I think of {{name}} as a complimentary tool to help me understand news and stay up to date: Spending about five minutes and twenty clicks on it a day, I stay very much up with the big news and at the same time get a feeling for how the media digest and cannibalise different kinds of topics. 
+  
             <h1>Who develops it?</h1>
-			<p>A lot of people.</p>
+            <p>I am a physics PhD student, currently based in Berlin, actually working on quantum thermodynamics. {{name}} has been a somewhat obsessive side project for me over the past six months (check out some other things that I managed to put online on my <a href="https://beingbutlumps.wordpress.com">website</a>). I never had any training in programming, but as you can imagine, the learning curve has been a steep one. Still, I am very interested in hearing about possible imporvements or maybe have more qualified people join me in maintaining and expanding this site. <a href="{% url 'contact'%}">Hit me up</a> about your experience, insights, critcism, ideas!
+                </p> 
    
     </div>
-</div>
 {% endblock content %}

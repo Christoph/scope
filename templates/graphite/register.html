@@ -1,20 +1,102 @@
 {% extends "graphite/base.html" %}
+{% load widget_tweaks %}
 
 
 {% block content %}
 
-<h1 align=center class="page-title">Register</h1><!-- .entry-header -->
-			<div id="content" class="site-content" role="main">
+<h1 align=center class="page-title">Register</h1>
 
 		<div ALIGN=CENTER>
+
+<p> By creating an account you have access to a number of extra handy features:
+<ol>
+<li> You can start alerts to have custom graphs sent regularly to your inbox.</li>
+<li> Have access to your custom searches. </li>
+<li> Most further features that will be implemented in the future - advanced comparison of articles within cluster, exporting features, advanced search - will be tied to having an account. </li>
+    
+
             <p>{{state}}</p>
            
+
             {% if form %}
-    <form class="module aligned wide" action="{% url 'register' %}" method="post">
+
+            <div class="forms" id="form_registration_light">
+    <form action="{% url 'register' %}" method="post">
     {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Register" />
+
+    {% if form.first.errors %}
+   <div class="form-group has-error"> 
+   <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+   {% else %}
+   <div class="form-group">
+    {{form.first.label_tag}}
+    {% endif %}
+    {{form.first|add_class:"form-control"}}
+   </div>
+
+      {% if form.last.errors %}
+   <div class="form-group has-error"> 
+   <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+   {% else %}
+   <div class="form-group">
+    {{form.last.label_tag}}
+    {% endif %}
+    {{form.last|add_class:"form-control"}}
+   </div>
+
+      {% if form.username.errors %}
+   <div class="form-group has-error"> 
+   <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+   {% else %}
+   <div class="form-group">
+    {{form.username.label_tag}}
+    {% endif %}
+    {{form.username|add_class:"form-control"}}
+   </div>
+    
+    {% if form.email.errors %}
+   <div class="form-group has-error"> 
+   <label class="control-label" for="inputError1">Invalid email</label>
+   {% else %}
+   <div class="form-group">
+    {{form.email.label_tag}}
+    {% endif %}
+    {{form.email|add_class:"form-control"}}
+   </div>
+
+         {% if form.password1.errors %}
+   <div class="form-group has-error"> 
+   <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+   {% else %}
+   <div class="form-group">
+    {{form.password1.label_tag}}
+    {% endif %}
+    {{form.password1|add_class:"form-control"}}
+   </div>
+
+            {% if form.password2.errors %}
+   <div class="form-group has-error"> 
+   <label class="control-label" for="inputError1">Invalid format or not matching</label>
+   {% else %}
+   <div class="form-group">
+    {{form.password2.label_tag}}
+    {% endif %}
+    {{form.password2|add_class:"form-control"}}
+   </div>
+
+       {% if form.captcha.errors %}
+   <div class="form-group has-error"> 
+   <label class="control-label" for="inputError1">Invalid captcha</label>
+   {% else %}
+   <div class="form-group">
+    {{form.captcha.label_tag}}
+    {% endif %}
+    {{form.captcha|add_class:"form-control"}}
+   </div>
+
+    <input class="btn btn-default" id="form_registration_dark" type="submit" value="Register" />
 </form>
+</div>
             {% endif %}
   </div> 
 </div>

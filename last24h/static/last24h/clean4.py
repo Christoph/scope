@@ -16,6 +16,9 @@ import sys
 import json
 import urllib
 import math
+from time import mktime
+from datetime import datetime
+
 
 from last24h.models import Suggest
 
@@ -26,14 +29,18 @@ def return_articles(feeds,non_keywords):
         for i in range(0, len(d.entries)-1):
             dd = Article(d.entries[i].link, language='en')#, fetch_images = False)#link.split('url=')[1]
             if hasattr(d.entries[i],'summary'):
-                ee = d.entries[i].summary[0:min(200,len(d.entries[i].summary))]
+                ee = d.entries[i].summary[0:min(400,len(d.entries[i].summary))]
             else:
                 ee = ''
             #  if hasattr(d.entries[i],'tags'):
             #      ff = [tag['term'] for tag in d.entries[i].tags if tag['term'] not in non_keywords] 
             # else: 
             #    ff = ['']
-            articles_info.append([dd,ee])#,ff    
+            if hasattr(d.entries[i],'published_parsed'):
+                ff = datetime.fromtimestamp(mktime(d.entries[i].published_parsed))
+            else:
+                ff = ''
+            articles_info.append([dd,ee,ff])#,ff    
     return articles_info
     
 # Determine scources and mode of extraction
@@ -44,7 +51,7 @@ def return_articles(feeds,non_keywords):
 articles = []
 feeds = ['http://feeds.guardian.co.uk/theguardian/world/rss','http://www.themoscowtimes.com/rss/top/','http://www.spiegel.de/international/index.rss','http://mondediplo.com/backend','http://feeds.bbci.co.uk/news/business/rss.xml','http://www.independent.co.uk/news/world/rss','http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml','http://www.aljazeera.com/xml/rss/all.xml','http://feeds.wsjonline.com/wsj/podcast_wall_street_journal_whats_news','feed://timesofindia.feedsportal.com/c/33039/f/533916/index.rss','http://www.thenation.com/rss/articles','http://feeds.washingtonpost.com/rss/world/asia-pacific','http://www.telegraph.co.uk/finance/economics/rss','feed://www.thejc.com/feed/news','http://feeds.bbci.co.uk/news/technology/rss.xml','feed://www.buenosairesherald.com/articles/rss.aspx','feed://muslimnews.co.uk/feed/?post_type=news','http://www.latimes.com/world/rss2.0.xml','http://feeds.chicagotribune.com/chicagotribune/news','http://feeds.feedburner.com/TheAustralianTheWorld']
  
-non_keywords = set(('World news','Europe','Africa','USA','Technology','Approved','Password','Biography'))
+non_keywords = set(('World news','Europe','Africa','USA','Technology','Approved','Password','Biography','2016'))
 articles_info = return_articles(feeds,non_keywords)
 
 articles = [k[0] for k in articles_info]
@@ -137,6 +144,7 @@ keywords = []
 summary = []
 titles = []
 urls = []
+times = []
 images = []
 exclude = set(('', 'FT.com / Registration / Sign-up','Error','404 Page not found','Page no longer available', 'File or directory not found','Page not found','Content not found'))
 
@@ -145,9 +153,11 @@ counter = 0
 for i in range(0,upper-1):
     article = articles[i]
     if article.title not in exclude:
+
         doc.append(article.text)
         titles.append(article.title)
         urls.append(article.url)
+        times.append(articles_info[i][2])
         images.append(article.top_image)
         if articles_info[i][1] != '':
             summary.append(articles_info[i][1])
@@ -207,7 +217,7 @@ tfidf_model = gensim.models.TfidfModel( corp )
 
 #  Create pairwise document similarity index
 
-n = 100
+n = 50
 
 corpus_tfidf= tfidf_model[corp]
 
@@ -244,13 +254,19 @@ index.save('last24h/static/last24h/l24h.index')
 
 #Begin Graph visualisation
 
-thresh = 0.15#0.1/pow(upper/210,2)  #the higher the thresh, the more critical  
+
+thresh = 0.1#0.1/pow(upper/210,2)  #the higher the thresh, the more critical  
 ug = nx.Graph()
 for i in range(0, len(corp)):
-    ug.add_node(i,title=titles[i],url=urls[i],suggest=0, summary = summary[i],images = images[i], comp = 0,keywords='' )#,keywords=keywords[i])
+    if len(urls[i].strip("www.")) != 0:
+        source = urls[i].strip("www.")[1].strip("/")[0]
+    elif len(urls[i].strip("rss.")) != 0:  
+        source = urls[i].strip("rss.")[1].strip("/")[0]
+    else: 
+        source = urls[i].strip("http://")[1].strip("/")[0]
+    ug.add_node(i,title=titles[i],url=urls[i],suggest=0, summary = summary[i],images = images[i], comp = 0,keywords='',source = source, time = times[i] )#,keywords=keywords[i])
 
 for i in range( 0, len( corpus_tfidf ) ):
-  
     sim = index[ lsi_model[ corp [ i ] ] ]
     for j in range( i+1, len( sim ) ):
         dist = (1. - sim[j])/2.
@@ -272,10 +288,15 @@ big_list = []
 keywords_in = []
 graphs = sorted(nx.connected_component_subgraphs(ug), key = len, reverse = True)
 for comp in graphs:
+    first_time = sorted([i.times for i in comp.nodes()])[0]
+    last_time = sorted([i.times for i in comp.nodes()])[-1]
+    time_span = (last_time - first_time).total_seconds()
+
     closeness = nx.closeness_centrality(comp, distance=True)
     count_clique=1
     for i in comp: 
         ug.node[i]['comp'] = count_comp
+        ug.nodes[i]['time_pos'] = (ug.node[i].time - last_time).total_seconds()/time_span*350 + 5
     count_comp += 1    
     if len(comp) > 5:
         for i in comp: 
@@ -291,8 +312,10 @@ for comp in graphs:
         susvec = sorted(closeness.items(), key = lambda close:close[1],reverse=True)[0][0]                
         big_list.append([len(comp)^2,susvec])
     else: 
-        ug.node[comp.nodes()[0]]['single'] = 1
-        big_list.append([1,comp.nodes()[0]])
+        ug.remove_nodes_from(comp)
+ #   else: 
+ #       ug.node[comp.nodes()[0]]['single'] = 1
+ #       big_list.append([1,comp.nodes()[0]])
         
 for m in sorted(big_list,reverse=True):
     if ((False not in [ug.node[k]['suggest'] == 0 for k in ug.neighbors(m[1])]) and (ug.node[m[1]]['suggest'] == 0))and (len(list_corpus[m[1]]) > 1):

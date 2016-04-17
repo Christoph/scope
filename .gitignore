@@ -7,6 +7,6 @@ q/
 
 *.pyc
 
-settings.py
+graphite/settings.py
 
 

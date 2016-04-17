@@ -17,30 +17,34 @@ import json
 import urllib
 import math
 from django.core.mail import send_mail
-
+from time import mktime
+from datetime import datetime
 from last24h.models import Suggest
+from django.templatetags.static import static
 
 def return_articles(feeds,non_keywords):
-    articles_info = []
-    for feed in feeds:
-        d = feedparser.parse(feed)
-        for i in range(0, len(d.entries)-1):
-            dd = Article(d.entries[i].link, language='en')#, fetch_images = False)#link.split('url=')[1]
-            if hasattr(d.entries[i],'summary'):
-                ee = d.entries[i].summary[0:min(200,len(d.entries[i].summary))]
-            else:
-                ee = ''
-            #  if hasattr(d.entries[i],'tags'):
-            #      ff = [tag['term'] for tag in d.entries[i].tags if tag['term'] not in non_keywords] 
-            # else: 
-            #    ff = ['']
-            articles_info.append([dd,ee])#,ff    
-    return articles_info
-    
-# Determine scources and mode of extraction
-            
-#mode = raw_input("Enter 0 for a search query and 1 for a map")
+	articles_info = []
+	for feed in feeds:
+		d = feedparser.parse(feed)
+		for i in range(0, len(d.entries)-1):
+			dd = Article(d.entries[i].link, language='en')#, fetch_images = False)#link.split('url=')[1]
+			if hasattr(d.entries[i],'summary'):
+				aa = d.entries[i].summary
+				if "<div>" in aa:
+					aa = aa.split("<div>")[0] + " " + aa.split("<div>")[2]
 
+				ee = aa[0:min(400,len(d.entries[i].summary))]
+			else:
+				ee = ''
+			if hasattr(d.entries[i],'published_parsed'):
+				ff = datetime.fromtimestamp(mktime(d.entries[i].published_parsed))
+			else:
+				ff = None
+			articles_info.append([dd,ee,ff])#,ff    
+	return articles_info
+	
+# Determine scources and mode of extraction
+			
 #Via Googlefeed
 articles = []
 feeds = ['http://feeds.guardian.co.uk/theguardian/world/rss','http://www.themoscowtimes.com/rss/top/','http://www.spiegel.de/international/index.rss','http://mondediplo.com/backend','http://feeds.bbci.co.uk/news/business/rss.xml','http://www.independent.co.uk/news/world/rss','http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml','http://www.aljazeera.com/xml/rss/all.xml','feed://timesofindia.feedsportal.com/c/33039/f/533916/index.rss','http://www.thenation.com/rss/articles','http://feeds.washingtonpost.com/rss/world/asia-pacific','http://www.telegraph.co.uk/finance/economics/rss','feed://www.thejc.com/feed/news','http://feeds.bbci.co.uk/news/technology/rss.xml','feed://www.buenosairesherald.com/articles/rss.aspx','feed://muslimnews.co.uk/feed/?post_type=news','http://www.latimes.com/world/rss2.0.xml','http://feeds.chicagotribune.com/chicagotribune/news','http://feeds.feedburner.com/TheAustralianTheWorld']
@@ -52,84 +56,81 @@ articles = [k[0] for k in articles_info]
 print len(articles)
 upper = min(600, len(articles))
 
-
 for a in articles:
     a.download()
     a.parse()
-    
-#print "Start threading"
+	
+# print "Start threading"
 
-#Threading stuff
+# #Threading stuff
 
-#exitFlag = 0
+# exitFlag = 0
 
-#class myThread (threading.Thread):
+# class myThread (threading.Thread):
 #    def __init__(self, threadID, name, q):
-#        threading.Thread.__init__(self)
-#        self.threadID = threadID
-#        self.name = name
-#        self.q = q
+# 	   threading.Thread.__init__(self)
+# 	   self.threadID = threadID
+# 	   self.name = name
+# 	   self.q = q
 #    def run(self):
-#        #print "Starting " + self.name
-#        process_data(self.name, self.q)
-#        #print "Exiting " + self.name
+# 	   #print "Starting " + self.name
+# 	   process_data(self.name, self.q)
+# 	   #print "Exiting " + self.name
 
-#def process_data(threadName, q):
+# def process_data(threadName, q):
 #    while not exitFlag:
-#       queueLock.acquire()
-#      if not workQueue.empty():
-#         data = q.get()
-    #        queueLock.release()
-#            data.download()
- #           data.parse()
-#           #print " %s processing" % (threadName)
-#        else:
-#            queueLock.release()
-#       time.sleep(1)
+#    	queueLock.acquire()
+#    	if not workQueue.empty():
+#    		data = q.get()
+# 		queueLock.release()
+# 		data.download()
+# 		data.parse()
+# 		  #print " %s processing" % (threadName)
+# 	else:
+# 		queueLock.release()
+# 	time.sleep(1)
 
-#maxthread = 200
-#if upper < maxthread:
- #   threadlimit = upper
-#else:
- #   threadlimit = maxthread
-        
-#threadList = []
-#for i in range(1,threadlimit):
+# maxthread = 200
+# if upper < maxthread:
+#    threadlimit = upper
+# else:
+#    threadlimit = maxthread
+		
+# threadList = []
+# for i in range(1,threadlimit):
 #    threadList.append(str(i))
 
-#nameList = articles[1:upper]
-#queueLock = threading.Lock()
-#workQueue = Queue.Queue(upper)
-#threads = []
-#threadID = 1
+# nameList = articles[1:upper]
+# queueLock = threading.Lock()
+# workQueue = Queue.Queue(upper)
+# threads = []
+# threadID = 1
 
-# Create new threads
-#for tName in threadList:
+# #Create new threads
+# for tName in threadList:
 #    thread = myThread(threadID, tName, workQueue)
 #    thread.start()
 #    threads.append(thread)
-#   threadID += 1
+#    threadID += 1
 
-# Fill the queue
-#queueLock.acquire()
-#for word in nameList:
+# #Fill the queue
+# queueLock.acquire()
+# for word in nameList:
 #    workQueue.put(word)
-#queueLock.release()
+# queueLock.release()
 
 
-# Wait for queue to empty
-#while not workQueue.empty():
+# #Wait for queue to empty
+# while not workQueue.empty():
 #   pass
 
-# Notify threads it's time to exit
-#exitFlag = 1
+# #Notify threads it's time to exit
+# exitFlag = 1
 
-# Wait for all threads to complete
-#for t in threads:
+# #Wait for all threads to complete
+# for t in threads:
 #    t.join()
-#print "Exiting Main Thread"
-
-
+# print "Exiting Main Thread"
 
 #Putting together
 
@@ -138,26 +139,28 @@ keywords = []
 summary = []
 titles = []
 urls = []
+times = []
 images = []
 exclude = set(('', 'FT.com / Registration / Sign-up','Error','404 Page not found','Page no longer available', 'File or directory not found','Page not found','Content not found'))
 
 counter = 0
 
 for i in range(0,upper-1):
-    article = articles[i]
-    if article.title not in exclude:
-        doc.append(article.text)
-        titles.append(article.title)
-        urls.append(article.url)
-        images.append(article.top_image)
-        if articles_info[i][1] != '':
-            summary.append(articles_info[i][1])
-        else: 
-            summary.append(article.text[0:200])
-        #keywords.append(articles_info[i][2]) 
-                            
+	article = articles[i]
+	if article.title not in exclude:
+		doc.append(article.text)
+		titles.append(article.title)
+		urls.append(article.url)
+		images.append(article.top_image)
+		times.append(articles_info[i][2])
+		if articles_info[i][1] != '':
+			summary.append(articles_info[i][1])
+		else: 
+			summary.append(article.text[0:400] + "...")
+		#keywords.append(articles_info[i][2]) 
+							
 #        keywords.append(article.keywords)
-                          
+						  
 #Begin Semantic Analysis
 
 # Remove punctuation, then tokenize documents
@@ -166,9 +169,9 @@ punc = re.compile( '[%s]' % re.escape( string.punctuation ) )
 term_vec = [ ]
 
 for a in doc:
-        a = a.lower()  #these aren't necessary if you're dealing with keywords
-        a = punc.sub( '', a )
-        term_vec.append( nltk.word_tokenize( a ) )
+		a = a.lower()  #these aren't necessary if you're dealing with keywords
+		a = punc.sub( '', a )
+		term_vec.append( nltk.word_tokenize( a ) )
 
 # Print resulting term vectors
 
@@ -177,17 +180,17 @@ for a in doc:
 stop_words = nltk.corpus.stopwords.words( 'english' )
 
 for i in range( 0, len( term_vec ) ):
-    term_list = [ ]
+	term_list = [ ]
 
-    for term in term_vec[ i ]:
-        if term not in stop_words:
-            term_list.append( term )
+	for term in term_vec[ i ]:
+		if term not in stop_words:
+			term_list.append( term )
 
-    term_vec[ i ] = term_list
+	term_vec[ i ] = term_list
 
 # Print term vectors with stop words removed
-
-    # Porter stem remaining terms
+# stemming is difficult with the keyword extraction ....
+	# Porter stem remaining terms
 
 #porter = nltk.stem.porter.PorterStemmer()
 
@@ -200,7 +203,7 @@ for i in range( 0, len( term_vec ) ):
 dict = gensim.corpora.Dictionary( term_vec )
 corp = [ ]
 for i in range( 0, len( term_vec ) ):
-    corp.append( dict.doc2bow( term_vec[ i ] ) )
+	corp.append( dict.doc2bow( term_vec[ i ] ) )
 
 #  Create TFIDF vectors based on term vectors bag-of-word corpora
 
@@ -208,7 +211,7 @@ tfidf_model = gensim.models.TfidfModel( corp )
 
 #  Create pairwise document similarity index
 
-n = 250
+n = 100
 
 corpus_tfidf= tfidf_model[corp]
 
@@ -216,124 +219,216 @@ lsi_model = gensim.models.LsiModel(corpus_tfidf, id2word=dict, num_topics=n) #
 corpus_lsi = lsi_model[corpus_tfidf]
 list_corpus = []
 for dox in corpus_lsi:
-    list_corpus.append(dox)
+	list_corpus.append(dox)
 index = gensim.similarities.SparseMatrixSimilarity(corpus_lsi, num_features = n )
 
 #lda_model = gensim.models.LdaModel(corpus_tfidf, id2word=dict, num_topics=20) #initialize an LSI transformation
 #index2 = gensim.similarities.SparseMatrixSimilarity(lda_model[corpus_tfidf], num_features = 50 )
 
-gensim.corpora.MmCorpus.serialize('/home/django/graphite/static/last24h/l24h.mm', corp)
-dict.save('/home/django/graphite/static/last24h/l24h.dict')
-lsi_model.save('/home/django/graphite/static/last24h/l24h.lsi')
-index.save('/home/django/graphite/static/last24h/l24h.index')
+gensim.corpora.MmCorpus.serialize('static/last24h/l24h.mm',corp)#/home/django/graphite/static/last24h/l24h.mm', corp)
+dict.save('static/last24h/l24h.dict')
+lsi_model.save('static/last24h/l24h.lsi')
+index.save('static/last24h/l24h.index')
 #lda_model.save('/tmp/model.lda') 
-
-#load from gensim objects
-
-#dict = gensim.corpora.Dictionary.load('/tmp/news.dict')
-#corpus_tfidf = gensim.corpora.MmCorpus('/tmp/corpus_tf.mm')
-#corp = gensim.corpora.MmCorpus('/tmp/corpus.mm')
-#lsi_model = gensim.models.LsiModel.load('/tmp/model.lsi')
-#lda_model = gensim.models.LdaModel.load('/tmp/model.lda')
-#titles = numpy.load("titles.npy")
-
-#produce keywords
-
-    #extract for every article the strongest topics, then depending on the weighting the three strongest words, then add these and later make sure only the, otherwise maybe only find the keywords for the suggestions or the cluster kings
-
 
 
 #Begin Graph visualisation
 
-thresh = 0.25#0.1/pow(upper/210,2)  #the higher the thresh, the more critical  
+thresh = 0.10#0.1/pow(upper/210,2)  #the higher the thresh, the more critical  
 ug = nx.Graph()
 for i in range(0, len(corp)):
-    ug.add_node(i,title=titles[i],url=urls[i],suggest=0, summary = summary[i],images = images[i], comp = 0,keywords='' )#,keywords=keywords[i])
+	if len(urls[i].split("www.")) != 1:
+		source = urls[i].split("www.")[1].split("/")[0]
+	elif len(urls[i].split("rss.")) != 1:  
+		source = urls[i].split("rss.")[1].split("/")[0]
+	else: 
+		source = urls[i].split("http://")[1].split("/")[0]
+	ug.add_node(i,title=titles[i],url=urls[i],suggest=0, summary = summary[i],images = images[i], comp = 0,source= source,keywords='', time = times[i])#,keywords=keywords[i])
 
 for i in range( 0, len( corpus_tfidf ) ):
   
-    sim = index[ lsi_model[ corp [ i ] ] ]
-    for j in range( i+1, len( sim ) ):
-        dist = (1. - sim[j])/2.
-        if dist < thresh:
-            ug.add_edge(i,j,{'weight':dist})
+	sim = index[ lsi_model[ corp [ i ] ] ]
+	for j in range( i+1, len( sim ) ):
+		dist = (1. - sim[j])/2.
+		if dist < thresh:
+			ug.add_edge(i,j,{'weight':dist})
 
-            
+			
 suggestions = Suggest.objects.filter(custom = 'last24h') 
 suggestions.delete()
-            
-#cliques = list(nx.find_cliques(ug))
-#closeness = nx.closeness_centrality(ug, distance=True)
-maxcount = 15
+			
+size= len(corp)
+tg = nx.DiGraph()
+tg.add_node(0,overall_size=size)
+
+
+n = 100
 count_suggest = 1
 count_comp = 1
-#create a list of all cliques in all the comps, assign weight to each of them given by the size of the comp weighted inversely by numbering the cluster.
-
 big_list = []
-keywords_in = ['ms','.','cookies','cookie','mr','_','-']
-graphs = sorted(nx.connected_component_subgraphs(ug), key = len, reverse = True)
-for comp in graphs:
-    closeness = nx.closeness_centrality(comp, distance=True)
-    count_clique=1
-    for i in comp: 
-        ug.node[i]['comp'] = count_comp
-    count_comp += 1    
-    if len(comp) > 5:
-        for i in comp: 
-            ug.node[i]['single'] = 0
-        for i in sorted(list(nx.find_cliques(comp)),key = len, reverse=True):
-            if len(i) >= 3:
-                susvec = sorted([[closeness[r],r] for r in i], reverse=True)[0][1]
-                big_list.append([len(comp)*len(i)/count_clique,susvec])
-                count_clique += 0
-    elif len(comp) in [2,3,4,5]:
-        for i in comp: 
-            ug.node[i]['single'] = 0
-        susvec = sorted(closeness.items(), key = lambda close:close[1],reverse=True)[0][0]                
-        big_list.append([len(comp)^2,susvec])
-    else: 
-        ug.node[comp.nodes()[0]]['single'] = 1
-        big_list.append([1,comp.nodes()[0]])
-        
-suggestions = []
-for m in sorted(big_list,reverse=True):
-    if ((False not in [ug.node[k]['suggest'] == 0 for k in ug.neighbors(m[1])]) and (ug.node[m[1]]['suggest'] == 0))and (len(list_corpus[m[1]]) > 1):
-        tops = []
-        
-        for i in range(0,2):
-            tops.append(sorted(list_corpus[m[1]],key= lambda close:close[1],reverse=True)[i])
-                    #prop_o = int(math.floor(3./((tops[1][1]/tops[0][1])+1)))#1->1, 2->1,3->0,0.5->2, 0.3->3
-        keyword = []
-        t = sorted([[float(i.split('*"')[0]),i.split('*"')[1].strip('" ')] for i in lsi_model.print_topics(n)[tops[0][0]][1].split('+') if i.split('*"')[1].strip('" ') not in keywords_in],reverse=True)
-        if (len(t) != 0)and(t[0][0]>=0):
-            keyword.append(t[0][1])
-            keywords_in.append(t[0][1])                          
-        t = sorted([[float(i.split('*"')[0]),i.split('*"')[1].strip('" ')] for i in lsi_model.print_topics(n)[tops[1][0]][1].split('+') if i.split('*"')[1].strip('" ') not in keywords_in],reverse=True)
-        if (len(t) != 0)and(t[0][0]>=0):
-            keyword.append(t[0][1])
-            keywords_in.append(t[0][1])
-                        
-        ug.node[m[1]]['keywords'] = keyword
-        ug.node[m[1]]['suggest'] = count_suggest
-        if count_suggest <= maxcount:
-            q = Suggest(custom= 'last24h', title = ug.node[m[1]]['title'], url = ug.node[m[1]]['url'], distance = count_suggest, images = ug.node[m[1]]['images'])
-            q.save()
-	    suggestions.append(ug.node[m[1]]['title'])
-            count_suggest += 1                                      
-            
+small_list = []
+keywords_in = ['ms','.','cookies','cookie','mr','_','-','2016']
+
+graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
+graphx = sorted([[len(i), nx.average_clustering(i),i] for i in graphs],reverse=True)
+
+
+
+for a in graphx:
+	comp = a[2]
+	if len(comp) >= 4:
+
+		# first take care of the time signatures of the articles for the detail view
+		timespartition = sorted(list(set([ug.node[i]['time'] for i in comp.nodes() if ug.node[i]['time'] != None]))) #collect the different times occuring 
+		first_time = timespartition[0]
+		last_time = timespartition[-1]
+		onlytimes = []
+		for a in timespartition:
+		   onlytimes.append([i for i in comp.nodes() if ug.node[i]['time'] == a]) # partition the set of times into articles with the same timestamp
+		if first_time != last_time: #in case they're all published at the same time
+			time_span = (last_time - first_time).total_seconds()
+		else:
+			time_span = 1
+		#calculate positions on circle, reserving at least 355-5 deg for ones without timestamp.
+		notime = [ug.node[i]['time'] for i in comp.nodes() if ug.node[i]['time'] == None]
+		ratio = len(notime)/len(comp)
+		notime_count = 1
+		#take care of positioning of articles with the same timestamp
+		for a in onlytimes:
+			relcount = 0
+			for i in a:
+				if len(a) > 1:
+					ug.node[i]['time_pos'] = (last_time - ug.node[i]['time']).total_seconds()/time_span*350*(1-ratio) + 5 + ratio*175 + relcount/(len(a)-1)*5-5*len(a)/2
+					relcount += 1
+				else:  
+					ug.node[i]['time_pos'] = (last_time - ug.node[i]['time']).total_seconds()/time_span*350*(1-ratio) + 5 + ratio*175
+				#translate into isoformat for display
+				ug.node[i]['time'] = ug.node[i]['time'].isoformat()
+
+
+		#display formatting of time
+		if len(notime) == len(comp): #none of the nodes has a timestamp
+			time_disclaim = 'no timestamp for this cluster'
+			timeinf = ['','','','','']
+		elif time_span == 1: #all of those nodes that have a timestamp have the same one
+			time_disclaim = 'no timestamp'
+			timeinf = ['','',ug.node[i]['time'],'','']
+		else: 
+			now = datetime.now().isoformat()
+			now = now[5:7] + '/' + now[8:10] + ' ' + now[11:13] + 'h'
+			time_disclaim = 'no timestamp'
+			t_hours = time_span/3600
+			if int(t_hours/4/24) == 0:
+				tt1 = str(int(t_hours/4%24)) + 'h'
+			elif int(t_hours/4%24) == 0:
+				tt1 = str(int(t_hours/4/24)) + 'd '
+			else:
+				tt1 = str(int(t_hours/4/24)) + 'd ' + str(int(t_hours/4%24)) + 'h'
+			if int(t_hours/2/24) == 0:
+				tt2 = str(int(t_hours/2%24)) + 'h'
+			elif int(t_hours/2%24) == 0:
+				tt2 = str(int(t_hours/2/24)) + 'd '
+			else:
+				tt2 = str(int(t_hours/2/24)) + 'd ' + str(int(t_hours/2%24)) + 'h'
+			if int(3*t_hours/4/24) == 0:
+				tt3 = str(int(3*t_hours/4%24)) + 'h'
+			elif int(3*t_hours/4%24) == 0:
+				tt3 = str(int(3*t_hours/4/24)) + 'd '
+			else:
+				tt3 = str(int(3*t_hours/4/24)) + 'd ' + str(int(3*t_hours/4%24)) + 'h'
+			if int(t_hours/24) == 0:
+				tt4 = str(int(t_hours%24)) + 'h'
+			elif int(t_hours/4%24) == 0:
+				tt4 = str(int(t_hours/4/24)) + 'd '
+			else:
+				tt4 = str(int(t_hours/24)) + 'd ' + str(int(t_hours%24)) + 'h'
+			timeinf = [now,tt1,tt2,tt3,tt4]
+
+		#now for comp level keyword extraction
+		if len(comp) >= 7:
+			all_words = []
+			for i in comp:
+				ug.node[i]['comp'] = count_comp
+				ug.node[i]['single'] = 0
+				for word in punc.sub('',ug.node[i]['title']).split(" "):
+					if word not in stop_words:
+						all_words.append(word)
+			a = sorted([[len([b for b in all_words if b == word]),word] for word in list(set(all_words))],reverse=True)
+			keywords = [a[0][1], a[1][1]]
+		else:
+			for i in comp:
+				ug.node[i]['comp'] = count_comp
+				ug.node[i]['single'] = 0
+			all_words = []
+			# compile a list of all words, directly with the weightings. Then merge this big list.
+			for j in range(0,2):
+				x = sorted(list_corpus[i],key= lambda close:close[1],reverse=True)[j]
+				t = sorted([[float(z.split('*"')[0]),z.split('*"')[1].strip('" ')] for z in lsi_model.print_topics(n)[x[0]][1].split('+') if z.split('*"')[1].strip('" ') not in keywords_in],reverse=True)
+				s = [[a*x[1],b] for a,b in t] #weigh every word weight by topic weight
+				for item in s:
+					all_words.append(item)  
+
+		
+			one_word = []
+			for a in list(set([b for c,b in all_words if b not in keywords_in])):
+				f = [[x,y] for x,y in all_words if y==a]
+				one_word.append([sum([x for x,y in f]),a])
+			a = sorted(one_word,reverse=True)
+
+			if len(a) != 0:
+				keywords = [a[0][1], a[1][1]]
+				#keywords_in.append(keywords[0])
+				#keywords_in.append(keywords[1])
+			else: keywords = ''
+
+		#clustering for detail view
+		if nx.average_clustering(comp) == 1:
+			clustering = 100
+		else: clustering=str(nx.average_clustering(comp))[2:4]
+		
+		#compute the centrality to turn them into one detail view and the radius size
+		count_degree = 1
+	#elif len(comp) in [4,5]:
+		closeness = nx.closeness_centrality(comp, distance=True)
+		#for [b,a] in sorted([[closeness[r],r] for r in comp.nodes()], reverse=True):
+		for (a,b) in sorted([[a,nx.degree(comp)[a]] for a in nx.degree(comp)], key= lambda close:close[1], reverse= True):
+			ug.node[a]['deg'] = b
+			ug.node[a]['deg_pos'] = float(count_degree)/len(comp)*360	
+			count_degree += 1
+		susvec = sorted(closeness.items(), key = lambda close:close[1],reverse=True)[0][0]   
+		ug.node[susvec]['suggest'] = count_comp
+		#q = Suggest(custom= 'last24h', title = ug.node[susvec]['title'], url = ug.node[susvec]['url'], distance = count_comp, images = ug.node[susvec]['images'])
+		#q.save()
+
+
+				#add the nodes for the arc
+		tg.add_node(count_comp, clustering=clustering,name=keywords, timeinf = timeinf, time_disclaim = time_disclaim)  
+		tg.add_edge(0,count_comp)
+
+
+		tg.add_node(count_comp*100, size=len(comp))
+		tg.add_edge(count_comp,count_comp*100)
+		count_comp += 1
+	else:
+
+		ug.remove_nodes_from(comp)
+
+
+tg.add_edge(0,50)
+tg.add_node(5000, size= 0)
+tg.add_edge(50,5000)
+tg.node[0]['final_size']=len(ug.nodes())
+tg.node[0]['comps'] = count_comp-1
+ug.graph['size']=len(ug.nodes())
+ug.graph['comps'] = count_comp-1
+
+#export
 from networkx.readwrite import json_graph
-
-ug_nl = json_graph.node_link_data(ug)  
-#ug_tree = json_graph.tree_data(ug) #hier soll noch rein, dass der Graph nach Keywords und query sortiert wird: In der Mitte die Query, dann die Keywords und dann die Artikel
-#ug_adj = json_graph.adjacency_data(ug)
-
-with open('static/last24h/ug_nl.json', 'w') as fp:
+ug_nl = json_graph.node_link_data(ug)
+tgt = json_graph.tree_data(tg,root=0)
+with open(settings.STATIC_BREV + static('last24h/tgt_cluster.json'), 'w+') as fp:
+    json.dump(tgt,fp)
+with open(settings.STATIC_BREV + static('last24h/ug_nl_cluster.json'), 'w+') as fp:
     json.dump(ug_nl,fp)
-    
-#with open('ug_tree.json', 'w') as fp:
- #   json.dumps(json_ug, fp)
-    
-#with open('last24h/static/last24h/ug_adj.json', 'w') as fp:
- #   json.dump(ug_adj, fp)
 
-send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])
+#send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])
