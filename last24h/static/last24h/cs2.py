@@ -26,6 +26,32 @@
 
 
 def return_articles(feeds,non_keywords):
+    import networkx as nx
+    import gensim
+    import nltk
+    import re
+    import string
+    import numpy
+    import scipy
+    import feedparser
+    import newspaper
+    from newspaper import Article
+    import Queue
+    import threading
+    import time
+    import untangle
+    import sys
+    import json
+    import urllib
+    import math
+    from django.core.mail import send_mail
+    from time import mktime
+    from datetime import datetime
+
+    import copy
+
+    from celery import shared_task, current_task
+
     articles_info = []
     for feed in feeds:
         d = feedparser.parse(feed)
@@ -80,7 +106,7 @@ exitFlag = 0
 
 global exitFlag, workQueue, queueLock, articlenumber
 
-if article == 0:
+if alert == 0:
     current_task.update_state(state='DOWNLOAD',
                         meta={'current': 20, 'articles': articlenumber, 'words':0})
 
@@ -178,7 +204,7 @@ for a in doc:
 words = len(" ".join(doc))
 # Print resulting term vectors
 if alert == 0: 
-    current_task.update_state(state='ANALYSE',
+    current_task.update_state(state='SCAN',
                 meta={'current': 60, 'articles':0, 'words':words})
    
 # Remove stop words from term vectors
@@ -195,7 +221,7 @@ for i in range( 0, len( term_vec ) ):
     term_vec[ i ] = term_list
 
 if alert == 0: 
-    current_task.update_state(state='ANALYSE',
+    current_task.update_state(state='SCAN',
                 meta={'current':62, 'articles':0, 'words':words})
    
 # Print term vectors with stop words removed
@@ -231,7 +257,7 @@ tfidf_model = gensim.models.TfidfModel( corp ,id2word=new_dict)
 
 #  Create pairwise document similarity index
 if alert == 0: 
-    current_task.update_state(state='ANALYSE',
+    current_task.update_state(state='SCAN',
                 meta={'current': 66, 'articles':0, 'words':words})
    
 n = 20
@@ -245,7 +271,7 @@ for dox in corpus_lsi:
 index = gensim.similarities.SparseMatrixSimilarity(corpus_lsi, num_features = n )
 
 if alert == 0: 
-    current_task.update_state(state='ANALYSE',
+    current_task.update_state(state='SCAN',
                 meta={'current':75, 'articles':0, 'words':words})
    
 #lda_model = gensim.models.LdaModel(corpus_tfidf, id2word=dict, num_topics=20) #initialize an LSI transformation
@@ -275,7 +301,7 @@ for i in range( 0, len( corpus_tfidf ) ):
             ug.add_edge(i,j,{'weight':dist})
 
 if alert == 0: 
-    current_task.update_state(state='ANALYSE',
+    current_task.update_state(state='SCAN',
                 meta={'current': 80, 'articles':0, 'words':words})
    
            

@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from celery import shared_task, current_task
-
+from celery.exceptions import Reject
 from time import sleep
 
 import sys
@@ -62,35 +62,6 @@ def process_data(threadName, q):
 
 exitFlag = 0
 
-
-
-@shared_task
-def add(x, y):
-	for i in range(100):
-		sleep(0.1)
-	return x+y
-		
-
-
-@shared_task
-def mul(x, y):
-	return x * y
-
-
-@shared_task
-def xsum(numbers):
-	return sum(numbers)
-
-
-@shared_task
-def do_work():
-	for i in range(100):
-		sleep(0.1)
-		print i
-		current_task.update_state(state='PROGRESS',
-			meta={'current': i, 'total': 100})
-
-
 @shared_task
 def cs_task(feeds,strin,alert):
 	from celery import shared_task, current_task
@@ -106,5 +77,10 @@ def cs_task(feeds,strin,alert):
 	if alert == 0:
 		current_task.update_state(state='PREPARE',
 			meta={'current': 10, 'articles':0, 'words':0})
-	execfile(settings.STATIC_BREV + static('last24h/cs2.py'))#'/home/django/graphite/static/last24h/cs2.py')         
-
+	try:
+		execfile(settings.STATIC_BREV + static('last24h/cs2.py'))
+	except:
+		raise Exception()
+			
+	def on_failure(self, *args, **kwargs):
+	 	pass

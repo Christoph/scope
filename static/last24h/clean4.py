@@ -381,60 +381,6 @@ for a in graphx:
 				#keywords_in.append(keywords[1])
 			else: keywords = ''
 
-		#suggestion extraction
-	# if len(comp) > 5:
-	# 	count_clique=1
-	# 	clique_count= 0
-	# 	closeness = nx.closeness_centrality(comp, distance=True)
-
-	# 	for k in sorted(list(nx.find_cliques(comp)),key = len, reverse=True):
-	# 		if len(k) >= 3:
-	# 			susvec = sorted([[closeness[r],r] for r in k], reverse=True)[0][1]
-	# 			if count_clique == 1:
-	# 				ug.node[susvec]['suggest'] = count_comp
-	# 				q = Suggest(custom= 'last24h', title = ug.node[susvec]['title'], url = ug.node[susvec]['url'], distance = count_comp, images = ug.node[susvec]['images'])
-	# 				q.save()
-	# 			else:
-	# 				small_list.append([len(comp)*len(k)/count_clique,susvec])
-	# 			#clique level keyword extraction
-	# 			all_words = []
-	# 			for j in k:
-	# 				for l in range(0,4):
-	# 					x = sorted(list_corpus[j],key= lambda close:close[1],reverse=True)[l]
-	# 					t = sorted([[float(i.split('*"')[0]),i.split('*"')[1].strip('" ')] for i in lsi_model.print_topics(n)[x[0]][1].split('+') if i.split('*"')[1].strip('" ') not in keywords_in],reverse=True)
-	# 					s = [[a*x[1],b] for a,b in t] #weigh every word weight by topic weight
-	# 					for item in s:
-	# 						all_words.append(item)
-
-	# 			one_word = []
-	# 			for a in list(set([b for c,b in all_words if b not in keywords_in])):
-	# 				f = [[x,y] for x,y in all_words if y==a]
-	# 				one_word.append([sum([x for x,y in f]),a])
-	# 			a = sorted(one_word,reverse=True)
-				
-
-	# 			if len(a) == 1:
-	# 				keywords = [a[0][1]]
-	# 				ug.node[susvec]['keywords'] = keywords
-	# 				#keywords_in.append(keywords[0])
-	# 			elif len(a) == 2:
-	# 				keywords = [a[0][1], a[1][1]]
-	# 				ug.node[susvec]['keywords'] = keywords
-	# 				#keywords_in.append(keywords[0])
-	# 				#keywords_in.append(keywords[1])
-					
-	# 			else:
-	# 				keywords = ''
-
-	# 			tg.add_node(count_comp*100+count_clique-1, size=len(k),name=keywords)
-	# 			tg.add_edge(count_comp,count_comp*100+count_clique-1)
-
-	# 			clique_count += len(k)
-	# 			count_clique += 1
-	# 	tg.add_node(count_comp*100+count_clique-1, size=len(comp)-clique_count)
-	# 	tg.add_edge(count_comp,count_comp*100+count_clique-1)   #this last node is the one corresponding to all nodes that are not in any clique, i.e. it is on the level of cliques, not comps
-	# 	count_comp += 1
-
 		#clustering for detail view
 		if nx.average_clustering(comp) == 1:
 			clustering = 100
@@ -476,28 +422,13 @@ tg.node[0]['comps'] = count_comp-1
 ug.graph['size']=len(ug.nodes())
 ug.graph['comps'] = count_comp-1
 
-
-#at first there should be an article for every survining comp, then we fill up via biglist. 
-
-#suggestions for database
-# maxcount = 15
-# count_suggest = count_comp-1
-# for m in sorted(small_list,reverse=True):
-# 	if count_suggest <= maxcount:
-# 		if ((False not in [ug.node[k]['suggest'] == 0 for k in ug.neighbors(m[1])]) and (ug.node[m[1]]['suggest'] == 0))and (len(list_corpus[m[1]]) > 1):
-# 			ug.node[susvec]['suggest'] = count_suggest
-# 			q = Suggest(custom= 'last24h', title = ug.node[m[1]]['title'], url = ug.node[m[1]]['url'], distance = count_suggest, images = ug.node[m[1]]['images'])
-# 			q.save()
-# 			count_suggest += 1                                      
-
-
 #export
 from networkx.readwrite import json_graph
 ug_nl = json_graph.node_link_data(ug)
 tgt = json_graph.tree_data(tg,root=0)
-with open('last24h' + static('last24h/tgt_cluster.json'), 'w+') as fp:
+with open(settings.STATIC_BREV + static('last24h/tgt_cluster.json'), 'w+') as fp:
     json.dump(tgt,fp)
-with open('last24h' + static('last24h/ug_nl_cluster.json'), 'w+') as fp:
+with open(settings.STATIC_BREV + static('last24h/ug_nl_cluster.json'), 'w+') as fp:
     json.dump(ug_nl,fp)
 
 #send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])

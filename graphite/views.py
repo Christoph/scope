@@ -360,33 +360,27 @@ def update_state(request):
             job_id = request.GET['task_id']
             job = app.AsyncResult(job_id)
                     #request.session['task_id'] = job.id
+            print job.state
             if job.state == 'PREPARE':
                 data = str(job.result['current']) + ' Initializing'
             elif job.state == 'DOWNLOAD':
                 data = str(job.result['current']) + 'Downloading and processing ' + str(job.result['articles']) + ' articles'
-            elif job.state == 'ANALYSE':
+            elif job.state == 'SCAN':
                 data = str(job.result['current']) + 'Scanning and analysing ' + str(job.result['words']) + ' words'
             elif job.state == 'VISUALISE':
                 data = str(job.result['current']) + 'Construct visualization'
             elif job.state == 'SUCCESS':
                 data = 50
-                print data
+            elif job.state =='FAILURE':
+                data = 500
+                
                 #strin = request.GET['strin']
                 #return HttpResponseRedirect(reverse('csr',args=[strin]))
     return HttpResponse(json.dumps(data))
 
 
-#@csrf_exempt
-def do_task(request):
-    """ A view the call the task and write the task id to the session """
-    data = 'Fail'
-    job = do_work.delay()
-      #request.session['task_id'] = job.id
-    data = job.id      
-    json_data = json.dumps(data)
-
-    return HttpResponse(json_data)
-
+def server_error(request):
+    return render(request,'graphite/500.html')
 #@csrf_exempt
 def search_task_term(request):
     if request.method == 'POST':
@@ -423,7 +417,7 @@ def search_task_term(request):
                 q = Query(query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
                 q.save()
             print strin
-            job = cs_task.delay(feeds,strin)
+            job = cs_task.delay(feeds,strin,0)
             data = '{"job":"' + str(job.id) + '","strin": "' + str(strin) + '"}'    
             json_data = json.dumps(data)
 
@@ -455,7 +449,7 @@ def search_task_feeds(request):
             q = Query(query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
             q.save()
             
-        job = cs_task.delay(feeds,strin)
+        job = cs_task.delay(feeds,strin,0)
         data = '{"job":"' + str(job.id) + '","strin": "' + str(strin) + '"}'    
           #request.session['task_id'] = job.id
         json_data = json.dumps(data)

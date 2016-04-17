@@ -38,6 +38,8 @@ CURRENT_NAME = 'graphite'
 
 # Application definition
 
+ADMINS = ('GRPHT','grphtcontact@gmail.com')
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',

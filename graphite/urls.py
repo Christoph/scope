@@ -19,7 +19,6 @@ from django.shortcuts import render
 from . import views
 from django.contrib.auth import views as auth_views
 
-
 urlpatterns = [
 #    url(r'^djga/', include('google_analytics.urls')),
     url(r'^', include('django.contrib.auth.urls')),
@@ -37,6 +36,7 @@ urlpatterns = [
     url(r'^about', views.about, name='about'),
     url(r'^grews-alert', views.grews_alert, name='grews_alert'),
     url(r'^how-it-works', views.how_it_works, name='how_it_works'),
+    url(r'^server_error$', views.server_error, name = 'server_error'),
     url(r'^login$', views.login_user, name = 'login_user'),
     url(r'^logout$', views.logout_user, name = 'logout_user'),
     #url(r'^password$', views.password, name = 'password'),
@@ -46,7 +46,6 @@ urlpatterns = [
    url(r'happybday$',views.martin,name='martin'),
    #url(r'^search_state$', views.search_state, name="search_state"),
    url(r'^update_state$', views.update_state, name="update_state"),
-   url(r'^do_task$', views.do_task, name="do_task"),
    url(r'^search_task_term$', views.search_task_term, name="search_task_term"),
    url(r'^search_task_feeds$', views.search_task_feeds, name="search_task_feeds"),
 ]

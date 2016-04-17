@@ -20,12 +20,14 @@
      jQuery('.progress-bar').css({'width': task.substr(1,2) + '%'});
       jQuery('.sr-only').html(task.substr(1,2) + '% Complete');
       jQuery('.status').html(task.substring(3,task.length -1));
-      console.log(task);
-
-
+      //console.log(task);
       if (task == "50")
       {
     window.location.href = "cs=" + strin;}
+     else if (task == "500")
+      {
+        console.log('hey');
+    window.location.href = "server_error";}
   //jQuery.ajax({url: , type: "POST",});}
 
       else {var timer = setTimeout(SearchState,500);}
