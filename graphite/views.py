@@ -79,10 +79,6 @@ class myThread (threading.Thread):
         counter += 1
         print "Exiting " + self.name
 
-<<<<<<< HEAD
-=======
-
->>>>>>> first-branch
 def process_data(threadName, q):
     while not exitFlag:
         queueLock.acquire()
