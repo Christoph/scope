@@ -3,6 +3,8 @@
 cs/
 q/
 
+l24h_data/
+
 *.py~
 
 *.pyc
