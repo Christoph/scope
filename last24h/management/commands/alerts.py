@@ -7,8 +7,8 @@ import os
 import datetime
 import sys
 from django.core.mail import send_mail
-from last24h.models import Suggest, Alert, Send,Soures
-from django_cron import CronJobBase, Schedule                     
+from last24h.models import Suggest, Alert, Send,Sources
+#from django_cron import CronJobBase, Schedule                     
 import networkx as nx
 import gensim
 import nltk
@@ -24,7 +24,7 @@ import untangle
 import json
 from django.conf import settings
 
-from last24h.tasks import alert_task
+#from last24h.tasks import alert_task
 
 global workQueue, exitFlag, queueLock
 
@@ -82,9 +82,9 @@ class Command(BaseCommand):
             diff_in_sec = delivery_t - alert.delivery_time.replace(tzinfo = None, minute= 0)
             #print int(diff_in_sec.total_seconds()) % alert.frequency
             if (int(diff_in_sec.total_seconds()) % alert.frequency == 0) and (diff_in_sec.total_seconds() > 0) :
-                feeds = alert.feeds.split(,)
+                feeds = alert.feeds.split(',')
                 if alert.feed_type == False:
-                    topics = alert.query.split(,)
+                    topics = alert.query.split(',')
                     strin = delivery_t.isoformat()[:13] + "&feeds=none&term=" + "AND".join(topics)
                 else: 
                     ids = []
