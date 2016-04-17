@@ -3,10 +3,12 @@
 cs/
 q/
 
+l24h_data/
+
 *.py~
 
 *.pyc
 
-settings.py
+graphite/settings.py
 
 

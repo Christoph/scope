@@ -341,5 +341,5 @@ class Command(BaseCommand):
         #with open('last24h/static/last24h/ug_adj.json', 'w') as fp:
          #   json.dump(ug_adj, fp)
 
-        send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])
+#        send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])
 
