@@ -1,172 +1,156 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html>
+
 <meta charset="utf-8">
-<style>
-    #container {min-height:100%;
-        position:relative;}
-    #body {padding-bottom:60px;}
-    #footer {height: 60x;
-        position:absolute;
-   bottom:0;
-    width:100%;}
-.colophon2 {
-	color: #818181;
-	font-size: .7em;
-	margin: 0 auto;
-    max-width: 1300px;
-    padding: 10px}
-    
-.menu-footer {
-    background: #2b2b2b;
-    width: 100%;}
-.menu-left {
-  float:left;
-    width:450px;}
-    
-.menu-right {
-  float:right;
- /* width:300px;
-    padding: 20px;}*/}
-.node circle {
-  stroke: #fff;
-  stroke-width: 1.5px;
-}
-text {
-  font: 10px "Raleway", sans-serif;
-  pointer-events: none;
-  text-align:center;
-  position:absolute;
-  
-}
-.link {
-  stroke: #999;
-  stroke-opacity: .6;
-}
-
-div.tooltip {   
-  position: absolute;           
-  text-align: center;                        
-  font: 12px "Raleway", sans-serif;           
-  border: 2px;      
-  border-radius: 8px;
-  line-height: 1;
-  font-weight: bold;
-  padding: 12px;
-  background: #fff;          
-  pointer-events: none;
-  color: #2b2b2b;
-  border-color: #2b2b2b;
-  border-style: solid;
-}
-.d3-tip:after {
-  box-sizing: border-box;
-  display: inline;
-  font-size: 12px;
-  width: 100%;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
-  position: absolute;
-  text-align: center;
-}
- pop.popup {
-  position: absolute;           
-  text-align: left;                        
-  font: 12px "Raleway", sans-serif;           
-  border: 2px;
-  width: 200px;
-  border-radius: 8px;
-  line-height: 1;
-  padding: 12px;
-  background: #fff;
-  color: #2b2b2b;
-  border-color: #2b2b2b;
-  border-style: solid;
-}  
-
-form {        
-  text-align: left;                        
-  font: 12px "Raleway", sans-serif;           
-  border: 2px;
-  width: 700px;
-  border-radius: 8px;
-  line-height: 2;
-    margin: 20px; 
-  padding: 20px;
-  background: #2b2b2b;
-  color: #fff;
-  border-color: #2b2b2b;
-  border-style: solid;
-  display: block;
-}
-    
-/* Creates a small triangle extender for the tooltip */
-</style>
+<!-- div.tooltip img{max-width:200px} -->
 
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if name %}{{name}}{% else %}graphite {% endif %} | maximise relevance, minimise redundancy</title>
+   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">-->
 
-    <title>{{name}} | maximise relevance, minimise redundancy</title>
-    <link rel="stylesheet" href="{% static 'last24h/style_unt.css' %}">
-
+<link rel="stylesheet" href="{% static 'last24h/bootstrap-3.3.6-dist/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'last24h/bootstrap-select-1.10.0/dist/css/bootstrap-select.min.css' %}">
+    <!-- Latest compiled and minified CSS -->
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">-->
+    <!-- Optional theme -->
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+   <!--<link rel="stylesheet" href="{% static 'last24h/style_unt.css' %}">-->
+ <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+   <link href="{% static 'last24h/sticky-footer-navbar.css' %}" rel="stylesheet">
+   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,600&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+   <link rel="stylesheet" href="{% static 'last24h/graphstyle.css' %}">
+    {% block head %}{% endblock %} 
 </head>
-<body class="home blog mp6 customizer-styles-applied highlander-enabled highlander-light demo-site infinite-scroll">
-    <div id="container">
-    <div id="body">
-        
-	<div id="page" class="hfeed site">
-				<div id="masthead-wrap">
-			<header id="masthead" class="site-header" role="banner">
-				<div id="logo">
-										<h1 class="site-title"><a href="{% url 'last24h:index' %}" title="Untitled" rel="home">{{name}} <font color=#999 size='8px' face='Raleway'>- max relevance, min redundancy</font></a></h1><h1 class="site-title">  </h1>
-									</div>
-				<div class="nav-wrap">
-					<nav role="navigation" class="site-navigation main-navigation">
-						<h1 class="assistive-text">Menu</h1>
-						<div class="assistive-text skip-link"><a href="#content" title="Skip to content">Skip to content</a></div>
-
-						<div class="menu-short-container"><ul id="menu-short" class="menu"><li id="menu-item-132" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-132"><a href="{% url 'last24h:index' %}">≤24h</a></li>
-<li id="menu-item-133" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-133"><a href="{% url 'customsearch' %}">custom search</a></li>
-<li id="menu-item-135" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-135"><a href="{% url 'grews_alert' %}">alerts</a></li>
-<li id="menu-item-133" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-133"><a href="{% url 'how_it_works' %}">how it works</a></li>
-<li id="menu-item-136" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-136"><a href="{% with log_link|first as name %}{% url name %}{% endwith %}">{{log_inf|first}}</a></li>
-<li id="menu-item-136" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-136">
-<a href="{% with log_link|last as name %}{% url name %}{% endwith %}">{{log_inf|last}}</a>
-</li>
-</ul></div>					</nav><!-- .site-navigation -->
-                    				</div><!-- .nav-wrap -->
-			</header><!-- #masthead -->
-		</div><!-- #masthead-wrap -->
-    </div>     
-        
-              
-              	<div id="main" class="site-main">
-		<div id="primary" class="content-area">
-
- 
-{% block content %}
-{% endblock %}                
-            
-   
-</div>       
+<body>
+			<header>
+          <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'index' %}"><strong>{% if name %}{{name}}{% else %}graphite {% endif %} </strong><small> - max relevance, min redundancy</small></a>
         </div>
-    
-            </div>   
-      
-        
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url 'customsearch' %}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a><title>Custom Search</title></li>
+            <li><a href="{% url 'grews_alert' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a></li>
+            <li><a href="{% url 'how_it_works' %}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a>
+              {% if log_inf %}
+              <ul class="dropdown-menu">
+                <li><a href="{% with log_link|first as name %}{% url name %}{% endwith %}">{{log_inf|first}}</a></li>
+                <li><a href="{% with log_link|last as name %}{% url name %}{% endwith %}">{{log_inf|last}}</a></li>
+              </ul>
+              {% endif %} 
+            </li>
 
-            <div id="footer">
-    	<div id="colophon-wrap">
-		<footer id="colophon" class="site-footer" role="contentinfo">
-			<div class="site-info">
-								&copy; Copyright 2015, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a>.
-                <a href="{% url 'about' %}">About</a>, <a href="{% url 'contact' %}">Contact</a>, <a href="{% url 'disclaimer' %}" rel="designer">Disclaimer/License</a>.			</div><!-- .site-info -->
-		</footer><!-- #colophon -->
-	</div><!-- #colophon-wrap -->       
+          </ul>
+            <!-- Button trigger modal -->
+             
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">What is what?</h4>
+      </div>
+      <div class="modal-body">
+      <ul>
+      <li> Every circle corresponds to a news article. Hover over it to see get information about it. Click on it to get to the article directly. The article that is currently shown in the center will be filled black.</li>
+      <li> Two circles share a link when they have strong thematic overlap.</li>
+      <li> The circle in the middle displays gives you the proportions of the sizes between the different topic clusters. The clusters are clock-wise by size. You can get to the detail view of a topic cluster by clicking on the corresponding section of the central circle.</li>
+      <li> The most central articles of each cluster has a black border. To get to the "suggestion view" in which only the most central articles of each cluster are shown, click the "star" button in the top right corner.</li>
+      <li> In the detail view (or the suggestion view), articles will be highlighted or faded out depending on whether they overlap (i.e. if they share a link in the overview).</li>
+      <li> You can reorder the articles by different parameters using the dropdown menu at the top of the big circle section.</li>
+      <li> To zoom out again, click anywhere inside the center of the large circle or, again, on the circle section.<li>
+      </ul> 
+ For more information about how these graphs are constructed, click <a href="{% url 'how_it_works'%}">here</a>
+      </div>
+    </div>
+  </div>
 </div>
-     </div>
+
+<!-- Sharemodal -->
+<div class="modal fade" id="share_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+ <div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Share this graph!</h4>
+      </div>
+      <div class="modal-body share-body">
+      <div class="row share-row">
+          <!--<div class="col-md-4 share-col twitter-col">-->
+          <a href="http://twitter.com/home?status=" title="Share on Twitter" target="_blank" class="btn btn-twitter share-btn">
+          <div align=center>
+          <i class="fa fa-twitter"></i>
+          </div>
+          </a>
+          </div>
+          <div class="row share-row">
+          <!--<div class="col-md-4 share-col share-col">-->
+          <a href="https://www.facebook.com/sharer/sharer.php?u=" title="Share on Facebook" target="_blank" class="btn btn-facebook share-btn">
+          <div align=center>
+          <i class="fa fa-facebook"></i>
+          </div>
+          </a>
+          </div>
+          <div class="row share-row">
+          <!--<div class="col-md-4 share-col googleplus-col">-->
+          <a href="https://plus.google.com/share?url=" title="Share on Google+" target="_blank" class="btn btn-googleplus share-btn">
+          <div align=center>
+          <i class="fa fa-google-plus"></i>
+          </div>
+          </a>
+          </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block vis %}{% endblock %}         				
+			</header>
+ 
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="container main">
+      <div align= center>
+{% block content %}
+{% endblock %}      
+</div>          
+</div>
+            <!-- Latest compiled and minified JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+
+{% block scripts %}  
+{% endblock %}
+    	
+		<footer class="footer">
+      <div class="container">
+        <p class="text-muted">&copy; Copyright 2015-2016, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a> <a href="{% url 'contact' %}">Contact</a>  <a href="{% url 'disclaimer' %}" rel="designer">Disclaimer/License</a></p>
+      </div>
+    </footer>
+      </body>
    
-    </body>
+    
         
 </html>
 
