@@ -700,5 +700,10 @@ def contact(request):
     return render(request, 'graphite/contact.html',{'log_inf':log_inf, 'log_link':log_link, 'form':form,'name':current_name,'state':state})
 
 
-
+def index(request):
+    log_inf, log_link = check_login(request)
+    json = settings.STATIC_BREV + static('last24h/ug_nl_cluster.json')
+    tgt = settings.STATIC_BREV + static('last24h/tgt_cluster.json')
+    context = {'json':json,'tgt': tgt,'name':current_name,'log_inf':log_inf, 'log_link':log_link}
+    return render(request, 'graphite/index_test3.html', context)
 

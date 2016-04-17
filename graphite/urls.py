@@ -23,6 +23,7 @@ urlpatterns = [
 #    url(r'^djga/', include('google_analytics.urls')),
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^', include('last24h.urls')),
+    url(r'^$', views.index, name='index'),
     url(r'^last24h/', include('last24h.urls', namespace='last24h')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^about/', views.about, name = 'about'),

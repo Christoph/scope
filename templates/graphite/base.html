@@ -36,12 +36,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'last24h:index' %}"><strong>{% if name %}{{name}}{% else %}graphite {% endif %} </strong><small> - max relevance, min redundancy</small></a>
+          <a class="navbar-brand" href="{% url 'index' %}"><strong>{% if name %}{{name}}{% else %}graphite {% endif %} </strong><small> - max relevance, min redundancy</small></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-          
-           <!-- <li><a href="{% url 'last24h:index' %}">start</a></li>-->
             <li><a href="{% url 'customsearch' %}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a><title>Custom Search</title></li>
             <li><a href="{% url 'grews_alert' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a></li>
             <li><a href="{% url 'how_it_works' %}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a></li>
