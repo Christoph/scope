@@ -28,6 +28,8 @@ from django.conf import settings
 
 global workQueue, exitFlag, queueLock
 
+from last24h.tasks import cs_task
+
 class myThread (threading.Thread):
     def __init__(self, threadID, name, q):
         threading.Thread.__init__(self)

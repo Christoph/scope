@@ -26,50 +26,50 @@
 
 
 def return_articles(feeds,non_keywords):
-    import networkx as nx
-    import gensim
-    import nltk
-    import re
-    import string
-    import numpy
-    import scipy
-    import feedparser
-    import newspaper
-    from newspaper import Article
-    import Queue
-    import threading
-    import time
-    import untangle
-    import sys
-    import json
-    import urllib
-    import math
-    from django.core.mail import send_mail
-    from time import mktime
-    from datetime import datetime
-
-    import copy
-
-    from celery import shared_task, current_task
+    # import networkx as nx
+    # import gensim
+    # import nltk
+    # import re
+    # import string
+    # import numpy
+    # import scipy
+    # import feedparser
+    # import newspaper
+    # from newspaper import Article
+    # import Queue
+    # import threading
+    # import time
+    # import untangle
+    # import sys
+    # import json
+    # import urllib
+    # import math
+    # from django.core.mail import send_mail
+    # from time import mktime
+    # from datetime import datetime
+    # #import copy
+    # from celery import shared_task, current_task
 
     articles_info = []
     for feed in feeds:
         d = feedparser.parse(feed)
         for i in range(0, len(d.entries)-1):
             dd = Article(d.entries[i].link, language='en')#, fetch_images = False)#link.split('url=')[1]
-            if hasattr(d.entries[i],'summary'):
-                aa = d.entries[i].summary
-                if "<div>" in aa:
-                    aa = aa.split("<div>")[0] + " " + aa.split("<div>")[2]
-
-                ee = aa[0:min(400,len(d.entries[i].summary))]
+            if feed[0:24] != "http://news.google.co.uk" and hasattr(d.entries[i],'summary'):
+                if hasattr(d.entries[i],'published_parsed'):
+                    aa = d.entries[i].summary
+                    if "<div>" in aa:
+                        aa = aa.split("<div>")[0] + " " + aa.split("</div>")[1]
+                #ee = aa[0:min(400,len(d.entries[i].summary))]
+                else:
+                    aa = ''
             else:
-                ee = ''
+                aa = ''
             if hasattr(d.entries[i],'published_parsed'):
                 ff = datetime.fromtimestamp(mktime(d.entries[i].published_parsed))
             else:
                 ff = None
-            articles_info.append([dd,ee,ff])#,ff    
+            articles_info.append([dd,aa,ff])#,ff    
     return articles_info
     
 # Determine scources and mode of extraction
@@ -178,16 +178,18 @@ for i in range(0,upper-1):
         urls.append(article.url)
         images.append(article.top_image)
         times.append(articles_info[i][2])
-        if articles_info[i][1] != '':
+        if articles_info[i][1] == '':
+            summary.append(article.text[0:200] + "...")
+        else:
             summary.append(articles_info[i][1])
-        else: 
-            summary.append(article.text[0:400] + "...")
+        # if articles_info[i][1] != '':
+        #     summary.append(articles_info[i][1])
+        # else: 
+        #     summary.append(article.text[0:400] + "...")
         #keywords.append(articles_info[i][2]) 
                             
 #        keywords.append(article.keywords)
  
-numpy.save("titles",titles)
-
 #Begin Semantic Analysis
 
 
@@ -237,7 +239,7 @@ if alert == 0:
 #  Convert term vectors into gensim dictionary
 
 dict = gensim.corpora.Dictionary( term_vec )
-new_dict = copy.deepcopy(dict)
+#new_dict = copy.deepcopy(dict)
 #new_dict.filter_extremes(no_below=0, no_above=1, keep_n=vocsize)
 
  # old2new = {dict.token2id[token]:new_id for new_id, token in new_dict.iteritems()}
@@ -245,7 +247,7 @@ new_dict = copy.deepcopy(dict)
 
 corp = [ ]
 for i in range( 0, len( term_vec ) ):
-    corp.append( new_dict.doc2bow( term_vec[ i ] ) )
+    corp.append( dict.doc2bow( term_vec[ i ] ) )#new_dict
 
 #  Create TFIDF vectors based on term vectors bag-of-word corpora
 
@@ -253,17 +255,17 @@ for i in range( 0, len( term_vec ) ):
 # corp = MmCorpus("{}.bow".format(prefix))
 
 
-tfidf_model = gensim.models.TfidfModel( corp ,id2word=new_dict)
+tfidf_model = gensim.models.TfidfModel( corp ,id2word=dict)#new_dict
 
 #  Create pairwise document similarity index
 if alert == 0: 
     current_task.update_state(state='SCAN',
                 meta={'current': 66, 'articles':0, 'words':words})
    
-n = 20
+n = articlenumber/5
 
 corpus_tfidf= tfidf_model[corp]
-lsi_model = gensim.models.LsiModel(corpus_tfidf, id2word=new_dict, num_topics=n) #
+lsi_model = gensim.models.LsiModel(corpus_tfidf, id2word=dict, num_topics=n) #new_dict
 corpus_lsi = lsi_model[corpus_tfidf]
 list_corpus = []
 for dox in corpus_lsi:
@@ -279,9 +281,7 @@ if alert == 0:
 
 
 #Begin Graph visualisation
-
-
-thresh = 0.2-articlenumber/8000.#0.15#0.1/pow(upper/210,2)  #the higher the thresh, the less critical  
+thresh = 0.13-articlenumber*0.03/500#+float(pow(articlenumber-500,6))/(float(pow(500,6))*10)#0.15#0.1/pow(upper/210,2)  #the higher the thresh, the less critical  
 ug = nx.Graph()
 for i in range(0, len(corp)):
     if len(urls[i].split("www.")) != 1:
@@ -325,7 +325,7 @@ graphx = sorted([[len(i), nx.average_clustering(i),i] for i in graphs],reverse=T
 
 for a in graphx:
     comp = a[2]
-    if len(comp) >= 2:
+    if len(comp) >= 4:
 
         # first take care of the time signatures of the articles for the detail view
         timespartition = sorted(list(set([ug.node[i]['time'] for i in comp.nodes() if ug.node[i]['time'] != None]))) #collect the different times occuring 
@@ -407,7 +407,7 @@ for a in graphx:
                     if word not in stop_words:
                         all_words.append(word)
             a = sorted([[len([b for b in all_words if b == word]),word] for word in list(set(all_words))],reverse=True)
-            keywords = [a[0][1], a[1][1]]
+            keywords = a[0][1] + ", " + a[1][1]
         else:
             for i in comp:
                 ug.node[i]['comp'] = count_comp
@@ -429,7 +429,7 @@ for a in graphx:
             a = sorted(one_word,reverse=True)
 
             if len(a) != 0:
-                keywords = [a[0][1], a[1][1]]
+                keywords = a[0][1] + ", " + a[1][1]
                 #keywords_in.append(keywords[0])
                 #keywords_in.append(keywords[1])
             else: keywords = ''
@@ -524,9 +524,9 @@ if alert == 0:
                 meta={'current': 90, 'articles':0, 'words':words})
    
 
-# tg.add_edge(0,50)
-# tg.add_node(5000, size= 0)
-# tg.add_edge(50,5000)  
+tg.add_edge(0,50)
+tg.add_node(5000, size= 0.01)
+tg.add_edge(50,5000)  
 tg.node[0]['final_size']=len(ug.nodes())
 tg.node[0]['comps'] = count_comp-1
 ug.graph['size']=len(ug.nodes())
@@ -551,9 +551,9 @@ ug.graph['comps'] = count_comp-1
 from networkx.readwrite import json_graph
 ug_nl = json_graph.node_link_data(ug)
 tgt = json_graph.tree_data(tg,root=0)
-with open(settings.STATIC_BREV + static('last24h/cs/cs_'+ strin +'_tgt_cluster.json'), 'w+') as fp:
+with open(settings.STATIC_ROOT + 'last24h/cs/cs_'+ strin +'_tgt_cluster.json', 'w+') as fp:
     json.dump(tgt,fp)
-with open(settings.STATIC_BREV + static('last24h/cs/cs_'+ strin +'_nl.json'), 'w+') as fp:
+with open(settings.STATIC_ROOT + 'last24h/cs/cs_'+ strin +'_nl.json', 'w+') as fp:
     json.dump(ug_nl,fp)
 
 

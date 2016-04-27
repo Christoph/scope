@@ -1,0 +1,20 @@
+{% extends "graphite/base.html" %}
+{% load staticfiles %}
+
+
+{% block head %}
+
+    <script align='center' type="text/javascript" src="{% static 'last24h/d3.min.js' %}"></script> 
+    <script type='text/javascript'> var json =  "{% static 'last24h/ug_nl_cluster.json' %}",
+    tgt = "{% static 'last24h/tgt_cluster2.json' %}",
+    custom = 1,
+    nodefac = 2,
+    linkdist = 40;
+     </script>
+{% endblock %}
+        
+
+{% block vis %}
+<script type='text/javascript' src="{% static 'last24h/mobile.js' %}"> </script>
+<script type="text/javascript" src="{% static 'last24h/d3.layout.js' %}"></script>
+{% endblock %}

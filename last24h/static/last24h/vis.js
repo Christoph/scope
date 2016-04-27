@@ -1,12 +1,8 @@
 //(function(){
 //var this_js_script = $('script[src*=somefile]');
-var width = window.innerWidth,
-	height = 1000;
 
-		function resize() {
-	svg.attr("width", width).attr("height", height);
-	force.size([width, height]).resume();
-  }
+var width = window.innerWidth,
+	height = 1100;
 
 var centerx = width/2,
 centery = 500;
@@ -73,8 +69,8 @@ var defs = svg.append('svg:defs');
 var color = d3.scale.category20();
 
 var force = d3.layout.force()
-	.charge(-80)//function(d){return (d.suggest <= 15) && (d.suggest != 0) ? -150 : -60;})
-	.linkDistance(linkdist)
+	.charge(function(){return width <= 800? -20 : -80;})
+	.linkDistance(function(){return width <= 800? linkdist/2 : linkdist;})
 	.size([width, height]);
 
 var hue = d3.scale.category20();
@@ -127,7 +123,7 @@ d3.json(tgt, function(error, root) {
   var center = chart.append("ellipse")
 	  .attr("rx", radius)
 	  .attr("ry",radius)
-
+	  //.style("stroke","#2b2b2b")
 	  .style("fill","#ffffff")
 	  .on("click", zoomOut);
 
@@ -136,6 +132,7 @@ d3.json(tgt, function(error, root) {
   var path = chart.selectAll("path")
 	  	.data(partition.nodes(root).slice(1))
 		.enter().append("path")
+		.attr("class","path")
 	  	.attr("d", arc)
 	  	.style("fill", function(d) { return d.fill; })
 	 	.style("pointer-events","none")
@@ -144,13 +141,16 @@ d3.json(tgt, function(error, root) {
 	  	.on("mouseover",function(o){
 			if (detail == 0) {
 			var h = d3.selectAll(".node").filter(function(e) {return e.comp == o.parent.id && e.suggest != 0 ? this : null;}).node();
+			var g = d3.selectAll("circle").filter(function(e) {return e.comp == o.parent.id && e.suggest != 0 ? this : null;}).node();
+			d3.selectAll("circle").style("fill", function(d) { return color(d.comp); });
+	  		d3.select(g).style("fill","#2b2b2b");
 			var f = h.__data__;
 			if (f.time != null) {
-				div.html('<b>Most central article for this cluster:</b><br/><a href=' + f.url + '><b>' + f.title + '</b></a><br/><br/><b>' + f.source  + '   ' + f.time.substr(5,2) + '/' + f.time.substr(8,2) + ' ' + f.time.substr(11,5) + '</b><br/><br/>' + f.summary);
-				}
-			else {
-				div.html('<b>Most central article for this cluster:</b><br/><a href=' + f.url + '><b>' + f.title + '</b></a><br/><br/><b>' + f.source  + '</b><br/><br/>' + f.summary);
-				}
+				div.html('<u align="center">Central cluster article:</u><br/><br/><a href=' + f.url + '>' + f.title + '</a><br/><br/>' + f.source  + '   ' + f.time.substr(5,2) + '/' + f.time.substr(8,2) + ' ' + f.time.substr(11,5) + '</><br/><br/>' + f.summary);
+					}
+			else { 
+				div.html('<u align="center">Central cluster article:</u><br/><br/><a href=' + f.url + '><b>' + f.title + '</b></a><br/><br/><b>' + f.source  + '</b><br/><br/>' + f.summary);
+					}
 			
 	  			}
 	  		});
@@ -253,22 +253,35 @@ d3.json(tgt, function(error, root) {
 	   	center.transition().duration(750).transition().duration(1250)
 	   			.attr("rx", newradius).attr("ry",newradius)
 		//Stuff for big circle
-		topichead.style("border-color",color(g.comp))
-				.style("font-color",color(g.comp))
-				.html('<h3>topic</h3><br/><h1>'+ p.name +'</h1><br/><p># of articles:'+ cir.size()+ '<p>Clustering:' + p.clustering + '%').transition().duration(500).transition().duration(1500).style("opacity",1);
+		d3.select("#orderdiv")
+				.transition().duration(1500)
+				.transition().duration(500)
+	   			.style("opacity",1);
 	  	d3.selectAll("#image")
 	   			.attr("xlink:href",g.images);
 	   	rects.attr("xlink:href",function(d){return d.url;})
 				.style("pointer-events","auto");
 		if (g.time != null) {
-		  div.html('<a href=' + g.url + '><b>' + g.title + '</b></a><br/><br/><b>' + g.source  + '   ' + g.time.substr(5,2) + '/' + g.time.substr(8,2) + ' ' + g.time.substr(11,5) + '</b><br/><br/>' + g.summary);
+		  div.html('<a href=' + g.url + '>' + g.title + '</a><br/><br/>' + g.source  + '   ' + g.time.substr(5,2) + '/' + g.time.substr(8,2) + ' ' + g.time.substr(11,5) + '<br/><br/>' + g.summary);
 							}
 		else {
-		  div.html('<a href=' + g.url + '><b>' + g.title + '</b></a><br/><br/><b>' + g.source  + '</b><br/><br/>' + g.summary)
-							}
-		div.transition().duration(500).transition().duration(1500)
-			  .style("left","50px")
-			  .style("top", (centery + 50) + "px");
+		  div.html('<a href=' + g.url + '>' + g.title + '</a><br/><br/>' + g.source  + '<br/><br/>' + g.summary)
+		
+					}
+		div
+			   			.style("opacity",0)
+			   			.style("overflow","visible")
+			   			.transition().duration(1500)
+			   			// .transition().duration(1250)
+			   			.style("left","50px")
+			   			.style("top", (centery + 50) + "px")
+			   			.transition().duration(500)
+			   			.style("opacity",1)
+			   			;
+		// div.transition().duration(500).transition().duration(1500)
+		// 	  .style("left","50px")
+		// 	  .style("top", (centery + 50) + "px")
+		// 	  .style("overflow","visible");
 
 		if (clock == 0) {}
 		else if (clock == 1) { 
@@ -288,6 +301,12 @@ d3.json(tgt, function(error, root) {
 			time6.html("-" + p.timeinf[4]).transition().duration(2000).style("opacity",0);
 		} 
 		//Others
+		topichead
+				.html('<h3>topic</h3><br/><h1>'+ p.name +'</h1><br/><p># of articles: '+ cir.size()+ '<p>Clustering: ' + p.clustering + '%')
+				.transition().duration(1500)
+				.transition().duration(500)
+				.style("opacity",1);
+
 		d3.select("#suggestbutton").style("pointer-events","none");
 		d3.selectAll("path").style("pointer-events","none");
 	   	recto.transition().duration(2000)
@@ -298,7 +317,9 @@ d3.json(tgt, function(error, root) {
 				.style("opacity",0);
 		d3.selectAll(".link").transition().duration(1000)
 				.style("opacity",0);
-		d3.selectAll("#bubble").transition().duration(500).transition().duration(1500)
+		d3.selectAll("#bubble")
+				.transition().duration(1500)
+				.transition().duration(500)
 	  			.style("opacity",1);
 		texts.transition().duration(500).transition().duration(1500)
 				.style("opacity",1)
@@ -355,6 +376,7 @@ d3.json(tgt, function(error, root) {
   	function zoomOut(p) {
 		detail = 0;
 		if (!p.parent) return;
+		d3.selectAll("path").filter(function(d){return d.id == 50? this:null;}).style("stroke","#fff");
 		zoom(p.parent, p,radius,2000,150);
 		d3.select("#suggestbutton")
 				.style("pointer-events","auto");
@@ -367,6 +389,7 @@ d3.json(tgt, function(error, root) {
 	   			.attr("rx", radius)
 	   			.attr("ry",radius)
 	   	div
+	   			.style("overflow","auto")
 	   			.transition().duration(500)
 	   			.style("opacity",0)
 	   			.style("pointer-events","auto")
@@ -385,7 +408,9 @@ d3.json(tgt, function(error, root) {
 		if (suggestt == 0){
 			var cir = d3.selectAll(".node").filter(function(d) {return p.id == d.comp ? this : null;});
 			var circir = d3.selectAll("circle").filter(function(d) {return p.id == d.comp ? this : null;});
-		   	d3.selectAll("circle").filter(function(d) {return p.id != d.comp ? this : null;}).style("pointer-events","auto").transition().duration(2000).style("opacity",1);//.style("stroke",function(d) {return (d.suggest <= root.comps) && (d.suggest != 0) ? '#2b2b2b' :'#fff';});       
+		   	d3.selectAll("circle").filter(function(d) {return p.id != d.comp ? this : null;}).style("pointer-events","auto")
+		   			.transition().duration(2000)
+		   			.style("opacity",1);//.style("stroke",function(d) {return (d.suggest <= root.comps) && (d.suggest != 0) ? '#2b2b2b' :'#fff';});       
 
 	  		}
 		  else if (suggestt == 50){
@@ -420,10 +445,10 @@ d3.json(tgt, function(error, root) {
 				.attr("y2", function(d) {return centery+calc_pos(d.target)[1];})
 			 
 		topichead
-				.transition().duration(2000)
+				.transition().duration(200)
 				.style("opacity",0);
 		d3.select("#bubble")
-				.transition().duration(1000)
+				.transition().duration(200)
 				.style("opacity",0);
 
 	  	} //end of zoomout
@@ -470,12 +495,14 @@ d3.json(tgt, function(error, root) {
 			  .attrTween("d", function(d) { return arcTween.call(this, exitArc(d)); })
 			  .remove();
 		  path.enter().append("path")
+		  		.attr("class","path")
 			  .style("fill-opacity", function(d) { return d.depth === 2 - (root === p) ? 1 : 0; })
 			  .style("fill", function(d) { return d.fill; }) //'url(#grad)')//
 			  .on("click", zoomIn)
 			  .each(function(d) { this._current = enterArc(d); });
 			  path.transition()
 			  .style("fill-opacity", 1)
+			  .style("stroke",function(d) {return d.parent.id == 50? "#2b2b2b":null})
 			  .attrTween("d", function(d) { return arcTween.call(this, updateArc(d)); })
 			  .transition().duration(sig).attr("d",arc2);
 
@@ -489,20 +516,26 @@ d3.json(tgt, function(error, root) {
 						  .style("fill-opacity", function(d) { return d.depth === 1 + (root === p) ? 1 : 0; })
 						  .attrTween("d", function(d) { return arcTween.call(this, exitArc(d)); })
 						  .remove();
-					  	path.enter().append("path")
+					  	path.enter()
+					  		.append("path")
 						  	.style("fill-opacity", function(d) { return d.depth === 2 - (root === p) ? 1 : 0; })
 						  	.style("fill", function(d) { return d.fill; }) //'url(#grad)')//
 						  	.on("click", zoomIn)
 						  	.style("pointer-events","auto")
 						  	.on("mouseover",function(o){
-								var h = d3.selectAll(".node").filter(function(e) {return e.comp == o.parent.id && e.suggest != 0 ? this : null;}).node();
+								var h = d3.selectAll(".node").filter(function(e) {return e.comp == o.parent.id && e.suggest == o.parent.id ? this : null;}).node();
+								var g = d3.selectAll("circle").filter(function(e) {return e.comp == o.parent.id && e.suggest != 0 ? this : null;}).node();
+								d3.selectAll("circle").style("fill", function(d) { return color(d.comp); });
+	  							d3.select(g).style("fill","#2b2b2b");
 								var f = h.__data__;
 								if (f.time != null) {
-							 		div.html('<b>Most central article for this cluster:</b><br/><a href=' + f.url + '><b>' + f.title + '</b></a><br/><br/><b>' + f.source  + '   ' + f.time.substr(5,2) + '/' + f.time.substr(8,2) + ' ' + f.time.substr(11,5) + '</b><br/><br/>' + f.summary);
+							 		div.html('<u>Central cluster article:</u><br/><br/><a href=' + f.url + '>' + f.title + '</a><br/><br/>' + f.source  + '   ' + f.time.substr(5,2) + '/' + f.time.substr(8,2) + ' ' + f.time.substr(11,5) + '</><br/><br/>' + f.summary);
 							 		}
 								else { 
-									div.html('<b>Most central article for this cluster:</b><br/><a href=' + f.url + '><b>' + f.title + '</b></a><br/><br/><b>' + f.source  + '</b><br/><br/>' + f.summary);
+									div.html('<u>Central cluster article:</u><br/><br/><a href=' + f.url + '><b>' + f.title + '</b></a><br/><br/><b>' + f.source  + '</b><br/><br/>' + f.summary);
 									}
+								
+
 						  		})
 							.each(function(d) { this._current = enterArc(d); });
 						path.transition()
@@ -514,8 +547,9 @@ d3.json(tgt, function(error, root) {
 
 
   	function zoomSuggest() {
+  				clock = 2;
 				suggestt = 50;
-
+				d3.selectAll("path").filter(function(d){return d.id == 50? this:null;}).style("stroke","#2b2b2b");
 				var p = d3.selectAll("path").filter(function(d){return d.id == 50? this:null;}).node().__data__;
 					if (p.depth > 1) p = p.parent;
 				detail = p.id;
@@ -531,14 +565,18 @@ d3.json(tgt, function(error, root) {
 					texts = d3.selectAll("#nodetext").filter(function(d) {return (d.suggest <= root.comps) && (d.suggest != 0) ? this : null;}),
 					rects = d3.selectAll("#rect").filter(function(d) {return (d.suggest <= root.comps) && (d.suggest != 0) ? this : null;});
 
-				cir.transition().duration(500)
-						.transition().duration(1500)
+				cir.transition().duration(750)
+						.transition().duration(1250)
 						.attr("transform", function(d) {return around_suggest(d,centerx,centery,radius,newradius,500,clock);})
-				circir.transition().duration(500)
-				 		.transition().duration(1500)
+				circir.transition().duration(750)
+				 		.transition().duration(1250)
 				 		.attr("r",function(d){return 2*nodefac*(d.deg)+2;});
 
 				path.style("pointer-events","none");
+				// d3.select("#orderdiv")
+				// 		.transition().duration(500)
+				// 		.transition().duration(1500)
+	   // 					.style("opacity",1);
 				recto.transition().duration(2000).style("opacity",0)
 
 			   	chart.transition().duration(750)
@@ -548,22 +586,24 @@ d3.json(tgt, function(error, root) {
 			   			.transition().duration(1250)
 			   			.attr("rx", newradius)
 			   			.attr("ry",newradius)
-			   	div.transition().duration(750)
-			   			.transition().duration(1250)
+			   	div
+			   			.style("opacity",0)
+			   			.style("overflow","visible")
+			   			.transition().duration(1500)
+			   			// .transition().duration(1250)
 			   			.style("left","50px")
-			   			.style("top", (centery + 100) + "px");
+			   			.style("top", (centery + 50) + "px")
+			   			.transition().duration(500)
+			   			.style("opacity",1)
+			   			;
  
 				if (g.time != null) {
-					div.html('<a href=' + g.url + '><b>' + g.title + '</b></a><br/><br/><b>' + g.source  + '   ' + g.time.substr(5,2) + '/' + g.time.substr(8,2) + ' ' + g.time.substr(11,5) + '</b><br/><br/>' + g.summary)
+					div.html('<a href=' + g.url + '>' + g.title + '</a><br/><br/>' + g.source  + '   ' + g.time.substr(5,2) + '/' + g.time.substr(8,2) + ' ' + g.time.substr(11,5) + '<br/><br/>' + g.summary)
 					}
 				else {
-					div.html('<a href=' + g.url + '><b>' + g.title + '</b></a><br/><br/><b>' + g.source  + '</b><br/><br/>' + g.summary)
+					div.html('<a href=' + g.url + '>' + g.title + '</a><br/><br/>' + g.source  + '<br/><br/>' + g.summary)
 					}
 				d3.selectAll("#image").attr("xlink:href",g.images);
-				div.transition().duration(500)
-						.transition().duration(1500)
-						.style("left","50px")
-						.style("top", (centery + 50) + "px");
 				rects
 						.attr("xlink:href",function(d){return d.url;})
 						.style("pointer-events","auto");
@@ -575,17 +615,15 @@ d3.json(tgt, function(error, root) {
 						.transition().duration(1000)
 						.style("opacity",0);
 				topichead
-						.style("border-color",color(p.id))
-						.style("font-color",color(p.id))
-						.html('<br/><h1>Suggestions</h1><br/>')
+						.html('<br/><h1>Graphite \n Reading List</h1><br/> These articles are the most central of each cluster, ordered by cluster size. The central article of each cluster is that one which is most likely to cover the others as well. This means that by reading this list from top to bottom you maximise you coverage over the news per time spent reading. Enjoy')
+						.transition().duration(1500)
 						.transition().duration(500)
-						.transition().duration(1500)
 						.style("opacity",1);
-			  	d3.selectAll("#bubble").transition().duration(500)
-			  			.transition().duration(1500)
+			  	d3.selectAll("#bubble").transition().duration(1500)
+			  			.transition().duration(500)
 			  			.style("opacity",1);
-				texts.transition().duration(500)
-						.transition().duration(1500)
+				texts.transition().duration(750)
+						.transition().duration(1250)
 						.style("opacity",1)
 						.attr("dx", function (d) { return computeTextRotation(d) > 180 ? "-23" : "23"; }) // margin
 						.attr("dy", ".35em")
@@ -691,17 +729,18 @@ d3.json(json, function(error, graph) {
 	  .enter().append("g")
 	  .attr("class", "node")
 	  .style("pointer-events","none")
-	  .call(force.drag)
+	  //.call(force.drag)
 	  .on("mouseover",function(d){if (detail != 0){
-	  		d3.selectAll("circle").style("fill", function(d) { return color(d.comp); });
 	  		if (d.time != null) {
-	  			div.html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/><br/><b>' + d.source  + '   ' + d.time.substr(5,2) + '/' + d.time.substr(8,2) + ' ' + d.time.substr(11,5) + '</b><br/><br/>' + d.summary)
+	  			div.html('<a href=' + d.url + '>' + d.title + '</a><br/><br/>' + d.source  + '   ' + d.time.substr(5,2) + '/' + d.time.substr(8,2) + ' ' + d.time.substr(11,5) + '<br/><br/>' + d.summary)
 	  			}
 	  		else {
-	  			div.html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/><br/><b>' + d.source  + '</b><br/><br/>' + d.summary)
+	  			div.html('<a href=' + d.url + '>' + d.title + '</a><br/><br/>' + d.source  + '<br/><br/>' + d.summary)
 			  	}
 	  		var h = d3.selectAll("circle").filter(function(e) {return d.title == e.title ? this : null;}).node(),
 	  			cir = d3.selectAll(".node").filter(function(d) {return detail == d.comp ? this : null;});
+	  		
+	  		d3.selectAll("circle").style("fill", function(d) { return color(d.comp); });
 	  		d3.select(h).style("fill","#2b2b2b");
 	  		cir.style("opacity", function (o) {
 	  			return neighboring(d, o) | neighboring(o, d) ? 1 : 0.3;});
@@ -733,7 +772,8 @@ d3.json(json, function(error, graph) {
 			.attr("x", 12)
 			.attr("y", '0.35em')
 			.style("opacity",0)
-			.style({"text-baseline":"left","text-anchor":"left","width":"40px"}).html(function(d){return d.title;});
+			.style({"text-baseline":"left","text-anchor":"left","width":"40px"})
+			.html(function(d){return d.title;});
 
 		node.append("circle")
 			.style("pointer-events","none")
@@ -745,8 +785,8 @@ d3.json(json, function(error, graph) {
 			.style("opacity",function(d){return (d.single == 1)? 0:1;})
 			.on("mouseover", function(d) {
 			  d3.selectAll("circle").style("fill", function(d) { return color(d.comp); });//"stroke",function(d) {return (d.suggest <= graph.graph.comps) && (d.suggest != 0) ? '#2b2b2b' :'#fff';}); 
-			  if (d.time != null) {div.html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/><br/><b>' + d.source  + '   ' + d.time.substr(5,2) + '/' + d.time.substr(8,2) + ' ' + d.time.substr(11,5) + '</b><br/><br/>' + d.summary)}
-			  	else {div.html('<a href=' + d.url + '><b>' + d.title + '</b></a><br/><br/><b>' + d.source  + '</b><br/><br/>' + d.summary)}
+			  if (d.time != null) {div.html('<a href=' + d.url + '>' + d.title + '</a><br/><br/>' + d.source  + '   ' + d.time.substr(5,2) + '/' + d.time.substr(8,2) + ' ' + d.time.substr(11,5) + '<br/><br/>' + d.summary)}
+			  	else {div.html('<a href=' + d.url + '>' + d.title + '</a><br/><br/>' + d.source  + '<br/><br/>' + d.summary)}
 			  		d3.select(this).style("fill","#2b2b2b"); 
 			  })
 			.on("click", function(d){return window.open(d.url, '_blank');})
@@ -823,6 +863,9 @@ d3.json(json, function(error, graph) {
 
 }); // end of d3.json(json)
 
+
+
+
 function key(d) {
   var k = [], p = d;
   while (p.depth) k.push(p.id), p = p.parent;
@@ -831,7 +874,7 @@ function key(d) {
 function fill(d) {
   var p = d;
   while (p.depth > 1) p = p.parent;
-  var c = d3.lab(p.id == 50? '#c7c7c7':color(p.id));//;d3.lab(color(p.id));
+  var c = d3.lab(p.id == 50? '#fff':color(p.id));//;d3.lab(color(p.id));
   //c.l = luminance(d.sum);
   return c;
 }
@@ -845,6 +888,4 @@ function arcTween(b) {
 function updateArc(d) {
   return {depth: d.depth, x: d.x, dx: d.dx};
 }
-
-
 //})();    

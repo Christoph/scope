@@ -26,7 +26,7 @@
     window.location.href = "cs=" + strin;}
      else if (task == "500")
       {
-        console.log('hey');
+       
     window.location.href = "server_error";}
   //jQuery.ajax({url: , type: "POST",});}
 
@@ -61,7 +61,7 @@ function extractfeeds(input){
       for (var i = input.length-1; i >= 0; i--) {
         array.push(input[i]['value'])
       }
-      console.log(array);
+      //console.log(array);
       return array;
     }
 
@@ -72,16 +72,16 @@ $('.searchform').click( function() {
 })
 jQuery('#searchform').on('submit', function(event) {
     event.preventDefault();
-    console.log("form submitted!")  // sanity check
+   // console.log("form submitted!")  // sanity check
     $('#csmodal').modal()
     var input = $( "#searchform" ).serializeArray();
     var sources = $( "#sources" ).val();
-    console.log(sources);
-    console.log(post);
+    //console.log(sources);
+    //console.log(post);
     console.log(user_id);
 
     if (post == 'search1') {
-      console.log(input[1].value);
+     // console.log(input[1].value);
    jQuery.ajax({
     url: "search_task_term",
     type: "POST",
@@ -98,7 +98,7 @@ jQuery('#searchform').on('submit', function(event) {
    }).done(function(task) {
     var output = JSON.parse(task);
     strin = output.strin;
-    console.log(output);
+    //console.log(output);
     if (output.job != 'exists') {return start_task(output.job);}
       else {window.location.href = "cs=" + strin;}
   
@@ -106,7 +106,7 @@ jQuery('#searchform').on('submit', function(event) {
 
       }
   else if (post == 'search2') {
-    console.log(input.slice(2,input.length));
+    //console.log(input.slice(2,input.length));
     input = input.slice(2,input.length);
     var array = extractfeeds(input);
    jQuery.ajax({
@@ -126,10 +126,10 @@ jQuery('#searchform').on('submit', function(event) {
     //  });
     // }
    }).done(function(task) {
-    console.log(task);
+    //console.log(task);
    var output = JSON.parse(task);
     strin = output.strin;
-    console.log(output);
+    //console.log(output);
       if (output.job != 'exists') {return start_task(output.job);}
       else {window.location.href = "cs=" + strin;}
           })

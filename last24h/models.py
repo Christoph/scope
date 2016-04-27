@@ -42,7 +42,7 @@ class Alert(models.Model):
     no = models.CharField(max_length= 200,null=True)
     user = models.ForeignKey(User, default = None,null = True)
     #email = models.EmailField(max_length = 254)
-    frequency = models.SmallIntegerField(choices = ((10400, '4 hours'), (31200,'12 hours'),(62400,'24 hours'),(172800,'2 days'),(345600,'4 days'),(604800,'1 week')))
+    frequency = models.IntegerField(choices = ((10400, '4 hours'), (31200,'12 hours'),(62400,'24 hours'),(172800,'2 days'),(345600,'4 days'),(604800,'1 week')))
     delivery_time = models.DateTimeField()
     query = models.CharField(max_length=500)
     feed_type = models.BooleanField(default=False)

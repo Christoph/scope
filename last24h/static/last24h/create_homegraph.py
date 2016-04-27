@@ -10,14 +10,13 @@ def return_articles(feeds,non_keywords):
 				if "<div>" in aa:
 					aa = aa.split("<div>")[0] + " " + aa.split("<div>")[2]
 
-				ee = aa[0:min(400,len(d.entries[i].summary))]
 			else:
-				ee = ''
+				aa = ''
 			if hasattr(d.entries[i],'published_parsed'):
 				ff = datetime.fromtimestamp(mktime(d.entries[i].published_parsed))
 			else:
 				ff = None
-			articles_info.append([dd,ee,ff])#,ff    
+			articles_info.append([dd,aa,ff])#,ff    
 	return articles_info
 	
 # Determine scources and mode of extraction
@@ -202,10 +201,10 @@ index = gensim.similarities.SparseMatrixSimilarity(corpus_lsi, num_features = n 
 #lda_model = gensim.models.LdaModel(corpus_tfidf, id2word=dict, num_topics=20) #initialize an LSI transformation
 #index2 = gensim.similarities.SparseMatrixSimilarity(lda_model[corpus_tfidf], num_features = 50 )
 
-gensim.corpora.MmCorpus.serialize(settings.STATIC_BREV + static('last24h/l24h_data/l24h.mm'),corp)#/home/django/graphite/static/last24h/l24h.mm', corp)
-dict.save(settings.STATIC_BREV + static('last24h/l24h_data/l24h.dict'))
-lsi_model.save(settings.STATIC_BREV + static('last24h/l24h_data/l24h.lsi'))
-index.save(settings.STATIC_BREV + static('last24h/l24h_data/l24h.index'))
+gensim.corpora.MmCorpus.serialize(settings.STATIC_ROOT + 'last24h/l24h_data/l24h.mm',corp)#/home/django/graphite/static/last24h/l24h.mm', corp)
+dict.save(settings.STATIC_ROOT + 'last24h/l24h_data/l24h.dict')
+lsi_model.save(settings.STATIC_ROOT + 'last24h/l24h_data/l24h.lsi')
+index.save(settings.STATIC_ROOT + 'last24h/l24h_data/l24h.index')
 #lda_model.save('/tmp/model.lda') 
 
 
@@ -392,7 +391,7 @@ for a in graphx:
 
 
 tg.add_edge(0,50)
-tg.add_node(5000, size= 0)
+tg.add_node(5000, size= 0.01)
 tg.add_edge(50,5000)
 tg.node[0]['final_size']=len(ug.nodes())
 tg.node[0]['comps'] = count_comp-1
@@ -403,9 +402,9 @@ ug.graph['comps'] = count_comp-1
 from networkx.readwrite import json_graph
 ug_nl = json_graph.node_link_data(ug)
 tgt = json_graph.tree_data(tg,root=0)
-with open(settings.STATIC_BREV + static('last24h/tgt_cluster.json'), 'w+') as fp:
+with open(settings.STATIC_ROOT + 'last24h/tgt_cluster.json', 'w+') as fp:
     json.dump(tgt,fp)
-with open(settings.STATIC_BREV + static('last24h/ug_nl_cluster.json'), 'w+') as fp:
+with open(settings.STATIC_ROOT + 'last24h/ug_nl_cluster.json', 'w+') as fp:
     json.dump(ug_nl,fp)
 
 #send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])

@@ -78,7 +78,7 @@ def cs_task(feeds,strin,alert):
 		current_task.update_state(state='PREPARE',
 			meta={'current': 10, 'articles':0, 'words':0})
 	try:
-		execfile(settings.STATIC_BREV + static('last24h/cs2.py'))
+		execfile(settings.STATIC_ROOT + 'last24h/cs2.py')#settings.STATIC_BREV + static('last24h/cs2.py'))
 	except:
 		raise Exception()
 			

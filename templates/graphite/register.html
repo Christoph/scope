@@ -7,15 +7,18 @@
 <h1 align=center class="page-title">Register</h1>
 
 		<div ALIGN=CENTER>
-
+{% if new %}
 <p> By creating an account you have access to a number of extra handy features:
 <ol>
 <li> You can start alerts to have custom graphs sent regularly to your inbox.</li>
 <li> Have access to your custom searches. </li>
 <li> Most further features that will be implemented in the future - advanced comparison of articles within cluster, exporting features, advanced search - will be tied to having an account. </li>
-    
+</ol>
+</p>
 
-            <p>{{state}}</p>
+{% endif %} 
+
+            <p><strong>{{state}}</strong></p>
            
 
             {% if form %}

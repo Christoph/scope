@@ -1,5 +1,40 @@
+//medium+ screen sizes
+@media (min-width:992px) {
+    .desktop-only {
+        display:block !important;
+    }
+}
+.navbar-brand {
+  font-weight: 500;
+
+}
+
+
+.path {
+  stroke-width: 1px;
+}
+ 
+//small screen sizes
+@media (max-width: 991px) {
+    .mobile-only {
+        display:block !important;
+    }
+ 
+    .desktop-only {
+        display:none !important;
+    }
+}
+
+
 body {font-family: 'Source Sans Pro', sans-serif;
 font-size: 16px;}
+
+svg:not(:root) {
+overflow: visible
+}
+.container .text-muted{
+margin: 15px 0;
+}
 
 
 .index_form {
@@ -156,7 +191,7 @@ centtext {
   padding: 12px;
   background: #fff;          
   pointer-events: auto;
-  overflow: scroll;
+  overflow: auto;
 }
    
 
@@ -189,7 +224,6 @@ centtext {
 
 	background-color: #fff;
 	border-bottom-style: solid;
-	border-bottom-width: 1.5px;
 	border-color: #2b2b2b;
 }
 
@@ -198,7 +232,7 @@ centtext {
 
 	background-color: #fff;
 	border-top: solid;
-	border-top-width: 1.5px;
+	border-top-width: 1px;
 	border-color: #2b2b2b;
 }
 
@@ -213,8 +247,7 @@ div.container{
 }
 
 div.container.main{
-	max-width: 70%;
-padding-bottom: 50px;}
+	padding-bottom: 50px;}
 
 div.tab-content {
 	margin-bottom: 50px;

@@ -1,0 +1,486 @@
+{
+        "comps": 12,
+        "children": [
+                {
+                        "clustering": "70",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "Japan",
+                                "quake" 
+                        ],
+                        "id": 1,
+                        "timeinf": [
+                                "04/17 12h",
+                                "14h",
+                                "1d 5h",
+                                "1d 19h",
+                                "2d 10h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+
+                        ]
+                },
+                {
+                        "clustering": "71",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "earthquake",
+                                "Ecuador"
+                        ],
+                        "id": 2,
+                        "timeinf": [
+                                "04/17 12h",
+                                "1h",
+                                "2h",
+                                "3h",
+                                "4h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                },
+                {
+                        "clustering": "90",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "refugees",
+                                "Pope"
+                        ],
+                        "id": 3,
+                        "timeinf": [
+                                "04/17 12h",
+                                "7h",
+                                "15h",
+                                "23h",
+                                "1d 7h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                },
+                {
+                        "clustering": "9",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "impeachment",
+                                "rousseff"
+                        ],
+                        "id": 4,
+                        "timeinf": [
+                                "04/17 12h",
+                                "2d 2h",
+                                "4d 4h",
+                                "6d 6h",
+                                "8d 9h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                },
+                {
+                        "clustering": "83",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "refugees",
+                                "pope"
+                        ],
+                        "id": 5,
+                        "timeinf": [
+                                "04/17 12h",
+                                "15h",
+                                "1d 7h",
+                                "1d 22h",
+                                "2d 14h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                },
+                {
+                        "clustering": "76",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "impeachment",
+                                "rousseff"
+                        ],
+                        "id": 6,
+                        "timeinf": [
+                                "04/17 12h",
+                                "6h",
+                                "13h",
+                                "19h",
+                                "1d 2h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                },
+                {
+                        "clustering": "58",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "antisemitism",
+                                "labour"
+                        ],
+                        "id": 7,
+                        "timeinf": [
+                                "04/17 12h",
+                                "2d 11h",
+                                "4d 22h",
+                                "7d 9h",
+                                "9d 20h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "oil",
+                                "opec"
+                        ],
+                        "id": 8,
+                        "timeinf": [
+                                "04/17 12h",
+                                "9h",
+                                "18h",
+                                "1d 4h",
+                                "1d 13h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                },
+                {
+                        "clustering": "7",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "israeli",
+                                "palestinian"
+                        ],
+                        "id": 9,
+                        "timeinf": [
+                                "04/17 12h",
+                                "9h",
+                                "19h",
+                                "1d 4h",
+                                "1d 14h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                },
+                {
+                        "clustering": "46",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "saudi",
+                                "antisemitism"
+                        ],
+                        "id": 10,
+                        "timeinf": [
+                                "04/17 12h",
+                                "4h",
+                                "8h",
+                                "13h",
+                                "17h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                },
+                {
+                        "clustering": "46",
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "festival",
+                                "inflation"
+                        ],
+                        "id": 11,
+                        "timeinf": [
+                                "04/17 12h",
+                                "8h",
+                                "17h",
+                                "1d 1h",
+                                "1d 10h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": [
+                                "trump",
+                                "saudi"
+                        ],
+                        "id": 12,
+                        "timeinf": [
+                                "04/17 12h",
+                                "4h",
+                                "8h",
+                                "12h",
+                                "16h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                },
+                                {
+                                        "id": 100,
+                                        "size": 1,
+                                        "name":"Article of the day"
+                                }
+                        ]
+                }
+        ],
+        "overall_size": 500,
+        "final_size": 77,
+        "id": 0,
+        "name":"WElcome to graphite. Click here to get going. blabla"
+}

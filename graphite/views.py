@@ -94,7 +94,6 @@ def process_data(threadName, q):
         time.sleep(1)
 
 
-
 def check_login(request):
     if request.user.is_authenticated():
         log_inf = ['Profile','Logout']
@@ -105,6 +104,14 @@ def check_login(request):
     return log_inf, log_link
     
 from random import randint
+
+
+def mobile(request):
+    log_inf, log_link = check_login(request)
+    context = {'name':current_name,'log_inf':log_inf, 'log_link':log_link}
+    return render(request, 'graphite/mobile.html',context)
+
+
 
 def martin(request):
     messages = ["'My name is Martin and I will save you', he said.","She shyly looked up on him.","His chin was quite big.","Kazoom!!","Nothing happened.","The wind rose.","'Dontt worry, babe', he said","They walked down the road","Godzilla","She cried","He cried","A tear dropped on the floow","'I hate you', she said", "He pressed her tightly against him"]
@@ -222,6 +229,55 @@ def about(request):
     return render(request,'graphite/about.html', {'log_inf':log_inf, 'log_link':log_link,'name':current_name})
 
 @login_required(login_url='/login')
+def profile_edit(request):
+    if request.method == 'POST':
+        print request.POST
+        user = User.objects.get(id=request.user.id)
+        user.first_name = request.POST['first']
+        user.last_name = request.POST['last']
+        user.username = request.POST['username']
+        user.email = request.POST['email']            
+        user.save()
+        return HttpResponse(
+                json.dumps({"success": "Changes have been saved"}),
+                content_type="application/json"
+            )
+
+    else:
+        return HttpResponse(
+                json.dumps({"nothing to see": "this isn't happening"}),
+                content_type="application/json"
+            )
+
+@login_required(login_url='/login')
+def alert_edit(request):
+    if request.method == 'POST':
+        print request.POST
+        q = Alert.objects.get(no=request.POST['no'])
+        q.query = request.POST['query']
+        #freq_dict = {"10400":'4 hours',"31200":'12 hours',"62400":'24 hours',"172800":'2 days',"345600":'4 days',"604800":'1 week'}
+        print int(request.POST['frequency'])
+        q.frequency = int(request.POST['frequency'])
+        print "here"
+        q.save()
+        try: q.save()
+        except: 
+            return HttpResponse(
+                json.dumps({"error": "There occurred some error during saving. Try again"}),
+                content_type="application/json"
+            )
+        return HttpResponse(
+            json.dumps({"success": "Changes have been saved"}),
+            content_type="application/json"
+            )
+
+    else:
+        return HttpResponse(
+                json.dumps({"nothing to see": "this isn't happening"}),
+                content_type="application/json"
+            )
+
+@login_required(login_url='/login')
 def profile(request):    
     log_inf, log_link = check_login(request)
     user = User.objects.get(id=request.user.id)
@@ -236,32 +292,36 @@ def profile(request):
     state_profile = ""
     if request.method == 'POST':
         #print request.POST
-        if 'save' in request.POST:
-            q = Alert.objects.get(no=request.POST['no'])
-            q.query = request.POST['query']
-            q.frequency = request.POST['frequency']
-            try: q.save()
-            except: state = "It seems there is a problem with the data you entered. Please try and correct"
-            return HttpResponseRedirect(reverse('profile'))
-        elif 'delete' in request.POST:
+      #  if 'save' in request.POST:
+       #     q = Alert.objects.get(no=request.POST['no'])
+        #    q.query = request.POST['query']
+         #   q.frequency = request.POST['frequency']
+         #   try: q.save()
+         #   except: state = "It seems there is a problem with the data you entered. Please try and correct"
+         #   return HttpResponseRedirect(reverse('profile'))
+        if 'delete' in request.POST:
             q = Alert.objects.get(no = request.POST['no'])
             state = 'The alert "' + q.query + '" was successfully deleted.'           
             q.delete()
-            alerts2 = Alert.objects.filter(user = user).order_by('delivery_time')
+            alerts = Alert.objects.filter(user = user).order_by('delivery_time')
             for i in range(0,len(alerts)):
-                alert.no = str(user.id) + '_' + str(i)
+                alerts[i].no = str(user.id) + '_' + str(i+1)
+                alerts[i].save()
+           # alerts2 = Alert.objects.filter(user = user).order_by('delivery_time')
+           # for i in range(0,len(alerts)):
+           #     alert.no = str(user.id) + '_' + str(i)
                 
-            return HttpResponseRedirect(reverse('profile'))
-        elif 'save_profile' in request.POST:
+            #return HttpResponseRedirect(reverse('profile'))
+        #elif 'save_profile' in request.POST:
             
-            user.first_name = request.POST['first']
-            user.last_name = request.POST['last']
-            user.username = request.POST['username']
-            user.email = request.POST['email']
+         #   user.first_name = request.POST['first']
+         #   user.last_name = request.POST['last']
+         #   user.username = request.POST['username']
+         #   user.email = request.POST['email']
                 
-            user.save()
-            state_profile = "Changes have been saved"
-            form2 = RegistrationForm2(request.POST)
+         #   user.save()
+         #   state_profile = "Changes have been saved"
+         #   form2 = RegistrationForm2(request.POST)
         elif 'delete_profile' in request.POST:
             try:
                 Alert.objects.get(user=user).delete()
@@ -312,7 +372,7 @@ def login_user(request):
                 login(request, user)
                 #state = "You are succesfully logged in. Please proceed to"
                 #render(request, 'last24h/index.html')
-                return HttpResponseRedirect(reverse('last24h:index')) 
+                return HttpResponseRedirect(reverse('profile')) 
             # Redirect to a success page.
             else:
             # Return a 'disabled account' error message
@@ -398,7 +458,7 @@ def search_task_term(request):
         query = "\n".join(topics)
 
         if len(Query.objects.filter(string = strin)) != 0:
-            if user_id != None:
+            if user_id != "None":
                 q = Query(user = User.objects.get(id =user_id), query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
                 q.save()
             else: 
@@ -409,7 +469,7 @@ def search_task_term(request):
 
 
         else :
-            if user_id != None:
+            if user_id != "None":
                 q = Query(user = User.objects.get(id =user_id), query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
                 q.save()
             else: 
@@ -441,7 +501,7 @@ def search_task_feeds(request):
             query.append(source.name)
         query = "\n".join(query)
         strin = datetime.now().isoformat()[:13] + "&feeds=" + "AND".join(ids) + "&term=none"
-        if user_id != None:
+        if user_id != "None":
             q = Query(user = User.objects.get(id = user_id), query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
             q.save()
         else: 

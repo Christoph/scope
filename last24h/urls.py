@@ -8,5 +8,5 @@ urlpatterns = [
     #url(r'^$', views.index, name='index'),
     # /last24h/custom_search
     #url(r'q=(?P<topic>.*)$', views.csresults, name='csresults'),#kwargs = {'topic':topic}),#\?q=(?P<topic>\w+)$', views.csresults, name='csresults'),
-
+#	url(r'mobile$',views.mobile,name='mobile'),
 ]
