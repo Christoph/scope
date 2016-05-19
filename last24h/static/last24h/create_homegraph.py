@@ -237,6 +237,9 @@ size= len(corp)
 tg = nx.DiGraph()
 tg.add_node(0,overall_size=size)
 
+tg2 = nx.DiGraph()
+tg2.add_node(0,overall_size=size)
+
 
 n = 100
 count_suggest = 1
@@ -256,69 +259,73 @@ for a in graphx:
 
 		# first take care of the time signatures of the articles for the detail view
 		timespartition = sorted(list(set([ug.node[i]['time'] for i in comp.nodes() if ug.node[i]['time'] != None]))) #collect the different times occuring 
-		first_time = timespartition[0]
-		last_time = timespartition[-1]
-		onlytimes = []
-		for a in timespartition:
-		   onlytimes.append([i for i in comp.nodes() if ug.node[i]['time'] == a]) # partition the set of times into articles with the same timestamp
-		if first_time != last_time: #in case they're all published at the same time
-			time_span = (last_time - first_time).total_seconds()
-		else:
-			time_span = 1
-		#calculate positions on circle, reserving at least 355-5 deg for ones without timestamp.
-		notime = [ug.node[i]['time'] for i in comp.nodes() if ug.node[i]['time'] == None]
-		ratio = len(notime)/len(comp)
-		notime_count = 1
-		#take care of positioning of articles with the same timestamp
-		for a in onlytimes:
-			relcount = 0
-			for i in a:
-				if len(a) > 1:
-					ug.node[i]['time_pos'] = (last_time - ug.node[i]['time']).total_seconds()/time_span*350*(1-ratio) + 5 + ratio*175 + relcount/(len(a)-1)*5-5*len(a)/2
-					relcount += 1
-				else:  
-					ug.node[i]['time_pos'] = (last_time - ug.node[i]['time']).total_seconds()/time_span*350*(1-ratio) + 5 + ratio*175
-				#translate into isoformat for display
-				ug.node[i]['time'] = ug.node[i]['time'].isoformat()
+		if len(timespartition) != 0:
+			first_time = timespartition[0]
+			last_time = timespartition[-1]
+			onlytimes = []
+			for a in timespartition:
+			   onlytimes.append([i for i in comp.nodes() if ug.node[i]['time'] == a]) # partition the set of times into articles with the same timestamp
+			if first_time != last_time: #in case they're all published at the same time
+				time_span = (last_time - first_time).total_seconds()
+			else:
+				time_span = 1
+			#calculate positions on circle, reserving at least 355-5 deg for ones without timestamp.
+			notime = [ug.node[i]['time'] for i in comp.nodes() if ug.node[i]['time'] == None]
+			ratio = len(notime)/len(comp)
+			notime_count = 1
+			#take care of positioning of articles with the same timestamp
+			for a in onlytimes:
+				relcount = 0
+				for i in a:
+					if len(a) > 1:
+						ug.node[i]['time_pos'] = (last_time - ug.node[i]['time']).total_seconds()/time_span*350*(1-ratio) + 5 + ratio*175 + relcount/(len(a)-1)*5-5*len(a)/2
+						relcount += 1
+					else:  
+						ug.node[i]['time_pos'] = (last_time - ug.node[i]['time']).total_seconds()/time_span*350*(1-ratio) + 5 + ratio*175
+					#translate into isoformat for display
+					ug.node[i]['time'] = ug.node[i]['time'].isoformat()
 
 
-		#display formatting of time
-		if len(notime) == len(comp): #none of the nodes has a timestamp
-			time_disclaim = 'no timestamp for this cluster'
-			timeinf = ['','','','','']
-		elif time_span == 1: #all of those nodes that have a timestamp have the same one
-			time_disclaim = 'no timestamp'
-			timeinf = ['','',ug.node[i]['time'],'','']
+			#display formatting of time
+			if len(notime) == len(comp): #none of the nodes has a timestamp
+				time_disclaim = 'no timestamp for this cluster'
+				timeinf = ['','','','','']
+			elif time_span == 1: #all of those nodes that have a timestamp have the same one
+				time_disclaim = 'no timestamp'
+				timeinf = ['','',ug.node[i]['time'],'','']
+			else: 
+				now = datetime.now().isoformat()
+				now = now[5:7] + '/' + now[8:10] + ' ' + now[11:13] + 'h'
+				time_disclaim = 'no timestamp'
+				t_hours = time_span/3600
+				if int(t_hours/4/24) == 0:
+					tt1 = str(int(t_hours/4%24)) + 'h'
+				elif int(t_hours/4%24) == 0:
+					tt1 = str(int(t_hours/4/24)) + 'd '
+				else:
+					tt1 = str(int(t_hours/4/24)) + 'd ' + str(int(t_hours/4%24)) + 'h'
+				if int(t_hours/2/24) == 0:
+					tt2 = str(int(t_hours/2%24)) + 'h'
+				elif int(t_hours/2%24) == 0:
+					tt2 = str(int(t_hours/2/24)) + 'd '
+				else:
+					tt2 = str(int(t_hours/2/24)) + 'd ' + str(int(t_hours/2%24)) + 'h'
+				if int(3*t_hours/4/24) == 0:
+					tt3 = str(int(3*t_hours/4%24)) + 'h'
+				elif int(3*t_hours/4%24) == 0:
+					tt3 = str(int(3*t_hours/4/24)) + 'd '
+				else:
+					tt3 = str(int(3*t_hours/4/24)) + 'd ' + str(int(3*t_hours/4%24)) + 'h'
+				if int(t_hours/24) == 0:
+					tt4 = str(int(t_hours%24)) + 'h'
+				elif int(t_hours/4%24) == 0:
+					tt4 = str(int(t_hours/4/24)) + 'd '
+				else:
+					tt4 = str(int(t_hours/24)) + 'd ' + str(int(t_hours%24)) + 'h'
+				timeinf = [now,tt1,tt2,tt3,tt4]
 		else: 
-			now = datetime.now().isoformat()
-			now = now[5:7] + '/' + now[8:10] + ' ' + now[11:13] + 'h'
-			time_disclaim = 'no timestamp'
-			t_hours = time_span/3600
-			if int(t_hours/4/24) == 0:
-				tt1 = str(int(t_hours/4%24)) + 'h'
-			elif int(t_hours/4%24) == 0:
-				tt1 = str(int(t_hours/4/24)) + 'd '
-			else:
-				tt1 = str(int(t_hours/4/24)) + 'd ' + str(int(t_hours/4%24)) + 'h'
-			if int(t_hours/2/24) == 0:
-				tt2 = str(int(t_hours/2%24)) + 'h'
-			elif int(t_hours/2%24) == 0:
-				tt2 = str(int(t_hours/2/24)) + 'd '
-			else:
-				tt2 = str(int(t_hours/2/24)) + 'd ' + str(int(t_hours/2%24)) + 'h'
-			if int(3*t_hours/4/24) == 0:
-				tt3 = str(int(3*t_hours/4%24)) + 'h'
-			elif int(3*t_hours/4%24) == 0:
-				tt3 = str(int(3*t_hours/4/24)) + 'd '
-			else:
-				tt3 = str(int(3*t_hours/4/24)) + 'd ' + str(int(3*t_hours/4%24)) + 'h'
-			if int(t_hours/24) == 0:
-				tt4 = str(int(t_hours%24)) + 'h'
-			elif int(t_hours/4%24) == 0:
-				tt4 = str(int(t_hours/4/24)) + 'd '
-			else:
-				tt4 = str(int(t_hours/24)) + 'd ' + str(int(t_hours%24)) + 'h'
-			timeinf = [now,tt1,tt2,tt3,tt4]
+			timeinf = "no time information"
+			time_disclaim = "no time information"
 
 		#now for comp level keyword extraction
 		if len(comp) >= 7:
@@ -352,7 +359,7 @@ for a in graphx:
 			a = sorted(one_word,reverse=True)
 
 			if len(a) != 0:
-				keywords = [a[0][1], a[1][1]]
+				keywords = a[0][1] + ", " + a[1][1]
 				#keywords_in.append(keywords[0])
 				#keywords_in.append(keywords[1])
 			else: keywords = ''
@@ -378,10 +385,8 @@ for a in graphx:
 
 
 				#add the nodes for the arc
-		tg.add_node(count_comp, clustering=clustering,name=keywords, timeinf = timeinf, time_disclaim = time_disclaim)  
+		tg.add_node(count_comp, clustering=clustering,name=keywords)  
 		tg.add_edge(0,count_comp)
-
-
 		tg.add_node(count_comp*100, size=len(comp))
 		tg.add_edge(count_comp,count_comp*100)
 		count_comp += 1
@@ -391,9 +396,11 @@ for a in graphx:
 
 
 tg.add_edge(0,50)
-tg.add_node(5000, size= 0.01)
+tg.add_node(5000, size= 0.1)
 tg.add_edge(50,5000)
 tg.node[0]['final_size']=len(ug.nodes())
+tg.node[0]['comps'] = count_comp-1
+tg2.node[0]['final_size']=len(ug.nodes())
 tg.node[0]['comps'] = count_comp-1
 ug.graph['size']=len(ug.nodes())
 ug.graph['comps'] = count_comp-1

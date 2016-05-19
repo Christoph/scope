@@ -642,8 +642,10 @@ def csr(request,strin):
     time = triple[0][5:7] + '/' + triple[0][8:10] + ' ' + triple[0][11:16]
     if triple[1] == 'none':  
         query = [i.title() for i in triple[2].split('AND')]#.append() = ",".join([i.title() for i in triple[2].split('AND')])
+	term = True
     else:
         ids = triple[1].split('AND')
+	term = False
         query = []
         for i in ids:
             query.append(Sources.objects.get(id = i).name) #query + Sources.objects.get(id = i).name
@@ -654,7 +656,7 @@ def csr(request,strin):
     #query = Query.objects.filter(string = 'strin')
     info = Query.objects.filter(string = strin)[0]
 
-    context = {'info':info,'strin':strin, 'time':time,'query':query,'name':current_name, 'log_inf':log_inf, 'log_link':log_link}
+    context = {'term':term,'info':info,'strin':strin, 'time':time,'query':query,'name':current_name, 'log_inf':log_inf, 'log_link':log_link}
     return render(request, 'graphite/cs_result3.html', context) #-{'topic': topic})
 
 @login_required(login_url='/login')
@@ -709,6 +711,7 @@ def grews_alert(request):
                     q.save()
                     
                     state = "Congratulations. Now look forward to your first alert." 
+		    form = AlertForm()
                 # Redirect to a success page.
             
         if 'add_source' in request.POST:

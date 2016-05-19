@@ -2,7 +2,7 @@
 //var this_js_script = $('script[src*=somefile]');
 
 var width = window.innerWidth,
-	height = 1100;
+	height = 1300;
 
 var centerx = width/2,
 centery = 500;
@@ -166,7 +166,11 @@ d3.json(tgt, function(error, root) {
 		.style("pointer-events","none")
 		.style("top","60px" )
 		.html('<span class="glyphicon glyphicon-star" aria-hidden="true">')
-		.on("click",zoomSuggest);
+		.on("click",function() {
+			if (suggestt == 50) {
+				
+				return zoomOut(root);}
+			else {return zoomSuggest();}});
 
 	var helper = d3.select("body")
 		.append("button")
@@ -285,11 +289,11 @@ d3.json(tgt, function(error, root) {
 
 		if (clock == 0) {}
 		else if (clock == 1) { 
-			time2.html(p.timeinf[0]).transition().duration(2000).style("opacity",1);
-			time3.html("-" + p.timeinf[1]).transition().duration(2000).style("opacity",1);
-			time4.html("-" + p.timeinf[2]).transition().duration(2000).style("opacity",1);
-			time5.html("-" + p.timeinf[3]).transition().duration(2000).style("opacity",1);
-			time6.html("-" + p.timeinf[4]).transition().duration(2000).style("opacity",1);
+			time2.html(p.timeinf[0]).transition().duration(1500).transition().duration(500).style("opacity",1);
+			time3.html("-" + p.timeinf[1]).transition().duration(1500).transition().duration(500).style("opacity",1);
+			time4.html("-" + p.timeinf[2]).transition().duration(1500).transition().duration(500).style("opacity",1);
+			time5.html("-" + p.timeinf[3]).transition().duration(1500).transition().duration(500).style("opacity",1);
+			time6.html("-" + p.timeinf[4]).transition().duration(1500).transition().duration(500).style("opacity",1);
 		}
 		 //end if clock==1 
 
@@ -404,6 +408,14 @@ d3.json(tgt, function(error, root) {
 		recto
 				.transition().duration(2000)
 				.style("opacity",1);
+
+		if (clock ==1) {
+				time2.transition().duration(200).style("opacity",0);
+				time3.transition().duration(200).style("opacity",0);
+				time4.transition().duration(200).style("opacity",0);
+				time5.transition().duration(200).style("opacity",0);
+				time6.transition().duration(200).style("opacity",0);
+			}
 		
 		if (suggestt == 0){
 			var cir = d3.selectAll(".node").filter(function(d) {return p.id == d.comp ? this : null;});
