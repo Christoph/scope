@@ -23,7 +23,7 @@ class RegistrationForm(forms.Form):
     first= forms.CharField(label='First name', max_length=60)
     last= forms.CharField(label='Last name', max_length=60)  
     username=forms.CharField(label='Username', max_length=30)
-    email = forms.EmailField(label='Email', max_length=30)
+    email = forms.EmailField(label='Email', max_length=100)
     password1 =forms.CharField(label='Password',max_length=60,widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repeat password', max_length=60,widget=forms.PasswordInput)
     captcha = CaptchaField(label = "Prove you're human")

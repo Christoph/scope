@@ -3,13 +3,14 @@
 
 {% block content %}
 
+
 <div class="container main">
 <h1 align=center class="page-title">Alerts</h1><!-- .entry-header <-->
 
 <div align=center>
 
        <p>Here you can create your own alert (or many of them) sent regularly to your inbox.</p>
-       <p>This is just a custom search at regular intervals so the same guidelines apply: It is important to make clear that <strong>the quality of the graph depends massively on the number of input articles!</strong> I therefore strongly recommend to make sure that you have at least 150 articles. If your favourite feed is not in the list of options, add it to our database using the form below!</p>
+       <p>This is just a custom search at regular intervals so the same guidelines apply: It is important to make clear that <strong>the quality of the graph depends massively on the number of input articles!</strong> I therefore strongly recommend to make sure that you have at least 150 articles overall. If your favourite feed is not in the list of options, add it to our database using the form below!</p>
    <p><b>  {{ state }} </b></p>
 
     <div class="forms" id="form_alert_light">
@@ -76,7 +77,14 @@
               {% endif %}
               {{form.captcha|add_class:"form-control"}}
              </div>
+
+             {% if log_inf|first == 'Register' %}
+             <div class="btn btn-default" id="form_alert_dark">Sorry but you need to have a profile to subscribe to alerts.</div>
+              
+              {% else %}
               <button class="btn btn-default" id="form_alert_dark" type="submit" value"Set alert" name="set">Submit</button>
+              
+              {% endif %}
 
    </div>
 </form>

@@ -659,11 +659,14 @@ def csr(request,strin):
     context = {'term':term,'info':info,'strin':strin, 'time':time,'query':query,'name':current_name, 'log_inf':log_inf, 'log_link':log_link}
     return render(request, 'graphite/cs_result3.html', context) #-{'topic': topic})
 
-@login_required(login_url='/login')
+#@login_required(login_url='/login')
 def grews_alert(request):
+    if request.user.is_authenticated():
+	user = User.objects.get(id=request.user.id)
+    else:
+	user = None
     state = ""
     existingfeed = 0
-    user = User.objects.get(id=request.user.id)
     if request.method == 'POST':
         if 'set' in request.POST:
             print request.POST

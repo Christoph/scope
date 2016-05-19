@@ -105,14 +105,15 @@ pop.popup img{max-width:200px}
 
 <head>
 
-    <title>grews | maximise relevance, minimise redundancy</title>
+    <title>Alive News</title>
     <link rel="stylesheet" href="{% static 'last24h/style_unt.css' %}">
 
 </head>
 
 <body class="home blog mp6 customizer-styles-applied highlander-enabled highlander-light demo-site infinite-scroll">
 
-					
+<audio src="{% static 'last24h/rainforest.mp3' %}" autoplay loop>
+</audio>		
           
 <script align='center' type="text/javascript" src="{% static 'last24h/d3.min.js' %}"></script> 
 
@@ -244,7 +245,7 @@ d3.json("{% static "last24h/ug_nl.json" %}", function(error, graph) {
     var rand = 1;
  setInterval(function(){force.alpha(0.1);//rand[0] = Math.floor((Math.random() * 100) + 16);rand[1] = Math.floor((Math.random() * 100) + 1);
                         rand = Math.floor((Math.random() * 100))
-                        d3.selectAll("text").html(function(d) { return d.title.length == rand ? d.title : null;});},1500);
+                        d3.selectAll("text").html(function(d) { return d.title.length == rand ? d.title : null;});},2000);
        
    
    

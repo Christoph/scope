@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.core.urlresolvers import reverse
 import time
 import urllib
 import threading
@@ -7,7 +8,7 @@ import os
 import datetime
 import sys
 from django.core.mail import send_mail
-from last24h.models import Suggest, Alert, Send,Sources
+from last24h.models import Alert, Send,Sources, Query
 #from django_cron import CronJobBase, Schedule                     
 import networkx as nx
 import gensim
@@ -63,20 +64,17 @@ class Command(BaseCommand):
     def handle(self,*args,**options):
         time_at_beginning = datetime.datetime.now().replace(second = 0, microsecond = 0, minute = 0)
         for job in Send.objects.all():
-            entry = [job.email,job.query,job.user,job.string]
+            entry = [job.user.email,job.query,job.user,job.string]
             if entry[2] != None:
                 address = entry[2].first_name + ' ' + entry[2].last_name
             else:
                 address = 'there'
-            send_mail('Your latest alert for: ' + entry[1], 'Hi' + address + ',here is the link to your latest alert for your query:' + entry[1] +
- settings.CURRENT_DOMAIN + '/last24h/cs=' + entry[3] +
- 'If you have a profile with us, you can edit the alert at any time from your profile. Otherwise click this link to delete the alert:' +
- settings.CURRENT_DOMAIN +'/last24h/d=' + entry[3], 'valentinjohanncaspar@gmail.com', [entry[0]],
+            send_mail('Your latest alert for: ' + entry[1], 'Hi' + address + ', here is the link to your latest alert for your query:' + entry[1] +
+ settings.CURRENT_DOMAIN + '/last24h/cs=' + entry[3] + 'You can manage your alerts in your profile settings. Hope you enjoy the graph!', 'grphtcontact@gmail.com', [entry[0]],
  connection=None, html_message='<head><title>'+ settings.CURRENT_NAME + '| maximise relevance, minimise redundancy</title></head><p>Hi '+
- address + ',</p><p>here is the link to your latest grews alert for your query:</p><p><a href="'
+ address + ',</p><p>here is the link to your latest alert for your query:</p><p><a href="'
  + settings.CURRENT_DOMAIN + '/last24h/cs=' + entry[3] + '" >' + entry[1] +
- '</a></p><p>If you have a profile with us, you can edit the alert at any time from your profile. Otherwise you can delete your alert by clicking <a href="'
- + settings.CURRENT_DOMAIN + '/last24h/d=' + entry[3]+'">here</a>.</p>')
+ '</a></p><p>You can manage your alerts in your profile settings. Hope you enjoy the graph!</p>')
         Send.objects.all().delete()
         delivery_t = datetime.datetime.now().replace(second = 0, microsecond = 0, minute = 0) + datetime.timedelta(hours = 1)
         for alert in Alert.objects.all():
@@ -94,8 +92,10 @@ class Command(BaseCommand):
                         source = Sources.objects.get(url=feed)
                         ids.append(str(source.id))
                     strin = delivery_t.isoformat()[:13] + "&feeds=" + "AND".join(ids) + "&term=none"
-                
+
                 cs_task(feeds,strin,1)
-                q = Send(email = alert.email, query = alert.query, user = alert.user,string = strin)
+                q = Query(user = alert.user, query = alert.query, time = delivery_t, string = strin, url = reverse('csr',args=[strin]))
+                q.save()
+                q = Send(query = alert.query, user = alert.user,string = strin)
                 q.save()
 

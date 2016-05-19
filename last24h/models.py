@@ -51,7 +51,7 @@ class Alert(models.Model):
     feeds = models.CharField(max_length=600,null = True)
     
 class Send(models.Model):
-    email = models.EmailField(max_length = 254)
+   # email = models.EmailField(max_length = 254)
     query = models.CharField(max_length=200)
     user = models.ForeignKey(User, default = None,null = True)
     string = models.CharField(max_length=200)

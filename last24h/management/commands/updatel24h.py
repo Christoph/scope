@@ -28,4 +28,4 @@ class Command(BaseCommand):
         import numpy
         import scipy
         execfile(settings.STATIC_ROOT + 'last24h/create_homegraph.py')
-        send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])
+       # send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])
