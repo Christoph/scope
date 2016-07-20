@@ -6,6 +6,7 @@
 }
 .navbar-brand {
   font-weight: 500;
+  color: #fff;
 
 }
 
@@ -35,8 +36,16 @@ overflow: visible
 .container .text-muted{
 margin: 15px 0;
 }
+}
 
+svg:not(:root) {
+overflow: visible
+}
+.container .text-muted{
+margin: 15px 0;
+}
 
+.svg-mobile {margin-bottom:0px;} 
 .index_form {
   margin:auto;
   text-align: center;                        
@@ -47,13 +56,17 @@ margin: 15px 0;
 
 }
 
-@media screen and (min-width: 768px) { 
-  .modal:before {
-    display: inline-block;
-    vertical-align: middle;
-    content: " ";
-    height: 10%;
-  }
+.path {
+  stroke-width: 1px;
+}
+
+.text_mobile{
+font: 13px "Source Sans Pro", sans-serif;
+font-weight: ;
+pointer-events: none;
+position: relative;
+max-width: none;
+background-color: none;
 }
 
 .colophon2 {
@@ -94,23 +107,16 @@ svg {float: right;
     
 text {
   font: 13px "Source Sans Pro", sans-serif;
-    font-weight: bold;
+    font-weight: 600;
   pointer-events: none;
   position:absolute;
     max-width: 50px;
   background-color:#fff;
-  border-radius:3px;
     opacity: 1;
-    border-style: solid;
-    border: 2px;
 }
     texto a:link,
     texto a:hover, 
     texto a:visited {
-      <!--  position:relative;
-        bottom: 0px;
-    color: #bbb; 
-        vertical-align: bottom; --!>
    }
 
 svg bubble {
@@ -156,7 +162,7 @@ background-size: contain;
 
 titul {
    position: absolute;
- top:50px;
+ top:100px;
   text-align: center;                        
   font: 14px "Source Sans Pro", sans-serif;           
   line-height: 1;
@@ -183,7 +189,7 @@ centtext {
   position: absolute;
     float: left;
   text-align: left;                        
-  font: 14px "Source Sans Pro", sans-serif;           
+  font: 16px "Source Sans Pro", sans-serif;           
 
   width: 250px;
   height:250px;
@@ -204,6 +210,19 @@ centtext {
   
 
 }
+
+
+.voffset2  { margin-top: 2px; }
+.voffset5 { margin-top: 5px; }
+.voffset10 { margin-top: 10px; }
+.voffset15 { margin-top: 15px; }
+.voffset30 { margin-top: 30px; }
+.voffset40 { margin-top: 40px; }
+.voffset60 { margin-top: 60px; }
+.voffset80 { margin-top: 80px; }
+.voffset100 { margin-top: 100px; }
+.voffset150 { margin-top: 150px; }
+
 
 #form_custom_light { background-color: #ffbb78;}
 #form_custom_dark { background-color: #ff7f0e;}
@@ -227,7 +246,29 @@ centtext {
 	border-color: #2b2b2b;
 }
 
+#reading_title {
+  color: rgb(174, 199, 232);
+font-weight: 700;
+font-size: 25px;
+}
 
+#analyse_title {
+  color: #ffbb78;
+font-weight: 700;
+font-size: 25px;
+}
+
+.landing {
+  background-color: #f2f2f2;
+}
+
+#landing {
+  height: 150px;
+}
+
+.landing > container > text-muted > a {
+  color: #2b2b2b;
+}
 .footer {
 
 	background-color: #fff;
@@ -242,12 +283,9 @@ img.captcha {
 	border-radius: 10px;
 	width: 100px;}
 
-div.container{
-	width: 90%;
-}
 
 div.container.main{
-	padding-bottom: 50px;}
+	padding-bottom: 50px;};
 
 div.tab-content {
 	margin-bottom: 50px;
@@ -360,7 +398,7 @@ div.tab-content {
 a {color: #2b2b2b;
 	font-weight: 600;}
 
-.btn-default,.btn-primary,.btn-success,.btn-info,.btn-warning,.btn-danger {
+.btn-default,.btn-primary,.btn-secondary,.btn-success,.btn-info,.btn-warning,.btn-danger {
     -webkit-box-shadow: 2px 3px 0px rgba(4, 4, 4, 0.3);
     -moz-box-shadow:    2px 3px 0px rgba(4, 4, 4, 0.3);
     box-shadow:         0px 0px 0px rgba(4, 4, 4, 0.3);

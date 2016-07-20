@@ -1,7 +1,9 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html>
-
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:og="http://ogp.me/ns#"
+xmlns:fb="http://www.facebook.com/2008/fbml">
 <meta charset="utf-8">
 <!-- div.tooltip img{max-width:200px} -->
 
@@ -10,7 +12,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if name %}{{name}}{% else %}graphite {% endif %} | less noise, more news</title>
+    <link rel="image_src" href="{% static 'last24h/graphite-logo.jpg' %}">
+    <link rel="icon" href="{% static 'last24h/graphite-logo2.jpg' %}">
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<meta property="og:image" content="http://www.grpht.info{% static 'last24h/graphite-logo2.jpg' %}">
 
     <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
@@ -34,7 +39,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'index' %}"><span style ="font-size:20px">{% if name %}{{name}}{% else %}graphite {% endif %}</span><small> - less noise, more news</small></a>
+          <a class="navbar-brand" href="{% url 'home' %}"><span style ="font-size:20px">{% if name %}{{name}}{% else %}graphite {% endif %}</span><small> - less noise, more news</small></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -68,14 +73,17 @@
       </div>
       <div class="modal-body">
       <ul>
-      <li> Every circle corresponds to a news article. Hover over it to see get information about it. Click on it to get to the article directly. The article that is currently shown in the center will be filled black.</li>
-      <li> Two circles share a link when they have strong thematic overlap.</li>
-      <li> The circle in the middle displays gives you the proportions of the sizes between the different topic clusters. The clusters are clock-wise by size. You can get to the detail view of a topic cluster by clicking on the corresponding section of the central circle.</li>
-      <li> The most central articles of each cluster has a black border. To get to the "suggestion view" in which only the most central articles of each cluster are shown, click the "star" button in the top right corner.</li>
-      <li> In the detail view (or the suggestion view), articles will be highlighted or faded out depending on whether they overlap (i.e. if they share a link in the overview).</li>
-      <li> You can reorder the articles by different parameters using the dropdown menu at the top of the big circle section.</li>
-      <li> To zoom out again, click anywhere inside the center of the large circle or, again, on the circle section.<li>
- For more information about how these graphs are constructed, click <a href="{% url 'how_it_works'%}">here</a>
+        <li> Every <strong>circle</strong> corresponds to a news article. Hover over it to a summary about it. Click on it to get to the article directly. The article that is currently shown in the center will be filled black.</li>
+        <li> Two circles share a <strong>link</strong> when they have strong thematic overlap.</li>
+        <li> The arc in the middle displays the proportions of the sizes between the different topic clusters. You can get to the <strong>detail view</strong> of a topic cluster by clicking on the corresponding section of the central circle.</li>
+        <li> The most <strong>central article</strong> of each cluster has a black border. To get to the <strong>"suggestion view"</strong> in which only the most central articles of each cluster are shown, click the  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>-button in the top right corner. <strong>Reading articles from the suggestion view from top to bottom is the best thing you can do to get on top of the news since you only read those articles on a topic that are most representative of the overall reporting on that topic (maximising relevance), while at the same time it minimises redundancy between different articles!</strong></li>
+        <li> In the detail view, articles will be <strong>highlighted</strong> or faded out depending on whether they overlap (i.e. if they share a link in the overview).</li>
+        <li> You can reorder the articles by different parameters using the <strong>dropdown menu</strong> at the top of the big circle section.</li>
+        <li> To <strong>leave the detail view</strong>, click anywhere inside the center of the large circle or, again, on the circle section.</li>
+        <li>Open this view at any time by clicking the <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>-button.</li>
+      </ul>
+        For more information about how these graphs are constructed, click  <a href="{% url 'how_it_works'%}"><span><i class="fa fa-info" aria-hidden="true"></i></span></a>.<br/>
+          
       </div>
     </div>
   </div>

@@ -27,7 +27,7 @@ from last24h.models import Suggest, Query
 from django.conf import settings
 #import logging
 
-global workQueue, exitFlag, queueLock, current_name, articlenumber
+global workQueue, exitFlag, queueLock, current_name, articlenumber, inputt
 
 class myThread (threading.Thread):
 	def __init__(self, threadID, name, q):
@@ -62,6 +62,58 @@ def process_data(threadName, q):
 
 exitFlag = 0
 
+
+@shared_task
+def test_task(email):
+	print email 
+
+@shared_task
+def twitter_job(twitt_input):
+	from celery import shared_task, current_task
+	import json
+	inputdict = {"inputt": twitt_input}
+	print inputdict
+	#sys.argv = [settings.STATIC_BREV + static('last24h/tweet.py'), inputt]
+	execfile(settings.STATIC_ROOT + 'last24h/tweet.py',inputdict)
+
+@shared_task
+def brief_rene(email,strin):
+	import networkx as nx
+	import gensim
+	import nltk
+	import re
+	import string
+	import json
+	import urllib
+	from networkx.readwrite import json_graph
+	from django.core.mail import send_mail
+	from last24h.models import Suggest
+	from django.conf import settings
+#	try:
+	#sys.argv = [email]
+	sys.argv = [settings.STATIC_BREV + static('last24h/create_brief_rene.py'), strin, email]
+	execfile(settings.STATIC_ROOT + 'last24h/create_brief_rene.py')
+
+
+@shared_task
+def sample_brief(email):
+	import networkx as nx
+	import gensim
+	import nltk
+	import re
+	import string
+	import json
+	import urllib
+	from networkx.readwrite import json_graph
+	from django.core.mail import send_mail
+	from last24h.models import Suggest
+	from django.conf import settings
+#	try:
+	#sys.argv = [email]
+	execfile(settings.STATIC_ROOT + 'last24h/create_brief.py')
+	#except:
+	#	raise Exception()
+
 @shared_task
 def cs_task(feeds,strin,alert):
 	from celery import shared_task, current_task
@@ -72,15 +124,15 @@ def cs_task(feeds,strin,alert):
 	import numpy
 	import scipy
 	#logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-	sys.argv = [settings.STATIC_BREV + static('last24h/cs2.py'), feeds, strin, current_task,alert]
+	sys.argv = [settings.STATIC_BREV + static('last24h/customsearch.py'), feeds, strin, current_task,alert]
 				#return returncode
 	if alert == 0:
 		current_task.update_state(state='PREPARE',
 			meta={'current': 10, 'articles':0, 'words':0})
-	try:
-		execfile(settings.STATIC_ROOT + 'last24h/cs2.py')#settings.STATIC_BREV + static('last24h/cs2.py'))
-	except:
-		raise Exception()
+	
+	execfile(settings.STATIC_ROOT + 'last24h/customsearch.py')#settings.STATIC_BREV + static('last24h/cs2.py'))
+	#except:
+	#	raise Exception()
 			
 	def on_failure(self, *args, **kwargs):
 	 	pass

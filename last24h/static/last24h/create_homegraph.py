@@ -23,7 +23,7 @@ def return_articles(feeds,non_keywords):
 			
 #Via Googlefeed
 articles = []
-feeds = ['http://feeds.guardian.co.uk/theguardian/world/rss','http://www.themoscowtimes.com/rss/top/','http://www.spiegel.de/international/index.rss','http://mondediplo.com/backend','http://feeds.bbci.co.uk/news/business/rss.xml','http://www.independent.co.uk/news/world/rss','http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml','http://www.aljazeera.com/xml/rss/all.xml','feed://timesofindia.feedsportal.com/c/33039/f/533916/index.rss','http://www.thenation.com/rss/articles','http://feeds.washingtonpost.com/rss/world/asia-pacific','http://www.telegraph.co.uk/finance/economics/rss','feed://www.thejc.com/feed/news','http://feeds.bbci.co.uk/news/technology/rss.xml','feed://www.buenosairesherald.com/articles/rss.aspx','feed://muslimnews.co.uk/feed/?post_type=news','http://www.latimes.com/world/rss2.0.xml','http://feeds.chicagotribune.com/chicagotribune/news','http://feeds.feedburner.com/TheAustralianTheWorld']
+feeds = ['http://feeds.guardian.co.uk/theguardian/world/rss','http://www.themoscowtimes.com/rss/top/','http://www.spiegel.de/international/index.rss','http://mondediplo.com/backend','http://feeds.bbci.co.uk/news/business/rss.xml','http://www.independent.co.uk/news/world/rss','http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml','http://www.aljazeera.com/xml/rss/all.xml','feed://timesofindia.feedsportal.com/c/33039/f/533916/index.rss','http://feeds.washingtonpost.com/rss/world/asia-pacific','http://www.telegraph.co.uk/finance/economics/rss','feed://www.thejc.com/feed/news','http://feeds.bbci.co.uk/news/technology/rss.xml','feed://www.buenosairesherald.com/articles/rss.aspx','feed://muslimnews.co.uk/feed/?post_type=news','http://www.latimes.com/world/rss2.0.xml','http://feeds.chicagotribune.com/chicagotribune/news','http://feeds.feedburner.com/TheAustralianTheWorld']
  
 non_keywords = set(('World news','Europe','Africa','USA','Technology','Approved','Password','Biography'))
 articles_info = return_articles(feeds,non_keywords)
@@ -256,7 +256,6 @@ graphx = sorted([[len(i), nx.average_clustering(i),i] for i in graphs],reverse=T
 for a in graphx:
 	comp = a[2]
 	if len(comp) >= 4:
-
 		# first take care of the time signatures of the articles for the detail view
 		timespartition = sorted(list(set([ug.node[i]['time'] for i in comp.nodes() if ug.node[i]['time'] != None]))) #collect the different times occuring 
 		if len(timespartition) != 0:
@@ -328,41 +327,41 @@ for a in graphx:
 			time_disclaim = "no time information"
 
 		#now for comp level keyword extraction
-		if len(comp) >= 7:
-			all_words = []
-			for i in comp:
-				ug.node[i]['comp'] = count_comp
-				ug.node[i]['single'] = 0
-				for word in punc.sub('',ug.node[i]['title']).split(" "):
-					if word not in stop_words:
-						all_words.append(word)
-			a = sorted([[len([b for b in all_words if b == word]),word] for word in list(set(all_words))],reverse=True)
-			keywords = [a[0][1], a[1][1]]
-		else:
-			for i in comp:
-				ug.node[i]['comp'] = count_comp
-				ug.node[i]['single'] = 0
-			all_words = []
-			# compile a list of all words, directly with the weightings. Then merge this big list.
-			for j in range(0,2):
-				x = sorted(list_corpus[i],key= lambda close:close[1],reverse=True)[j]
-				t = sorted([[float(z.split('*"')[0]),z.split('*"')[1].strip('" ')] for z in lsi_model.print_topics(n)[x[0]][1].split('+') if z.split('*"')[1].strip('" ') not in keywords_in],reverse=True)
-				s = [[a*x[1],b] for a,b in t] #weigh every word weight by topic weight
-				for item in s:
-					all_words.append(item)  
+		#if len(comp) >= 7:
+		all_words = []
+		for i in comp:
+			ug.node[i]['comp'] = count_comp
+			ug.node[i]['single'] = 0
+			for word in punc.sub('',ug.node[i]['title']).split(" "):
+				if word not in stop_words:
+					all_words.append(word)
+		a = sorted([[len([b for b in all_words if b == word]),word] for word in list(set(all_words))],reverse=True)
+		keywords = [a[0][1], a[1][1]]
+		# else:
+		# 	for i in comp:
+		# 		ug.node[i]['comp'] = count_comp
+		# 		ug.node[i]['single'] = 0
+		# 	all_words = []
+		# 	# compile a list of all words, directly with the weightings. Then merge this big list.
+		# 	for j in range(0,2):
+		# 		x = sorted(list_corpus[i],key= lambda close:close[1],reverse=True)[j]
+		# 		t = sorted([[float(z.split('*"')[0]),z.split('*"')[1].strip('" ')] for z in lsi_model.print_topics(n)[x[0]][1].split('+') if z.split('*"')[1].strip('" ') not in keywords_in],reverse=True)
+		# 		s = [[a*x[1],b] for a,b in t] #weigh every word weight by topic weight
+		# 		for item in s:
+		# 			all_words.append(item)  
 
 		
-			one_word = []
-			for a in list(set([b for c,b in all_words if b not in keywords_in])):
-				f = [[x,y] for x,y in all_words if y==a]
-				one_word.append([sum([x for x,y in f]),a])
-			a = sorted(one_word,reverse=True)
+		# 	one_word = []
+		# 	for a in list(set([b for c,b in all_words if b not in keywords_in])):
+		# 		f = [[x,y] for x,y in all_words if y==a]
+		# 		one_word.append([sum([x for x,y in f]),a])
+		# 	a = sorted(one_word,reverse=True)
 
-			if len(a) != 0:
-				keywords = a[0][1] + ", " + a[1][1]
-				#keywords_in.append(keywords[0])
-				#keywords_in.append(keywords[1])
-			else: keywords = ''
+		# 	if len(a) != 0:
+		# 		keywords = a[0][1] + ", " + a[1][1]
+		# 		#keywords_in.append(keywords[0])
+		# 		#keywords_in.append(keywords[1])
+		# 	else: keywords = ''
 
 		#clustering for detail view
 		if nx.average_clustering(comp) == 1:
@@ -380,12 +379,12 @@ for a in graphx:
 			count_degree += 1
 		susvec = sorted(closeness.items(), key = lambda close:close[1],reverse=True)[0][0]   
 		ug.node[susvec]['suggest'] = count_comp
-		#q = Suggest(custom= 'last24h', title = ug.node[susvec]['title'], url = ug.node[susvec]['url'], distance = count_comp, images = ug.node[susvec]['images'])
-		#q.save()
+		q = Suggest(custom= 'last24h', title = ug.node[susvec]['title'], url = ug.node[susvec]['url'], distance = count_comp, images = ug.node[susvec]['images'], keywords = keywords)
+		q.save()
 
 
 				#add the nodes for the arc
-		tg.add_node(count_comp, clustering=clustering,name=keywords)  
+		tg.add_node(count_comp, clustering=clustering,name=keywords, timeinf=timeinf,time_disclaim=time_disclaim)  
 		tg.add_edge(0,count_comp)
 		tg.add_node(count_comp*100, size=len(comp))
 		tg.add_edge(count_comp,count_comp*100)
