@@ -28,7 +28,7 @@ resp, items = m.search(None, '(SINCE "'+ yesterday.strftime("%d-%b-%Y")+'")') # 
 items = items[0].split() # getting the mails id
 print items
 
-subscribed_urls = ["launch.us","launch.co","index.co","azhar","getrevue.co","morningreader.com","producthunt.com","betalist","crunchable","mailchimp.com","facebook.com","twitter.com","launchticker","play.google.com","www.technologyreview.com/newsletters","launchevents.typeform.com","ev.inside.com","itunes.apple.com","https://www.technologyreview.com/?utm_source","typeform","producthunt.us3.list-manage.com","getfeedback"]
+subscribed_urls = ["launch.us","launch.co","index.co","azhar","getrevue.co","morningreader.com","producthunt.com","betalist","crunchable","mailchimp.com","facebook.com","twitter.com","launchticker","play.google.com","www.technologyreview.com/newsletters","launchevents.typeform.com","ev.inside.com","itunes.apple.com","https://www.technologyreview.com/?utm_source","typeform","producthunt.us3.list-manage.com","getfeedback","youtube.com","forms/"]
 all_urls = [] 
 #senders = ''
 senders_list = []
@@ -59,9 +59,9 @@ for emailid in items:
             all_urls.append(finalurl)
 
 
-urlss = open('urls.txt','w+')
-urlss.write("AND".join(all_urls))
-urlss.close()
+#urlss = open('urls.txt','w+')
+#urlss.write("AND".join(all_urls))
+#urlss.close()
 
 
 
@@ -297,7 +297,7 @@ tfidf_model = gensim.models.TfidfModel( corp )
 
 #  Create pairwise document similarity index
 
-n = 10
+n = 20
 
 corpus_tfidf= tfidf_model[corp]
 
@@ -356,8 +356,8 @@ for s in [x/1000. for x in xrange(0,500)]:
                 ug.add_edge(i,j,{'weight':dist})
     graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
 
-    test = [x for x in graphs if len(x) >= 4]
-    test2 = [len(x) for x in test]
+    test = [x for x in graphs if 20>= len(x) >= 5]
+    test2 = [len(x)/2. for x in test]
     score_new = [len(test),sum(test2)]
     
     if score_new > best_score and len(test) >= 4:
@@ -401,7 +401,7 @@ tg.add_node(0,overall_size=size)
 # tg2.add_node(0,overall_size=size)
 
 
-n = 100
+#n = 100
 count_suggest = 1
 count_comp = 1
 big_list = []
