@@ -1,6 +1,6 @@
 global exitFlag, workQueue, queueLock, articlenumber
 
-
+print strin
 import email, imaplib, os,sys
 import urllib2
 from datetime import date, timedelta
@@ -30,6 +30,7 @@ print items
 
 subscribed_urls = ["launch.us","launch.co","index.co","azhar","getrevue.co","morningreader.com","producthunt.com","betalist","crunchable","mailchimp.com","facebook.com","twitter.com","launchticker","play.google.com","www.technologyreview.com/newsletters","launchevents.typeform.com","ev.inside.com","itunes.apple.com","https://www.technologyreview.com/?utm_source","typeform","producthunt.us3.list-manage.com","getfeedback","youtube.com","forms/"]
 all_urls = [] 
+no_urls = 0
 #senders = ''
 senders_list = []
 #for emailid in range(int(items[2]),int(items[2])+2):
@@ -37,6 +38,7 @@ for emailid in items:
     resp, data = m.fetch(emailid, "(RFC822)") # fetching the mail, "`(RFC822)`" means "get the whole stuff", but you can ask for headers only, etc
     email_body = data[0][1] # getting the mail content
     urls = list(set([i.split('"')[0].replace("=","").replace("3D","=") for i in email_body.replace("\r\n","").split('href=3D"') if i[0:4] == 'http']))#[i.split('"')[0].replace("=","").replace("click?upn3D","click?upn=") for i in email_body.replace("\r\n","").split('href=3D"') if i[0:4] == 'http']
+    no_urls = no_urls + len(urls)
     mail = email.message_from_string(email_body) # parsing the mail content to get a mail object
     sender, encoding = email.Header.decode_header(email.utils.parseaddr(mail.get('from'))[0])[0]
     senders_list.append(sender)
@@ -135,7 +137,10 @@ for emailid in items:
 #articles_info = return_articles(all_urls)
 
 articles = [Article(x) for x in list(set(all_urls))]
-articlenumber = len(articles)
+if len(articles) != 0:
+    articlenumber = len(articles)
+else:
+    articlenumber = 1
 upper = min(600, len(articles))
 
 # for a in articles:
@@ -228,10 +233,11 @@ exclude = set(('', 'FT.com / Registration / Sign-up','Error','404 Page not found
 unsubscribe_exclude = "If you are not redirected automatically, please click the Unsubscribe button below"
 
 counter = 0
-
+words = 0
 for i in range(0,upper-1):
     article = articles[i]
-    if article.title not in exclude and unsubscribe_exclude not in article.text:
+    words += len(" ".join(article.text))
+    if article.title not in exclude and unsubscribe_exclude not in article.text and "tech" in article.text:
         doc.append(article.text)
         titles.append(article.title)
         urls.append(article.url)
@@ -258,6 +264,8 @@ for a in doc:
         a = a.lower()  #these aren't necessary if you're dealing with keywords
         a = punc.sub( '', a )
         term_vec.append( nltk.word_tokenize( a ) )
+
+
 
 # Print resulting term vectors
 
@@ -297,7 +305,7 @@ tfidf_model = gensim.models.TfidfModel( corp )
 
 #  Create pairwise document similarity index
 
-n = 20
+n = 40
 
 corpus_tfidf= tfidf_model[corp]
 
@@ -340,8 +348,14 @@ graphs = []
 score_new = 0
 score_old = -1
 best_thresh = 0.
-best_score = [0,0]
+best_score = 0
 #thresh = 0.02
+
+#Now trying two steps: In the first, get the bigguest cluster (which should correspond to tech topics) and then in a second step maximise the number of clusters in it
+
+orignumber = len(ug)
+print str(len(ug)) + " old graph"
+
 for s in [x/1000. for x in xrange(0,500)]:
 
 
@@ -356,11 +370,13 @@ for s in [x/1000. for x in xrange(0,500)]:
                 ug.add_edge(i,j,{'weight':dist})
     graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
 
-    test = [x for x in graphs if 20>= len(x) >= 5]
-    test2 = [len(x)/2. for x in test]
-    score_new = [len(test),sum(test2)]
+    test = [x for x in graphs if len(x) >= 4]#20>= 
+    test2 = [len(x) for x in test]
+    if len(test2) != 0:
+        score_new = sum(test2) #test2[0]
+    #score_new = [len(test),sum(test2)]
     
-    if score_new > best_score and len(test) >= 4:
+    if score_new > best_score and len(test) == 5:
         best_score = score_new
         best_thresh = s
 
@@ -379,6 +395,7 @@ for s in [x/1000. for x in xrange(0,500)]:
     #     break
 
 
+
 #thresh -= 0.002
 print best_thresh
 ug.remove_edges_from(ug.edges())
@@ -389,7 +406,72 @@ for i in range( 0, len( corpus_tfidf ) ):
         if dist < best_thresh:
             ug.add_edge(i,j,{'weight':dist})
 graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
-            
+
+
+
+# for i in range(2,len(graphs)):
+#     ug.remove_nodes_from(graphs[i])
+
+#tech_ratio = orignumber/float(len(ug))
+
+# print str(len(ug)) + " new graph"
+# print "Second Round"
+
+# best_thresh = 0.
+# best_score = 0#[0,0]
+
+# for s in [x/1000. for x in xrange(0,500)]:
+
+
+# #while score_new >= score_old:#len(graphs) not in [5,6] and any(len(x) <4 for x in graphs):
+#     ug.remove_edges_from(ug.edges())
+
+#     for i in range(0,len( corpus_tfidf )): 
+#         sim = index[ lsi_model[ corp [ i ] ] ]
+#         for j in range( i+1, len( sim ) ):
+#             dist = (1. - sim[j])/2.
+#             if dist < s and j in ug and i in ug:
+#                 ug.add_edge(i,j,{'weight':dist})
+#     graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
+
+#     test = [x for x in graphs if 20>= len(x) >= 3]
+#     test2 = [len(x) for x in test]
+#     #score_new = test2[0]
+#     score_new = sum(test2) #[len(test),sum(test2)]
+    
+#     if score_new > best_score and 15>= len(test) >= 3:
+#         best_score = score_new
+#         best_thresh = s
+
+#     #print thresh
+#     #thresh += 0.001
+#     print s
+#     print len(graphs)
+#     # for i in graphs:
+#     #     for ii in i:
+#     #         print ug.node[ii]['title']
+#     #     print "and"
+#     #print test2
+#     print score_new
+#     print best_thresh
+#     # if thresh >= 0.5:
+#     #     break
+
+ 
+dispersion = str(int(float(1-2*best_thresh)*100)) + '%'
+# print best_thresh
+# ug.remove_edges_from(ug.edges())
+# for i in range( 0, len( corpus_tfidf ) ): 
+#     sim = index[ lsi_model[ corp [ i ] ] ]
+#     for j in range( i+1, len( sim ) ):
+#         dist = (1. - sim[j])/2.
+#         if dist < best_thresh and j in ug and i in ug:
+#             ug.add_edge(i,j,{'weight':dist})
+# graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
+
+# print graphs
+
+
 # suggestions = Suggest.objects.filter(custom = 'last24h') 
 # suggestions.delete()
             
@@ -415,7 +497,7 @@ graphx = sorted([[len(i), nx.average_clustering(i),i] for i in graphs],reverse=T
 
 for a in graphx:
     comp = a[2]
-    if len(comp) >= 4:
+    if len(comp) >= 3:
         # first take care of the time signatures of the articles for the detail view
         # timespartition = sorted(list(set([ug.node[i]['time'] for i in comp.nodes() if ug.node[i]['time'] != None]))) #collect the different times occuring 
         # if len(timespartition) != 0:
@@ -603,6 +685,11 @@ ug.graph['size']=len(ug.nodes())
 ug.graph['comps'] = count_comp-1
 ug.graph['senders'] = senders
 ug.graph['thresh'] = best_thresh
+ug.graph['dispersion'] = dispersion
+ug.graph['tech-nontech-ratio'] = str(len(doc)/float(articlenumber))#str(tech_ratio)
+ug.graph['wordcount'] = str(words)
+ug.graph['links'] = str(no_urls)
+ug.graph['articlenumber'] = str(articlenumber)
 
 #export
 from networkx.readwrite import json_graph

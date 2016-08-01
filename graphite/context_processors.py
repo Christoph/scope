@@ -13,3 +13,6 @@ def google_analytics(request):
             'GOOGLE_ANALYTICS_DOMAIN': ga_domain,
         }
     return {}
+
+def site(request):
+    return {'domain': settings.CURRENT_DOMAIN,'name':settings.CURRENT_NAME}
