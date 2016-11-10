@@ -8,7 +8,10 @@ def return_articles(feeds,non_keywords):
 			if hasattr(d.entries[i],'summary'):
 				aa = d.entries[i].summary
 				if "<div>" in aa:
-					aa = aa.split("<div>")[0] + " " + aa.split("<div>")[2]
+					try:
+						aa = aa.split("<div>")[0] + " " + aa.split("<div>")[2]
+					except:
+						aa = aa.split("<div>")[0]
 
 			else:
 				aa = ''

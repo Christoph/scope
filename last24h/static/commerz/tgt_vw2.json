@@ -1,0 +1,182 @@
+{
+        "comps": 15,
+        "children": [
+                {
+                        "clustering": "67",
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 17
+                                }
+                        ],
+                        "name": "Bruyne, Wolfsburg",
+                        "id": 1
+                },
+                {
+                        "clustering": 100,
+                        "children": [
+                                {
+                                        "id": 200,
+                                        "size": 9
+                                }
+                        ],
+                        "name": "Aktien, Trend",
+                        "id": 2
+                },
+                {
+                        "clustering": "35",
+                        "children": [
+                                {
+                                        "id": 300,
+                                        "size": 9
+                                }
+                        ],
+                        "name": "Bulli, Brasilien",
+                        "id": 3
+                },
+                {
+                        "clustering": 100,
+                        "children": [
+                                {
+                                        "id": 400,
+                                        "size": 8
+                                }
+                        ],
+                        "name": "steigender Kurs",
+                        "id": 4
+                },
+                {
+                        "clustering": 100,
+                        "children": [
+                                {
+                                        "id": 500,
+                                        "size": 7
+                                }
+                        ],
+                        "name": "Schaden, Unfall",
+                        "id": 5
+                },
+                {
+                        "clustering": 100,
+                        "children": [
+                                {
+                                        "id": 600,
+                                        "size": 7
+                                }
+                        ],
+                        "name": "AKTIEN, Hexensabbat",
+                        "id": 6
+                },
+                {
+                        "clustering": "74",
+                        "children": [
+                                {
+                                        "id": 700,
+                                        "size": 7
+                                }
+                        ],
+                        "name": "Milliarden, Investition",
+                        "id": 7
+                },
+                {
+                        "clustering": "57",
+                        "children": [
+                                {
+                                        "id": 800,
+                                        "size": 7
+                                }
+                        ],
+                        "name": "China, Absatzrekord",
+                        "id": 8
+                },
+                {
+                        "clustering": 100,
+                        "children": [
+                                {
+                                        "id": 900,
+                                        "size": 6
+                                }
+                        ],
+                        "name": "T2, Ringen",
+                        "id": 9
+                },
+                {
+                        "clustering": "82",
+                        "children": [
+                                {
+                                        "id": 1000,
+                                        "size": 6
+                                }
+                        ],
+                        "name": "XETRAHandel, Uhr",
+                        "id": 10
+                },
+                {
+                        "clustering": 100,
+                        "children": [
+                                {
+                                        "id": 1100,
+                                        "size": 5
+                                }
+                        ],
+                        "name": "Orkan, Lamborghini",
+                        "id": 11
+                },
+                {
+                        "clustering": 100,
+                        "children": [
+                                {
+                                        "id": 1200,
+                                        "size": 5
+                                }
+                        ],
+                        "name": "Millionen, verkauft",
+                        "id": 12
+                },
+                {
+                        "clustering": "86",
+                        "children": [
+                                {
+                                        "id": 1300,
+                                        "size": 5
+                                }
+                        ],
+                        "name": "verletzten, pausenlos",
+                        "id": 13
+                },
+                {
+                        "clustering": "46",
+                        "children": [
+                                {
+                                        "id": 1400,
+                                        "size": 5
+                                }
+                        ],
+                        "name": "zwei, reitet",
+                        "id": 14
+                },
+                {
+                        "clustering": "46",
+                        "children": [
+                                {
+                                        "id": 1500,
+                                        "size": 5
+                                }
+                        ],
+                        "name": "Dax, DJ",
+                        "id": 15
+                },
+                {
+                        "id": 50,
+                        "children": [
+                                {
+                                        "id": 5000,
+                                        "size": 0.1
+                                }
+                        ]
+                }
+        ],
+        "overall_size": 304,
+        "final_size": 108,
+        "id": 0
+}

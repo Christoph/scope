@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from celery import shared_task, current_task
 from celery.exceptions import Reject
-from time import sleep
+from time import sleep, mktime
 
 import sys
 from django.templatetags.static import static
@@ -18,14 +18,19 @@ import untangle
 import sys
 import json
 import urllib
+import re
 import math
-from time import mktime
+import gensim
+import nltk
+import string
 from datetime import timedelta
 from datetime import datetime
 import copy
 from last24h.models import Suggest, Query
 from django.conf import settings
 #import logging
+from networkx.readwrite import json_graph
+from django.core.mail import send_mail
 
 global workQueue, exitFlag, queueLock, current_name, articlenumber, inputt
 
@@ -69,46 +74,46 @@ def test_task(email):
 
 @shared_task
 def twitter_job(twitt_input):
-	from celery import shared_task, current_task
-	import json
+	#from celery import shared_task, current_task
+	#import json
 	inputdict = {"inputt": twitt_input}
 	print inputdict
 	#sys.argv = [settings.STATIC_BREV + static('last24h/tweet.py'), inputt]
 	execfile(settings.STATIC_ROOT + 'last24h/tweet.py',inputdict)
 
 @shared_task
-def brief_rene(email,strin):
-	import networkx as nx
-	import gensim
-	import nltk
-	import re
-	import string
-	import json
-	import urllib
-	from networkx.readwrite import json_graph
-	from django.core.mail import send_mail
-	from last24h.models import Suggest
-	from django.conf import settings
+def brief_rene(email,strin,select):
+	#import networkx as nx
+	#import gensim
+	#import nltk
+	#import re
+	#import string
+	#import json
+	#import urllib
+	#from networkx.readwrite import json_graph
+	#from django.core.mail import send_mail
+	#from last24h.models import Suggest
+	#from django.conf import settings
 #	try:
 	#sys.argv = [email]
-	sys.argv = [settings.STATIC_BREV + static('last24h/create_brief_rene.py'), strin, email]
+	sys.argv = [settings.STATIC_BREV + static('last24h/create_brief_rene.py'), strin, email,select]
 	execfile(settings.STATIC_ROOT + 'last24h/create_brief_rene.py')
 
 
 @shared_task
 def sample_brief(email):
-	import networkx as nx
-	import gensim
-	import nltk
-	import re
-	import string
-	import json
-	import urllib
-	from networkx.readwrite import json_graph
-	from django.core.mail import send_mail
-	from last24h.models import Suggest
-	from django.conf import settings
-#	try:
+	#import networkx as nx
+	#import gensim
+	#import nltk
+	#import re
+	#import string
+	#import json
+	#import urllib
+	#from networkx.readwrite import json_graph
+	#from django.core.mail import send_mail
+	#from last24h.models import Suggest
+	#from django.conf import settings
+	#try:
 	#sys.argv = [email]
 	execfile(settings.STATIC_ROOT + 'last24h/create_brief.py')
 	#except:
@@ -116,11 +121,11 @@ def sample_brief(email):
 
 @shared_task
 def cs_task(feeds,strin,alert):
-	from celery import shared_task, current_task
-	import gensim
-	import nltk
-	import re
-	import string
+	#from celery import shared_task, current_task
+	#import gensim
+	#import nltk
+	#import re
+	#import string
 	import numpy
 	import scipy
 	#logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)

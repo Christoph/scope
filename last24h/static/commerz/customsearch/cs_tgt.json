@@ -1,0 +1,150 @@
+{
+        "comps": 7,
+        "children": [
+                {
+                        "clustering": "19",
+                        "time_disclaim": "no timestamp",
+                        "name": "Scandal",
+                        "id": 1,
+                        "timeinf": [
+                                "10/16 19h",
+                                "58d 21h",
+                                "117d 18h",
+                                "176d 16h",
+                                "235d 13h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 100,
+                                        "size": 14
+                                }
+                        ]
+                },
+                {
+                        "clustering": "45",
+                        "time_disclaim": "no timestamp",
+                        "name": "sales, Volkswagen",
+                        "id": 2,
+                        "timeinf": [
+                                "10/16 19h",
+                                "6d 13h",
+                                "13d 3h",
+                                "19d 17h",
+                                "26d 7h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 200,
+                                        "size": 8
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": "uk, eu",
+                        "id": 3,
+                        "timeinf": [
+                                "10/16 19h",
+                                "26d 12h",
+                                "53d 1h",
+                                "79d 14h",
+                                "106d 3h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 300,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": 100,
+                        "time_disclaim": "no timestamp",
+                        "name": "VW Passat",
+                        "id": 4,
+                        "timeinf": [
+                                "10/16 19h",
+                                "23h",
+                                "1d 22h",
+                                "2d 21h",
+                                "3d 21h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 400,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "0",
+                        "time_disclaim": "no timestamp",
+                        "name": "BMW M3",
+                        "id": 5,
+                        "timeinf": [
+                                "10/16 19h",
+                                "5d 3h",
+                                "10d 6h",
+                                "15d 9h",
+                                "20d 13h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 500,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "0",
+                        "time_disclaim": "no timestamp",
+                        "name": "Stock",
+                        "id": 6,
+                        "timeinf": [
+                                "10/16 19h",
+                                "29d 4h",
+                                "58d 8h",
+                                "87d 12h",
+                                "116d 16h"
+                        ],
+                        "children": [
+                                {
+                                        "id": 600,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "clustering": "0",
+                        "time_disclaim": "no timestamp",
+                        "name": "Recalls",
+                        "id": 7,
+                        "timeinf": [
+                                "10/16 19h",
+                                "4d ",
+                                "8d ",
+                                "12d ",
+                                "4d "
+                        ],
+                        "children": [
+                                {
+                                        "id": 700,
+                                        "size": 4
+                                }
+                        ]
+                },
+                {
+                        "id": 50,
+                        "children": [
+                                {
+                                        "id": 5000,
+                                        "size": 0.01
+                                }
+                        ]
+                }
+        ],
+        "overall_size": 155,
+        "final_size": 42,
+        "id": 0
+}

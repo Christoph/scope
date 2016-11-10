@@ -517,3 +517,40 @@ tbody >tr:nth-child(odd) {
 .twitter-col {
   padding-left: 15px;
 }
+
+
+
+/*Slider CSS*/
+
+#ex1Slider {
+  height: 200px;
+  left: 1150px;
+  bottom: 850px;
+  opacity:0;
+  pointer-events: none;
+  /*background: rgb(128, 128, 128);*/
+}
+#ex1Slider .slider-handle {
+  border-bottom-color: blue;
+}
+
+#ex1 {
+  width: 300px;
+
+}
+
+#ex1Slider .slider-track-high, {
+  background: white;
+}
+
+#ex1Slider .slider-track-low, {
+  background: white;
+}
+
+#ex1Slider .slider-selection {
+  background-image: -moz-linear-gradient(top, #ff9896, #98df8a);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff9896), to(#98df8a));
+  background-image: -webkit-linear-gradient(top, #ff9896, #98df8a);
+  background-image: -o-linear-gradient(top, #ff9896, #98df8a);
+  background-image: linear-gradient(to bottom, #ff9896, #98df8a);
+}

@@ -659,7 +659,7 @@ d3.json(tgt, function(error, root) {
 						.transition().duration(1000)
 						.style("opacity",0);
 				topichead
-						.html('<br/><h1>Graphite \n Reading List</h1><br/> These articles are the most central of each cluster, ordered by cluster size. The central article of each cluster is that one which is most likely to cover the others as well. This means that by reading this list from top to bottom you maximise you coverage over the news per time spent reading. Enjoy')
+						.html('<br/><h1>Graphite \n Reading List</h1><br/> The most central article from each cluster, ordered by cluster size. Going down this list maximises your overview!')
 						.transition().duration(1500)
 						.transition().duration(500)
 						.style("opacity",1);

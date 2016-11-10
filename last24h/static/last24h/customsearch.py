@@ -278,7 +278,7 @@ if alert == 0:
    
 #lda_model = gensim.models.LdaModel(corpus_tfidf, id2word=dict, num_topics=20) #initialize an LSI transformation
 #index2 = gensim.similarities.SparseMatrixSimilarity(lda_model[corpus_tfidf], num_features = 50 )
-
+from random import randint
 
 #Begin Graph visualisation
 thresh = 0.13-articlenumber*0.03/500#+float(pow(articlenumber-500,6))/(float(pow(500,6))*10)#0.15#0.1/pow(upper/210,2)  #the higher the thresh, the less critical  
@@ -290,7 +290,7 @@ for i in range(0, len(corp)):
 		source = urls[i].split("rss.")[1].split("/")[0]
 	else: 
 		source = urls[i].split("http://")[1].split("/")[0]
-	ug.add_node(i,title=titles[i],url=urls[i],suggest=0, summary = summary[i],images = images[i], comp = 0,source= source,keywords='', time = times[i])#,keywords=keywords[i])
+	ug.add_node(i,title=titles[i],url=urls[i],suggest=0, summary = summary[i],images = images[i], comp = 0,source= source,keywords='', time = times[i],sent = randint(0,100)/100.)#,keywords=keywords[i])
 
 for i in range( 0, len( corpus_tfidf ) ):
   

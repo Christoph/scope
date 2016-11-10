@@ -48,12 +48,16 @@ urlpatterns = [
     url(r'^alert_edit$', views.alert_edit, name = 'alert_edit'),
     url(r'^contact$', views.contact, name = 'contact'), 
     url(r'mobile$',views.mobile,name='mobile'),   
-   url(r'alive$',views.artsy,name='artsy'),   
+   url(r'alive$',views.artsy,name='artsy'),
+      url(r'vw$',views.vw,name='vw'),
+   url(r'vw2$',views.vw2,name='vw2'),   
+   url(r'pd$',views.pd,name='pd'),
    url(r'happybday$',views.martin,name='martin'),
    #url(r'^search_state$', views.search_state, name="search_state"),
    url(r'^update_state$', views.update_state, name="update_state"),
    url(r'^search_task_term$', views.search_task_term, name="search_task_term"),
    url(r'^search_task_feeds$', views.search_task_feeds, name="search_task_feeds"),
    url(r'^send_sample$', views.send_sample, name="send_sample"),
+    url(r'^lichtenfels$', views.lichtenfels, name="lichtenfels"),
 ]
 

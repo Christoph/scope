@@ -836,4 +836,26 @@ def home(request):
 	context = {'log_inf':log_inf, 'log_link':log_link}
 	return render(request, 'graphite/home.html', context)
 
+def lichtenfels(request):
+	log_inf, log_link = check_login(request)
+	context = {'log_inf':log_inf, 'log_link':log_link}
+	#return render(request, 'graphite/home.html', context)
+	return render(request, 'presi/presi_first.html',context)
 
+
+def vw(request):
+	log_inf, log_link = check_login(request)
+	context = {'log_inf':log_inf, 'log_link':log_link}
+	return render(request, 'graphite/vw.html', context)
+
+def vw2(request):
+	log_inf, log_link = check_login(request)
+	context = {'log_inf':log_inf, 'log_link':log_link}
+	return render(request, 'graphite/vw2.html', context)
+
+def pd(request):
+    with open('/home/django/graphite/last24h/static/last24h/pd.pdf', 'r') as pdf:
+        response = HttpResponse(pdf.read(), content_type='application/pdf')
+        response['Content-Disposition'] = 'inline;filename=some_file.pdf'
+        return response
+    pdf.closed
