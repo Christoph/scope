@@ -11,4 +11,10 @@ l24h_data/
 
 graphite/settings.py
 
+ENV/
+.env
+.DS_STORE
+modernizr.js
 
+bower_components/
+node_modules/
