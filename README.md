@@ -17,6 +17,10 @@
     * npm install
     * bower install
 
+    * CAUTION: Following commands download around 1.4 GB
+    * python -m spacy.en.download all
+    * python -m spacy.de.download all
+
 ### 2. After install you need to configure the settings file
     * DB (create db with separate user. host and port are empty if lokal)
     * private key

@@ -32,7 +32,7 @@ items = items[0].split() # getting the mails id
 print items
 
 subscribed_urls = ["launch.us","launch.co","index.co","azhar","getrevue.co","morningreader.com","producthunt.com","betalist","crunchable","mailchimp.com","facebook.com","twitter.com","launchticker","play.google.com","www.technologyreview.com/newsletters","launchevents.typeform.com","ev.inside.com","itunes.apple.com","https://www.technologyreview.com/?utm_source","typeform","producthunt.us3.list-manage.com","getfeedback","youtube.com","forms/","smashingmagazine","wikipedia.org"]
-all_urls = [] 
+all_urls = []
 no_urls = 0
 #senders = ''
 senders_list = []
@@ -75,7 +75,7 @@ upper = min(600, len(articles))
 # for a in articles:
 #     a.download()
 #     a.parse()
-    
+
 # print "Start threading"
 
 # #Threading stuff
@@ -87,7 +87,7 @@ if upper < maxthread:
    threadlimit = upper
 else:
    threadlimit = maxthread
-        
+
 threadList = []
 for i in range(1,threadlimit):
    threadList.append(str(i))
@@ -153,10 +153,10 @@ for i in range(0,upper-1):
         #     print article.text
         # except:
         #     pass
-        #keywords.append(articles_info[i][2]) 
-                            
+        #keywords.append(articles_info[i][2])
+
 #        keywords.append(article.keywords)
-                          
+
 #Begin Semantic Analysis
 
 # Remove punctuation, then tokenize documents
@@ -222,18 +222,18 @@ corpus_tfidf= tfidf_model[corp]
 #lda_model = gensim.models.LdaModel(corpus_tfidf, id2word=dict, num_topics=20) #initialize an LSI transformation
 #index2 = gensim.similarities.SparseMatrixSimilarity(lda_model[corpus_tfidf], num_features = 50 )
 
-gensim.corpora.MmCorpus.serialize(settings.STATIC_ROOT + 'last24h/rene_data/rene.mm',corp)#/home/django/graphite/static/last24h/l24h.mm', corp)
-dict.save(settings.STATIC_ROOT + 'last24h/rene_data/rene.dict')
-# lsi_model.save(settings.STATIC_ROOT + 'last24h/rene_data/rene.lsi')
-# index.save(settings.STATIC_ROOT + 'last24h/rene_data/rene.index')
-#lda_model.save('/tmp/model.lda') 
+gensim.corpora.MmCorpus.serialize(settings.STATIC_ROOT + 'rene/rene_data/rene.mm',corp)#/home/django/graphite/static/last24h/l24h.mm', corp)
+dict.save(settings.STATIC_ROOT + 'rene/rene_data/rene.dict')
+# lsi_model.save(settings.STATIC_ROOT + 'rene/rene_data/rene.lsi')
+# index.save(settings.STATIC_ROOT + 'rene/rene_data/rene.index')
+#lda_model.save('/tmp/model.lda')
 
 
 
 
 #Begin Graph visualisation
 
-#3-articlenumber*0.03/500#0.1/pow(upper/210,2)  #the higher the thresh, the more critical  
+#3-articlenumber*0.03/500#0.1/pow(upper/210,2)  #the higher the thresh, the more critical
 ug = nx.Graph()
 for i in range(0, len(corp)):
     try:
@@ -243,9 +243,9 @@ for i in range(0, len(corp)):
 
     # if len(urls[i].split("www.")) != 1:
     #     source = urls[i].split("www.")[1].split("/")[0]
-    # elif len(urls[i].split("rss.")) != 1:  
+    # elif len(urls[i].split("rss.")) != 1:
     #     source = urls[i].split("rss.")[1].split("/")[0]
-    # else: 
+    # else:
     #     source = urls[i].split("http://")[1].split("/")[0]
     ug.add_node(i,title=titles[i],url=urls[i],suggest=0, summary = summary[i],images = images[i], comp = 0,source= source,keywords='',time=None)#, time = times[i])#,keywords=keywords[i])
 
@@ -273,7 +273,7 @@ print str(len(ug)) + " old graph"
 # #while score_new >= score_old:#len(graphs) not in [5,6] and any(len(x) <4 for x in graphs):
 #     ug.remove_edges_from(ug.edges())
 
-#     for i in range( 0, len( corpus_tfidf ) ): 
+#     for i in range( 0, len( corpus_tfidf ) ):
 #         sim = index[ lsi_model[ corp [ i ] ] ]
 #         for j in range( i+1, len( sim ) ):
 #             dist = (1. - sim[j])/2.
@@ -281,7 +281,7 @@ print str(len(ug)) + " old graph"
 #                 ug.add_edge(i,j,{'weight':dist})
 #     graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
 
-#     test = [x for x in graphs if len(x) >= 3]#20>= 
+#     test = [x for x in graphs if len(x) >= 3]#20>=
 #     exclude = [x.nodes() for x in graphs if x not in test]
 #     test2 = [len(x) for x in test]
 #     if len(test) == 2:
@@ -289,7 +289,7 @@ print str(len(ug)) + " old graph"
 #     #score_new = [len(test),sum(test2)]
 #     elif len(test) >= 3:
 #         score_new = len(test[0])*len(test[1])*len(test[2])
-    
+
 #     if score_new > best_score and len(test) >= 3:
 #         best_score = score_new
 #         best_thresh = s
@@ -313,14 +313,14 @@ print str(len(ug)) + " old graph"
 #thresh -= 0.002
 # print best_thresh
 # ug.remove_edges_from(ug.edges())
-# for i in range( 0, len( corpus_tfidf ) ): 
+# for i in range( 0, len( corpus_tfidf ) ):
 #     sim = index[ lsi_model[ corp [ i ] ] ]
 #     for j in range( i+1, len( sim ) ):
 #         dist = (1. - sim[j])/2.
 #         if dist < best_thresh:
 #             ug.add_edge(i,j,{'weight':dist})
 # graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
-# test = [x for x in graphs if len(x) >= 3]#20>= 
+# test = [x for x in graphs if len(x) >= 3]#20>=
 # exclude = [x.nodes() for x in graphs if x not in test]
 # for graph in graphs:
 #     print graph
@@ -332,13 +332,13 @@ print str(len(ug)) + " old graph"
 # for graph in test:
 #     print "\n CLUSTER: \n"
 #     for no in graph:
-#         try: 
+#         try:
 #             print ug.node[no]['title'], ug.node[no]['source'], no
 #         except:
 #             pass
 # print "\n AND \n"
 # for no in list(set().union(*exclude)):
-#     try: 
+#     try:
 #         print ug.node[no]['title'], ug.node[no]['source'], no
 #     except:
 #         pass
@@ -357,8 +357,8 @@ corpus_lsi2 = lsi_model2[corpus_tfidf]
 #     list_corpus.append(dox)
 index2 = gensim.similarities.SparseMatrixSimilarity(corpus_lsi2, num_features = n2 )
 
-lsi_model2.save(settings.STATIC_ROOT + 'last24h/rene_data/l24h2.lsi')
-index2.save(settings.STATIC_ROOT + 'last24h/rene_data/l24h2.index')
+lsi_model2.save(settings.STATIC_ROOT + 'rene/rene_data/l24h2.lsi')
+index2.save(settings.STATIC_ROOT + 'rene/rene_data/l24h2.index')
 
 best_thresh = 0.
 best_score = 0#[0,0]
@@ -369,7 +369,7 @@ for s in [x/1000. for x in xrange(0,500)]:
 #while score_new >= score_old:#len(graphs) not in [5,6] and any(len(x) <4 for x in graphs):
     ug.remove_edges_from(ug.edges())
 
-    for i in range(0,len( corpus_tfidf )): 
+    for i in range(0,len( corpus_tfidf )):
         sim = index2[ lsi_model2[ corp [ i ] ] ]
         for j in range( i+1, len( sim ) ):
             dist = (1. - sim[j])/2.
@@ -383,9 +383,9 @@ for s in [x/1000. for x in xrange(0,500)]:
     if len(test) >= 2:
         score_new = len(test)#len(test[0])+len(test[1])#sum(test2)#len(test)#test2[0]
         #score_new = [len(test),sum(test2)]
-    
+
     #score_new = sum(test2) #[len(test),sum(test2)]
-    
+
     if score_new > best_score and len(test) >= 3:
         best_score = score_new
         best_thresh = s
@@ -404,11 +404,11 @@ for s in [x/1000. for x in xrange(0,500)]:
         # if thresh >= 0.5:
         #     break
 
- 
+
 dispersion = str((1.-2*best_thresh)*100)[:-2] + '%'
 print best_thresh
 ug.remove_edges_from(ug.edges())
-for i in range( 0, len( corpus_tfidf ) ): 
+for i in range( 0, len( corpus_tfidf ) ):
     sim = index2[ lsi_model2[ corp [ i ] ] ]
     for j in range( i+1, len( sim ) ):
         dist = (1. - sim[j])/2.
@@ -420,13 +420,13 @@ exclude = [x.nodes() for x in graphs if x not in test]
 for graph in test:
     print "\n CLUSTER: \n"
     for no in graph:
-        try: 
+        try:
             print ug.node[no]['title'], ug.node[no]['source'], no
         except:
             pass
 print "\n AND \n"
 for no in list(set().union(*exclude)):
-    try: 
+    try:
         print ug.node[no]['title'], ug.node[no]['source'], no
     except:
         pass
@@ -467,14 +467,14 @@ for a in graphx:
             keywords = a[0][1]
                 #keywords_in.append(keywords[0])
                 #keywords_in.append(keywords[1])
-        else: 
+        else:
             keywords = ''
 
         #clustering for detail view
         if nx.average_clustering(comp) == 1:
             clustering = 100
         else: clustering=str(nx.average_clustering(comp))[2:4]
-        
+
         #compute the centrality to turn them into one detail view and the radius size
         count_degree = 1
     #elif len(comp) in [4,5]:
@@ -482,7 +482,7 @@ for a in graphx:
         #for [b,a] in sorted([[closeness[r],r] for r in comp.nodes()], reverse=True):
         for (a,b) in sorted([[a,nx.degree(comp)[a]] for a in nx.degree(comp)], key= lambda close:close[1], reverse= True):
             ug.node[a]['deg'] = b
-            ug.node[a]['deg_pos'] = float(count_degree)/len(comp)*360   
+            ug.node[a]['deg_pos'] = float(count_degree)/len(comp)*360
             count_degree += 1
         ordering = sorted(closeness.items(), key = lambda close:close[1],reverse=True)
         susvec = ordering[0][0]
@@ -492,8 +492,8 @@ for a in graphx:
         q.save()
 
                 #add the nodes for the arc
-        tg.add_node(count_comp, clustering=clustering,name=keywords)  
-        tg.add_edge(0,count_comp) 
+        tg.add_node(count_comp, clustering=clustering,name=keywords)
+        tg.add_edge(0,count_comp)
 
         tg.add_node(count_comp*100, size=len(comp))
         tg.add_edge(count_comp,count_comp*100)

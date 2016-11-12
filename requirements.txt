@@ -40,3 +40,10 @@ tldextract==1.5.1
 untangle==1.1.0
 virtualenv==15.0.2
 zope.interface==4.2.0
+ipython==5.1.0
+eventregistry==6.0.10
+spacy==1.2.0
+pandas==0.19.1
+keras==1.1.1
+tensorflow==0.11.0rc2
+scikit-learn==0.18
