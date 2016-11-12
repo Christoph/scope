@@ -1,10 +1,7 @@
 #!/bin/sh
 
-# Install virtual env
-pip install virtualenv
-
 # Create virtual ENV
-virtualenv ENV
+virtualenv -p /usr/bin/python2.7 ENV
 
 # Activate the virtualenv
 source ENV/bin/activate
