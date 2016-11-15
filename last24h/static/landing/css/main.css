@@ -288,13 +288,21 @@ a:hover, a:focus {
 	margin-top: 6px;
 }
 
+.navbar-contact {
+  float:left;
+  height:50px;
+  padding:15px 55px;
+  font-size:18px;
+  line-height:20px
+}
+
 
 
 /* ==========================================================================
    Main styles
    ========================================================================== */
 header {
-  background: url(../img/landing2.jpg) no-repeat center center;
+  background: url(../img/simple.jpeg) no-repeat center center;
   width: 100%;
   padding: 20px 10px 60px 10px;
   height: 100vh;
@@ -523,7 +531,7 @@ footer {
   transition: all 0.25s ease-in-out;
 }
 .pricing-table.active {
-  box-shadow: 0px 0px 12px rgba(41,46,50,0.6); 
+  box-shadow: 0px 0px 12px rgba(41,46,50,0.6);
   position: absolute;
   margin: auto;
   z-index: 200;
@@ -658,7 +666,7 @@ footer {
    Mobile styles
    ========================================================================== */
 /* Landscape phones and down */
-@media (max-width: 480px) { 
+@media (max-width: 480px) {
 
 .btn-lg {
   font-size: 12.5px;
@@ -676,7 +684,7 @@ footer {
   letter-spacing: 0px;
 }
 
-#be-the-first { 
+#be-the-first {
       background-attachment: scroll;
   }
 
@@ -684,9 +692,9 @@ footer {
 
 
 /* Landscape phone to portrait tablet */
-@media (min-width: 481px) and (max-width: 767px) { 
+@media (min-width: 481px) and (max-width: 767px) {
 
-#be-the-first { 
+#be-the-first {
       background-attachment: scroll;
   }
 
@@ -696,10 +704,10 @@ footer {
 /* Portrait tablet to landscape and desktop */
 @media (min-width: 768px) and (max-width: 991px) {
 
-#be-the-first { 
+#be-the-first {
       background-attachment: scroll;
   }
-  
+
 }
 
 
@@ -708,15 +716,10 @@ footer {
 @media (min-width: 992px) and (max-width: 1199px) {
 
 }
-     
+
 
 
 /* Large screens ----------- */
 @media (min-width: 1200px) and (max-width: 3000px) {
 
-}   
-
-
-
-
-
+}

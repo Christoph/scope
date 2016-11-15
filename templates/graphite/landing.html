@@ -1,160 +1,166 @@
-{% load staticfiles %}
-{% load widget_tweaks %}
+{% load staticfiles %} {% load widget_tweaks %}
 <!DOCTYPE html>
-<html lang="en"><head>
-  <meta charset="utf-8">
-  <title>Graphite - less noise, more news</title>
-  <meta name="keywords" content="">
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
-  <meta property="og:title" content="">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="">
-  <meta property="og:site_name" content="">
-  <meta property="og:description" content="">
+<html lang="en">
 
-  <!-- Styles -->
-  <!-- <link rel="stylesheet" href="{% static 'landing/css/font-awesome.min.css' %}"> -->
-  <link rel="stylesheet" href="{% static 'landing/css/animate.css' %}">
+<head>
+    <meta charset="utf-8">
+    <title>Graphite - less noise, more news</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-   <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
-<!--   <link href='http://fonts.googleapis.com/css?family=Raleway:400,100,200,300,500,600,700,800,900|Montserrat:400,700' rel='stylesheet' type='text/css'> -->
-  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,600&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:site_name" content="">
+    <meta property="og:description" content="">
 
-  <link rel="stylesheet" href="{% static 'landing/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'landing/css/main.css' %}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
-  <link rel="stylesheet" href="{% static 'last24h/graphstyle.css' %}">
-  <script src="{% static 'landing/js/modernizr-2.7.1.js' %}"></script>
-  <script align='center' type="text/javascript" src="{% static 'last24h/d3.min.js' %}"></script>
-  
+    <!-- Styles -->
+    <!-- <link rel="stylesheet" href="{% static 'landing/css/font-awesome.min.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'landing/css/animate.css' %}">
+
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+    <!--   <link href='http://fonts.googleapis.com/css?family=Raleway:400,100,200,300,500,600,700,800,900|Montserrat:400,700' rel='stylesheet' type='text/css'> -->
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,600&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="{% static 'landing/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'landing/css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="{% static 'last24h/graphstyle.css' %}">
+    <script src="{% static 'landing/js/modernizr-2.7.1.js' %}"></script>
+    <script align='center' type="text/javascript" src="{% static 'last24h/d3.min.js' %}"></script>
+
 </head>
 
 <body>
 
-    
+
     <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}graphite {% endif %}<!-- </span> --><small> - less noise, more news</small></a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <!-- <li><a href="#pricing" class="scroll">Pricing</a></li> -->
-            <!-- <li><a id="navlog" href="#">Log In</a></li> -->
-          </ul>
-        </div><!--/.navbar-collapse -->
-      </div>
-    </div>
-        
-    <header>
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-6">
-            <a class="navbar-brand" href="{% url 'landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}graphite {% endif %}<!-- </span> --><!-- <small> - less noise, more news</small> --></a>
-          </div>
-          <div class="col-xs-6 signin text-right navbar-nav">
-            <!-- <a href="#pricing" class="scroll">Pricing</a> -->
-            <!-- &nbsp; &nbsp;<a href="#">Log In</a> -->
-          </div>
-        </div>
-        
-        <div class="row header-info">
-          <div class="col-sm-10 col-sm-offset-1 text-center">
-            <h1>Less noise, more news</h1>
-            <br />
-            <p class="lead wow fadeIn" data-wow-delay="0s">Graphite is all about combining data crunching, semantic analysis and graph theory in order to curate and analyse news articles.<br>
-            We currently use our expertise in these fields through two product lines. Which one is for you?</p>
-            <br />
-              
+                <a class="navbar-brand" href="{% url 'landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}graphite {% endif %}<!-- </span> --><small> - more overview, less redundancy</small></a>
 
-                <div class="row">
-                   <div class="col-xs-6 text-right wow fadeInUp" data-wow-delay="0.5s">
-                  <p class="lead wow fadeIn" id="reading_title">NewsButler</p>
-                  <hr  class="line blue">
-            
-            <p class="lead wow fadeIn" data-wow-delay="0.5s">Don't have time to check the news all day but don't want to miss out? <br>
-            Let NewsButler do the reading and sort the noise from the news.</p>
-                  </div>
-                  <div class="col-xs-6 text-left wow fadeInUp" data-wow-delay="0.6s">
-                   <p class="lead wow fadeIn" id="analyse_title">Sextant</p>
-                  <hr class="line orange">
-           
-            <p class="lead wow fadeIn" data-wow-delay="0.6s">Gain deep insights into trends and practices in journalism and news reporting. <br>
-          
-              Analyse correlations along many parameters between news articles using intuitive visualisations.</p> 
-<!--               Recognise trends that no reader-feedback mechanism can.
+            </div>
+            <a class="nav navbar-nav navbar-brand navbar-right" href="{% url 'contact' %}"> <i class="fa fa-envelope" aria-hidden="true"></i> contact </a>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <!-- <li><a href="#pricing" class="scroll">Pricing</a></li> -->
+                    <!-- <li><a id="navlog" href="#">Log In</a></li> -->
+                </ul>
+            </div>
+            <!--/.navbar-collapse -->
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-6">
+                    <a class="navbar-brand" href="{% url 'landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}graphite {% endif %}<!-- </span> --><!-- <small> - less noise, more news</small> --></a>
+                </div>
+                <div class="col-xs-6 signin text-right navbar-nav">
+                    <!-- <a href="#pricing" class="scroll">Pricing</a> -->
+                    <!-- &nbsp; &nbsp;<a href="#">Log In</a> -->
+                </div>
+            </div>
+
+            <div class="row header-info">
+                <div class="col-sm-10 col-sm-offset-1 text-center">
+                    <h1>More overview, less redundancy</h1>
+                    <br />
+                    <p class="lead wow fadeIn" data-wow-delay="0s">Graphite is all about <strong>saving time</strong> by providing smart overviews of unstructured texts. this is realized through a combination of deep learning, semantic analysis and graph theory methods.<br> We currently use our expertise in three product lines.</p>
+
+                                        {% comment %}
+                    <p class="lead wow fadeIn" data-wow-delay="0s">Graphite is all about combining data crunching, semantic analysis and graph theory in order to curate and analyse news articles.<br> We currently use our expertise in these fields through two product lines. Which one is for you?</p>
+                    <br />
+
+
+                    <div class="row">
+                        <div class="col-xs-6 text-right wow fadeInUp" data-wow-delay="0.5s">
+                            <p class="lead wow fadeIn" id="reading_title">NewsButler</p>
+                            <hr class="line blue">
+
+                            <p class="lead wow fadeIn" data-wow-delay="0.5s">Don't have time to check the news all day but don't want to miss out? <br> Let NewsButler do the reading and sort the noise from the news.</p>
+                        </div>
+                        <div class="col-xs-6 text-left wow fadeInUp" data-wow-delay="0.6s">
+                            <p class="lead wow fadeIn" id="analyse_title">Sextant</p>
+                            <hr class="line orange">
+
+                            <p class="lead wow fadeIn" data-wow-delay="0.6s">Gain deep insights into trends and practices in journalism and news reporting. <br> Analyse correlations along many parameters between news articles using intuitive visualisations.</p>
+                            <!--               Recognise trends that no reader-feedback mechanism can.
               </p> -->
 
-                  </div>
+                        </div>
 
-                </div><!--End Button Row--> 
-                 <div class="row">
+                    </div>
 
-                 
-                  <div class="col-xs-6 text-right wow fadeInUp" data-wow-delay="0.9s">
-                  <a href="#reading" class="btn btn-primary btn-lg scroll">Learn More</a>
-                 </div> 
-                 <div class="col-xs-6 text-left wow fadeInUp" data-wow-delay="1s">
-                 <a href="#analyse" class="btn btn-secondary btn-lg scroll">Learn More</a>
-                 </div>
+                    <!--End Button Row-->
+                    <div class="row">
 
 
-              </div>
+                        <div class="col-xs-6 text-right wow fadeInUp" data-wow-delay="0.9s">
+                            <a href="#reading" class="btn btn-primary btn-lg scroll">Learn More</a>
+                        </div>
+                        <div class="col-xs-6 text-left wow fadeInUp" data-wow-delay="1s">
+                            <a href="#analyse" class="btn btn-secondary btn-lg scroll">Learn More</a>
+                        </div>
+
+
+                    </div>
+                    {% endcomment %}
+                </div>
+
             </div>
-            
-          </div>
         </div>
-      </div>
+        </div>
     </header>
-    
+
     <div class="mouse-icon hidden-xs">
         <div class="scroll"></div>
-      </div>
-    
+    </div>
+
     <section id="reading" class="pad-sm light-gray-bg">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-8 col-sm-offset-2 text-center wow fadeIn" data-wow-delay="0s">
-          <i class="fa fa-envelope-o margin-30"></i>
-            <h2 class="wow black">Reconsider the way you read</h2>
-            <br />
-            <p class="lead black">NewsButler produces reading lists based on your favourite news sources - curated so as to maximise their relevance and minimise their redundancy.</p>
-            <br />
-            </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 text-center wow fadeIn" data-wow-delay="0s">
+                    <i class="fa fa-envelope-o margin-30"></i>
+                    <h2 class="wow black">Reconsider the way you read</h2>
+                    <br />
+                    <p class="lead black">NewsButler produces reading lists based on your favourite news sources - curated so as to maximise their relevance and minimise their redundancy.</p>
+                    <br />
+                </div>
             </div>
 
             <div class="row">
-              <div class="col-sm-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                  <hr  class="line" style="color:#1f77b4">
-            <h3 class="wow fadeIn black">Minimize redundancy</h3>
-             <p class="wow grey">For every hot topic NewsButler picks exactly one article, namely the one from your favorite sources that it finds to be most representative of all articles on the issue.</p>
-             <h3 class="wow fadeIn">Maximize relevance</h3>
-            <p class="wow grey">Reading lists are ordered by the amount of coverage a topic receives in the news overall - meaning you'll always be on top of the news.</p>
-                            <h3 class="wow fadeIn">Light-weight and discreet</h3>
-            <p class="wow grey">No account, login or fancy interfaces. The lists are sent to your inbox, no more, no less.</p>
-           <!--  <h3 class="wow fadeIn">Objective</h3>
+                <div class="col-sm-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <hr class="line" style="color:#1f77b4">
+                    <h3 class="wow fadeIn black">Minimize redundancy</h3>
+                    <p class="wow grey">For every hot topic NewsButler picks exactly one article, namely the one from your favorite sources that it finds to be most representative of all articles on the issue.</p>
+                    <h3 class="wow fadeIn">Maximize relevance</h3>
+                    <p class="wow grey">Reading lists are ordered by the amount of coverage a topic receives in the news overall - meaning you'll always be on top of the news.</p>
+                    <h3 class="wow fadeIn">Light-weight and discreet</h3>
+                    <p class="wow grey">No account, login or fancy interfaces. The lists are sent to your inbox, no more, no less.</p>
+                    <!--  <h3 class="wow fadeIn">Objective</h3>
             <p class="wow grey">No political agenda, no sentimentalism: NewsButler works on the basis of graph theory and sentimental analysis</p>-->
-            </div> 
-              <div class="col-sm-6 col-md-6 wow fadeInUp text-center" data-wow-delay="0.3s">
-              
-                              <form role="form">
-                              {% csrf_token %}
-                  <div class="form-group">
-                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter Email (we won't save this address - promise)">
-                  </div>
-                  <button type="button" id="samplesubmit" name='sample' class="btn btn-primary btn-lg samplesubmit">Receive sample list</button>
-                </form>
-                <h3 class="lead strong grey"> OR</h3>
-                <button type="toggle" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#alertmodal">Create your own!</button>
-                <!-- <form role="form" action="{% url 'grews_alert' %}" method="post">
-    
+                </div>
+                <div class="col-sm-6 col-md-6 wow fadeInUp text-center" data-wow-delay="0.3s">
+
+                    <form role="form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter Email (we won't save this address - promise)">
+                        </div>
+                        <button type="button" id="samplesubmit" name='sample' class="btn btn-primary btn-lg samplesubmit">Receive sample list</button>
+                    </form>
+                    <h3 class="lead strong grey"> OR</h3>
+                    <button type="toggle" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#alertmodal">Create your own!</button>
+                    <!-- <form role="form" action="{% url 'grews_alert' %}" method="post">
+
     {% csrf_token %}
       <div class="form-group">
   {{form.sources.label_tag}}    {{form.sources|add_class:"form-control selectpicker"|attr:"data-live-search:true"|attr:"multiple"}}
@@ -162,17 +168,17 @@
     </div>
 
              {% if form.frequency.errors %}
-             <div class="form-group has-error"> 
+             <div class="form-group has-error">
              <label class="control-label" for="inputError1">Invalid frequency</label>
              {% else %}
              <div class="form-group">
-             {{form.frequency.label_tag}} 
+             {{form.frequency.label_tag}}
               {% endif %}
               {{form.frequency|add_class:"c-select"|add_class:"form-control"}}
-             </div>  
+             </div>
 
             {% if form.delivery_time.errors %}
-             <div class="form-group has-error"> 
+             <div class="form-group has-error">
              <label class="control-label" for="inputError1">Invalid time format</label>
              {% else %}
               <div class="form-group">
@@ -183,70 +189,70 @@
 
 
              {% if form.captcha.errors %}
-             <div class="form-group has-error"> 
+             <div class="form-group has-error">
              <label class="control-label" for="inputError1">Invalid captcha</label>
              {% else %}
              <div class="form-group">
-            {{form.captcha.label_tag}} 
+            {{form.captcha.label_tag}}
               {% endif %}
               {{form.captcha|add_class:"form-control"|attr:"placeholder:Prove you're human"}}
              </div>
               <button class="btn btn-primary btn-lg scroll" type="submit" value"Set alert" name="set">Submit</button>
-              
+
 
    </div>
 </form> -->
-              </div>
+                </div>
 
 
-          </div>
-      
-      </div>
+            </div>
+
+        </div>
     </section>
 
 
     <section id="analyse" class="pad-sm">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-8 col-sm-offset-2 text-center margin-30 wow fadeIn" data-wow-delay="0s">
-          <i class="fa fa-search margin-30" aria-hidden="true"></i>
-            <h2 class="wow black">The news at your fingertips!</h2>
-            <p class="lead black">Sextant: The tool for journalists, news analysts and everybody who wants to go beyond the surface in journalism.</p>
-          </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6 col-md-6 wow fadeInUp text-center" data-wow-delay="0.5s">
-            <div class="graphbox" id="graphbox">
-            <!-- <h3 class="wow fadeIn">Check out today's graph</h3> -->
-            <script type='text/javascript'>
-              var landing = "{% static 'last24h/landing_graph.json' %}";
-              </script>
-            <script type='text/javascript' src="{% static 'last24h/landing_graph.js' %}"></script>
-          </div>
-
-        </div>
-              <div class="col-sm-6 col-md-6 wow fadeInUp text-right" data-wow-delay="0.5s">
-                  <hr  class="line orange">
-            <!-- <h3 class="wow fadeIn">Analysis tool</h3>
-                 <p class="wow grey">Keep up with news trends and reporting dynamics of a fast moving world.</p> -->
-                 <h3 class="wow fadeIn">Objective</h3>
-                 <p class="wow grey">No need for having to rely on expert selections and other curation mechanisms.</p>
-                 <h3 class="wow fadeIn">Complex content, simple layout</h3>
-                 <p class="wow grey">At every point everything is simple but at the same any two pieces of information are only few clicks away.</p>
-                 <h3 class="wow fadeIn">Proactive</h3>
-                   <p class="wow grey">Sextant proactively makes you aware of unusual and interesting correlations or behaviour in the news world.</p>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 text-center margin-30 wow fadeIn" data-wow-delay="0s">
+                    <i class="fa fa-search margin-30" aria-hidden="true"></i>
+                    <h2 class="wow black">The news at your fingertips!</h2>
+                    <p class="lead black">Sextant: The tool for journalists, news analysts and everybody who wants to go beyond the surface in journalism.</p>
+                </div>
             </div>
-              
-        </div>
-<!--         <div class="iphone wow fadeInUp" data-wow-delay="1s">
+            <div class="row">
+                <div class="col-sm-6 col-md-6 wow fadeInUp text-center" data-wow-delay="0.5s">
+                    <div class="graphbox" id="graphbox">
+                        <!-- <h3 class="wow fadeIn">Check out today's graph</h3> -->
+                        <script type='text/javascript'>
+                            var landing = "{% static 'last24h/landing_graph.json' %}";
+                        </script>
+                        <script type='text/javascript' src="{% static 'last24h/landing_graph.js' %}"></script>
+                    </div>
+
+                </div>
+                <div class="col-sm-6 col-md-6 wow fadeInUp text-right" data-wow-delay="0.5s">
+                    <hr class="line orange">
+                    <!-- <h3 class="wow fadeIn">Analysis tool</h3>
+                 <p class="wow grey">Keep up with news trends and reporting dynamics of a fast moving world.</p> -->
+                    <h3 class="wow fadeIn">Objective</h3>
+                    <p class="wow grey">No need for having to rely on expert selections and other curation mechanisms.</p>
+                    <h3 class="wow fadeIn">Complex content, simple layout</h3>
+                    <p class="wow grey">At every point everything is simple but at the same any two pieces of information are only few clicks away.</p>
+                    <h3 class="wow fadeIn">Proactive</h3>
+                    <p class="wow grey">Sextant proactively makes you aware of unusual and interesting correlations or behaviour in the news world.</p>
+                </div>
+
+            </div>
+            <!--         <div class="iphone wow fadeInUp" data-wow-delay="1s">
           <img src="img/iphone.png">
         </div> -->
-      </div>
+        </div>
     </section>
 
 
-    
-<!--     <section id="main-info" class="pad-xl">
+
+    <!--     <section id="main-info" class="pad-xl">
       <div class="container">
         <div class="row">
           <div class="col-sm-6 wow fadeIn" data-wow-delay="0.4s">
@@ -267,10 +273,10 @@
         </div>
       </div>
     </section> -->
-        
-        
+
+
     <!--Pricing-->
-<!--     <section id="pricing" class="pad-lg">
+    <!--     <section id="pricing" class="pad-lg">
       <div class="container">
         <div class="row margin-40">
           <div class="col-sm-8 col-sm-offset-2 text-center">
@@ -278,9 +284,9 @@
             <p class="white">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam viverra orci ut.</p>
           </div>
         </div>
-        
+
         <div class="row margin-50">
-          
+
           <div class="col-sm-4 pricing-container wow fadeInUp" data-wow-delay="1s">
             <br />
             <ul class="list-unstyled pricing-table text-center">
@@ -293,7 +299,7 @@
               <li class="features last btn btn-secondary btn-wide"><a href="#">Get Started</a></li>
             </ul>
           </div>
-          
+
           <div class="col-sm-4 pricing-container wow fadeInUp" data-wow-delay="0.4s">
             <ul class="list-unstyled pricing-table active text-center">
               <li class="headline"><h5 class="white">Professional</h5></li>
@@ -306,7 +312,7 @@
               <li class="features last btn btn-secondary btn-wide"><a href="#">Get Started</a></li>
             </ul>
           </div>
-          
+
           <div class="col-sm-4 pricing-container wow fadeInUp" data-wow-delay="1.3s">
             <br />
             <ul class="list-unstyled pricing-table text-center">
@@ -319,13 +325,13 @@
               <li class="features last btn btn-secondary btn-wide"><a href="#">Get Started</a></li>
             </ul>
           </div>
-          
+
         </div>
-        
+
       </div>
     </section> -->
-    
-<!--         <section id="pricing" class="pad-xl">
+
+    <!--         <section id="pricing" class="pad-xl">
       <div class="container">
         <div class="row">
           <div class="col-sm-8 col-sm-offset-2 text-center margin-30 wow fadeIn" data-wow-delay="0.6s">
@@ -333,44 +339,44 @@
             <p class="lead">Lorem ipsum dolor sit amet, consectetur adipis.</p>
           </div>
         </div>
-        
+
        <div class="iphone wow fadeInUp" data-wow-delay="1s">
           <img src="img/iphone.png">
-        </div> 
+        </div>
       </div>
     </section> -->
-    
-    
-<!--     <section id="press" class="pad-sm">
+
+
+    <!--     <section id="press" class="pad-sm">
       <div class="container">
-        
+
         <div class="row margin-30 news-container">
           <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 wow fadeInLeft" data-wow-delay="0.8s">
             <a href="#" target="_blank">
             <img class="news-img pull-left" src="img/press-01.jpg" alt="Tech Crunch">
-            <p class="black">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam viverra orci ut.<br /> 
+            <p class="black">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam viverra orci ut.<br />
             <small><em>Tech Crunch - January 15, 2015</em></small></p>
             </a>
           </div>
         </div>
-        
+
         <div class="row margin-30 news-container">
           <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 wow fadeInLeft" data-wow-delay="1.2s">
             <a href="#" target="_blank">
             <img class="news-img pull-left" src="img/press-02.jpg" alt="Forbes">
-            <p class="black">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam viverra orci ut. <br /> 
+            <p class="black">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam viverra orci ut. <br />
             <small><em>Forbes - Feb 25, 2015</em></small></p>
             </a>
           </div>
         </div>
-        
+
       </div>
     </section> -->
-    
-    
-<!--     <footer>
+
+
+    <!--     <footer>
       <div class="container">
-        
+
         <div class="row">
           <div class="col-sm-8 margin-20">
             <ul class="list-inline social">
@@ -380,127 +386,114 @@
               <li><a href="#"><i class="fa fa-instagram"></i></a></li>
             </ul>
           </div>
-          
+
           <div class="col-sm-4 text-right">
             <p><small>Copyright &copy; 2014. All rights reserved. <br>
               Created by <a href="http://visualsoldiers.com">Visual Soldiers</a></small></p>
           </div>
         </div>
-        
+
       </div>-->
 
 
 
-<!-- modal -->
-<div class="modal fade" tabindex="-1" aria-labelledby="setalert" id="alertmodal">
-  <div class="modal-dialog">
-<!--     <div class="modal-content">
+    <!-- modal -->
+    <div class="modal fade" tabindex="-1" aria-labelledby="setalert" id="alertmodal">
+        <div class="modal-dialog">
+            <!--     <div class="modal-content">
     <div class="container"> -->
 
-  <div class="forms" id="form_alert_light">
+            <div class="forms" id="form_alert_light">
 
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs" id="customtab2" role="tablist">
-    <li role="presentation" class="active"><a href="#term" aria-controls="term" role="tab" data-toggle="tab" id="tab-left">Search Term</a></li>
-    <li role="presentation"><a href="#feeds" aria-controls="feeds" role="tab" data-toggle="tab" id="tab-right">Feeds</a></li>
-  </ul>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="customtab2" role="tablist">
+                    <li role="presentation" class="active"><a href="#term" aria-controls="term" role="tab" data-toggle="tab" id="tab-left">Search Term</a></li>
+                    <li role="presentation"><a href="#feeds" aria-controls="feeds" role="tab" data-toggle="tab" id="tab-right">Feeds</a></li>
+                </ul>
 
-    <form action="{% url 'grews_alert' %}" method="post">
-    
-    {% csrf_token %}
-      <div class="tab-content">
-  <div role="tabpanel" class="tab-pane active" id="term">
+                <form action="{% url 'grews_alert' %}" method="post">
 
-          {% if form.query.errors %}
-             <div class="form-group has-error"> 
-             <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
-             {% else %}
-             <div class="form-group">
-              {{form.query.label_tag}}
-              {% endif %}
-              {{form.query|add_class:"form-control"}}
-             </div>
-        
-            </div>
+                    {% csrf_token %}
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="term">
 
-    <div role="tabpanel" class="tab-pane" id="feeds">
-         <div class="form-group">
-    {{form.sources.label_tag}}
-    {{form.sources|add_class:"form-control selectpicker"|attr:"data-live-search:true"|attr:"multiple"}}
-    {{form.sources.errors}}
-        </div>
-    </div>
+                            {% if form.query.errors %}
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError1">Invalid format, avoid special characters</label> {% else %}
+                                <div class="form-group">
+                                    {{form.query.label_tag}} {% endif %} {{form.query|add_class:"form-control"}}
+                                </div>
 
-             {% if form.frequency.errors %}
-             <div class="form-group has-error"> 
-             <label class="control-label" for="inputError1">Invalid frequency</label>
-             {% else %}
-             <div class="form-group">
-              {{form.frequency.label_tag}}
-              {% endif %}
-              {{form.frequency|add_class:"form-control"}}
-             </div>  
+                            </div>
 
-             {% if form.delivery_time.errors %}
-             <div class="form-group has-error"> 
-             <label class="control-label" for="inputError1">Invalid time format</label>
-             {% else %}
-             <div class="form-group">
-              {{form.delivery_time.label_tag}}
-              {% endif %}
-              {{form.delivery_time|add_class:"form-control"}}
-             </div>
+                            <div role="tabpanel" class="tab-pane" id="feeds">
+                                <div class="form-group">
+                                    {{form.sources.label_tag}} {{form.sources|add_class:"form-control selectpicker"|attr:"data-live-search:true"|attr:"multiple"}} {{form.sources.errors}}
+                                </div>
+                            </div>
+
+                            {% if form.frequency.errors %}
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError1">Invalid frequency</label> {% else %}
+                                <div class="form-group">
+                                    {{form.frequency.label_tag}} {% endif %} {{form.frequency|add_class:"form-control"}}
+                                </div>
+
+                                {% if form.delivery_time.errors %}
+                                <div class="form-group has-error">
+                                    <label class="control-label" for="inputError1">Invalid time format</label> {% else %}
+                                    <div class="form-group">
+                                        {{form.delivery_time.label_tag}} {% endif %} {{form.delivery_time|add_class:"form-control"}}
+                                    </div>
 
 
-             {% if form.captcha.errors %}
-             <div class="form-group has-error"> 
-             <label class="control-label" for="inputError1">Invalid captcha</label>
-             {% else %}
-             <div class="form-group">
-              {{form.captcha.label_tag}}
-              {% endif %}
-              {{form.captcha|add_class:"form-control"}}
-             </div>
+                                    {% if form.captcha.errors %}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError1">Invalid captcha</label> {% else %}
+                                        <div class="form-group">
+                                            {{form.captcha.label_tag}} {% endif %} {{form.captcha|add_class:"form-control"}}
+                                        </div>
 
-             {% if log_inf|first == 'Register' %}
-             <div class="btn btn-default" id="form_alert_dark">Currently in development</div>
-              
-              {% else %}
-              <button class="btn btn-default" id="form_alert_dark" type="submit" value"Set alert" name="set">Submit</button>
-              
-              {% endif %}
+                                        {% if log_inf|first == 'Register' %}
+                                        <div class="btn btn-default" id="form_alert_dark">Currently in development</div>
 
-   </div>
-</form>
+                                        {% else %}
+                                        <button class="btn btn-default" id="form_alert_dark" type="submit" value "Set alert" name="set">Submit</button> {% endif %}
 
-</div>
-    </div>
-  </div>
-<!-- </div>
+                                    </div>
+                </form>
+
+                </div>
+                </div>
+                </div>
+                <!-- </div>
 </div> -->
 
 
- <!--   </footer> -->
+                <!--   </footer> -->
 
-        <footer class="landing">
-      <div class="container">
-        <p><small>&copy; Copyright 2015-2016, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a> <a href="{% url 'contact' %}">Contact</a> 
+                <footer class="landing">
+                    <div class="container">
+                        <p><small>&copy; Copyright 2015-2016, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a> <a href="{% url 'contact' %}">Contact</a>
          <!-- <a href="{% url 'disclaimer' %}" rel="designer">Disclaimer/License</a> -->
          </small></p>
-      </div>
-    </footer>
-    
-    
-    <!-- Javascript
+                    </div>
+                </footer>
+
+
+                <!-- Javascript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="js/jquery-1.11.0.min.js"><\/script>')</script>
-    <script src="{% static 'landing/js/wow.min.js' %}"></script>
-    <script src="{% static 'landing/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'landing/js/main.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
-    <script src="{% static 'last24h/landing.js' %}"></script>
-    
-    </body>
+                <!-- Placed at the end of the document so the pages load faster -->
+                <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+                <script>
+                    window.jQuery || document.write('<script src="js/jquery-1.11.0.min.js"><\/script>')
+                </script>
+                <script src="{% static 'landing/js/wow.min.js' %}"></script>
+                <script src="{% static 'landing/js/bootstrap.min.js' %}"></script>
+                <script src="{% static 'landing/js/main.js' %}"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+                <script src="{% static 'last24h/landing.js' %}"></script>
+
+</body>
+
 </html>
