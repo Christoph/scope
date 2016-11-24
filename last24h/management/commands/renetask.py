@@ -79,14 +79,14 @@ class Command(BaseCommand):
 
         strin = strin
 
-        entry = ['grphtcontact@gmail.com',"Rene's Newsletter", "Rene",strin]
-        send_mail('Your latest alert for: ' + entry[1], 'Hi' + address + ', here is the link to your latest alert for your query:' + entry[1] +
- settings.CURRENT_DOMAIN + '/last24h/cs=' + entry[3] + 'You can manage your alerts in your profile settings. Hope you enjoy the graph!', 'grphtcontact@gmail.com', [entry[0]],
- connection=None, html_message='<head><title>'+ settings.CURRENT_NAME + '| maximise relevance, minimise redundancy</title></head><p>Hi '+
- address + ',</p><p>here is the link to your latest alert for your query:</p><p><a href="'
- + settings.CURRENT_DOMAIN + '/last24h/cs=' + entry[3] + '" >' + entry[1] +
- '</a></p><p>You can manage your alerts in your profile settings. Hope you enjoy the graph!</p>')
-        brief_rene('grphtcontact@gmail.com',strin,0)
+ #        entry = ['grphtcontact@gmail.com',"Rene's Newsletter", "Rene",strin]
+ #        send_mail('Your latest alert for: ' + entry[1], 'Hi' + address + ', here is the link to your latest alert for your query:' + entry[1] +
+ # settings.CURRENT_DOMAIN + '/last24h/cs=' + entry[3] + 'You can manage your alerts in your profile settings. Hope you enjoy the graph!', 'grphtcontact@gmail.com', [entry[0]],
+ # connection=None, html_message='<head><title>'+ settings.CURRENT_NAME + '| maximise relevance, minimise redundancy</title></head><p>Hi '+
+ # address + ',</p><p>here is the link to your latest alert for your query:</p><p><a href="'
+ # + settings.CURRENT_DOMAIN + '/last24h/cs=' + entry[3] + '" >' + entry[1] +
+ # '</a></p><p>You can manage your alerts in your profile settings. Hope you enjoy the graph!</p>')
+ #        brief_rene('grphtcontact@gmail.com',strin,0)
 
  #        n2 = 18
  #        strin = strin + str(n2)

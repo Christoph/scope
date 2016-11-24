@@ -859,3 +859,6 @@ def pd(request):
         response['Content-Disposition'] = 'inline;filename=some_file.pdf'
         return response
     pdf.closed
+
+
+

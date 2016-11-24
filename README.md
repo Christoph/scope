@@ -21,6 +21,8 @@
     * python -m spacy.en.download all
     * python -m spacy.de.download all
 
+    *CAUTION: In case you get an error "pg_config executable not found" when installing psycopg2 from requirements, you may have to (a) reinstall postgresql using "brew install postgresql" on Mac or "sudo apt-get install libpq-dev python-dev" on Linux/ubuntu
+
 ### 2. After install you need to configure the settings file
     * DB (create db with separate user. host and port are empty if lokal)
     * private key

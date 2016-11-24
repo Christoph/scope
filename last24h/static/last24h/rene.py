@@ -8,6 +8,8 @@ from urlparse import urlparse
 from operator import mul
 from networkx.readwrite import json_graph
 
+from nh.models import Select_NH
+
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -489,6 +491,8 @@ for a in graphx:
         cnode = ug.node[susvec]
         cnode['suggest'] = count_comp
         q = Suggest(custom= strin, title = ug.node[susvec]['title'], url = ug.node[susvec]['url'], distance = count_comp, images = ug.node[susvec]['images'], keywords = keywords,source=ug.node[susvec]['source'])
+        q.save()
+        q = Suggest(title = ug.node[susvec]['title'], url = ug.node[susvec]['url'], rank = count_comp, images = ug.node[susvec]['images'], keywords = keywords,source=ug.node[susvec]['source'])
         q.save()
 
                 #add the nodes for the arc

@@ -22,7 +22,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
 #    url(r'^djga/', include('google_analytics.urls')),
     url(r'^', include('django.contrib.auth.urls')),
-    url(r'^', include('last24h.urls')),
+    url(r'^nh/', include('nh.urls',namespace="nh")),
     url(r'^landing', views.landing, name='landing'),
     url(r'^last24h/', include('last24h.urls', namespace='last24h')),
     url(r'^$', views.home, name='home'),
