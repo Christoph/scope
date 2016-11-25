@@ -1,106 +1,73 @@
-{% extends "graphite/base.html" %}
-{% load widget_tweaks %}
-{% load staticfiles %}
-
-
-{% block content %}
+{% extends "graphite/base.html" %} {% load widget_tweaks %} {% load staticfiles %} {% block content %}
 
 <div class="container main">
-<h1 align=center >Selection</h1><!-- .entry-header -->
+    <h1 align=center>Newsletter - <strong>News Selection</strong></h1>
+    <!-- .entry-header -->
 
     <div ALIGN=CENTER>
 
 
-<div class="forms">
+        <div class="forms">
 
 
-<div class="row">
-  
-   <div class="col-md-2">Mistaken</div>
 
-<div class="col-md-2">Take into selection</div>
+            <!-- Tab panes -->
+            <form action="{% url 'nh:interface' %}" id="searchform" method="post">
+                {% csrf_token %}
+                {% for suggestion in suggestions %}
 
-<div class="col-md-8">Article</div>
+                <div class="row well">
+
+                    <div class="col-md-8" style="word-wrap: break-word; text-align: left;">
+
+                        <h2> {{suggestion.title}} </h2>
+
+                        <p> {{suggestion.summary}} </p>
+
+                    </div>
+
+                    <div class="col-md-4" style="text-align: left; margin-top: 4%;">
+
+                      <div class="row">
+
+                        <label class="checkbox-inline" style="font-size: 20px">
+                          {% if suggestion.is_selected %}
+
+                          <input id="selection" style="transform: scale(1.5); margin-top: 6px" type="checkbox" name="select{{ suggestion.rank }}" checked> {% else %}
+
+                          <input id="selection" style="transform: scale(1.5); margin-top: 6px" type="checkbox" name="select{{ suggestion.rank }}"> {% endif %}
+                          Selection
+                        </label>
+
+                      </div>
+
+                      <div class="row">
+                        <label class="checkbox-inline" style="font-size: 20px">
+                        {% if suggestion.is_mistake %}
+                        <input id="mistake" style="transform: scale(1.5); margin-top: 6px" type="checkbox" name="mistake{{ suggestion.rank }}" checked> {% else %}
+
+                        <input id="mistake" style="transform: scale(1.5); margin-top: 6px" type="checkbox" name="mistake{{ suggestion.rank }}"> {% endif %}
+                        Mistaken
+                      </label>
+
+                      </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %} {% if selection_made %}
+
+                <input class="btn btn-primary" type="button" value="Already selected"> {% else %}
+
+                <input class="btn btn-primary" type="submit" value="Create Newsletter"> {% endif %}
 
 
+            </form>
+
+
+        </div>
+    </div>
 </div>
 
-
-  <!-- Tab panes -->
-<form action="{% url 'nh:interface' %}" id="searchform" method="post">
-    {% csrf_token %}
-
-    {% for suggestion in suggestions %}
-
-    <div class="row">
-      
-      <div class="col-md-2 red">
-
-      {% if suggestion.is_mistake %}
-
-      <input type="checkbox" name="mistake{{ suggestion.rank }}" checked>
-
-      {% else %}
-
-       <input type="checkbox" name="mistake{{ suggestion.rank }}" >
-        
-      {% endif %}
-             
-
-      </div>
-
-      <div class="col-md-2 ">
-        
-        {% if suggestion.is_selected %}
-
-         <input type="checkbox" name="select{{ suggestion.rank }}" checked>
-
-         {% else %}
-
-        <input type="checkbox" name="select{{ suggestion.rank }}">
-   
-        {% endif %}
-
-
-
-      </div>
-
-      <div class="col-md-8">
-        
-        <h2> {{suggestion.title}} </h2>
-
-        <p> {{suggestion.summary}} </p>
-
-      </div>
-
-    </div>
-
-    {% endfor %}
-
-
-    {% if selection_made %}
-
-     <input type="button" value="Already selected">
-
-    {% else %}
-
-        <input type="submit" value="Create Newsletter">
-   
-      
-    {% endif %}
-
-   
-</form>
-
-
-    </div> 
-    </div>
-    </div>
-
 {% endblock content %}
-
-           
-
-
-    
-
