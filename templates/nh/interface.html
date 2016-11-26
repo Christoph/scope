@@ -6,15 +6,11 @@
 
     <div ALIGN=CENTER>
 
-
         <div class="forms">
-
-
 
             <!-- Tab panes -->
             <form action="{% url 'nh:interface' %}" id="searchform" method="post">
-                {% csrf_token %}
-                {% for suggestion in suggestions %}
+                {% csrf_token %} {% for suggestion in suggestions %}
 
                 <div class="row well">
 
@@ -26,31 +22,39 @@
 
                     </div>
 
-                    <div class="col-md-4" style="text-align: left; margin-top: 4%;">
+                    <div class="col-md-4" style="text-align: left; margin-top: 4%">
 
-                      <div class="row">
+                        <div class="row">
 
                         <label class="checkbox-inline" style="font-size: 20px">
-                          {% if suggestion.is_selected %}
 
-                          <input id="selection" style="transform: scale(1.5); margin-top: 6px" type="checkbox" name="select{{ suggestion.rank }}" checked> {% else %}
-
-                          <input id="selection" style="transform: scale(1.5); margin-top: 6px" type="checkbox" name="select{{ suggestion.rank }}"> {% endif %}
+                          <input
+                          id="selection"
+                          style="transform: scale(1.5); margin-top: 6px"
+                          type="checkbox"
+                          name="select{{ suggestion.rank }}"
+                          {% if suggestion.is_selected %} checked {% endif %}
+                          >
                           Selection
+
                         </label>
 
-                      </div>
+                        </div>
 
-                      <div class="row">
-                        <label class="checkbox-inline" style="font-size: 20px">
-                        {% if suggestion.is_mistake %}
-                        <input id="mistake" style="transform: scale(1.5); margin-top: 6px" type="checkbox" name="mistake{{ suggestion.rank }}" checked> {% else %}
+                        <div class="row">
+                          <label class="checkbox-inline" style="font-size: 20px">
 
-                        <input id="mistake" style="transform: scale(1.5); margin-top: 6px" type="checkbox" name="mistake{{ suggestion.rank }}"> {% endif %}
-                        Mistaken
-                      </label>
+                            <input
+                            id="selection"
+                            style="transform: scale(1.5); margin-top: 6px"
+                            type="checkbox"
+                            name="select{{ suggestion.rank }}"
+                            {% if suggestion.is_mistake %} checked {% endif %}
+                            >
+                            Selection
 
-                      </div>
+                          </label>
+                        </div>
 
                     </div>
 
