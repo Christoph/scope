@@ -16,5 +16,3 @@ class Select_NH(models.Model):
     #text = models.CharField(max_length=9000)
     def __unicode__(self):              # __unicode__ on Python 2
         return self.title
-
-

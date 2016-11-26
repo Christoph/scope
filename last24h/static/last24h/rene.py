@@ -17,6 +17,13 @@ sys.setdefaultencoding('utf8')
 
 
 detach_dir = '.' # directory where to save attachments (default: current)
+# user="enews@neulandherzer.net"
+# pwd = "Ensemble_Enema"
+# m = imaplib.IMAP4_SSL("imap.1und1.de")
+# m.login(user,pwd)
+# m.select("INBOX")
+
+
 user = "renesnewsletter"
 pwd = "renewilllesen"
 # connecting to the gmail imap server
@@ -527,20 +534,20 @@ ug.graph['links'] = str(no_urls)
 ug.graph['articlenumber'] = str(articlenumber)
 
 #export
-ug_nl = json_graph.node_link_data(ug)
-tgt = json_graph.tree_data(tg,root=0)
-#tgt_mobile = json_graph.tree_data(tg2,root=0)
-with open(settings.STATIC_ROOT + 'last24h/cs/cs_'+ strin +'_tgt_cluster.json', 'w+') as fp:
-    json.dump(tgt,fp)
-# with open(settings.STATIC_ROOT + 'last24h/cs/cs_'+ strin +'_tgt_mobile.json', 'w+') as fp:
-#     json.dump(tgt_mobile,fp)
-with open(settings.STATIC_ROOT + 'last24h/cs/cs_'+ strin +'_nl.json', 'w+') as fp:
-    json.dump(ug_nl,fp)
+# ug_nl = json_graph.node_link_data(ug)
+# tgt = json_graph.tree_data(tg,root=0)
+# #tgt_mobile = json_graph.tree_data(tg2,root=0)
+# with open('nh/static/nh/json/' + date.today().isoformat() + '_center.json', 'w+') as fp:
+#     json.dump(tgt,fp)
+
+# with open('nh/static/nh/json/' + date.today().isoformat() + '_graph.json', 'w+') as fp:
+#     json.dump(ug,fp)
 
 
-q = Query.objects.filter(string= strin)
-for query in q:
-    query.articlenumber = articlenumber
-    query.words = words
-    query.save()
+# q = Query.objects.filter(string= strin)
+# for query in q:
+#     query.articlenumber = articlenumber
+#     query.words = words
+#     query.save()
+
 #send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])
