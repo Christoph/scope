@@ -1,5 +1,33 @@
 {% extends "graphite/base.html" %} {% load widget_tweaks %} {% load staticfiles %} {% block content %}
 
+<style media="screen">
+
+.well.suggest {
+  background-color: rgb(121, 179, 179);
+}
+
+.well.mistake {
+  background-color: rgb(213, 90, 20);
+}
+
+</style>
+
+<script type="text/javascript">
+function updateClass(box, id) {
+
+   if(box.id == "selection-"+id)
+   {
+       $( "div#suggestion-"+id ).toggleClass( "suggest" );
+   }
+
+   if(box.id == "mistake-"+id)
+   {
+       $( "div#suggestion-"+id ).toggleClass( "mistake" );
+   }
+};
+
+</script>
+
 <div class="container main">
     <h1 align=center>Newsletter - <strong>News Selection</strong></h1>
     <!-- .entry-header -->
@@ -10,9 +38,10 @@
 
             <!-- Tab panes -->
             <form action="{% url 'nh:interface' %}" id="searchform" method="post">
-                {% csrf_token %} {% for suggestion in suggestions %}
+                {% csrf_token %}
+                {% for suggestion in suggestions %}
 
-                <div class="row well">
+                <div class="row well" id="suggestion-{{ forloop.counter }}">
 
                     <div class="col-md-8" style="word-wrap: break-word; text-align: left;">
 
@@ -29,10 +58,11 @@
                         <label class="checkbox-inline" style="font-size: 20px">
 
                           <input
-                          id="selection"
-                          style="transform: scale(1.5); margin-top: 6px"
+                          id="selection-{{ forloop.counter }}"
+                          style="margin-top: 6px"
                           type="checkbox"
                           name="select{{ suggestion.rank }}"
+                          onchange="updateClass(this, {{ forloop.counter }})"
                           {% if suggestion.is_selected %} checked {% endif %}
                           >
                           Selection
@@ -45,13 +75,15 @@
                           <label class="checkbox-inline" style="font-size: 20px">
 
                             <input
-                            id="selection"
-                            style="transform: scale(1.5); margin-top: 6px"
+                            id="mistake-{{ forloop.counter }}"
+                            {% if suggestion.is_mistake %} class="mistake" {% endif %}
+                            style="margin-top: 6px"
                             type="checkbox"
                             name="select{{ suggestion.rank }}"
+                            onchange="updateClass(this, {{ forloop.counter }})"
                             {% if suggestion.is_mistake %} checked {% endif %}
                             >
-                            Selection
+                            Mistake
 
                           </label>
                         </div>
