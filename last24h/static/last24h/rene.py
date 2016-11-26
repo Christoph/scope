@@ -514,24 +514,24 @@ for a in graphx:
         ug.remove_nodes_from(comp)
 
 
-tg.add_edge(0,50)
-tg.add_node(5000, size= 0.1)
-tg.add_edge(50,5000)
-tg.node[0]['final_size']=len(ug.nodes())
-tg.node[0]['comps'] = count_comp-1
-#tg.node[0]['thresh'] = best_thresh
-#tg2.node[0]['final_size']=len(ug.nodes())
-tg.node[0]['comps'] = count_comp-1
-#tg2.node[0]['thresh'] = best_thresh
-ug.graph['size']=len(ug.nodes())
-ug.graph['comps'] = count_comp-1
-ug.graph['senders'] = senders
-ug.graph['thresh'] = best_thresh
-ug.graph['dispersion'] = dispersion
-#ug.graph['tech-nontech-ratio'] = str(tech_ratio)#str(len(doc)/float(articlenumber))#
-ug.graph['wordcount'] = str(words)
-ug.graph['links'] = str(no_urls)
-ug.graph['articlenumber'] = str(articlenumber)
+# tg.add_edge(0,50)
+# tg.add_node(5000, size= 0.1)
+# tg.add_edge(50,5000)
+# tg.node[0]['final_size']=len(ug.nodes())
+# tg.node[0]['comps'] = count_comp-1
+# #tg.node[0]['thresh'] = best_thresh
+# #tg2.node[0]['final_size']=len(ug.nodes())
+# tg.node[0]['comps'] = count_comp-1
+# #tg2.node[0]['thresh'] = best_thresh
+# ug.graph['size']=len(ug.nodes())
+# ug.graph['comps'] = count_comp-1
+# ug.graph['senders'] = senders
+# ug.graph['thresh'] = best_thresh
+# ug.graph['dispersion'] = dispersion
+# #ug.graph['tech-nontech-ratio'] = str(tech_ratio)#str(len(doc)/float(articlenumber))#
+# ug.graph['wordcount'] = str(words)
+# ug.graph['links'] = str(no_urls)
+# ug.graph['articlenumber'] = str(articlenumber)
 
 #export
 # ug_nl = json_graph.node_link_data(ug)

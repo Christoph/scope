@@ -10,6 +10,20 @@
   background-color: rgb(213, 90, 20);
 }
 
+.numberbox {
+
+  border: 2px solid;
+  border-radius: 2px;
+  border-color: rgb(121, 179, 179);
+  position: fixed;
+  top: 10%;
+  left: 80%;
+  width: 30px;
+  font-size: 30px;
+  text-align:center;
+  display:none;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -28,9 +42,12 @@ function updateClass(box, id) {
 
 </script>
 
-<div class="container main">
+
     <h1 align=center>Newsletter - <strong>News Selection</strong></h1>
     <!-- .entry-header -->
+
+    <div class="numberbox"></div>
+
 
     <div ALIGN=CENTER>
 
@@ -58,6 +75,7 @@ function updateClass(box, id) {
                         <label class="checkbox-inline" style="font-size: 20px">
 
                           <input
+                          class = "selectbox"
                           id="selection-{{ forloop.counter }}"
                           style="margin-top: 6px"
                           type="checkbox"
@@ -75,6 +93,7 @@ function updateClass(box, id) {
                           <label class="checkbox-inline" style="font-size: 20px">
 
                             <input
+                            class = "mistakebox"                            
                             id="mistake-{{ forloop.counter }}"
                             {% if suggestion.is_mistake %} class="mistake" {% endif %}
                             style="margin-top: 6px"
@@ -104,6 +123,29 @@ function updateClass(box, id) {
 
         </div>
     </div>
-</div>
 
 {% endblock content %}
+
+{% block scripts %}
+
+<script type='text/javascript'>
+
+jQuery(document).ready(addClickHandlers());
+
+var count = 0;
+
+function addClickHandlers() {
+
+jQuery('.selectbox').on('click', function(event) {
+             
+count = $("[class='selectbox']:checked").length;
+$('.numberbox').html(count);
+$('.numberbox').css("display","block");
+
+ });
+}
+
+</script>
+  
+{% endblock scripts %}
+
