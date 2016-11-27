@@ -1,10 +1,7 @@
 #!/bin/sh
 
 # Create virtual ENV
-virtualenv -p /usr/bin/python2.7 ENV
-
-# Activate the virtualenv
-source ENV/bin/activate
+mkvirtualenv scope
 
 # Install all requirements
 pip install -r requirements.txt
