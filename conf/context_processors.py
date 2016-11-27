@@ -1,7 +1,12 @@
+"""Context Processor."""
+
 from django.conf import settings
+
 
 def google_analytics(request):
     """
+    Google Analytics.
+
     Use the variables returned in this function to
     render your Google Analytics tracking code template.
     """
@@ -14,5 +19,11 @@ def google_analytics(request):
         }
     return {}
 
+
 def site(request):
-    return {'domain': settings.CURRENT_DOMAIN,'name':settings.CURRENT_NAME}
+    """Available in all templates."""
+    return {
+        'domain': settings.CURRENT_DOMAIN,
+        'name': settings.CURRENT_NAME,
+        'media': settings.MEDIA_ROOT
+        }
