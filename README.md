@@ -20,7 +20,7 @@
     * mkvirtualenv scope
     * pip install -r requirements.txt
     * npm install
-    * bower install
+    * python manage.py bower install --settings=conf.settings.local
 
     * CAUTION: Following commands download around 1.4 GB
     * python -m spacy.en.download all

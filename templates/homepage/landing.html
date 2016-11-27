@@ -16,19 +16,19 @@
     <meta property="og:description" content="">
 
     <!-- Styles -->
-    <!-- <link rel="stylesheet" href="{% static 'landing/css/font-awesome.min.css' %}"> -->
-    <link rel="stylesheet" href="{% static 'landing/css/animate.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'homepage/css/font-awesome.min.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'homepage/css/animate.css' %}">
 
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
     <!--   <link href='http://fonts.googleapis.com/css?family=Raleway:400,100,200,300,500,600,700,800,900|Montserrat:400,700' rel='stylesheet' type='text/css'> -->
     <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,600&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 
-    <link rel="stylesheet" href="{% static 'landing/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'landing/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'homepage/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'homepage/css/main.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="{% static 'last24h/graphstyle.css' %}">
-    <script src="{% static 'landing/js/modernizr-2.7.1.js' %}"></script>
-    <script align='center' type="text/javascript" src="{% static 'last24h/d3.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'homepage/css/graphstyle.css' %}">
+    <script src="{% static 'homepage/js/modernizr-2.7.1.js' %}"></script>
+    <script align='center' type="text/javascript" src="{% static 'homepage/js/dependencies/d3.min.js' %}"></script>
 
 </head>
 
@@ -43,7 +43,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-                <a class="navbar-brand" href="{% url 'landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}graphite {% endif %}<!-- </span> --><small> - more overview, less redundancy</small></a>
+                <a class="navbar-brand" href="{% url 'homepage:landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}graphite {% endif %}<!-- </span> --><small> - more overview, less redundancy</small></a>
 
             </div>
             <a class="nav navbar-nav navbar-brand navbar-right" style="color:black;" href="mailto:grphtcontact@gmail.com"> <i class="fa fa-envelope" aria-hidden="true"></i> contact </a>
@@ -61,7 +61,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-xs-6">
-                    <a class="navbar-brand" href="{% url 'landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}graphite {% endif %}<!-- </span> --><!-- <small> - less noise, more news</small> --></a>
+                    <a class="navbar-brand" href="{% url 'homepage:landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}graphite {% endif %}<!-- </span> --><!-- <small> - less noise, more news</small> --></a>
                 </div>
                 <div class="col-xs-6 signin text-right navbar-nav">
                     <!-- <a href="#pricing" class="scroll">Pricing</a> -->
@@ -200,7 +200,7 @@
                     <li role="presentation"><a href="#feeds" aria-controls="feeds" role="tab" data-toggle="tab" id="tab-right">Feeds</a></li>
                 </ul>
 
-                <form action="{% url 'grews_alert' %}" method="post">
+                <form action="{% url 'explore:alert' %}" method="post">
 
                     {% csrf_token %}
                     <div class="tab-content">
@@ -264,7 +264,7 @@
                 <footer class="landing">
                     <div class="container">
                         <p><small>&copy; Copyright 2016, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a> <a href="mailto:grphtcontact@gmail.com">Contact</a>
-         <!-- <a href="{% url 'disclaimer' %}" rel="designer">Disclaimer/License</a> -->
+
          </small></p>
                     </div>
                 </footer>
@@ -277,11 +277,11 @@
                 <script>
                     window.jQuery || document.write('<script src="js/jquery-1.11.0.min.js"><\/script>')
                 </script>
-                <script src="{% static 'landing/js/wow.min.js' %}"></script>
-                <script src="{% static 'landing/js/bootstrap.min.js' %}"></script>
-                <script src="{% static 'landing/js/main.js' %}"></script>
+                <script src="{% static 'homepage/js/wow.min.js' %}"></script>
+                <script src="{% static 'homepage/js/bootstrap.min.js' %}"></script>
+                <script src="{% static 'homepage/js/main.js' %}"></script>
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
-                <script src="{% static 'last24h/landing.js' %}"></script>
+                <script src="{% static 'homepage/js/landing.js' %}"></script>
 
 </body>
 

@@ -10,9 +10,8 @@ https://docs.djangoproject.com/en/1.8/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
-from .base import *
-
 import os
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = get_env_variable('SECRET_KEY')
 X_FRAME_OPTIONS = 'DENY'
@@ -44,7 +43,7 @@ EMAIL_HOST_PASSWORD = 'scope2016'
 AUTH_PROFILE_MODULE = 'scope.UserProfile'
 TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates',
   'DIRS': [os.path.join(BASE_DIR, 'templates')],
-  'APP_DIRS': True,
+  'APP_DIRS': False,
   'OPTIONS': {'context_processors': ['django.template.context_processors.debug',
                                      'django.template.context_processors.request',
                                      'django.contrib.auth.context_processors.auth',

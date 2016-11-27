@@ -8,5 +8,6 @@ urlpatterns = [
     # ...
     url(r'^$', views.interface,name="interface"),
     url(r'^feed/latest$', Feed()),
+    
     # ...
 ]

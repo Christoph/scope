@@ -19,12 +19,12 @@ from django.contrib import admin
 # from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-#    url(r'^djga/', include('google_analytics.urls')),
     url(r'^', include('django.contrib.auth.urls')),
-    url(r'^curate', include('curate.urls',namespace="curate")),
-   # url(r'^explore', include('explore.urls',namespace="explore")),
-    url(r'^', include('homepage.urls', namespace='homepage')),
+    url(r'^captcha/', include('captcha.urls')),
     url(r'^admin/', include(admin.site.urls)),
-
+    url(r'^curate/', include('curate.urls',namespace="curate")),
+    url(r'^explore/', include('explore.urls',namespace="explore")),
+    url(r'^', include('homepage.urls', namespace='homepage')),
+    url(r'^misc/', include('misc.urls', namespace='misc')),
 ]
 
