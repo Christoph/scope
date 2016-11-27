@@ -67,6 +67,7 @@ USE_TZ = True
 STATIC_ROOT = 'static/'
 MEDIA_ROOT = 'media/'
 BOWER_ROOT = 'bower_components/'
+TEMPLATE_ROOT = 'templates/'
 
 STATIC_URL = '/static/'
 
