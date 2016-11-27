@@ -9,8 +9,6 @@ l24h_data/
 
 *.pyc
 
-graphite/settings.py
-
 ENV/
 .env
 .DS_STORE

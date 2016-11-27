@@ -1,0 +1,26 @@
+from __future__ import unicode_literals
+
+from django.db import models
+from django.contrib.auth.models import User, AnonymousUser
+import django.utils.timezone
+
+# Create your models here.
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, default = None,null = True)
+    activation_key = models.CharField(max_length=40)
+    key_expires = models.DateTimeField()
+
+class Query(models.Model):
+    user = models.ForeignKey(User, default = None,null = True)
+    query = models.CharField(max_length=200)
+    time = models.DateTimeField(default = django.utils.timezone.now)
+    string = models.CharField(max_length=200)
+    url = models.CharField(max_length=200)
+    articlenumber = models.IntegerField(null = True,blank=True)
+    words = models.IntegerField(null = True,blank=True)
+
+class Sources(models.Model):
+    name = models.CharField(max_length = 200)
+    url = models.CharField(max_length=200)
+    def __unicode__(self):
+        return self.name
