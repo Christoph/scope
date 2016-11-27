@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     'curate',
     'twitter_bootstrap',
     'django.contrib.sites',
-    'widget_tweaks')
+    'widget_tweaks',
+    'djangobower')
 
 SITE_ID = 1
 

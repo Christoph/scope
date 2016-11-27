@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'twitter_bootstrap',
     'django.contrib.sites',
     'widget_tweaks',
+    'djangobower',
     'djcelery',
     'kombu.transport.django')
 
