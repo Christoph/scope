@@ -25,5 +25,6 @@ def site(request):
     return {
         'domain': settings.CURRENT_DOMAIN,
         'name': settings.CURRENT_NAME,
-        'media': settings.MEDIA_ROOT
+        'media': settings.MEDIA_ROOT,
+        'bower': settings.BOWER_ROOT
         }
