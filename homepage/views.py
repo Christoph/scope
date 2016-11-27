@@ -19,8 +19,9 @@ from django.core.mail import send_mail,EmailMessage
 from scope.models import Article
 from homepage.forms import AlertEditForm,NameForm, AlertForm, RegistrationForm,ContactForm,RegistrationForm2,SourceForm
 from curate.models import Select
-from explore.models import Query, Sources,UserProfile
+from explore.models import Query, Sources
 from alert.models import Alert, Send
+from scope.models import UserProfile
 
 import random, sha
 import networkx as nx
@@ -100,11 +101,11 @@ def check_login(request):
     if request.user.is_authenticated():
         log_inf = ['Profile','Logout']
         log_link = ['profile','logout_user']
-    else: 
+    else:
         log_inf = ['Register','Login']
         log_link = ['register','login_user']
     return log_inf, log_link
-    
+
 from random import randint
 
 
@@ -133,9 +134,9 @@ def index(request):
             sys.argv = ['/home/django/graphite/static/last24h/csl24h.py', topics, strin]
             execfile('/home/django/graphite/static/last24h/csl24h.py')
             #return returncode
-            
-        
-            return HttpResponseRedirect(reverse('last24h:csresults',args=[strin])) 
+
+
+            return HttpResponseRedirect(reverse('last24h:csresults',args=[strin]))
         if (form2.is_valid()) and ('customsearch' in request.POST):
             # process the data in form.cleaned_data as required
             # ...
@@ -152,8 +153,8 @@ def index(request):
             sys.argv = ['/home/django/graphite/static/last24h/cs2.py', topics, strin]
             execfile('/home/django/graphite/static/last24h/cs2.py')
             #return returncode
-            
-        
+
+
             return HttpResponseRedirect(reverse('csr',args=[strin])) #reverse('last24h:csresults',args={topic}))#
 
     # if a GET (or any other method) we'll create a blank form
@@ -190,14 +191,14 @@ def csresults(request,topic):
             sys.argv = ['/home/django/graphite/static/last24h/cs2.py', topics, strin]
             execfile('/home/django/graphite/static/last24h/cs2.py')
             #return returncode
-            
-        
+
+
             return HttpResponseRedirect(reverse('csr',args=[strin])) #reverse('last24h:csresults',args={topic}))#
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = NameForm()
-         
+
     log_inf, log_link = check_login(request)
     suggestions = Select.objects.filter(custom = 'q' + topic).order_by('distance')
     topic_text = topic[:(len(topic)-14)].replace('AND',', ').replace("_"," ")
@@ -218,14 +219,14 @@ def martin(request):
     messages = ["'My name is Martin and I will save you', he said.","She shyly looked up on him.","His chin was quite big.","Kazoom!!","Nothing happened.","The wind rose.","'Dontt worry, babe', he said","They walked down the road","Godzilla","She cried","He cried","A tear dropped on the floow","'I hate you', she said", "He pressed her tightly against him"]
     state = "Go for it, birthday boy!"
     if request.method == 'POST':
-        if 'add' in request.POST:            
+        if 'add' in request.POST:
             state = messages[randint(0,len(messages)-1)]
         if 'reset' in request.POST:
             state = "hit me, Martin!"
 #   if 'append' in request.POST:
 #       messages.appendrequest.POST['text']
     return render(request,'graphite/martin.html', {'state': state})
-  
+
 
 
 
@@ -234,11 +235,11 @@ def artsy(request):
 
 def register(request,):
     state = "With a profile you can manage and edit your alerts, access previous search results and unlock other great features!"
-    log_inf, log_link = check_login(request) 
+    log_inf, log_link = check_login(request)
     if request.user.is_authenticated():
         # They already have an account; don't let them register again
         state = "Seems like we already have an account for those details. If you want to create a separate account, please log out from your current account."
-    
+
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = RegistrationForm(request.POST)
@@ -246,27 +247,27 @@ def register(request,):
         if form.is_valid():
             if request.POST['password1'] == request.POST['password2']:
                 print request.POST['username']
-                
+
                 if form.isValidUsername(request.POST['username']):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
-                    print 
+                    print
                     new_data = request.POST.copy()
                     new_user = form.save(new_data)
-            
-            # Build the activation key for their account                                                                                                                    
+
+            # Build the activation key for their account
                     salt = sha.new(str(random.random())).hexdigest()[:5]
                     activation_key = sha.new(salt+new_user.username).hexdigest()
                     key_expires = datetime.today() + timedelta(2)
-            
-                # Create and save their profile                                                                                                                                 
+
+                # Create and save their profile
                     new_profile = UserProfile(user=new_user,
                                       activation_key=activation_key,
                                       key_expires=key_expires)
                     new_profile.save()
-            
-            # Send an email with the confirmation link                                                                                                                      
+
+            # Send an email with the confirmation link
                     email_subject = 'Your new Grews profile confirmation'
                     email_body = "Hello, %s, and thanks for creating a Grews profile!\n\nTo activate your account, click this link within 48 hours:\n\n %s/confirm/%s" % (
                     new_user.username,
@@ -287,16 +288,16 @@ def register(request,):
                     print 'render created'
                     state="Great! Only one step to go. We've sent you an email with a confirmation link. Please confirm and you're set to go."
                     return render(request,'graphite/register.html', {'new':False,'state':state, 'log_inf':log_inf, 'log_link':log_link})
-                else: 
+                else:
                     state="Sorry, but this username is already taken."
-                    
-            else: 
+
+            else:
                 state = "Passwords mismatch, try again."
-               
+
     else:
-        form = RegistrationForm() 
+        form = RegistrationForm()
     return render(request,'graphite/register.html', {'new':True,'form': form, 'state':state, 'log_inf':log_inf, 'log_link':log_link})
-            # Save the user                                                                                                                                                 
+            # Save the user
 def confirm(request, activation_key):
     log_inf, log_link = check_login(request)
     if request.user.is_authenticated():
@@ -321,12 +322,12 @@ def confirm(request, activation_key):
 
 #@login_required(login_url='/login')
 def disclaimer(request):
-    log_inf, log_link = check_login(request)    
+    log_inf, log_link = check_login(request)
     return render(request,'graphite/disclaimer.html', {'log_inf':log_inf, 'log_link':log_link})
 
 #@login_required(login_url='/login')
 def about(request):
-    log_inf, log_link = check_login(request)    
+    log_inf, log_link = check_login(request)
     return render(request,'graphite/about.html', {'log_inf':log_inf, 'log_link':log_link})
 
 @login_required(login_url='/login')
@@ -337,7 +338,7 @@ def profile_edit(request):
         user.first_name = request.POST['first']
         user.last_name = request.POST['last']
         user.username = request.POST['username']
-        user.email = request.POST['email']            
+        user.email = request.POST['email']
         user.save()
         return HttpResponse(
                 json.dumps({"success": "Changes have been saved"}),
@@ -362,7 +363,7 @@ def alert_edit(request):
         print "here"
         q.save()
         try: q.save()
-        except: 
+        except:
             return HttpResponse(
                 json.dumps({"error": "There occurred some error during saving. Try again"}),
                 content_type="application/json"
@@ -380,14 +381,14 @@ def alert_edit(request):
 
 
 @login_required(login_url='/login')
-def profile(request):    
+def profile(request):
     log_inf, log_link = check_login(request)
     user = User.objects.get(id=request.user.id)
     form2 = RegistrationForm2(initial={'first': user.first_name,
-    'last': user.last_name,  
+    'last': user.last_name,
     'username':user.username,
     'email': user.email})
-    
+
     alerts = Alert.objects.filter(user = user).order_by('delivery_time')
     alert_info = []
     state = ""
@@ -405,7 +406,7 @@ def profile(request):
 
         if 'delete' in request.POST:
             q = Alert.objects.get(no = request.POST['no'])
-            state = 'The alert "' + q.query + '" was successfully deleted.'           
+            state = 'The alert "' + q.query + '" was successfully deleted.'
             q.delete()
             alerts = Alert.objects.filter(user = user).order_by('delivery_time')
             for i in range(0,len(alerts)):
@@ -413,12 +414,12 @@ def profile(request):
                 alerts[i].save()
                 #return HttpResponseRedirect(reverse('profile'))
         # elif 'save_profile' in request.POST:
-            
+
         #     user.first_name = request.POST['first']
         #     user.last_name = request.POST['last']
         #     user.username = request.POST['username']
         #     user.email = request.POST['email']
-                
+
         #     user.save()
         #     state_profile = "Changes have been saved"
         #     form2 = RegistrationForm2(request.POST)
@@ -428,21 +429,21 @@ def profile(request):
                 Alert.objects.get(user=user).delete()
             except:
                 None
-                #delete the alerts, all the Suggest objects for each of the graphs that have been produced, and all the. No. delete suggestions and graph data otherwise through schedule24h. Specifically, check whether there exist graphs/suggest/query objects whose latest url is not the url of any alert or query.(be careful with "recent queries") if not, delete them. But don't delete them when deleting a user (if you delete the user, then this will show up with the next check  
+                #delete the alerts, all the Suggest objects for each of the graphs that have been produced, and all the. No. delete suggestions and graph data otherwise through schedule24h. Specifically, check whether there exist graphs/suggest/query objects whose latest url is not the url of any alert or query.(be careful with "recent queries") if not, delete them. But don't delete them when deleting a user (if you delete the user, then this will show up with the next check
             try:
                 Query.objects.get(user=user).delete()
             except:
                 None
-            
+
             try:
                 Send.objects.get(user=user).delete()
             except:
                 None
-            logout(request)                
+            logout(request)
             user.delete()
-            
+
             return HttpResponseRedirect(reverse('profile_delete'))
-            
+
     else:
         for i in range(0, len(alerts)):
             alert_info.append((alerts[i], AlertEditForm(initial = {'query' : alerts[i].query, 'frequency' : alerts[i].frequency, 'no' : alerts[i].no })))
@@ -451,7 +452,7 @@ def profile(request):
     #for query in recent_queries:
     #     csstring = 'cs' + query.string
     #     suggestions.append(Suggest.objects.filter(custom = csstring).order_by('distance')[:2])
-    
+
     context = {'user':user, 'recent_queries':recent_queries, 'alert_info':alert_info, 'log_inf':log_inf, 'log_link':log_link, 'state':state,'form2':form2,'state_profile':state_profile}
     return render(request, 'graphite/profile.html', context)
 
@@ -470,14 +471,14 @@ def login_user(request):
     if request.POST:
         username = request.POST['username']
         password = request.POST['password']
-    
+
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
                 login(request, user)
                 #state = "You are succesfully logged in. Please proceed to"
                 #render(request, 'last24h/index.html')
-                return HttpResponseRedirect(reverse('profile')) 
+                return HttpResponseRedirect(reverse('profile'))
             # Redirect to a success page.
             else:
             # Return a 'disabled account' error message
@@ -486,7 +487,7 @@ def login_user(request):
         # Return an 'invalid login' error message.
             state = "Your username and/or password were incorrect."
     log_inf, log_link = check_login(request)
-    
+
     return render(request, 'graphite/auth.html',{'state':state, 'username': username,'log_inf':log_inf, 'log_link':log_link})
 
 
@@ -520,9 +521,9 @@ def twitter_start(request):
         data = 'Fail'
     #job = customsearch.delay()
         inputt = request.POST.get('input')
-        
+
         job = twitter_job.delay(inputt)
-        data = '{"job":"' + str(job.id)+ '"}'    
+        data = '{"job":"' + str(job.id)+ '"}'
         json_data = json.dumps(data)
         return HttpResponse(json_data,content_type="application/json")
     else:
@@ -567,7 +568,7 @@ def update_state(request):
                 data = 50
             elif job.state =='FAILURE':
                 data = 500
-                
+
                 #strin = request.GET['strin']
                 #return HttpResponseRedirect(reverse('csr',args=[strin]))
     return HttpResponse(json.dumps(data))
@@ -585,7 +586,7 @@ def search_task_term(request):
         query = request.POST.get('query_text')
         print request.POST
         print user_id
-        topics = query.split(',') 
+        topics = query.split(',')
         for i in range(0, len(topics)):
             topics[i] = topics[i].strip(' ').lower().replace(" ","_")
         feeds = []
@@ -598,10 +599,10 @@ def search_task_term(request):
             if user_id != "None":
                 q = Query(user = User.objects.get(id =user_id), query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
                 q.save()
-            else: 
+            else:
                 q = Query(query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
                 q.save()
-            data = '{"job":"exists","strin": "' + str(strin) + '"}'    
+            data = '{"job":"exists","strin": "' + str(strin) + '"}'
             json_data = json.dumps(data)
 
 
@@ -609,12 +610,12 @@ def search_task_term(request):
             if user_id != "None":
                 q = Query(user = User.objects.get(id =user_id), query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
                 q.save()
-            else: 
+            else:
                 q = Query(query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
                 q.save()
             print strin
             job = cs_task.delay(feeds,strin,0)
-            data = '{"job":"' + str(job.id) + '","strin": "' + str(strin) + '"}'    
+            data = '{"job":"' + str(job.id) + '","strin": "' + str(strin) + '"}'
             json_data = json.dumps(data)
 
         return HttpResponse(json_data,content_type="application/json")
@@ -641,12 +642,12 @@ def search_task_feeds(request):
         if user_id != "None":
             q = Query(user = User.objects.get(id = user_id), query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
             q.save()
-        else: 
+        else:
             q = Query(query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
             q.save()
-            
+
         job = cs_task.delay(feeds,strin,0)
-        data = '{"job":"' + str(job.id) + '","strin": "' + str(strin) + '"}'    
+        data = '{"job":"' + str(job.id) + '","strin": "' + str(strin) + '"}'
           #request.session['task_id'] = job.id
         json_data = json.dumps(data)
 
@@ -659,7 +660,7 @@ def search_task_feeds(request):
 
 
 #@login_required(login_url='/login')
-def customsearch(request):     
+def customsearch(request):
     existingfeed = 0
     if request.user.is_authenticated():
         user_id = request.user.id
@@ -675,7 +676,7 @@ def customsearch(request):
     #         job = do_work.delay()
             #request.session['task_id'] = job.id
             #return HttpResponseRedirect(reverse('search_state') + '?job=' + job.id)
-            
+
         # check whether it's valid:
         #     if form2.is_valid():
         #         # process the data in form.cleaned_data as required
@@ -683,7 +684,7 @@ def customsearch(request):
         #         # redirect to a new URL:
         #         topic = form2.cleaned_data['query_text']
         #         print topic
-        #         topics = topic.split(',') 
+        #         topics = topic.split(',')
         #         for i in range(0, len(topics)):
         #             topics[i] = topics[i].strip(' ').lower().replace(" ","_")
         #         feeds = []
@@ -699,9 +700,9 @@ def customsearch(request):
         #         #return returncode
         #         execfile('last24h' + static('last24h/cs2.py'))#'/home/django/graphite/static/last24h/cs2.py')
         #         return HttpResponseRedirect(reverse('csr',args=[strin])) #reverse('last24h:csresults',args={topic}))#
-        #     else: 
+        #     else:
         #         print "nonon"
-        # if 'search2' in request.POST:            
+        # if 'search2' in request.POST:
         #     form2 = NameForm(request.POST)
         # # check whether it's valid:
         #     if form2.is_valid():
@@ -715,7 +716,7 @@ def customsearch(request):
         #         for feed in feeds:
         #             ids.append(str(Sources.objects.get(url=feed).id))
         #         strin = "AND".join(ids) + '_' + datetime.now().isoformat()[:13]
-                
+
         #         if request.user.is_authenticated():
         #             q = Query(user = User.objects.get(id =request.user.id), query = query_type, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
         #             q.save()
@@ -727,15 +728,15 @@ def customsearch(request):
             if len(Sources.objects.filter(url=request.POST['url'])) == 0:
                 if len(feedparser.parse(request.POST['url'])['entries']) != 0:
                     SourceForm(request.POST).save()
-                    return HttpResponseRedirect(reverse('customsearch'))    
-                else: 
+                    return HttpResponseRedirect(reverse('customsearch'))
+                else:
                     existingfeed = 2
-                
+
             else:
                 existingfeed = 1
-                
 
-            
+
+
 
 
     # if a GET (or any other method) we'll create a blank form
@@ -744,7 +745,7 @@ def customsearch(request):
     form = SourceForm()
     log_inf, log_link = check_login(request)
     context = {'user_id':user_id, 'existingfeed':existingfeed,'form':form,'form2':form2, 'log_inf':log_inf, 'log_link':log_link}
-    return render(request, 'graphite/custom_search.html', context)  
+    return render(request, 'graphite/custom_search.html', context)
 
 
 #@login_required(login_url='/login')
@@ -768,8 +769,8 @@ def custom_results(request,strin):
     #         sys.argv = [static('last24h/cs2.py'),topics,strin]#'/home/django/graphite/static/last24h/cs2.py', topics, strin]
     #         execfile(static('last24h/cs2.py'))#'/home/django/graphite/static/last24h/cs2.py')
     #         #return returncode
-            
-        
+
+
     #         return HttpResponseRedirect(reverse('csr',args=[strin])) #reverse('last24h:csresults',args={topic}))#
 
     # # if a GET (or any other method) we'll create a blank form
@@ -777,7 +778,7 @@ def custom_results(request,strin):
     #     form = NameForm()
     triple = [strin.split('&feeds=')[0],strin.split('&feeds=')[1].split('&term=')[0],strin.split('&feeds=')[1].split('&term=')[1]]
     time = triple[0][5:7] + '/' + triple[0][8:10] + ' ' + triple[0][11:16]
-    if triple[1] == 'none':  
+    if triple[1] == 'none':
         query = [i.title() for i in triple[2].split('AND')]#.append() = ",".join([i.title() for i in triple[2].split('AND')])
         term = True
     else:
@@ -786,14 +787,14 @@ def custom_results(request,strin):
         query = []
         for i in ids:
             query.append(Sources.objects.get(id = i).name) #query + Sources.objects.get(id = i).name
-        
+
     #form = NameForm()
     log_inf, log_link = check_login(request)
     #topic_text = strin[:(len(strin)-14)].replace('AND',', ').replace("_"," ")
     #query = Query.objects.filter(string = 'strin')
     try:
         info = Query.objects.filter(string = strin)[0]
-    except: 
+    except:
         info = ""
     context = {'term':term, 'info':info,'strin':strin, 'time':time,'query':query, 'log_inf':log_inf, 'log_link':log_link}
     return render(request, 'graphite/custom_results.html', context) #-{'topic': topic})
@@ -802,7 +803,7 @@ def custom_results(request,strin):
 def grews_alert(request):
     if request.user.is_authenticated():
         user = User.objects.get(id=request.user.id)
-    else: 
+    else:
         user = None
     state = ""
     existingfeed = 0
@@ -814,19 +815,19 @@ def grews_alert(request):
             if form.is_valid():
                 if (len(form.cleaned_data['query']) != 0) and (len(form.cleaned_data['sources']) != 0):
                     state = "Please make sure to only either enter a search term of select feeds"
-                    
-                else: 
+
+                else:
                     if len(form.cleaned_data['query']) != 0:
                         query = form.cleaned_data['query']
                         feed_type = False
-                        topics = query.split(',') 
+                        topics = query.split(',')
                         for i in range(0, len(topics)):
                             topics[i] = topics[i].strip(' ').lower().replace(" ","_")
                         feeds = []
                         for i in topics:
                             feeds.append('http://news.google.co.uk/news/feeds?pz=1&cf=all&ned=en&hl=en&q=' + i + '&output=rss&num=100')
                         query = ",".join(topics)
-                    else: 
+                    else:
                         feed_type = True
                         feeds = form.cleaned_data['sources']
                         ids = []
@@ -841,33 +842,33 @@ def grews_alert(request):
                     #email = form.cleaned_data['email']
                     frequency = form.cleaned_data['frequency']
                     delivery_time = form.cleaned_data['delivery_time']
-                    
+
                     #copies = form.cleaned_data['copies']
 
                     try:
                         user_alert = Alert.objects.filter(user=user)
                     except:
                         user_alert = []
-                        
+
                     no = str(user.id) + '_' + str(len(user_alert) + 1)
                     q = Alert(feeds = feeds,frequency = frequency, delivery_time = delivery_time, query = query, user = user,no = no,feed_type = feed_type)
                     q.save()
-                    
-                    state = "Congratulations. Now look forward to your first alert." 
+
+                    state = "Congratulations. Now look forward to your first alert."
             form = AlertForm()
                 # Redirect to a success page.
-            
+
         if 'add_source' in request.POST:
             if len(Sources.objects.filter(url=request.POST['url'])) == 0:
                 if len(feedparser.parse(request.POST['url'])['entries']) != 0:
                     SourceForm(request.POST).save()
-                    return HttpResponseRedirect(reverse('grews_alert'))    
-                else: 
+                    return HttpResponseRedirect(reverse('grews_alert'))
+                else:
                     existingfeed = 2
-                
+
             else:
                 existingfeed = 1
-    
+
     else: form = AlertForm()
     form2 = SourceForm()
     log_inf, log_link = check_login(request)
@@ -884,7 +885,7 @@ def contact(request):
     state = "Please drop me any feedback or suggestions or simply hit me with any thoughts of your's on the site!"
     if request.user.is_authenticated():
             form = ContactForm(initial = {'contact_email': request.user.email,'contact_name':request.user.first_name + ' ' + request.user.last_name})
-    else: 
+    else:
         form = ContactForm()
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -898,11 +899,11 @@ def contact(request):
                 reply_to = [request.POST['contact_email']]
             )
             email.send()
-            state="Thanks! Your mail has been sent"                                                                                                                
+            state="Thanks! Your mail has been sent"
             return render(request,'graphite/contact.html', {'state':state, 'log_inf':log_inf, 'log_link':log_link})
         else:
             state = "Oops. Something went wrong with the data. Please double-check and try again."
-        
+
     return render(request, 'graphite/contact.html',{'log_inf':log_inf, 'log_link':log_link, 'form':form,'state':state})
 
 #@csrf_exempt
@@ -915,7 +916,7 @@ def send_sample(request):
         #content = ''
         #send_mail('brief','Sorry, this service works only for html-compatible mail clients','grphtcontact@gmail.com',[email],connection=None, html_message=content)
         data = 'done'
-        # except: 
+        # except:
         #    data = 'Invalid email address'
         return HttpResponse(data,content_type="application/json")
     else:
@@ -959,8 +960,3 @@ def pd(request):
         response['Content-Disposition'] = 'inline;filename=some_file.pdf'
         return response
     pdf.closed
-
-
-
-
-  
