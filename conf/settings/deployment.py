@@ -20,6 +20,7 @@ from .base import *
 
 im = ImportGlobal()
 
+DEBUG = False
 ALLOWED_HOSTS = ['.grpht.info', '46.101.94.4', '.scope.ai']
 CURRENT_DOMAIN = 'http://www.scope.ai'
 CURRENT_NAME = 'scope'
