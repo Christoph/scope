@@ -20,13 +20,13 @@ DEBUG = True
 ALLOWED_HOSTS = []
 CURRENT_DOMAIN = 'http://127.0.0.1:8000'
 CURRENT_NAME = 'scope'
-ADMINS = ('GRPHT', 'grphtcontact@gmail.com')
+ADMINS = ('GRPHT', 'grphtcontact@gmail.com','admin@scope.ai')
 INSTALLED_APPS = ('django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'explore', 'scope','alert', 'captcha','curate', 'twitter_bootstrap', 'django.contrib.sites', 'widget_tweaks') 
   # 'djcelery', 'kombu.transport.django')
 import djcelery
 djcelery.setup_loader()
 
-BROKER_URL = 'amqp://admin:Istanbul@localhost:5672/80'
+BROKER_URL = get_env_variable('BROKER_URL') 
 CELERY_ACCEPT_CONTENT = ['pickle',
  'json',
  'msgpack',
@@ -36,12 +36,12 @@ MIDDLEWARE_CLASSES = ('django.contrib.sessions.middleware.SessionMiddleware', 'd
 
 GOOGLE_ANALYTICS = {'google_analytics_id': 'UA-71839611-1'}
 ROOT_URLCONF = 'conf.urls'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = '587'
+EMAIL_HOST = 'smtp.zoho.com'
+EMAIL_PORT = '465'
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'grphtcontact@gmail.com'
-EMAIL_HOST_PASSWORD = 'Horizon2020'
-AUTH_PROFILE_MODULE = 'last24h.UserProfile'
+EMAIL_HOST_USER = 'robot@scope.ai'
+EMAIL_HOST_PASSWORD = 'scope2016'
+AUTH_PROFILE_MODULE = 'scope.UserProfile'
 TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates',
   'DIRS': [os.path.join(BASE_DIR, 'templates')],
   'APP_DIRS': True,
@@ -51,12 +51,6 @@ TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates',
                                      'graphite.context_processors.site',
                                      'django.contrib.messages.context_processors.messages']}}]
 WSGI_APPLICATION = 'conf.wsgi.application'
-# DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#              'NAME': 'scope',
-#              'USER': 'admin_scope',
-#              'PASSWORD': 'scope2016',
-#              'HOST': '',
-#              'PORT': ''}}
 
 DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql_psycopg2',
              'NAME': get_env_variable('DATABASE_NAME'),

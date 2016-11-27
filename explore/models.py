@@ -1,14 +1,10 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import User
 import django.utils.timezone
 
-# Create your models here.
-class UserProfile(models.Model):
-    user = models.ForeignKey(User, default = None,null = True)
-    activation_key = models.CharField(max_length=40)
-    key_expires = models.DateTimeField()
+
 
 class Query(models.Model):
     user = models.ForeignKey(User, default = None,null = True)
