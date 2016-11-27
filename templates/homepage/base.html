@@ -1,11 +1,9 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-xmlns:og="http://ogp.me/ns#"
-xmlns:fb="http://www.facebook.com/2008/fbml">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
 <meta charset="utf-8">
-<meta name="robots" content="noindex,nofollow"/>
+<meta name="robots" content="noindex,nofollow" />
 
 <!-- div.tooltip img{max-width:200px} -->
 
@@ -14,157 +12,154 @@ xmlns:fb="http://www.facebook.com/2008/fbml">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if name %}{{name}}{% else %}scope {% endif %} | see more</title>
-    <link rel="image_src" href="{% static 'last24h/graphite-logo.jpg' %}">
-    <link rel="icon" href="{% static 'last24h/graphite-logo2.jpg' %}">
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<meta property="og:image" content="http://www.grpht.info{% static 'last24h/graphite-logo2.jpg' %}">
+    <link rel="image_src" href="{% static '{{MEDIA_ROOT}}homepage/img/logo_grpht.png' %}">
+    <link rel="icon" href="{% static '{{MEDIA_ROOT}}homepage/img/logo_grpht.png' %}">
+    <link rel="stylesheet" href="{{BOWER_ROOT}}bootstrap/dist/css/bootstrap.min.css">
+    <meta property="og:image" content="http://www.grpht.info{% static '{{MEDIA_ROOT}}homepage/img/logo_grpht.png' %}">
 
     <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
-    <!-- Optional theme -->
-<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">-->
-   <!--<link rel="stylesheet" href="{% static 'last24h/style_unt.css' %}">-->
- <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
-   <link href="{% static 'last24h/sticky-footer-navbar.css' %}" rel="stylesheet">
-   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,600&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-   <link rel="stylesheet" href="{% static 'last24h/graphstyle.css' %}">
-    {% block head %}{% endblock %} 
+    <link rel="stylesheet" href="{{BOWER_ROOT}}bootstrap-select/dist/css/bootstrap-select.min.css">
+    <link href="{{BOWER_ROOT}}font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{% static '{{STATIC_ROOT}}homepage/css/sticky-footer-navbar.css' %}" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,600&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static '{{STATIC_ROOT}}homepage/css/graphstyle.css' %}"> {% block head %}{% endblock %}
 </head>
+
 <body>
-			<header>
-          <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+    <header>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'home' %}"><span style ="font-size:20px">{% if name %}{{name}}{% else %}scope {% endif %}</span><small> - see more</small></a>
+                    <a class="navbar-brand" href="{% url 'home' %}"><span style ="font-size:20px">{% if name %}{{name}}{% else %}scope {% endif %}</span><small> - see more</small></a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{% url 'customsearch' %}"><i class="fa fa-search" aria-hidden="true"></i></a>
+                            <title>Custom Search</title>
+                        </li>
+                        <li><a href="{% url 'grews_alert' %}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a></li>
+                        <li><a href="{% url 'how_it_works' %}"><i class="fa fa-info" aria-hidden="true"></i></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user" aria-hidden="true"></i></a> {% if log_inf %}
+                            <ul class="dropdown-menu">
+                                <li><a href="{% with log_link|first as name %}{% url name %}{% endwith %}">{{log_inf|first}}</a></li>
+                                <li><a href="{% with log_link|last as name %}{% url name %}{% endwith %}">{{log_inf|last}}</a></li>
+                            </ul>
+                            {% endif %}
+                        </li>
+
+                    </ul>
+                    <!-- Button trigger modal -->
+
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </nav>
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">What is what?</h4>
+                    </div>
+                    <div class="modal-body">
+                        <ul>
+                            <li> Every <strong>circle</strong> corresponds to a news article. Hover over it to a summary about it. Click on it to get to the article directly. The article that is currently shown in the center will be filled black.</li>
+                            <li> Two circles share a <strong>link</strong> when they have strong thematic overlap.</li>
+                            <li> The arc in the middle displays the proportions of the sizes between the different topic clusters. You can get to the <strong>detail view</strong> of a topic cluster by clicking on the corresponding section of the central circle.</li>
+                            <li> The most <strong>central article</strong> of each cluster has a black border. To get to the <strong>"suggestion view"</strong> in which only the most central articles of each cluster are shown, click the <span class="glyphicon glyphicon-star"
+                                    aria-hidden="true"></span>-button in the top right corner. <strong>Reading articles from the suggestion view from top to bottom is the best thing you can do to get on top of the news since you only read those articles on a topic that are most representative of the overall reporting on that topic (maximising relevance), while at the same time it minimises redundancy between different articles!</strong></li>
+                            <li> In the detail view, articles will be <strong>highlighted</strong> or faded out depending on whether they overlap (i.e. if they share a link in the overview).</li>
+                            <li> You can reorder the articles by different parameters using the <strong>dropdown menu</strong> at the top of the big circle section.</li>
+                            <li> To <strong>leave the detail view</strong>, click anywhere inside the center of the large circle or, again, on the circle section.</li>
+                            <li>Open this view at any time by clicking the <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>-button.</li>
+                        </ul>
+                        For more information about how these graphs are constructed, click <a href="{% url 'how_it_works'%}"><span><i class="fa fa-info" aria-hidden="true"></i></span></a>.<br/>
+
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="{% url 'customsearch' %}"><i class="fa fa-search" aria-hidden="true"></i></a><title>Custom Search</title></li>
-            <li><a href="{% url 'grews_alert' %}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a></li>
-            <li><a href="{% url 'how_it_works' %}"><i class="fa fa-info" aria-hidden="true"></i></a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user" aria-hidden="true"></i></a>
-              {% if log_inf %}
-              <ul class="dropdown-menu">
-                <li><a href="{% with log_link|first as name %}{% url name %}{% endwith %}">{{log_inf|first}}</a></li>
-                <li><a href="{% with log_link|last as name %}{% url name %}{% endwith %}">{{log_inf|last}}</a></li>
-              </ul>
-              {% endif %} 
-            </li>
 
-          </ul>
-            <!-- Button trigger modal -->
-             
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+        <!-- Sharemodal -->
+        <div class="modal fade" id="share_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Share this graph!</h4>
+                    </div>
+                    <div class="modal-body share-body">
+                        <div class="row share-row">
+                            <!--<div class="col-md-4 share-col twitter-col">-->
+                            <a href="http://twitter.com/home?status=" title="Share on Twitter" target="_blank" class="btn btn-twitter share-btn">
+                                <div align=center>
+                                    <i class="fa fa-twitter"></i>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="row share-row">
+                            <!--<div class="col-md-4 share-col share-col">-->
+                            <a href="https://www.facebook.com/sharer/sharer.php?u=" title="Share on Facebook" target="_blank" class="btn btn-facebook share-btn">
+                                <div align=center>
+                                    <i class="fa fa-facebook"></i>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="row share-row">
+                            <!--<div class="col-md-4 share-col googleplus-col">-->
+                            <a href="https://plus.google.com/share?url=" title="Share on Google+" target="_blank" class="btn btn-googleplus share-btn">
+                                <div align=center>
+                                    <i class="fa fa-google-plus"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">What is what?</h4>
-      </div>
-      <div class="modal-body">
-      <ul>
-        <li> Every <strong>circle</strong> corresponds to a news article. Hover over it to a summary about it. Click on it to get to the article directly. The article that is currently shown in the center will be filled black.</li>
-        <li> Two circles share a <strong>link</strong> when they have strong thematic overlap.</li>
-        <li> The arc in the middle displays the proportions of the sizes between the different topic clusters. You can get to the <strong>detail view</strong> of a topic cluster by clicking on the corresponding section of the central circle.</li>
-        <li> The most <strong>central article</strong> of each cluster has a black border. To get to the <strong>"suggestion view"</strong> in which only the most central articles of each cluster are shown, click the  <span class="glyphicon glyphicon-star" aria-hidden="true"></span>-button in the top right corner. <strong>Reading articles from the suggestion view from top to bottom is the best thing you can do to get on top of the news since you only read those articles on a topic that are most representative of the overall reporting on that topic (maximising relevance), while at the same time it minimises redundancy between different articles!</strong></li>
-        <li> In the detail view, articles will be <strong>highlighted</strong> or faded out depending on whether they overlap (i.e. if they share a link in the overview).</li>
-        <li> You can reorder the articles by different parameters using the <strong>dropdown menu</strong> at the top of the big circle section.</li>
-        <li> To <strong>leave the detail view</strong>, click anywhere inside the center of the large circle or, again, on the circle section.</li>
-        <li>Open this view at any time by clicking the <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>-button.</li>
-      </ul>
-        For more information about how these graphs are constructed, click  <a href="{% url 'how_it_works'%}"><span><i class="fa fa-info" aria-hidden="true"></i></span></a>.<br/>
-          
-      </div>
+        {% block vis %}{% endblock %}
+    </header>
+
+
+    <!-- Main component for a primary marketing message or call to action -->
+    <div class="container main">
+
+        {% block content %} {% endblock %}
+        <div align=c enter>
+        </div>
     </div>
-  </div>
-</div>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="{{BOWER_ROOT}}jquery/dist/jquery.min.js"></script>
+    <script src="{{BOWER_ROOT}}bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="{{BOWER_ROOT}}bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    {% if GOOGLE_ANALYTICS_PROPERTY_ID %}
+    <script type='text/javascript'>
+        var GOOGLE_ANALYTICS_PROPERTY_ID = '{{GOOGLE_ANALYTICS_PROPERTY_ID}}',
+            GOOGLE_ANALYTICS_DOMAIN = '{{ GOOGLE_ANALYTICS_DOMAIN }}';
+    </script>
+    <script src="{% static '{{STATIC_ROOT}}config/js/ga.js' %}"></script>
 
-<!-- Sharemodal -->
-<div class="modal fade" id="share_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
- <div class="modal-content">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Share this graph!</h4>
-      </div>
-      <div class="modal-body share-body">
-      <div class="row share-row">
-          <!--<div class="col-md-4 share-col twitter-col">-->
-          <a href="http://twitter.com/home?status=" title="Share on Twitter" target="_blank" class="btn btn-twitter share-btn">
-          <div align=center>
-          <i class="fa fa-twitter"></i>
-          </div>
-          </a>
-          </div>
-          <div class="row share-row">
-          <!--<div class="col-md-4 share-col share-col">-->
-          <a href="https://www.facebook.com/sharer/sharer.php?u=" title="Share on Facebook" target="_blank" class="btn btn-facebook share-btn">
-          <div align=center>
-          <i class="fa fa-facebook"></i>
-          </div>
-          </a>
-          </div>
-          <div class="row share-row">
-          <!--<div class="col-md-4 share-col googleplus-col">-->
-          <a href="https://plus.google.com/share?url=" title="Share on Google+" target="_blank" class="btn btn-googleplus share-btn">
-          <div align=center>
-          <i class="fa fa-google-plus"></i>
-          </div>
-          </a>
-          </div>
-      </div>
-      </div>
-    </div>
-  </div>
-</div>
+    {% include 'templates/graphite/ga.html' %} {% endif %} {% block scripts %} {% endblock %}
 
-{% block vis %}{% endblock %}         				
-			</header>
- 
-
-      <!-- Main component for a primary marketing message or call to action -->
-      <div class="container main">
-      
-{% block content %}
-{% endblock %}   
-<div align= center>   
-</div>          
-</div>
-            <!-- Latest compiled and minified JavaScript -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
-{% if GOOGLE_ANALYTICS_PROPERTY_ID %}
-<script type='text/javascript'> var GOOGLE_ANALYTICS_PROPERTY_ID='{{GOOGLE_ANALYTICS_PROPERTY_ID}}', GOOGLE_ANALYTICS_DOMAIN ='{{ GOOGLE_ANALYTICS_DOMAIN }}';</script>
-<script src="{% static 'last24h/ga.js' %}"></script>
-
-  {% include 'templates/graphite/ga.html' %}
-{% endif %}
-
-{% block scripts %}  
-{% endblock %}
-    	
-		<footer class="footer">
-      <div class="container">
-        <p class="text-muted"><small>&copy; Copyright 2015-2016, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a> <a href="{% url 'contact' %}">Contact</a>  <a href="{% url 'disclaimer' %}" rel="designer">Disclaimer/License</a></small></p>
-      </div>
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted"><small>&copy; Copyright 2015-2016, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a> <a href="{% url 'contact' %}">Contact</a>  <a href="{% url 'disclaimer' %}" rel="designer">Disclaimer/License</a></small></p>
+        </div>
     </footer>
-      </body>
-   
-    
-        
-</html>
+</body>
 
+
+
+</html>
