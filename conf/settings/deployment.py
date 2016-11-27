@@ -14,17 +14,11 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 """
 
-from .base import ImportGlobal
-import os
+from .importer import ImportGlobal
 import djcelery
+from .base import *
 
 im = ImportGlobal()
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-SECRET_KEY = im.get_env_variable('SECRET_KEY')
-X_FRAME_OPTIONS = 'DENY'
-DEBUG = False
 
 ALLOWED_HOSTS = ['.grpht.info', '46.101.94.4', '.scope.ai']
 CURRENT_DOMAIN = 'http://www.scope.ai'
@@ -56,17 +50,6 @@ CELERY_ACCEPT_CONTENT = ['pickle',
                          'json',
                          'msgpack',
                          'yaml']
-SITE_ID = 1
-
-MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware')
 
 LOCKDOWN_PASSWORDS = ('scope2016')
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -77,44 +60,9 @@ LOCKDOWN_URL_EXCEPTIONS = (
     r'contact$'
  )
 
-
-GOOGLE_ANALYTICS = {'google_analytics_id': 'UA-71839611-1'}
-ROOT_URLCONF = 'conf.urls'
-EMAIL_HOST = 'smtp.zoho.com'
-EMAIL_PORT = '465'
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'robot@scope.ai'
-EMAIL_HOST_PASSWORD = 'scope2016'
-AUTH_PROFILE_MODULE = 'scope.UserProfile'
-TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates',
-              'DIRS': [os.path.join(BASE_DIR, 'templates')],
-              'APP_DIRS': True,
-              'OPTIONS': {
-                'context_processors': [
-                    'django.template.context_processors.debug',
-                    'django.template.context_processors.request',
-                    'django.contrib.auth.context_processors.auth',
-                    'conf.context_processors.site',
-                    'django.contrib.messages.context_processors.messages']}}]
-
-WSGI_APPLICATION = 'conf.wsgi.application'
-
 DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql_psycopg2',
                          'NAME': im.get_env_variable('DATABASE_NAME'),
                          'USER': im.get_env_variable('DATABASE_USER'),
                          'PASSWORD': im.get_env_variable('DATABASE_PASSWORD'),
-                         'HOST': '',
-                         'PORT': ''}}
-
-
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_L10N = True
-USE_TZ = True
-
-STATIC_ROOT = 'static/'
-
-STATIC_URL = '/static/'
-
-STATIC_BREV = 'last24h'
+                         'HOST': im.get_env_variable('DATABASE_HOST'),
+                         'PORT': im.get_env_variable('DATABASE_PORT')}}
