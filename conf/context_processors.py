@@ -26,5 +26,4 @@ def site(request):
         'domain': settings.CURRENT_DOMAIN,
         'name': settings.CURRENT_NAME,
         'media': settings.MEDIA_ROOT,
-        'templates': settings.TEMPLATE_ROOT
         }

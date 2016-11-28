@@ -12,10 +12,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if name %}{{name}}{% else %}scope {% endif %} | see more</title>
-    <link rel="image_src" href="{% static '{{media}}homepage/img/logo_grpht.png' %}">
+    <link rel="image_src" href="{{media}}homepage/img/logo_grpht.png">
     <link rel="icon" href="{{media}}homepage/img/logo_grpht.png">
-    <link rel="stylesheet" href=" {% static 'bootstrap/dist/css/bootstrap.min.css' %} ">
-    <meta property="og:image" content="http://www.grpht.info" href="{% static '{{media}}homepage/img/logo_grpht.png' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %} ">
+    <meta property="og:image" content="http://www.grpht.info" href="{{media}}homepage/img/logo_grpht.png">
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="{% static 'bootstrap-select/dist/css/bootstrap-select.min.css' %}">

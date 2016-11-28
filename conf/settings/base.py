@@ -70,6 +70,10 @@ STATICFILES_FINDERS = (
     'djangobower.finders.BowerFinder',
 )
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '../components/')
 
 BOWER_INSTALLED_APPS = (
@@ -81,10 +85,8 @@ BOWER_INSTALLED_APPS = (
     "font-awesome",
 )
 
-STATIC_ROOT = 'static/'
+#STATIC_ROOT = 'static/'
 MEDIA_ROOT = 'media/'
-TEMPLATE_ROOT = 'templates/'
 
+MEDIA_URL =  '/media/'
 STATIC_URL = '/static/'
-
-STATIC_BREV = 'last24h'
