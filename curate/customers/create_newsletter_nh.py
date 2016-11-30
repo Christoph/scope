@@ -398,10 +398,13 @@ index2.save(settings.STATIC_ROOT + 'rene/rene_data/l24h2.index')
 best_thresh = 0.
 best_score = 0  # [0,0]
 
+# Optimization
 for s in [x / 1000. for x in xrange(0, 500)]:
 
     # while score_new >= score_old:#len(graphs) not in [5,6] and any(len(x) <4
     # for x in graphs):
+
+    # Remove old edges
     ug.remove_edges_from(ug.edges())
 
     for i in range(0, len(corpus_tfidf)):
@@ -471,6 +474,7 @@ for no in list(set().union(*exclude)):
         pass
 size = len(corp)
 
+# Tg is inner circle
 tg = nx.DiGraph()
 tg.add_node(0, overall_size=size)
 
@@ -489,6 +493,8 @@ graphx = sorted([[len(i), nx.average_clustering(i), i]
 
 for a in graphx:
     comp = a[2]
+
+    # Redundant
     if len(comp) >= 3:
             # now for comp level keyword extraction
             # if len(comp) >= 7:
@@ -530,6 +536,7 @@ for a in graphx:
             count_degree += 1
         ordering = sorted(closeness.items(),
                           key=lambda close: close[1], reverse=True)
+        # Most central article ID
         susvec = ordering[0][0]
         cnode = ug.node[susvec]
         cnode['suggest'] = count_comp

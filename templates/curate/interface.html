@@ -1,4 +1,4 @@
-{% extends "graphite/base.html" %} {% load widget_tweaks %} {% load staticfiles %} {% block content %}
+{% extends "homepage/base.html" %} {% load widget_tweaks %} {% load staticfiles %} {% block content %}
 
 <style media="screen">
 
@@ -93,7 +93,7 @@ function updateClass(box, id) {
                           <label class="checkbox-inline" style="font-size: 20px">
 
                             <input
-                            class = "mistakebox"                            
+                            class = "mistakebox"
                             id="mistake-{{ forloop.counter }}"
                             {% if suggestion.is_mistake %} class="mistake" {% endif %}
                             style="margin-top: 6px"
@@ -137,7 +137,7 @@ var count = 0;
 function addClickHandlers() {
 
 jQuery('.selectbox').on('click', function(event) {
-             
+
 count = $("[class='selectbox']:checked").length;
 $('.numberbox').html(count);
 $('.numberbox').css("display","block");
@@ -146,6 +146,5 @@ $('.numberbox').css("display","block");
 }
 
 </script>
-  
-{% endblock scripts %}
 
+{% endblock scripts %}

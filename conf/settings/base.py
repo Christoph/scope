@@ -86,7 +86,5 @@ BOWER_INSTALLED_APPS = (
 )
 
 #STATIC_ROOT = 'static/'
-MEDIA_ROOT = 'media/'
 
-MEDIA_URL =  '/media/'
 STATIC_URL = '/static/'
