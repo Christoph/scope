@@ -1,26 +1,41 @@
-global exitFlag, workQueue, queueLock, articlenumber
-
-print strin
 import email
 import imaplib
 import os
 import sys
 import urllib2
+import json
 from datetime import date, timedelta
 from urlparse import urlparse
 from operator import mul
 from networkx.readwrite import json_graph
 
-from nh.models import Select_NH
+# from curate.models import Select
 
-import semantics.preprocess as preprocess
-import semantics.word_vector as word_vector
+import scope.methods.semantics.preprocess as preprocess
+import scope.methods.semantics.word_vector as word_vector
+import scope.methods.cluster.graphBuilder as builder
+
+global exitFlag, workQueue, queueLock, articlenumber
+
+# Turns unicode into UTF8
+def byteify(input):
+    if isinstance(input, dict):
+        return {byteify(key): byteify(value)
+                for key, value in input.iteritems()}
+    elif isinstance(input, list):
+        return [byteify(element) for element in input]
+    elif isinstance(input, unicode):
+        return input.encode('utf-8')
+    else:
+        return input
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 pre = preprocess.PreProcessing("english")
 wv_model = word_vector.Model()
+
+'''
 
 detach_dir = '.'  # directory where to save attachments (default: current)
 # user="enews@neulandherzer.net"
@@ -162,6 +177,9 @@ titles = []
 urls = []
 times = []
 images = []
+
+data = []
+
 exclude = set(('', 'FT.com / Registration / Sign-up', 'Error', '404 Page not found',
                'Page no longer available', 'File or directory not found', 'Page not found', 'Content not found'))
 
@@ -174,6 +192,12 @@ for i in range(0, upper - 1):
     words += len(" ".join(article.text))
     # and "tech" in article.text:
     if article.title not in exclude and unsubscribe_exclude not in article.text:
+
+        data.append({
+            "doc": article.text, "titles": article.title,
+            "urls": article.url, "images": article.top_image,
+            "summary": article.text[0:400] + "..."})
+
         doc.append(article.text)
         titles.append(article.title)
         urls.append(article.url)
@@ -187,6 +211,9 @@ for i in range(0, upper - 1):
         # keywords.append(articles_info[i][2])
 
 #        keywords.append(article.keywords)
+
+with open('curate/data/data.json', 'w+') as fp:
+    json.dump(data, fp)
 
 # Begin Semantic Analysis
 
@@ -255,9 +282,9 @@ corpus_tfidf = tfidf_model[corp]
 #index2 = gensim.similarities.SparseMatrixSimilarity(lda_model[corpus_tfidf], num_features = 50 )
 
 # /home/django/graphite/static/last24h/l24h.mm', corp)
-gensim.corpora.MmCorpus.serialize(
-    settings.STATIC_ROOT + 'rene/rene_data/rene.mm', corp)
-dict.save(settings.STATIC_ROOT + 'rene/rene_data/rene.dict')
+# gensim.corpora.MmCorpus.serialize(
+#    settings.STATIC_ROOT + 'rene/rene_data/rene.mm', corp)
+# dict.save(settings.STATIC_ROOT + 'rene/rene_data/rene.dict')
 # lsi_model.save(settings.STATIC_ROOT + 'rene/rene_data/rene.lsi')
 # index.save(settings.STATIC_ROOT + 'rene/rene_data/rene.index')
 # lda_model.save('/tmp/model.lda')
@@ -267,7 +294,9 @@ dict.save(settings.STATIC_ROOT + 'rene/rene_data/rene.dict')
 
 # 3-articlenumber*0.03/500#0.1/pow(upper/210,2)  #the higher the thresh,
 # the more critical
+'''
 ug = nx.Graph()
+'''
 for i in range(0, len(corp)):
     try:
         source = urlparse(urls[i]).hostname
@@ -285,8 +314,13 @@ for i in range(0, len(corp)):
 
 ug_nl = json_graph.node_link_data(ug)
 #tgt_mobile = json_graph.tree_data(tg2,root=0)
-with open(settings.STATIC_ROOT + 'last24h/rene_all.json', 'w+') as fp:
+with open('curate/data/rene_all.json', 'w+') as fp:
     json.dump(ug_nl, fp)
+
+'''
+
+with open('curate/data/rene_all.json') as fp:
+    ug_nl = byteify(json.load(fp))
 
 
 graphs = []
