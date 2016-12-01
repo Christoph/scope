@@ -85,6 +85,4 @@ BOWER_INSTALLED_APPS = (
     "font-awesome",
 )
 
-#STATIC_ROOT = 'static/'
-
 STATIC_URL = '/static/'
