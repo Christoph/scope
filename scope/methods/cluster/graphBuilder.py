@@ -3,9 +3,9 @@ from datetime import date, timedelta, datetime
 from time import mktime
 from random import randint
 
-import dataprovider.constants as constants
-import semantics.lsi as lsi
-import semantics.word_vector as word_vector
+import scope.methods.dataprovider.constants as constants
+import scope.methods.semantics.lsi as lsi
+import scope.methods.semantics.word_vector as word_vector
 
 reload(constants)
 reload(lsi)
