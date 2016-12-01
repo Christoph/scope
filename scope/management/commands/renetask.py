@@ -8,8 +8,8 @@ import os
 import datetime
 import sys
 from django.core.mail import send_mail
-from last24h.models import Alert, Send,Sources, Query, Suggest
-#from django_cron import CronJobBase, Schedule                     
+# from last24h.models import Alert, Send, Sources, Query, Suggest
+# from django_cron import CronJobBase, Schedule
 import networkx as nx
 import gensim
 import nltk
@@ -21,12 +21,12 @@ import feedparser
 import newspaper
 from newspaper import Article
 import untangle
-#import sys
+# import sys
 import json
 from django.conf import settings
 from django.templatetags.static import static
 
-from last24h.tasks import brief_rene
+from conf.tasks import brief_rene
 
 global workQueue, exitFlag, queueLock,finalurl
 
@@ -73,8 +73,10 @@ class Command(BaseCommand):
         n1 = options['n1'][0]
         n2 = options['n2'][0]
 
-        sys.argv = [settings.STATIC_BREV + static('last24h/rene.py'), strin,n1,n2]
-        execfile(settings.STATIC_ROOT + 'last24h/rene.py')
+        # sys.argv = [settings.STATIC_BREV + static('last24h/rene.py'), strin,n1,n2]
+        # execfile(settings.STATIC_ROOT + 'last24h/rene.py')
+        sys.argv = ['curate/customers/create_newsletter_nh.py', strin, n1, n2]
+        execfile('curate/customers/create_newsletter_nh.py')
         address = "Rene"
 
         strin = strin
@@ -111,6 +113,3 @@ class Command(BaseCommand):
  # + settings.CURRENT_DOMAIN + '/last24h/cs=' + entry[3] + '" >' + entry[1] +
  # '</a></p><p>You can manage your alerts in your profile settings. Hope you enjoy the graph!</p>')
  #        brief_rene('grphtcontact@gmail.com',strin)
-
-
-
