@@ -1,26 +1,70 @@
-global exitFlag, workQueue, queueLock, articlenumber
-
-print strin
+from operator import mul
+from networkx.readwrite import json_graph
+import networkx as nx
+import gensim
+import re
+import nltk
+import string
+import feedparser
+import newspaper
+from newspaper import Article
+import Queue
+import threading
+import time
+import untangle
+import sys
+import json
+import urllib
+import math
+# from django.core.mail import send_mail
+from time import mktime
+from datetime import datetime
+# from last24h.models import Suggest
+# from django.conf import 'last24h/static/rt numpy
+import scipy
 import email
 import imaplib
 import os
 import sys
 import urllib2
-from datetime import date, timedelta
+import datetime
+from datetime import date, timedelta, datetime
 from urlparse import urlparse
-from operator import mul
+from eventregistry import *
+import nltk.classify.util
+from nltk.classify import NaiveBayesClassifier
+from nltk.corpus import movie_reviews
 from networkx.readwrite import json_graph
 
-from nh.models import Select_NH
+# from curate.models import Select
 
-import semantics.preprocess as preprocess
-import semantics.word_vector as word_vector
+import scope.methods.semantics.preprocess as preprocess
+import scope.methods.semantics.word_vector as word_vector
+import scope.methods.cluster.graphBuilder as builder
+
+global exitFlag, workQueue, queueLock, articlenumber
+
+# Turns unicode into UTF8
+
+
+def byteify(input):
+    if isinstance(input, dict):
+        return {byteify(key): byteify(value)
+                for key, value in input.iteritems()}
+    elif isinstance(input, list):
+        return [byteify(element) for element in input]
+    elif isinstance(input, unicode):
+        return input.encode('utf-8')
+    else:
+        return input
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 pre = preprocess.PreProcessing("english")
 wv_model = word_vector.Model()
+
+'''
 
 detach_dir = '.'  # directory where to save attachments (default: current)
 # user="enews@neulandherzer.net"
@@ -155,6 +199,8 @@ print "Exiting Main Thread"
 
 # Putting together
 
+'''
+
 doc = []
 keywords = []
 summary = []
@@ -162,10 +208,15 @@ titles = []
 urls = []
 times = []
 images = []
+
+data = []
+
 exclude = set(('', 'FT.com / Registration / Sign-up', 'Error', '404 Page not found',
                'Page no longer available', 'File or directory not found', 'Page not found', 'Content not found'))
 
 unsubscribe_exclude = "If you are not redirected automatically, please click the Unsubscribe button below"
+
+'''
 
 counter = 0
 words = 0
@@ -174,6 +225,12 @@ for i in range(0, upper - 1):
     words += len(" ".join(article.text))
     # and "tech" in article.text:
     if article.title not in exclude and unsubscribe_exclude not in article.text:
+
+        data.append({
+            "doc": article.text, "titles": article.title,
+            "urls": article.url, "images": article.top_image,
+            "summary": article.text[0:400] + "..."})
+
         doc.append(article.text)
         titles.append(article.title)
         urls.append(article.url)
@@ -188,218 +245,46 @@ for i in range(0, upper - 1):
 
 #        keywords.append(article.keywords)
 
+with open('curate/data/data.json', 'w+') as fp:
+    json.dump(data, fp)
+
+'''
+
+with open('curate/data/data.json') as fp:
+    data = json.load(fp)
+
+n1 = 5
+n2 = 20
+
 # Begin Semantic Analysis
 
-# Remove punctuation, then tokenize documents
-# Using Refactored classes
-# TODO: PREPROCESS
+doc = [d["doc"] for d in data]
+
 term_vecs, docs = pre.lemma([d for d in doc])
-
-punc = re.compile('[%s]' % re.escape(string.punctuation))
-term_vec = []
-
-for a in doc:
-    a = a.lower()  # these aren't necessary if you're dealing with keywords
-    a = punc.sub('', a)
-    term_vec.append(nltk.word_tokenize(a))
-
-
-# Print resulting term vectors
-
-# Remove stop words from term vectors
-
-stop_words = nltk.corpus.stopwords.words('english')
-
-for i in range(0, len(term_vec)):
-    term_list = []
-
-    for term in term_vec[i]:
-        if term not in stop_words:
-            term_list.append(term)
-
-    term_vec[i] = term_list
-
-# Print term vectors with stop words removed
-# stemming is difficult with the keyword extraction ....
-    # Porter stem remaining terms
-
-porter = nltk.stem.porter.PorterStemmer()
-
-for i in range(0, len(term_vec)):
-    for j in range(0, len(term_vec[i])):
-        term_vec[i][j] = porter.stem(term_vec[i][j])
-
-#  Convert term vectors into gensim dictionary
-
-dict = gensim.corpora.Dictionary(term_vec)
-corp = []
-for i in range(0, len(term_vec)):
-    corp.append(dict.doc2bow(term_vec[i]))
-
-#  Create TFIDF vectors based on term vectors bag-of-word corpora
-
-tfidf_model = gensim.models.TfidfModel(corp)
-
-#  Create pairwise document similarity index
-
-
-corpus_tfidf = tfidf_model[corp]
-# lsi_model = gensim.models.LsiModel(corpus_tfidf, id2word=dict, num_topics=n1) #
-# corpus_lsi = lsi_model[corpus_tfidf]
-# list_corpus = []
-# # for dox in corpus_lsi:
-# #     list_corpus.append(dox)
-# index = gensim.similarities.SparseMatrixSimilarity(corpus_lsi, num_features = n1 )
-
-# lda_model = gensim.models.LdaModel(corpus_tfidf, id2word=dict, num_topics=20) #initialize an LSI transformation
-#index2 = gensim.similarities.SparseMatrixSimilarity(lda_model[corpus_tfidf], num_features = 50 )
-
-# /home/django/graphite/static/last24h/l24h.mm', corp)
-gensim.corpora.MmCorpus.serialize(
-    settings.STATIC_ROOT + 'rene/rene_data/rene.mm', corp)
-dict.save(settings.STATIC_ROOT + 'rene/rene_data/rene.dict')
-# lsi_model.save(settings.STATIC_ROOT + 'rene/rene_data/rene.lsi')
-# index.save(settings.STATIC_ROOT + 'rene/rene_data/rene.index')
-# lda_model.save('/tmp/model.lda')
-
 
 # Begin Graph visualisation
 
-# 3-articlenumber*0.03/500#0.1/pow(upper/210,2)  #the higher the thresh,
-# the more critical
 ug = nx.Graph()
-for i in range(0, len(corp)):
+
+for i in range(0, len(data)):
     try:
         source = urlparse(urls[i]).hostname
     except:
         source = "No Source Information"
 
-    # if len(urls[i].split("www.")) != 1:
-    #     source = urls[i].split("www.")[1].split("/")[0]
-    # elif len(urls[i].split("rss.")) != 1:
-    #     source = urls[i].split("rss.")[1].split("/")[0]
-    # else:
-    #     source = urls[i].split("http://")[1].split("/")[0]
-    ug.add_node(i, title=titles[i], url=urls[i], suggest=0, summary=summary[i], images=images[
-                i], comp=0, source=source, keywords='', time=None)  # , time = times[i])#,keywords=keywords[i])
+    ug.add_node(i, title=data[i]["titles"], url=data[i]["urls"], suggest=0, summary=data[i]["doc"][0:200],
+                images=data[i]["images"], comp=0, source=source, keywords='',
+                time=None)
 
 ug_nl = json_graph.node_link_data(ug)
-#tgt_mobile = json_graph.tree_data(tg2,root=0)
-with open(settings.STATIC_ROOT + 'last24h/rene_all.json', 'w+') as fp:
-    json.dump(ug_nl, fp)
-
 
 graphs = []
 score_new = 0
 best_thresh = 0.
 best_score = 0
-#thresh = 0.02
-
-# Now trying two steps: In the first, get the bigguest cluster (which
-# should correspond to tech topics) and then in a second step maximise the
-# number of clusters in it
-
-orignumber = len(ug)
-print "First Round"
-print str(len(ug)) + " old graph"
-
-# for s in [x/1000. for x in xrange(0,500)]:
-
-
-# #while score_new >= score_old:#len(graphs) not in [5,6] and any(len(x) <4 for x in graphs):
-#     ug.remove_edges_from(ug.edges())
-
-#     for i in range( 0, len( corpus_tfidf ) ):
-#         sim = index[ lsi_model[ corp [ i ] ] ]
-#         for j in range( i+1, len( sim ) ):
-#             dist = (1. - sim[j])/2.
-#             if dist < s:
-#                 ug.add_edge(i,j,{'weight':dist})
-#     graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
-
-#     test = [x for x in graphs if len(x) >= 3]#20>=
-#     exclude = [x.nodes() for x in graphs if x not in test]
-#     test2 = [len(x) for x in test]
-#     if len(test) == 2:
-#         score_new = len(test[0])*len(test[1])#reduce(mul, test2,1)#len(test[0])+len(test[1])
-#     #score_new = [len(test),sum(test2)]
-#     elif len(test) >= 3:
-#         score_new = len(test[0])*len(test[1])*len(test[2])
-
-#     if score_new > best_score and len(test) >= 3:
-#         best_score = score_new
-#         best_thresh = s
-
-# print thresh
-#thresh += 0.001
-# print s
-# print len(graphs)
-# # for i in graphs:
-# #     for ii in i:
-# #         print ug.node[ii]['title']
-# #     print "and"
-# #print test2
-# print score_new
-# print best_thresh
-# if thresh >= 0.5:
-#     break
-
-
-#thresh -= 0.002
-# print best_thresh
-# ug.remove_edges_from(ug.edges())
-# for i in range( 0, len( corpus_tfidf ) ):
-#     sim = index[ lsi_model[ corp [ i ] ] ]
-#     for j in range( i+1, len( sim ) ):
-#         dist = (1. - sim[j])/2.
-#         if dist < best_thresh:
-#             ug.add_edge(i,j,{'weight':dist})
-# graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
-# test = [x for x in graphs if len(x) >= 3]#20>=
-# exclude = [x.nodes() for x in graphs if x not in test]
-# for graph in graphs:
-#     print graph
-#     for no in graph:
-#         print ug.node[no]['title']
-
-
-# for graph in test:
-#     print "\n CLUSTER: \n"
-#     for no in graph:
-#         try:
-#             print ug.node[no]['title'], ug.node[no]['source'], no
-#         except:
-#             pass
-# print "\n AND \n"
-# for no in list(set().union(*exclude)):
-#     try:
-#         print ug.node[no]['title'], ug.node[no]['source'], no
-#     except:
-#         pass
-
-# print "\n SECOND ROUND \n"
-
-# for i in range(1,len(graphs)):
-#     ug.remove_nodes_from(graphs[i].nodes())
-
-# print str(len(ug)) + " new graph"
-
-lsi_model2 = gensim.models.LsiModel(corpus_tfidf, id2word=dict, num_topics=n2)
-corpus_lsi2 = lsi_model2[corpus_tfidf]
-# list_corpus = []
-# for dox in corpus_lsi:
-#     list_corpus.append(dox)
-index2 = gensim.similarities.SparseMatrixSimilarity(
-    corpus_lsi2, num_features=n2)
-
-lsi_model2.save(settings.STATIC_ROOT + 'rene/rene_data/l24h2.lsi')
-index2.save(settings.STATIC_ROOT + 'rene/rene_data/l24h2.index')
-
-best_thresh = 0.
-best_score = 0  # [0,0]
 
 # Optimization
-for s in [x / 1000. for x in xrange(0, 500)]:
+for s in [x / 10000. for x in xrange(1, 201)]:
 
     # while score_new >= score_old:#len(graphs) not in [5,6] and any(len(x) <4
     # for x in graphs):
@@ -407,12 +292,11 @@ for s in [x / 1000. for x in xrange(0, 500)]:
     # Remove old edges
     ug.remove_edges_from(ug.edges())
 
-    for i in range(0, len(corpus_tfidf)):
+    for i in range(0, len(data)):
         # TODO: SIMILARITY
-        # sim = wv_model.similarity(docs, i)
-        sim = index2[lsi_model2[corp[i]]]
+        sim = wv_model.similarity(docs, i)
         for j in range(i + 1, len(sim)):
-            dist = (1. - sim[j]) / 2.
+            dist = (1. - sim[j])
             if dist < s and j in ug and i in ug:
                 ug.add_edge(i, j, {'weight': dist})
     graphs = sorted(nx.connected_component_subgraphs(ug),
@@ -420,11 +304,11 @@ for s in [x / 1000. for x in xrange(0, 500)]:
 
     test = [x for x in graphs if 20 > len(x) >= 3]
     exclude = [x.nodes() for x in graphs if x not in test]
-    #test2 = [len(x) for x in test]
+    # test2 = [len(x) for x in test]
     if len(test) >= 2:
         # len(test[0])+len(test[1])#sum(test2)#len(test)#test2[0]
         score_new = len(test)
-        #score_new = [len(test),sum(test2)]
+        # score_new = [len(test),sum(test2)]
 
     # score_new = sum(test2) #[len(test),sum(test2)]
 
@@ -433,7 +317,7 @@ for s in [x / 1000. for x in xrange(0, 500)]:
         best_thresh = s
 
         # print thresh
-        #thresh += 0.001
+        # thresh += 0.001
         print s
         print len(graphs)
         # for i in graphs:
@@ -450,15 +334,17 @@ for s in [x / 1000. for x in xrange(0, 500)]:
 dispersion = str((1. - 2 * best_thresh) * 100)[:-2] + '%'
 print best_thresh
 ug.remove_edges_from(ug.edges())
-for i in range(0, len(corpus_tfidf)):
-    sim = index2[lsi_model2[corp[i]]]
+for i in range(0, len(data)):
+    sim = wv_model.similarity(docs, i)
+    # sim = index2[lsi_model2[corp[i]]]
     for j in range(i + 1, len(sim)):
-        dist = (1. - sim[j]) / 2.
+        dist = (1. - sim[j])
         if dist < best_thresh and j in ug and i in ug:
             ug.add_edge(i, j, {'weight': dist})
 graphs = sorted(nx.connected_component_subgraphs(ug), key=len, reverse=True)
 test = [x for x in graphs if 20 > len(x) >= 3]
 exclude = [x.nodes() for x in graphs if x not in test]
+
 for graph in test:
     print "\n CLUSTER: \n"
     for no in graph:
@@ -490,6 +376,7 @@ graphx = sorted([[len(i), nx.average_clustering(i), i]
 # for i in range(min(6,len(graphs))):
 #     ug.remove_nodes_from(graphs[i])
 
+print "\n REPRESENTATIVE: \n"
 
 for a in graphx:
     comp = a[2]
@@ -502,9 +389,10 @@ for a in graphx:
         for i in comp:
             ug.node[i]['comp'] = count_comp
             ug.node[i]['single'] = 0
-            for word in punc.sub('', ug.node[i]['title']).split(" "):
+            for word in preprocess.punc.sub(
+                    '', ug.node[i]['title']).split(" "):
                 # print word
-                if word not in stop_words:
+                if word not in preprocess.stop_words:
                     all_words.append(word)
         a = sorted([[len([b for b in all_words if b == word]), word]
                     for word in list(set(all_words))], reverse=True)
@@ -540,12 +428,15 @@ for a in graphx:
         susvec = ordering[0][0]
         cnode = ug.node[susvec]
         cnode['suggest'] = count_comp
-        q = Suggest(custom=strin, title=ug.node[susvec]['title'], url=ug.node[susvec][
-                    'url'], distance=count_comp, images=ug.node[susvec]['images'], keywords=keywords, source=ug.node[susvec]['source'])
-        q.save()
-        q = Suggest(title=ug.node[susvec]['title'], url=ug.node[susvec]['url'], rank=count_comp, images=ug.node[
-                    susvec]['images'], keywords=keywords, source=ug.node[susvec]['source'])
-        q.save()
+
+        print cnode["title"] + "\n"
+
+        # q = Suggest(custom=strin, title=ug.node[susvec]['title'], url=ug.node[susvec][
+                    # 'url'], distance=count_comp, images=ug.node[susvec]['images'], keywords=keywords, source=ug.node[susvec]['source'])
+        # q.save()
+        # q = Suggest(title=ug.node[susvec]['title'], url=ug.node[susvec]['url'], rank=count_comp, images=ug.node[
+                    # susvec]['images'], keywords=keywords, source=ug.node[susvec]['source'])
+        # q.save()
 
         # add the nodes for the arc
         tg.add_node(count_comp, clustering=clustering, name=keywords)
