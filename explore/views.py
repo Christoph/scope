@@ -23,7 +23,6 @@ from homepage.forms import AlertEditForm,NameForm, AlertForm, RegistrationForm,C
 #from curate.models import Select
 from explore.models import Query, Sources
 from alert.models import Alert, Send
-from scope.models import UserProfile
 
 from conf.celery import app
 from random import randint
@@ -275,5 +274,3 @@ def alert(request):
     else: form = AlertForm()
     form2 = SourceForm()
     return render(request, 'explore/alert.html',{'existingfeed':existingfeed,'state':state, 'form': form,'form2':form2})
-
-

@@ -115,7 +115,7 @@ def confirm(request, activation_key):
     return render_to_response('homepage/confirm.html', {'success': True, })
 
 #@login_required(login_url='/login')
-def disclaimer(request):  
+def disclaimer(request):
     return render(request,'homepage/disclaimer.html', )
 
 @login_required(login_url='/login')
@@ -170,7 +170,7 @@ def alert_edit(request):
 
 @login_required(login_url='/login')
 def profile(request):
-    
+
     user = User.objects.get(id=request.user.id)
     form2 = RegistrationForm2(initial={'first': user.first_name,
     'last': user.last_name,
@@ -269,7 +269,7 @@ def login_user(request):
         else:
         # Return an 'invalid login' error message.
             state = "Your username and/or password were incorrect."
-    
+
     return render(request, 'homepage/auth.html',{'state':state, 'username': username,})
 
 #@login_required(login_url='/login')
@@ -280,12 +280,12 @@ def how_it_works(request):
 def server_error(request):
     return render(request,'homepage/500.html')
 
-def profile_delete(request):   
+def profile_delete(request):
     return render(request, 'homepage/profile_delete.html',)
 
 #@login_required(login_url='/login')
 def contact(request):
-    
+
     state = "Please drop me any feedback or suggestions or simply hit me with any thoughts of your's on the site!"
     if request.user.is_authenticated():
             form = ContactForm(initial = {'contact_email': request.user.email,'contact_name':request.user.first_name + ' ' + request.user.last_name})
@@ -331,4 +331,3 @@ def send_sample(request):
 
 def landing(request):
     return render(request,'homepage/landing.html')
-
