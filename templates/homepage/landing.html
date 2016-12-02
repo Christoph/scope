@@ -1,35 +1,36 @@
 {% load staticfiles %} {% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
 
 <head>
     <meta charset="utf-8">
-    <title>Graphite - less noise, more news</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <meta property="og:title" content="">
+    <meta property="og:title" content="{{name}}">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="">
-    <meta property="og:site_name" content="">
+    <meta property="og:url" content="{{domain}}">
+    <meta property="og:site_name" content="{{name}}">
     <meta property="og:description" content="">
+    <meta property="og:image" content="{{domain}}" href="{% static 'homepage/img/logo.png' %}">
+
+    <title>{{name}} | {{slogan}}</title>
+    <link rel="image_src" href="{% static 'homepage/img/logo.png' %}">
+    <link rel="icon" href="{% static 'homepage/img/logo.png' %}">
+
 
     <!-- Styles -->
-    <!-- <link rel="stylesheet" href="{% static 'homepage/css/font-awesome.min.css' %}"> -->
     <link rel="stylesheet" href="{% static 'homepage/css/animate.css' %}">
-
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
-    <!--   <link href='http://fonts.googleapis.com/css?family=Raleway:400,100,200,300,500,600,700,800,900|Montserrat:400,700' rel='stylesheet' type='text/css'> -->
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %} " >
     <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,600&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 
-    <link rel="stylesheet" href="{% static 'homepage/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/main.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %} ">
+    <link rel="stylesheet" href="{% static 'bootstrap-select/dist/css/bootstrap-select.min.css' %}">
     <link rel="stylesheet" href="{% static 'homepage/css/graphstyle.css' %}">
-    <script src="{% static 'homepage/js/dependencies/modernizr-2.7.1.js' %}"></script>
-    <script align='center' type="text/javascript" src="{% static 'explore/js/dependencies/d3.min.js' %}"></script>
-
+     <link rel="stylesheet" href="{% static 'homepage/css/main.css' %}">
+    <script src="{% static 'homepage/js/modernizr-2.7.1.js' %}"></script>
 </head>
 
 <body>
@@ -43,10 +44,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-                <a class="navbar-brand" href="{% url 'homepage:landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}graphite {% endif %}<!-- </span> --><small> - more overview, less redundancy</small></a>
+                <a class="navbar-brand" href="{% url 'homepage:landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}<img width="50px" src="{% static 'homepage/img/logo.png' %}">graphite {% endif %}<!-- </span> --><small> - see more</small></a>
 
             </div>
-            <a class="nav navbar-nav navbar-brand navbar-right" style="color:black;" href="mailto:grphtcontact@gmail.com"> <i class="fa fa-envelope" aria-hidden="true"></i> contact </a>
+            <a class="nav navbar-nav navbar-brand navbar-right" style="color:gray;" href=https://twitter.com/scope_ai?lang=en> <i class="fa fa-twitter" aria-hidden="true"></i></a>
+            <a class="nav navbar-nav navbar-brand navbar-right" style="color:gray;" href="mailto:hello@scope.ai"> <i class="fa fa-envelope" aria-hidden="true"></i></a>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <!-- <li><a href="#pricing" class="scroll">Pricing</a></li> -->
@@ -71,9 +73,24 @@
 
             <div class="row header-info">
                 <div class="col-sm-10 col-sm-offset-1 text-center">
-                    <h1>More overview, less redundancy</h1>
+                    <h1 class="wow fadeIn" data-wow-delay="0.4s">See more</h1>
                     <br />
-                    <p class="lead wow fadeIn" data-wow-delay="0s">Graphite is all about <strong>saving time</strong> by providing smart overviews of unstructured texts. this is realized through a combination of deep learning, semantic analysis and graph theory methods.<br> <strong>Scroll-down</strong> to see our three product lines.</p>
+                    <p class="lead wow fadeIn" data-wow-delay="0s">We produce tools that let you stay on top of the news and documents relevant to you, while still saving your time.</p>
+
+                 <div class="row">
+
+                 
+                  <div class="col-xs-6 text-right wow fadeInUp" data-wow-delay="0.9s">
+                  <a href="#products" class="btn btn-secondary btn-lg scroll">Products</a>
+                 </div> 
+                 <div class="col-xs-6 text-left wow fadeInUp" data-wow-delay="1s">
+                 <a href="#about" class="btn btn-secondary btn-lg scroll">About</a>
+                 </div>
+
+
+              </div>
+
+
                 </div>
 
             </div>
@@ -85,186 +102,193 @@
         <div class="scroll"></div>
     </div>
 
-    <section id="reading" class="pad-sm light-gray-bg">
+    <section id="products" class="pad-sm light-gray-bg" style="height:100vh;">
         <div class="container">
+
+
+
+
+
+
+<div class="row">
+  <div class="col-md-4">
+      
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2 text-center wow fadeIn" data-wow-delay="0s">
-                    <i class="fa fa-envelope-o margin-30"></i>
-                    <h2 class="wow black">Message Scope </h2>
-                    <br />
-                </div>
+                    <i class="fa fa-list margin-30"></i>
+                    <h2 class="wow black margin-30">Automated Curation</h2>
+                                    </div>
             </div>
 
             <div class="row">
-                <div class="col-sm-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="col-sm-12 col-md-12 wow text-center fadeInUp" data-wow-delay="0.3s">
                     <hr class="line" style="color:#1f77b4">
                     <h3 class="wow fadeIn black">Minimize redundancy</h3>
-                    <p class="wow grey">For every hot topic Scope News picks exactly one article, namely the one from your favorite sources that it finds to be most representative of all articles on the issue.</p>
-                    <h3 class="wow fadeIn">Maximize relevance</h3>
-                    <p class="wow grey">Reading lists are ordered by the amount of coverage a topic receives in the news overall - meaning you'll always be on top of the news.</p>
-                    <h3 class="wow fadeIn">Light-weight and quick</h3>
-                    <p class="wow grey">Easy to set-up and without installations at your side.</p>
-                </div>
-                <div class="col-sm-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <hr class="line" style="color:#1f77b4">
-                    <p class="lead black"> <strong>Simplified media curation</strong></p>
-                    <br/>
-                    <p class="lead black">Reconsider the way you curate media texts. Message Scope you to curate your sources with ease by only showing the articles which maximise your overview and minimize the redundancy. </p>
-                    <br/>
+                    <p class="wow grey">Our technology identifies relevant articles while minimizing redundancy. This you stay informed while having to read much less.</p>
+                    <h3 class="wow fadeIn">Objective</h3>
+                    <p class="wow grey">Don't risk getting caught up in your interest bubble anymore.</p>
                 </div>
             </div>
 
-        </div>
-    </section>
 
 
-    <section id="analyse" class="pad-sm">
-        <div class="container">
+  </div>
+  <div class="col-md-4">
+      
+
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2 text-center wow fadeIn" data-wow-delay="0s">
                     <i class="fa fa-search margin-30" aria-hidden="true"></i>
-                    <h2 class="wow black">News Scope</h2>
-                    <p class="lead black">The tool for journalists, news analysts and everybody who wants to go beyond the surface in journalism.</p>
+                    <h2 class="wow black margin-30">Analysis Tool</h2>
+                    
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-6 col-md-6 wow fadeInUp text-center" data-wow-delay="0.5s">
-                    <hr class="line orange">
-                  <div class="graph">
-
-                  </div>
-
-                </div>
-                <div class="col-sm-6 col-md-6 wow fadeInUp text-right" data-wow-delay="0.5s">
-                    <hr class="line orange">
+                <div class="col-sm-12 col-md-12 wow fadeInUp text-center" data-wow-delay="0.4s">
+                    <hr class="line" style="color:#1f77b4">
                     <!-- <h3 class="wow fadeIn">Analysis tool</h3>
                  <p class="wow grey">Keep up with news trends and reporting dynamics of a fast moving world.</p> -->
-                    <h3 class="wow fadeIn">Objective</h3>
-                    <p class="wow grey">No need for having to rely on expert selections and other curation mechanisms.</p>
+                 <p class="wow grey"></p>
+                    <h3 class="wow fadeIn">In-Depth overview</h3>
+                    <p class="wow grey">We develop a tool for journalists and news analysts that lets them explore correlations and trends in news publishing.</p>
                     <h3 class="wow fadeIn">Complex content, simple layout</h3>
-                    <p class="wow grey">At every point everything is simple but at the same any two pieces of information are only few clicks away.</p>
-                    <h3 class="wow fadeIn">Proactive</h3>
-                    <p class="wow grey">Sextant proactively makes you aware of unusual and interesting correlations or behaviour in the news world.</p>
+                    <p class="wow grey">The tool is designed to be intuitive andrequires no technical knowledge.</p>
+                    <!-- <h3 class="wow fadeIn">Proactive</h3>
+                    <p class="wow grey">Sextant proactively makes you aware of unusual and interesting correlations or behaviour in the news world.</p> -->
                 </div>
 
             </div>
+
+  </div>
+  <div class="col-md-4">
+      
+
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 text-center wow fadeIn" data-wow-delay="0s">
+                <i class="fa fa-envelope-o margin-30"></i>
+                    <h2 class="wow black margin-30">Intelligent Alerts</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-12 wow fadeInUp text-center" data-wow-delay="0.5s">
+                    <hr class="line" style="color:#1f77b4">
+                    
+                     <h3 class="wow fadeIn">Bye bye fixed frequency</h3>
+                    <p class="wow grey">Our alerts will collect new content until the novelty compared to earlier alerts surpasses a certain threshold you set.</p>
+                    <h3 class="wow fadeIn">Trend detection</h3>
+                    <p class="wow grey">By focussing on relative changes, our IAlerts are the ideal tool to follow the development of topics you care about.</p>
+                </div>
+
+            </div>
+
+
+
+
+
+
+  </div>
+</div>
+
+
+
         </div>
     </section>
 
 
-    <section id="cluster" class="pad-sm">
+   <section id="about" class="pad-sm light-gray-bg graph" style="height:100vh">
+        <div class="container">
+<div class="row">
+                <div class="col-sm-8 col-sm-offset-2 text-center wow fadeIn" data-wow-delay="0s">
+                   <!--  <i class="fa fa-list margin-30"></i> -->
+                    <h2 class="wow black text-left margin-10">About</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-md-8 wow fadeInUp" data-wow-delay="0.3s">
+                    <hr class="line" style="color:#ffbb78">
+                    <h3 class="wow fadeIn black">Technology</h3>
+                    <p class="wow grey">At its core, our technolgy uses a combination of semantic analysis, deep learning and graph theoretical models to algorithmically check the overlap between texts and then create a reading list from a given input that maximises the overview  the user has by following this list.</p>
+                    <h3 class="wow fadeIn">The Startup</h3>
+                    <p class="wow grey">We're a young and dynamic group of programmers, interface designers and entrepreneurs that is currently based in Berlin and Vienna.</p>
+                    <h3 class="wow fadeIn">Traction</h3>
+                    <p class="wow grey">Currently we are running first pilots with medium sized and large corporates to fine-tune our services. If you are interested, don't hesitate to get in touch!</p>
+                </div>
+            </div>
+        
+
+
+        </div>
+
+
+
+        </div>
+    </section>
+
+    <section id="team" class="pad-lg bg-light-gray" style="height:90vh">
         <div class="container">
             <div class="row">
-                <div class="col-sm-8 col-sm-offset-2 text-center margin-30 wow fadeIn" data-wow-delay="0s">
-                    <h2 class="wow black">Inverse Alert</h2>
+                <div class="col-sm-8 col-sm-offset-2 text-center">
+                    <h2 class="wow black">Meet the team</h2>
+                    <!-- <hr class="line" style="color:grey"> -->
+                    <!-- <h3 class="section-subheading text-muted"></h3> -->
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-6 col-md-6 wow fadeInUp text-center" data-wow-delay="0.5s">
-                    <hr class="line grey">
-                    <p class="lead black"> <strong>Read only relevant news</strong></p>
-                    <p class="lead black">Set a watcher onto a specific topic. Inverse Alert will inform you if something changes - e.g. the watched company loses a lot of money.</p>
-                    <p>
-                      Currently
-                      <br>
-                  Under Development
-                    </p>
+                <div class="col-sm-4 text-center">
+                    <div class="team-member">
+                        <img width="200" src="{% static 'homepage/img/paul.jpg' %}" class="img-responsive img-circle" alt="">
+                        <h4>Paul Boës</h4>
+                        <!-- <p class="text-muted">CEO</p> -->
+                        <ul class="list-inline social-buttons">
+                            <li><a href="https://twitter.com/_paulboes_"><i class="fa fa-twitter"></i></a>
+                            </li>
+                            <li><a href="https://www.linkedin.com/in/paul-boes"><i class="fa fa-linkedin"></i></a>
+                            </li>
+                            <li><a href="https://beingbutlumps.wordpress.com"><i class="fa fa-pencil"></i></a></li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="col-sm-6 col-md-6 wow fadeInUp text-right" data-wow-delay="0.5s">
-                    <hr class="line grey">
-                    <!-- <h3 class="wow fadeIn">Analysis tool</h3>
-                 <p class="wow grey">Keep up with news trends and reporting dynamics of a fast moving world.</p> -->
-                    <h3 class="wow fadeIn">Targeted</h3>
-                    <p class="wow grey">Select a topic and sty informed.</p>
-                    <h3 class="wow fadeIn">Less time, more information</h3>
-                    <p class="wow grey">Read only articles which might impact your oppinion onto the watched topic.</p>
-                    <h3 class="wow fadeIn">Trend detection</h3>
-                    <p class="wow grey">Indentify trends earlier with help of multiple Inverse Alerts.</p>
+                <div class="col-sm-4 text-center">
+                    <div class="team-member">
+                        <img width="200" src="{% static 'homepage/img/chris.jpg' %}" class="img-responsive img-circle" alt="">
+                        <h4>Christoph Kralj</h4>
+                        <!-- <p class="text-muted">CTO</p> -->
+                        <ul class="list-inline social-buttons">
+                            <li><a href="https://github.com/Christoph/"><i class="fa fa-github"></i></a>
+                            </li>
+                            <li><a href="https://www.linkedin.com/in/christoph-kralj-63a5a8132"><i class="fa fa-linkedin"></i></a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-
+                <div class="col-sm-4 text-center">
+                    <div class="team-member">
+                        <img width="200" src="{% static 'homepage/img/richard.jpg' %}" class="img-responsive img-circle" alt="">
+                        <h4>Richard Lutschounig</h4>
+                        <!-- <p class="text-muted">CBO</p> -->
+                        <ul class="list-inline social-buttons">
+                           <!--  <li><a href="#"><i class="fa fa-twitter"></i></a>
+                            </li> -->
+                            <li><a href="https://www.linkedin.com/in/richard-lutschounig-27a7b1106/en"><i class="fa fa-linkedin"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+        
         </div>
-    </section>
 
-    <!-- modal -->
-    <div class="modal fade" tabindex="-1" aria-labelledby="setalert" id="alertmodal">
-        <div class="modal-dialog">
-            <!--     <div class="modal-content">
-    <div class="container"> -->
-
-            <div class="forms" id="form_alert_light">
-
-                <!-- Nav tabs -->
-                <ul class="nav nav-tabs" id="customtab2" role="tablist">
-                    <li role="presentation" class="active"><a href="#term" aria-controls="term" role="tab" data-toggle="tab" id="tab-left">Search Term</a></li>
-                    <li role="presentation"><a href="#feeds" aria-controls="feeds" role="tab" data-toggle="tab" id="tab-right">Feeds</a></li>
-                </ul>
-
-                <form action="{% url 'explore:alert' %}" method="post">
-
-                    {% csrf_token %}
-                    <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="term">
-
-                            {% if form.query.errors %}
-                            <div class="form-group has-error">
-                                <label class="control-label" for="inputError1">Invalid format, avoid special characters</label> {% else %}
-                                <div class="form-group">
-                                    {{form.query.label_tag}} {% endif %} {{form.query|add_class:"form-control"}}
-                                </div>
-
-                            </div>
-
-                            <div role="tabpanel" class="tab-pane" id="feeds">
-                                <div class="form-group">
-                                    {{form.sources.label_tag}} {{form.sources|add_class:"form-control selectpicker"|attr:"data-live-search:true"|attr:"multiple"}} {{form.sources.errors}}
-                                </div>
-                            </div>
-
-                            {% if form.frequency.errors %}
-                            <div class="form-group has-error">
-                                <label class="control-label" for="inputError1">Invalid frequency</label> {% else %}
-                                <div class="form-group">
-                                    {{form.frequency.label_tag}} {% endif %} {{form.frequency|add_class:"form-control"}}
-                                </div>
-
-                                {% if form.delivery_time.errors %}
-                                <div class="form-group has-error">
-                                    <label class="control-label" for="inputError1">Invalid time format</label> {% else %}
-                                    <div class="form-group">
-                                        {{form.delivery_time.label_tag}} {% endif %} {{form.delivery_time|add_class:"form-control"}}
-                                    </div>
-
-
-                                    {% if form.captcha.errors %}
-                                    <div class="form-group has-error">
-                                        <label class="control-label" for="inputError1">Invalid captcha</label> {% else %}
-                                        <div class="form-group">
-                                            {{form.captcha.label_tag}} {% endif %} {{form.captcha|add_class:"form-control"}}
-                                        </div>
-
-                                        {% if log_inf|first == 'Register' %}
-                                        <div class="btn btn-default" id="form_alert_dark">Currently in development</div>
-
-                                        {% else %}
-                                        <button class="btn btn-default" id="form_alert_dark" type="submit" value "Set alert" name="set">Submit</button> {% endif %}
-
-                                    </div>
-                </form>
-
-                </div>
-                </div>
-                </div>
-                <!-- </div>
-</div> -->
+        </section>
 
 
                 <!--   </footer> -->
 
-                <footer class="landing">
+                <footer class="landing" style="height:10vh">
                     <div class="container">
-                        <p><small>&copy; Copyright 2016, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a> <a href="mailto:grphtcontact@gmail.com">Contact</a>
-
+                        <p class="text-muted"><small>&copy; Copyright 2016
+         <a href="{% url 'homepage:disclaimer' %}" rel="designer">Disclaimer</a>
          </small></p>
                     </div>
                 </footer>
@@ -274,14 +298,13 @@
     ================================================== -->
                 <!-- Placed at the end of the document so the pages load faster -->
                 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+                <script src=" {% static 'bootstrap/dist/js/bootstrap.min.js' %} "></script>
+                    <script src=" {% static 'bootstrap-select/dist/js/bootstrap-select.min.js' %} "></script>
                 <script>
                     window.jQuery || document.write('<script src="js/jquery-1.11.0.min.js"><\/script>')
                 </script>
-                <script src="{% static 'homepage/js/dependencies/wow.min.js' %}"></script>
-                <script src="{% static 'homepage/js/dependencies/bootstrap.min.js' %}"></script>
-                <script src="{% static 'homepage/js/dependencies/main.js' %}"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
-                <script src="{% static 'homepage/js/landing.js' %}"></script>
+                <script src="{% static 'homepage/js/wow.min.js' %}"></script>
+                <script src="{% static 'homepage/js/main.js' %}"></script>
 
 </body>
 

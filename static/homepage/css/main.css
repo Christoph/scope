@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, h6, p, .btn, .navbar-nav a, .form-control, .list-inline, sma
 }
 
 p, .lead {
-	font-family: 'Raleway', sans-serif;
+  font-family: 'Raleway', sans-serif;
 }
 
 h1 {
@@ -81,12 +81,12 @@ a:hover, a:focus {
 }
 
 ::selection {
-	background: #231f20; /* Safari */
-	color: #FFFFFF;
+  background: #231f20; /* Safari */
+  color: #FFFFFF;
 }
 ::-moz-selection {
-	background: #231f20; /* Firefox */
-	color: #FFFFFF;
+  background: #231f20; /* Firefox */
+  color: #FFFFFF;
 }
 
 
@@ -99,8 +99,9 @@ a:hover, a:focus {
 .btn {
   text-transform: uppercase;
   border-radius: 4px;
-  border: none;
+  border: thick #fff solid;
   margin: 15px;
+  background-color: transparent;
 }
 
 .btn-lg {
@@ -128,13 +129,14 @@ a:hover, a:focus {
 }
 
 .btn-primary {
-  background-color:#aec7e8;
-  color: #231f20;
+  background-color:transparent;
+  color: #fff;
+  border: thick #fff solid;
 }
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
-  background-color: #1f77b4;
-  color: #ffffff;
+  background-color: #fff;
+  color: #8b8b8b;
   -webkit-transition: all 0.35s ease-in-out;
   -moz-transition: all 0.35s ease-in-out;
   -o-transition: all 0.35s ease-in-out;
@@ -142,13 +144,14 @@ a:hover, a:focus {
 }
 
 .btn-secondary {
-  background-color: #ffbb78;
-  color: #231f20;
+  background-color: transparent;
+  color: #fff;
+  border: thick #fff solid;
 }
 
 .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active, .btn-secondary.active {
-  background-color: #ff7f0e;
-  color: #ffffff;
+  background-color: #fff;
+  color: #8b8b8b;
   -webkit-transition: all 0.35s ease-in-out;
   -moz-transition: all 0.35s ease-in-out;
   -o-transition: all 0.35s ease-in-out;
@@ -228,7 +231,7 @@ a:hover, a:focus {
 }
 
 .purple-bg {
-	background: #6d3f96;
+  background: #6d3f96;
 }
 
 
@@ -285,7 +288,7 @@ a:hover, a:focus {
 }
 
 .logo img {
-	margin-top: 6px;
+  margin-top: 6px;
 }
 
 
@@ -305,10 +308,10 @@ header {
 }
 
 .graph {
-  background: url(../img/graph.png) no-repeat center center;
+  background: url(../img/back4.png) no-repeat bottom right;
   width: 100%;
-  padding: 20px 10px 60px 10px;
-  height: 600px;
+  /*padding: 20px 10px 60px 10px;*/
+  height: 800px;
   overflow: hidden;
   background-size: cover;
   -webkit-background-size: cover;
@@ -375,38 +378,38 @@ header {
 }
 
 .pad-xl {
-	padding: 200px 0px;
+  padding: 200px 0px;
 }
 
 .pad-lg {
-	padding: 160px 0px;
+  padding: 160px 0px;
 }
 
 .pad-sm {
-	padding: 80px 0px;
+  padding: 80px 0px;
 }
 
 .pad-xs {
-	padding: 30px 0px;
+  padding: 30px 0px;
 }
 
 
 
-#reading {
+#products {
   /*background: url(../img/be-the-first-bg.jpg) #231f20 no-repeat center center fixed;*/
-  background: linear-gradient(#aec7e8,#f2f2f2);
+  background: linear-gradient(#aec7e8,#fff);
   min-height: 300px;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-    background: -webkit-linear-gradient(#aec7e8,#f2f2f2); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(#aec7e8,#f2f2f2); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(#aec7e8,#f2f2f2); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(#aec7e8,#f2f2f2); /* Standard syntax */
+    background: -webkit-linear-gradient(#aec7e8,#fff); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#aec7e8,#fff); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#aec7e8,#fff); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#aec7e8,#fff); /* Standard syntax */
 }
 
-#cluster {
+#team {
   /*background: url(../img/be-the-first-bg.jpg) #231f20 no-repeat center center fixed;*/
   /*background: linear-gradient(#fff,#ff7f0e);*/
   background: #f2f2f2;
@@ -421,10 +424,11 @@ header {
     /*background: linear-gradient(#fff,#ff7f0e); /* Standard syntax */
 }
 
-#analyse {
+#about {
   /*background: url(../img/be-the-first-bg.jpg) #231f20 no-repeat center center fixed;*/
   /*background: linear-gradient(#fff,#ff7f0e);*/
-  background: #f2f2f2;
+  /*background: #f2f2f2;*/
+  /*background: url(../img/back3.png) no-repeat center center;*/
   min-height: 300px;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -445,28 +449,28 @@ header {
 }
 
 hr.line {
-	width: 100%;
-	border: 2px solid;
+  width: 100%;
+  border: 2px solid;
 }
 
 .orange {
-	border-color: #ffbb78;
-	color: #ffbb78;
+  border-color: #ffbb78;
+  color: #ffbb78;
 }
 
 .blue {
-	border-color: #aec7e8;
-	color: #aec7e8;
+  border-color: #aec7e8;
+  color: #aec7e8;
 }
 
 .yellow {
-	border-color: #fdc05d;
-	color: #fdc05d;
+  border-color: #fdc05d;
+  color: #fdc05d;
 }
 
 .grey {
-	border-color: #454545;
-	color: #454545;
+  border-color: #454545;
+  color: #454545;
 }
 
 .iphone {
@@ -504,13 +508,13 @@ hr.line {
 }
 
 .fa-search {
-  color: #ffbb78;
+  color: #1f77b4;
   font-size: 22px;
   display: block;
   padding-top: 15px;
   width: 60px;
   height: 60px;
-  border: 2px solid #ffbb78;
+  border: 2px solid #1f77b4;
   -moz-border-radius: 30px;
   -o-border-radius: 30px;
   -webkit-border-radius: 30px;
@@ -518,6 +522,20 @@ hr.line {
   margin: auto;
 }
 
+.fa-list {
+  color: #1f77b4;
+  font-size: 22px;
+  display: block;
+  padding-top: 15px;
+  width: 60px;
+  height: 60px;
+  border: 2px solid #1f77b4;
+  -moz-border-radius: 30px;
+  -o-border-radius: 30px;
+  -webkit-border-radius: 30px;
+  border-radius: 30px;
+  margin: auto;
+}
 
 
 .news-container {
@@ -642,9 +660,9 @@ footer {
 }
 
 .features.last a {
-	color: #70cbce;
-	font-size: 14px;
-	letter-spacing: 1px;
+  color: #70cbce;
+  font-size: 14px;
+  letter-spacing: 1px;
 }
 
 .pricing-container .btn {
@@ -753,4 +771,40 @@ footer {
 /* Large screens ----------- */
 @media (min-width: 1200px) and (max-width: 3000px) {
 
+}
+
+
+
+ul.social-buttons {
+  margin-bottom: 0;
+}
+ul.social-buttons li a {
+  padding-left: 0px;
+  display: block;
+  background-color: #222222;
+  height: 40px;
+  width: 40px;
+  border-radius: 100%;
+  font-size: 20px;
+  line-height: 40px;
+  color: white;
+  outline: none;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;list-inlin
+}
+ul.social-buttons li a:hover,
+ul.social-buttons li a:focus,
+ul.social-buttons li a:active {
+  background-color: #aec7e8ve;
+}
+
+.portfolio-modal .modal-content ul.list-inline {
+  margin-bottom: 30px;
+  margin-top: 0;
+}
+
+.team-member img {
+  margin: 0 auto;
+  border: 7px solid white;
 }

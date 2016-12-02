@@ -23,6 +23,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 CURRENT_DOMAIN = 'http://127.0.0.1:8000'
 CURRENT_NAME = 'scope'
+CURRENT_SLOGAN = "see more"
 
 INSTALLED_APPS = (
     'django.contrib.admin',

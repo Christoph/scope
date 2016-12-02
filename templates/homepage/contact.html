@@ -1,4 +1,4 @@
-{% extends "graphite/base.html" %}
+{% extends "homepage/base.html" %}
 {% load widget_tweaks %}
 
 {% block content %}
@@ -9,7 +9,7 @@
            
             {%if form %}
             <div class="forms" id="form_contact_light">
-	<form action="{% url 'contact' %}" method="post">
+	<form action="{% url 'homepage:contact' %}" method="post">
         
         {% csrf_token %}
       {% if form.contact_name.errors %}

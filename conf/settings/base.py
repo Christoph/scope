@@ -54,6 +54,7 @@ TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates',
                     'django.template.context_processors.request',
                     'django.contrib.auth.context_processors.auth',
                     'conf.context_processors.site',
+                    'conf.context_processors.check_login',
                     'django.contrib.messages.context_processors.messages']}}]
 
 WSGI_APPLICATION = 'conf.wsgi.application'

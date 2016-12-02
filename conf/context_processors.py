@@ -19,10 +19,21 @@ def google_analytics(request):
         }
     return {}
 
+def check_login(request):
+    if request.user.is_authenticated():
+        log_inf = ['Profile','Logout']
+        log_link = ['homepage:profile','homepage:logout_user']
+    else:
+        log_inf = ['Register','Login']
+        log_link = ['homepage:register','homepage:login_user']
+    return {'log_inf': log_inf,
+            'log_link':log_link
+            }
 
 def site(request):
     """Available in all templates."""
     return {
         'domain': settings.CURRENT_DOMAIN,
         'name': settings.CURRENT_NAME,
+        'slogan' : settings.CURRENT_SLOGAN,
         }
