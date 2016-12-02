@@ -4,14 +4,11 @@ from django.conf.urls import url, include
 from . import views
 
 urlpatterns = [
-    url(r'^', views.landing, name = 'landing'),
-    url(r'^about/', views.about, name = 'about'),
-    url(r'^captcha/', include('captcha.urls')),
+    url(r'^$', views.landing, name = 'landing'),
     url(r'^disclaimer/', views.disclaimer, name = 'disclaimer'),
     url(r'^register/', views.register, name = 'register'),
     url(r'^confirm/(?P<activation_key>.*)$', views.confirm, name = 'confirm'),
     url(r'^profile/', views.profile, name = 'profile'),
-    url(r'^about', views.about, name='about'),
     url(r'^how-it-works', views.how_it_works, name='how_it_works'),
     url(r'^server_error$', views.server_error, name = 'server_error'),
     url(r'^login$', views.login_user, name = 'login_user'),

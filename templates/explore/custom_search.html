@@ -1,4 +1,4 @@
-{% extends "graphite/base.html" %}
+{% extends "homepage/base.html" %}
 {% load widget_tweaks %}
 {% load staticfiles %}
 
@@ -25,7 +25,7 @@
   </ul>
 
   <!-- Tab panes -->
-<form action="{% url 'customsearch' %}" id="searchform" method="post">
+<form action="{% url 'explore:customsearch' %}" id="searchform" method="post">
     {% csrf_token %}
   <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="term">
@@ -53,7 +53,7 @@
 
 <h2 align=center class="page-title">Add feeds to database</h2>
 <div class="forms" id="form_feeds_light">
-    <form action="{% url 'customsearch' %}" method="post">
+    <form action="{% url 'explore:customsearch' %}" method="post">
       {% csrf_token %}
       <div class="form-group">
     {{form.name.label_tag}}

@@ -18,7 +18,7 @@ from django.core.mail import send_mail,EmailMessage
 
 from scope.models import Article
 from homepage.forms import AlertEditForm,NameForm, AlertForm, RegistrationForm,ContactForm,RegistrationForm2,SourceForm
-from curate.models import Select
+#from curate.models import Select
 from explore.models import Query, Sources
 from alert.models import Alert, Send
 from scope.models import UserProfile
@@ -29,20 +29,8 @@ from datetime import datetime, date
 
 
 
-def check_login(request):
-    if request.user.is_authenticated():
-        log_inf = ['Profile','Logout']
-        log_link = ['profile','logout_user']
-    else:
-        log_inf = ['Register','Login']
-        log_link = ['register','login_user']
-    return log_inf, log_link
-
-
-
 def register(request,):
     state = "With a profile you can manage and edit your alerts, access previous search results and unlock other great features!"
-    log_inf, log_link = check_login(request)
     if request.user.is_authenticated():
         # They already have an account; don't let them register again
         state = "Seems like we already have an account for those details. If you want to create a separate account, please log out from your current account."
@@ -94,7 +82,7 @@ def register(request,):
                          ['grphtcontact@gmail.com'])
                     print 'render created'
                     state="Great! Only one step to go. We've sent you an email with a confirmation link. Please confirm and you're set to go."
-                    return render(request,'homepage/register.html', {'new':False,'state':state, 'log_inf':log_inf, 'log_link':log_link})
+                    return render(request,'homepage/register.html', {'new':False,'state':state, })
                 else:
                     state="Sorry, but this username is already taken."
 
@@ -103,16 +91,15 @@ def register(request,):
 
     else:
         form = RegistrationForm()
-    return render(request,'homepage/register.html', {'new':True,'form': form, 'state':state, 'log_inf':log_inf, 'log_link':log_link})
+    return render(request,'homepage/register.html', {'new':True,'form': form, 'state':state})
             # Save the user
 def confirm(request, activation_key):
-    log_inf, log_link = check_login(request)
     if request.user.is_authenticated():
-        return render_to_response('homepage/confirm.html', {'has_account': True, 'log_inf':log_inf, 'log_link':log_link})
+        return render_to_response('homepage/confirm.html', {'has_account': True, })
     user_profile = get_object_or_404(UserProfile,
                                      activation_key=activation_key)
     if user_profile.key_expires.replace(tzinfo = None)  < datetime.today():
-        return render_to_response('homepage/confirm.html', {'expired': True, 'log_inf':log_inf, 'log_link':log_link})
+        return render_to_response('homepage/confirm.html', {'expired': True, })
     user_account = user_profile.user
     user_account.is_active = True
     user_account.save()
@@ -125,17 +112,11 @@ def confirm(request, activation_key):
     send_mail('new user activation',
                           email_body2,'grphtcontact@gmail.com',
                          ['grphtcontact@gmail.com'])
-    return render_to_response('homepage/confirm.html', {'success': True, 'log_inf':log_inf, 'log_link':log_link})
+    return render_to_response('homepage/confirm.html', {'success': True, })
 
 #@login_required(login_url='/login')
-def disclaimer(request):
-    log_inf, log_link = check_login(request)
-    return render(request,'homepage/disclaimer.html', {'log_inf':log_inf, 'log_link':log_link})
-
-#@login_required(login_url='/login')
-def about(request):
-    log_inf, log_link = check_login(request)
-    return render(request,'homepage/about.html', {'log_inf':log_inf, 'log_link':log_link})
+def disclaimer(request):  
+    return render(request,'homepage/disclaimer.html', )
 
 @login_required(login_url='/login')
 def profile_edit(request):
@@ -189,7 +170,7 @@ def alert_edit(request):
 
 @login_required(login_url='/login')
 def profile(request):
-    log_inf, log_link = check_login(request)
+    
     user = User.objects.get(id=request.user.id)
     form2 = RegistrationForm2(initial={'first': user.first_name,
     'last': user.last_name,
@@ -260,7 +241,7 @@ def profile(request):
     #     csstring = 'cs' + query.string
     #     suggestions.append(Suggest.objects.filter(custom = csstring).order_by('distance')[:2])
 
-    context = {'user':user, 'recent_queries':recent_queries, 'alert_info':alert_info, 'log_inf':log_inf, 'log_link':log_link, 'state':state,'form2':form2,'state_profile':state_profile}
+    context = {'user':user, 'recent_queries':recent_queries, 'alert_info':alert_info,'state':state,'form2':form2,'state_profile':state_profile}
     return render(request, 'homepage/profile.html', context)
 
 def logout_user(request):
@@ -288,26 +269,23 @@ def login_user(request):
         else:
         # Return an 'invalid login' error message.
             state = "Your username and/or password were incorrect."
-    log_inf, log_link = check_login(request)
-
-    return render(request, 'homepage/auth.html',{'state':state, 'username': username,'log_inf':log_inf, 'log_link':log_link})
+    
+    return render(request, 'homepage/auth.html',{'state':state, 'username': username,})
 
 #@login_required(login_url='/login')
 def how_it_works(request):
-    log_inf, log_link = check_login(request)
-    return render(request, 'homepage/how_it_works.html',{'log_inf':log_inf, 'log_link':log_link})
+    return render(request, 'homepage/how_it_works.html',)
 
 
 def server_error(request):
     return render(request,'homepage/500.html')
 
-def profile_delete(request):
-    log_inf, log_link = check_login(request)
-    return render(request, 'homepage/profile_delete.html',{'log_inf':log_inf, 'log_link':log_link})
+def profile_delete(request):   
+    return render(request, 'homepage/profile_delete.html',)
 
 #@login_required(login_url='/login')
 def contact(request):
-    log_inf, log_link = check_login(request)
+    
     state = "Please drop me any feedback or suggestions or simply hit me with any thoughts of your's on the site!"
     if request.user.is_authenticated():
             form = ContactForm(initial = {'contact_email': request.user.email,'contact_name':request.user.first_name + ' ' + request.user.last_name})
@@ -326,11 +304,11 @@ def contact(request):
             )
             email.send()
             state="Thanks! Your mail has been sent"
-            return render(request,'homepage/contact.html', {'state':state, 'log_inf':log_inf, 'log_link':log_link})
+            return render(request,'homepage/contact.html', {'state':state, })
         else:
             state = "Oops. Something went wrong with the data. Please double-check and try again."
 
-    return render(request, 'homepage/contact.html',{'log_inf':log_inf, 'log_link':log_link, 'form':form,'state':state})
+    return render(request, 'homepage/contact.html',{'form':form,'state':state})
 
 #@csrf_exempt
 def send_sample(request):
@@ -352,8 +330,5 @@ def send_sample(request):
         )
 
 def landing(request):
-    form = AlertForm()
-    log_inf, log_link = check_login(request)
-    context = {'log_inf':log_inf, 'log_link':log_link,'form':form}
-    return render(request,'homepage/landing.html',context)
+    return render(request,'homepage/landing.html')
 

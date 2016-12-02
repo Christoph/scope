@@ -434,6 +434,8 @@ for graph in test:
         except:
             pass
 print "\n AND \n"
+
+
 for no in list(set().union(*exclude)):
     try:
         print ug.node[no]['title'], ug.node[no]['source'], no
