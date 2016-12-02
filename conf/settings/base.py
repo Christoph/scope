@@ -81,7 +81,7 @@ BOWER_INSTALLED_APPS = (
     "jquery-ui",
     "bootstrap",
     "bootstrap-select",
-    "d3",
+    "d3#3",
     "lodash",
     "font-awesome",
 )
