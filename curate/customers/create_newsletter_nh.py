@@ -41,13 +41,13 @@ from networkx.readwrite import json_graph
 import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.word_vector as word_vector
 import scope.methods.cluster.graphBuilder as builder
+import scope.methods.dataprovider.crawler as Crawler
 
 global exitFlag, workQueue, queueLock, articlenumber
 
-# Turns unicode into UTF8
-
 
 def byteify(input):
+    # Turns unicode into UTF-8
     if isinstance(input, dict):
         return {byteify(key): byteify(value)
                 for key, value in input.iteritems()}
@@ -59,13 +59,16 @@ def byteify(input):
         return input
 
 reload(sys)
+# TODO: What is the meaning of this line?
 sys.setdefaultencoding('utf8')
 
 pre = preprocess.PreProcessing("english")
 wv_model = word_vector.Model()
+crawler = Crawler.Crawler("imap")
 
 '''
 
+# TODO: What is the use of this line?
 detach_dir = '.'  # directory where to save attachments (default: current)
 # user="enews@neulandherzer.net"
 # pwd = "Ensemble_Enema"
@@ -250,15 +253,15 @@ with open('curate/data/data.json', 'w+') as fp:
 
 '''
 
-with open('curate/data/data.json') as fp:
-    data = json.load(fp)
+# with open('curate/data.json') as fp:
+#    data = json.load(fp)
 
-n1 = 5
-n2 = 20
+# Load data
+data = crawler.query_source("NH")
 
 # Begin Semantic Analysis
 
-doc = [d["doc"] for d in data]
+doc = [d["body"] for d in data]
 
 term_vecs, docs = pre.lemma([d for d in doc])
 
@@ -272,7 +275,7 @@ for i in range(0, len(data)):
     except:
         source = "No Source Information"
 
-    ug.add_node(i, title=data[i]["titles"], url=data[i]["urls"], suggest=0, summary=data[i]["doc"][0:200],
+    ug.add_node(i, title=data[i]["title"], url=data[i]["url"], suggest=0, summary=data[i]["description"][0:200],
                 images=data[i]["images"], comp=0, source=source, keywords='',
                 time=None)
 
@@ -358,7 +361,7 @@ for no in list(set().union(*exclude)):
         print ug.node[no]['title'], ug.node[no]['source'], no
     except:
         pass
-size = len(corp)
+size = len(data)
 
 # Tg is inner circle
 tg = nx.DiGraph()
