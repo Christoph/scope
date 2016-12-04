@@ -92,7 +92,6 @@ upper = min(600, len(articles))
 
 # for a in articles:
 #     a.download()
-#     a.parse()
 
 # print "Start threading"
 

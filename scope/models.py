@@ -37,15 +37,15 @@ class Agent(models.Model):
 
 
 class Article(models.Model):
-    source_ID = models.ForeignKey(Source, blank=True, null=True)
-    agent_ID = models.ForeignKey(Agent, blank=True, null=True)
-    title = models.CharField(max_length=200)
-    url = models.CharField(max_length=200)
-    images = models.CharField(max_length=200)
-    description = models.CharField(max_length=200)
-    keywords = models.CharField(max_length=200)
+    source = models.ForeignKey(Source, blank=True, null=True)
+    agent = models.ForeignKey(Agent, blank=True, null=True)
+    title = models.CharField(max_length=300)
+    url = models.CharField(max_length=300)
+    images = models.CharField(max_length=500, blank=True)
+    description = models.CharField(max_length=500, blank=True)
+    keywords = models.CharField(max_length=200, blank=True)
     body = models.TextField()
-    time_written = models.DateTimeField()
+    # time_written = models.DateTimeField(blank=True)
     time_created = models.DateField(auto_now_add=True)
 
     def __unicode__(self):              # __unicode__ on Python 2

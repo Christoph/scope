@@ -40,12 +40,14 @@ from networkx.readwrite import json_graph
 
 import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.word_vector as word_vector
-import scope.methods.cluster.graphBuilder as builder
+import scope.methods.graphs.graphBuilder as builder
+import scope.methods.graphs.tests.rev_engineer as test
+import scope.methods.graphs.selector as selector
+
 
 global exitFlag, workQueue, queueLock, articlenumber
 
 # Turns unicode into UTF8
-
 
 def byteify(input):
     if isinstance(input, dict):
@@ -261,6 +263,15 @@ n2 = 20
 doc = [d["doc"] for d in data]
 
 term_vecs, docs = pre.lemma([d for d in doc])
+
+sim = wv_model.similarity(docs)
+
+
+selection = Selection_from_thresh.make_selection(Articles)
+
+selected_articles = [Articles[i][0] for i in selection['entries']]
+
+
 
 # Begin Graph visualisation
 
