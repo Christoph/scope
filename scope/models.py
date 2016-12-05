@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 # Create your models here.
 
@@ -21,31 +23,33 @@ class Customer(models.Model):
 
 
 class Source(models.Model):
-    name = models.CharField(max_length=200)
-    url = models.CharField(max_length=200)
+    product_customer_type = models.ForeignKey(
+        ContentType, related_name="product_customer")
+    product_customer_id = models.PositiveIntegerField()
+    product_customer_object = GenericForeignKey(
+        "product_customer_type", "product_customer_id")
 
-    def __unicode__(self):              # __unicode__ on Python 2
-        return self.name
+    agent_type = models.ForeignKey(ContentType, related_name="agent_type")
+    agent_id = models.PositiveIntegerField()
+    agent_object = GenericForeignKey("agent_type", "agent_id")
 
 
-class Agent(models.Model):
-    name = models.CharField(max_length=200)
-    url = models.CharField(max_length=200)
-
-    def __unicode__(self):              # __unicode__ on Python 2
-        return self.name
+class AgentImap(models.Model):
+    user = models.CharField(blank=True, max_length=100)
+    pwd = models.CharField(blank=True, max_length=100)
+    imap = models.CharField(blank=True, max_length=100)
+    mailbox = models.CharField(blank=True, max_length=100)
+    interval = models.IntegerField(blank=True, default=24)
 
 
 class Article(models.Model):
     source = models.ForeignKey(Source, blank=True, null=True)
-    agent = models.ForeignKey(Agent, blank=True, null=True)
     title = models.CharField(max_length=300)
     url = models.CharField(max_length=500)
     images = models.CharField(max_length=500, blank=True)
     description = models.CharField(max_length=500, blank=True)
     keywords = models.CharField(max_length=200, blank=True)
     body = models.TextField()
-    # time_written = models.DateTimeField(blank=True)
     time_created = models.DateField(auto_now_add=True)
 
     def __unicode__(self):              # __unicode__ on Python 2

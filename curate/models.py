@@ -3,6 +3,7 @@
 from django.db import models
 from scope.models import Article
 from scope.models import Customer
+from scope.models import Source
 
 # Create your models here.
 
@@ -19,9 +20,6 @@ class Curate_Query(models.Model):
     processed_words = models.CharField(max_length=200, blank=True)
     clustering = models.CharField(max_length=200, blank=True)
     no_clusters = models.IntegerField(null=True, blank=True)
-
-    def __unicode__(self):              # __unicode__ on Python 2
-        return self.time_stamp
 
 
 class Article_Curate_Query(models.Model):
