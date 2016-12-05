@@ -1,6 +1,8 @@
-import json
+import re
 import imaplib
 import urllib2
+import email
+import quopri
 from newspaper import Article
 from urlparse import urlparse
 from datetime import date, timedelta
@@ -11,8 +13,6 @@ class Crawler(object):
     """docstring for crawler."""
 
     def __init__(self, datasource):
-        if datasource == "json":
-            self.datasource = self._load_JSON
         if datasource == "imap":
             self.datasource = self._load_imap
 
@@ -33,6 +33,8 @@ class Crawler(object):
         mail_box = "[Gmail]/All Mail"
         mail_interval = 24
 
+        out = []
+
         # Connect to Mailbox
         mailbox = imaplib.IMAP4_SSL(mail_link)
         mailbox.login(mail_user, mail_pwd)
@@ -51,7 +53,6 @@ class Crawler(object):
         print items
 
         all_urls = []
-        no_urls = 0
 
         # Get the whole mail content
         for emailid in items:
@@ -61,30 +62,33 @@ class Crawler(object):
 
             email_body = data[0][1]  # getting the mail content
 
-            # TODO: Not sure what this does. Getting all in mail URLS?
-            # Here are three regex from stackoverflow and the internet for that
-            # (http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?
-            # \b(https?|ftp|file)://[-A-Z0-9+&@#/%?=~_|!:,.;]*[A-Z0-9+&@#/%=~_|]
-            # \b(?:(?:https?|ftp|file)://|www\.|ftp\.)
-            #   (?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*
-            #   (?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])
-            urls = list(set([i.split('"')[0].replace("=", "")
-                             .replace("3D", "=")
-                             for i in email_body.replace("\r\n", "")
-                             .split('href=3D"') if i[0:4] == 'http']))
+            # Convert to mail object
+            mail = email.message_from_string(quopri.decodestring(email_body))
 
-            no_urls = no_urls + len(urls)
+            # Get mail payload
+            if mail.is_multipart():
+                content = mail.get_payload()[0].get_payload()
+
+            else:
+                content = mail.get_payload()
+
+            # list set to remove duplicates
+            # Still problems with links like:
+            # http://www.cinemablend.com/news/1595010/why-jason-momoa-relates-so-closely-to-aquaman
+            urls = set(list(re.findall(
+                'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', content)))
 
             # Get real article urls
             for url in urls:
                 try:
+                    url = url.rstrip(')')
                     req = urllib2.Request(url)
                     res = urllib2.urlopen(req)
                     finalurl = res.geturl()
                     check_url = urlparse(finalurl)
                 # TODO: Shoudnt catch all exceptions
                 except:
-                    print "error while checking url: "+url
+                    print "error while checking url: " + url
                     continue
 
                 test_list = []
@@ -106,28 +110,17 @@ class Crawler(object):
                 a.download()
                 a.parse()
             except:
-                print "Error while downloading: "+a.url
+                print "Error while downloading: " + a.url
                 continue
 
         for article in articles:
             # and "tech" in article.text:
-            if article.title not in constants.EXCLUDE and constants.UNSUBSCRIBE_EXCLUDE not in article.text:
-                data.append({
+            # TODO: Problem: ")" will be added as article
+            if article.title not in constants.EXCLUDE and \
+               constants.UNSUBSCRIBE_EXCLUDE not in article.text:
+                out.append({
                     "body": article.text, "title": article.title,
                     "url": article.url, "images": article.top_image,
                     "description": article.text[0:400] + "..."})
 
-        return data
-
-    def _load_JSON(self, user):
-        # Load JSON
-        raw = json.loads(
-            open(user).read())
-
-        # Get data
-        data = [doc for doc in raw if
-                (doc['title'] not in constants.EXCLUDE and
-                    constants.UNSUBSCRIBE_EXCLUDE not in
-                    doc['body'] and doc['isDuplicate'] is False)]
-
-        return data
+        return out
