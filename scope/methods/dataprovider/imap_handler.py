@@ -9,29 +9,54 @@ from datetime import date, timedelta
 from . import constants
 
 
-class Crawler(object):
-    """docstring for crawler."""
+class ImapHandler(object):
+    """docstring for ImapHandler."""
 
-    def __init__(self, datasource):
-        if datasource == "imap":
-            self.datasource = self._load_imap
+    def _get_urls_from_string(self, content):
+        test_list = []
+        urls_list = []
 
-    def query_source(self, user):
-        return self.datasource(user)
+        # list set to remove duplicates
+        # Still problems with links like:
+        # http://www.cinemablend.com/news/1595010/why-jason-momoa-relates-so-closely-to-aquaman
+        urls = set(list(re.findall(
+            ('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|'
+             '(?:%[0-9a-fA-F][0-9a-fA-F]))+'),
+            content)))
 
-    def _load_imap(self, user):
+        # Get real article urls
+        for url in urls:
+            try:
+                url = url.rstrip(')')
+                req = urllib2.Request(url)
+                res = urllib2.urlopen(req)
+                finalurl = res.geturl()
+                check_url = urlparse(finalurl)
+            # TODO: Shoudnt catch all exceptions
+            except:
+                print "error while checking url: " + url
+                continue
 
-        # Temporary customer imap data
-        # mail_user = "enews@neulandherzer.net"
-        # mail_pwd = "Ensemble_Enema"
-        # mail_link = "imap.1und1.de"
-        # mail_box = "INBOX"
+            # TODO: Not sure what is the use of this lines
+            # Maybe creating a blacklist and not a whitelist?
+            for x in constants.SUBSCRIBED_URLS:
+                if x in finalurl:
+                    test_list.append("yes")
+            if len(test_list) == 0 and (check_url.path != '/' and
+                                        check_url.path != '' and
+                                        check_url.path != '/en/'):
+                urls_list.append(finalurl)
 
-        mail_user = "renesnewsletter"
-        mail_pwd = "renewilllesen"
-        mail_link = "imap.gmail.com"
-        mail_box = "[Gmail]/All Mail"
-        mail_interval = 24
+            # urls_list.append(finalurl)
+
+        return urls_list
+
+    def get_data(self, source):
+        mail_user = source.user.encode("utf-8")
+        mail_pwd = source.pwd.encode("utf-8")
+        mail_link = source.imap.encode("utf-8")
+        mail_box = source.mailbox.encode("utf-8")
+        mail_interval = source.interval.encode("utf-8")
 
         out = []
 
@@ -71,35 +96,9 @@ class Crawler(object):
             else:
                 content = mail.get_payload()
 
-            # list set to remove duplicates
-            # Still problems with links like:
-            # http://www.cinemablend.com/news/1595010/why-jason-momoa-relates-so-closely-to-aquaman
-            urls = set(list(re.findall(
-                'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', content)))
+            urls = self._get_urls_from_string(content)
 
-            # Get real article urls
-            for url in urls:
-                try:
-                    url = url.rstrip(')')
-                    req = urllib2.Request(url)
-                    res = urllib2.urlopen(req)
-                    finalurl = res.geturl()
-                    check_url = urlparse(finalurl)
-                # TODO: Shoudnt catch all exceptions
-                except:
-                    print "error while checking url: " + url
-                    continue
-
-                test_list = []
-
-                # TODO: Not sure what is the use of this lines
-                for x in constants.SUBSCRIBED_URLS:
-                    if x in finalurl:
-                        test_list.append("yes")
-                if len(test_list) == 0 and (check_url.path != '/' and
-                                            check_url.path != '' and
-                                            check_url.path != '/en/'):
-                    all_urls.append(finalurl)
+            all_urls.extend(urls)
 
         articles = [Article(x) for x in list(set(all_urls))]
 
@@ -121,6 +120,6 @@ class Crawler(object):
                 out.append({
                     "body": article.text, "title": article.title,
                     "url": article.url, "images": article.top_image,
-                    "description": article.text[0:400] + "..."})
+                    "description": article.text[0:294] + "..."})
 
         return out

@@ -36,37 +36,17 @@ from nltk.classify import NaiveBayesClassifier
 from nltk.corpus import movie_reviews
 from networkx.readwrite import json_graph
 
-from scope.models import Article, Customer
+from scope.models import Article, Customer, Source
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
 
 import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.word_vector as word_vector
-import scope.methods.cluster.graphBuilder as builder
-import scope.methods.dataprovider.crawler as Crawler
+import scope.methods.dataprovider.provider as Provider
 
-import scope.methods.graphs.graphBuilder as builder
-import scope.methods.graphs.tests.rev_engineer as test
-import scope.methods.graphs.selector as selector
-
-
-def byteify(input):
-    # Turns unicode into UTF-8
-    if isinstance(input, dict):
-        return {byteify(key): byteify(value)
-                for key, value in input.iteritems()}
-    elif isinstance(input, list):
-        return [byteify(element) for element in input]
-    elif isinstance(input, unicode):
-        return input.encode('utf-8')
-    else:
-        return input
-
-
-sys.setdefaultencoding('utf8')
 
 pre = preprocess.PreProcessing("english")
 wv_model = word_vector.Model()
-crawler = Crawler.Crawler("imap")
+provider = Provider.Provider()
 
 db_articles = []
 
@@ -75,19 +55,28 @@ curate_customer = Curate_Customer.objects.get(customer=customer)
 curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
 
 # Load data
-data = crawler.query_source("NH")
 
+# Get all sources connected to the curate_customer
+source = Source.objects.get(
+    product_customer_id=curate_customer.id).agent_object
+
+# Get the articles as dict
+data = provider.query_source(source)
+
+# Save the articles into the database
 for a in data:
     art, created = Article.objects.get_or_create(
-        title=a['titles'], url=a['urls'], defaults={
-            'body': a['body'], 'images': a['images'],
-            'description': a['description']})
+        source=source,
+        title=a['title'],
+        url=a['url'],
+        body=a['body'],
+        images=a['images'],
+        description=a['description'])
 
     Article_Curate_Query.objects.create(article=art, curate_query=curate_query)
     db_articles.append(art)
 
 # Begin Semantic Analysis
-
 doc = [d["body"] for d in data]
 
 term_vecs, docs = pre.lemma([d for d in doc])

@@ -7,9 +7,6 @@ class Model(object):
     def __init__(self):
         pass
 
-    def compute(self, data):
-        pass
-
     def similarity(self, docs):
         sim = np.zeros([len(docs), len(docs)])
 
