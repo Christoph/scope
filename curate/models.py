@@ -9,18 +9,15 @@ from scope.models import Customer
 
 class Curate_Customer(models.Model):
     customer = models.ForeignKey(Customer)
-    key = models.CharField(max_length=100,blank=True)
+    key = models.CharField(max_length=100, blank=True)
     expires = models.DateField(blank=True)
-
-    def __unicode__(self):              # __unicode__ on Python 2
-        return self.customer
 
 
 class Curate_Query(models.Model):
     curate_customer = models.ForeignKey(Curate_Customer)
     time_stamp = models.DateField(auto_now_add=True)
-    processed_words = models.CharField(max_length=200,blank=True)
-    clustering = models.CharField(max_length=200,blank=True)
+    processed_words = models.CharField(max_length=200, blank=True)
+    clustering = models.CharField(max_length=200, blank=True)
     no_clusters = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):              # __unicode__ on Python 2
