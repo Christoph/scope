@@ -1,5 +1,4 @@
 import sys
-import json
 
 # from curate.models import Select
 
@@ -19,6 +18,7 @@ wv_model = word_vector.Model()
 data_provider = provider.Provider()
 
 db_articles = []
+words = 0
 
 customer = Customer.objects.get(name="Neuland Herzer")
 curate_customer = Curate_Customer.objects.get(customer=customer)
@@ -28,10 +28,12 @@ curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
 
 # Get all sources connected to the curate_customer
 source = Source.objects.get(
-    product_customer_id=curate_customer.id).agent_object
+    product_customer_id=curate_customer.id)
+
+agent = source.agent_object
 
 # Get the articles as dict
-data = data_provider.query_source(source)
+data = provider.query_source(agent)
 
 # Save the articles into the database
 for a in data:
@@ -46,20 +48,16 @@ for a in data:
     Article_Curate_Query.objects.create(article=art, curate_query=curate_query)
     db_articles.append(art)
 
-counter = 0
-words = 0
+words = sum([len(i.body) for i in db_articles])
 
-doc = [i['body'] for i in data]
+# Semantic Analysis
+wv_model.load_data(db_articles)
 
-words = sum([len(i) for i in doc])
-
-
-
-term_vecs, docs = pre.lemma([d for d in doc])
-sim = wv_model.similarity(docs)
-
+sim = wv_model.similarity_matrix()
 
 # Extract Selection
+
+
 def test(dict, test_params):
     cluster_lengths = [i[0] for i in dict['articles']]
     weight_cluster_size = test_params[0]

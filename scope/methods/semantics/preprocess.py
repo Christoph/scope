@@ -1,35 +1,19 @@
 import re
 import nltk
 import string
-import nltk
-import spacy
-import sys
 
 
 class PreProcessing():
     """docstring for PreProcessing."""
 
     def __init__(self, lang):
-        reload(sys)
-        sys.setdefaultencoding('utf8')
         if(lang == "german"):
             self.stop_words = nltk.corpus.stopwords.words('german')
             self.stemmer = nltk.stem.snowball.GermanStemmer()
-            self.pipeline = spacy.load("de")
-
-            # Add stopwords to spacy
-            for word in self.stop_words:
-                spacy.de.language_data.STOP_WORDS.add(word)
-
-            # Set vocab entries of Stopwords to is_stop == true
-            for word in spacy.de.language_data.STOP_WORDS:
-                lexeme = self.pipeline.vocab[word.decode()]
-                lexeme.is_stop = True
 
         if(lang == "english"):
             self.stop_words = nltk.corpus.stopwords.words('english')
             self.stemmer = nltk.stem.porter.PorterStemmer()
-            self.pipeline = spacy.load("en")
 
         self.punc = re.compile('[%s]' % re.escape(string.punctuation))
 
@@ -44,18 +28,6 @@ class PreProcessing():
         term_vec = self._stemming(term_vec)
 
         return term_vec
-
-    def lemma(self, docs):
-        # Initialize output
-        vectors = []
-
-        # Import data into the spacy pipeline
-        data = [self.pipeline(item) for item in docs]
-
-        for doc in data:
-            vectors.append([tok.lemma_ for tok in doc if (tok.is_digit or tok.is_alpha) and not tok.is_stop])
-
-        return vectors, data
 
     def _tokenize(self, doc):
         term_vec = []

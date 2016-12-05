@@ -44,8 +44,7 @@ import scope.methods.semantics.word_vector as word_vector
 import scope.methods.dataprovider.provider as Provider
 
 
-pre = preprocess.PreProcessing("english")
-wv_model = word_vector.Model()
+wv_model = word_vector.Model("en")
 provider = Provider.Provider()
 
 db_articles = []
@@ -58,10 +57,12 @@ curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
 
 # Get all sources connected to the curate_customer
 source = Source.objects.get(
-    product_customer_id=curate_customer.id).agent_object
+    product_customer_id=curate_customer.id)
+
+agent = source.agent_object
 
 # Get the articles as dict
-data = provider.query_source(source)
+data = provider.query_source(agent)
 
 # Save the articles into the database
 for a in data:
@@ -76,14 +77,12 @@ for a in data:
     Article_Curate_Query.objects.create(article=art, curate_query=curate_query)
     db_articles.append(art)
 
-# Begin Semantic Analysis
-doc = [d["body"] for d in data]
+# Semantic Analysis
+wv_model.load_data(db_articles)
 
-term_vecs, docs = pre.lemma([d for d in doc])
+sim = wv_model.similarity_matrix()
 
-sim = wv_model.similarity(docs)
-
-# Begin Graph visualisation
+# Graph visualisation
 
 ug = nx.Graph()
 

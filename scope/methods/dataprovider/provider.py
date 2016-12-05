@@ -9,8 +9,8 @@ class Provider(object):
     def __init__(self):
         self.imap = ImapHandler()
 
-    def query_source(self, source):
-        if type(source) == AgentImap:
-            return self.imap.get_data(source)
+    def query_agent(self, agent):
+        if type(agent) == AgentImap:
+            return self.imap.get_data(agent)
 
-        raise ValueError("No valid source type")
+        raise ValueError("No valid agent type")
