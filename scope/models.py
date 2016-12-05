@@ -40,7 +40,7 @@ class Article(models.Model):
     source = models.ForeignKey(Source, blank=True, null=True)
     agent = models.ForeignKey(Agent, blank=True, null=True)
     title = models.CharField(max_length=300)
-    url = models.CharField(max_length=300)
+    url = models.CharField(max_length=500)
     images = models.CharField(max_length=500, blank=True)
     description = models.CharField(max_length=500, blank=True)
     keywords = models.CharField(max_length=200, blank=True)
