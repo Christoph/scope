@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 
 from django.db import models
 from scope.models import Article
@@ -8,19 +8,20 @@ from scope.models import Customer
 
 
 class Curate_Customer(models.Model):
-    customer_id = models.ForeignKey(Customer)
-    key = models.CharField(max_length=100)
-    expires = models.DateField()
+    customer = models.ForeignKey(Customer)
+    key = models.CharField(max_length=100,blank=True)
+    expires = models.DateField(blank=True)
 
     def __unicode__(self):              # __unicode__ on Python 2
-        return self.customer_id
+        return self.customer
 
 
 class Curate_Query(models.Model):
-    curate_customer_ID = models.ForeignKey(Curate_Customer)
+    curate_customer = models.ForeignKey(Curate_Customer)
     time_stamp = models.DateField(auto_now_add=True)
-    processed_words = models.CharField(max_length=200)
-    clustering = models.CharField(max_length=200)
+    processed_words = models.CharField(max_length=200,blank=True)
+    clustering = models.CharField(max_length=200,blank=True)
+    no_clusters = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):              # __unicode__ on Python 2
         return self.time_stamp
@@ -29,5 +30,5 @@ class Curate_Query(models.Model):
 class Article_Curate_Query(models.Model):
     is_selected = models.BooleanField(default=False)
     rank = models.IntegerField(null=True, blank=True)
-    article_ID = models.ForeignKey(Article)
-    curate_query_ID = models.ForeignKey(Curate_Query)
+    article = models.ForeignKey(Article)
+    curate_query = models.ForeignKey(Curate_Query)

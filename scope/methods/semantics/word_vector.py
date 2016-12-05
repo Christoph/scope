@@ -10,10 +10,12 @@ class Model(object):
     def compute(self, data):
         pass
 
-    def similarity(self, docs, index):
-        sim = np.zeros(len(docs))
+    def similarity(self, docs):
+        sim = np.zeros([len(docs), len(docs)])
 
         for i in range(0, len(docs)):
-            sim[i] = docs[index].similarity(docs[i])
+            for j in range(i, len(docs)):
+                sim[i, j] = docs[i].similarity(docs[j])
+                sim[j, i] = sim[i, j]
 
         return sim

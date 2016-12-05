@@ -68,7 +68,6 @@ class Crawler(object):
             # Get mail payload
             if mail.is_multipart():
                 content = mail.get_payload()[0].get_payload()
-
             else:
                 content = mail.get_payload()
 
@@ -93,6 +92,7 @@ class Crawler(object):
 
                 test_list = []
 
+                # TODO: Not sure what is the use of this lines
                 for x in constants.SUBSCRIBED_URLS:
                     if x in finalurl:
                         test_list.append("yes")
