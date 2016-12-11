@@ -1,6 +1,7 @@
 import re
 import imaplib
 import urllib2
+from cookielib import CookieJar
 import email
 import quopri
 from newspaper import Article
@@ -11,6 +12,15 @@ from . import constants
 
 class ImapHandler(object):
     """docstring for ImapHandler."""
+
+    def __init__(self):
+        self.cj = CookieJar()
+        self.url_opener = urllib2.build_opener(
+            urllib2.HTTPCookieProcessor(self.cj))
+        self.url_opener.addheaders = [
+            ('User-Agent',
+             ('Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127',
+              'Firefox/2.0.0.11'))]
 
     def _get_urls_from_string(self, content):
         test_list = []
@@ -30,8 +40,9 @@ class ImapHandler(object):
         for url in urls:
             try:
                 url = url.rstrip(')')
-                req = urllib2.Request(url)
-                res = urllib2.urlopen(req)
+                # req = urllib2.Request(url)
+                # res = urllib2.urlopen(req)
+                res = self.url_opener.open(url)
                 finalurl = res.geturl()
                 check_url = urlparse(finalurl)
             # TODO: Shoudnt catch all exceptions
@@ -75,9 +86,6 @@ class ImapHandler(object):
         resp, items = mailbox.search(
             None, '(SINCE "' + yesterday.strftime("%d-%b-%Y") + '")')
         items = items[0].split()  # getting the mails ids
-
-        # TODO: Debug print message
-        print items
 
         all_urls = []
 

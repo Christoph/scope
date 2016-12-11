@@ -6,7 +6,7 @@ from .feeds import Feed
 
 urlpatterns = [
     # ...
-    url(r'^$', views.interface, name="interface"),
+    url(r'(?P<customer_key>.*)/interface$', views.interface, name='interface'),
     url(r'^feed/latest$', Feed()),
 
     # ...
