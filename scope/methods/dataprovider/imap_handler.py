@@ -1,6 +1,7 @@
 import imaplib
 import email
 import quopri
+from urlparse import urlparse
 from datetime import date, timedelta
 from newspaper import Article
 from . import constants
@@ -79,6 +80,7 @@ class ImapHandler(object):
                 out.append({
                     "body": article.text, "title": article.title,
                     "url": article.url, "images": article.top_image,
-                    "description": article.text[0:294] + "..."})
+                    "description": article.text[0:294] + "...",
+                    "source": urlparse(article.url).netloc})
 
         return out
