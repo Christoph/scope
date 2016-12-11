@@ -244,33 +244,34 @@ def profile(request):
     context = {'user':user, 'recent_queries':recent_queries, 'alert_info':alert_info,'state':state,'form2':form2,'state_profile':state_profile}
     return render(request, 'homepage/profile.html', context)
 
-def logout_user(request):
+def logout(request):
     logout(request)
-    return render(request, 'homepage/logout.html',{'log_inf': ['Register','Login'],'log_link': ['register','login_user']})
+    return render(request, 'homepage/logout.html')
 
-def login_user(request):
-    state = ""
-    username = password = ''
-    if request.POST:
-        username = request.POST['username']
-        password = request.POST['password']
+    
+# def login_user(request):
+#     state = ""
+#     username = password = ''
+#     if request.POST:
+#         username = request.POST['username']
+#         password = request.POST['password']
 
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                #state = "You are succesfully logged in. Please proceed to"
-                #render(request, 'last24h/index.html')
-                return HttpResponseRedirect(reverse('profile'))
-            # Redirect to a success page.
-            else:
-            # Return a 'disabled account' error message
-                state = "Your account is not active, please contact the site admin."
-        else:
-        # Return an 'invalid login' error message.
-            state = "Your username and/or password were incorrect."
+#         user = authenticate(username=username, password=password)
+#         if user is not None:
+#             if user.is_active:
+#                 login(request, user)
+#                 #state = "You are succesfully logged in. Please proceed to"
+#                 #render(request, 'last24h/index.html')
+#                 return HttpResponseRedirect(reverse('profile'))
+#             # Redirect to a success page.
+#             else:
+#             # Return a 'disabled account' error message
+#                 state = "Your account is not active, please contact the site admin."
+#         else:
+#         # Return an 'invalid login' error message.
+#             state = "Your username and/or password were incorrect."
 
-    return render(request, 'homepage/auth.html',{'state':state, 'username': username,})
+#     return render(request, 'homepage/auth.html',{'state':state, 'username': username,})
 
 #@login_required(login_url='/login')
 def how_it_works(request):
