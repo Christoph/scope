@@ -47,4 +47,5 @@ keras==1.1.1
 tensorflow>=0.12.0rc0
 scikit-learn==0.18
 pylama==7.2.3
+pylama-pylint==2.2.1
 django-bower==5.2.0
