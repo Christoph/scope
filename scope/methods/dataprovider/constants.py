@@ -16,3 +16,5 @@ SUBSCRIBED_URLS = ["launch.us", "launch.co", "index.co", "azhar",
                    "typeform", "producthunt.us3.list-manage.com",
                    "getfeedback", "youtube.com", "forms/", "smashingmagazine",
                    "wikipedia.org"]
+
+URL_PATH_BLACKLIST = ["/unsupported-browser"]
