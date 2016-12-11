@@ -554,3 +554,7 @@ tbody >tr:nth-child(odd) {
   background-image: -o-linear-gradient(top, #ff9896, #98df8a);
   background-image: linear-gradient(to bottom, #ff9896, #98df8a);
 }
+
+.navbar-nav {
+  margin:none;
+}

@@ -56,7 +56,7 @@ class ImapHandler(object):
         mail_pwd = source.pwd.encode("utf-8")
         mail_link = source.imap.encode("utf-8")
         mail_box = source.mailbox.encode("utf-8")
-        mail_interval = source.interval.encode("utf-8")
+        mail_interval = source.interval
 
         out = []
 

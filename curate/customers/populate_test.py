@@ -10,7 +10,7 @@ imap.save()
 
 # Create Customer
 customer = Customer(
-    name="Neuland Herzer", customer_key="key", email="test@test.com")
+    name="Neuland Herzer Test", customer_key="key", email="test@test.com")
 
 customer.save()
 

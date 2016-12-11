@@ -1,4 +1,5 @@
 import sys
+from datetime import date
 
 # from curate.models import Select
 
@@ -7,7 +8,7 @@ import scope.methods.semantics.word_vector as word_vector
 import scope.methods.graphs.selector as selector
 import scope.methods.dataprovider.provider as provider
 
-from scope.models import Article, Customer, Source
+from scope.models import Customer
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
 
 reload(sys)
@@ -17,36 +18,19 @@ pre = preprocess.PreProcessing("english")
 wv_model = word_vector.Model("en")
 data_provider = provider.Provider()
 
-db_articles = []
-words = 0
 
+
+# will be replaced by authentication
 customer = Customer.objects.get(name="Neuland Herzer Test")
 curate_customer = Curate_Customer.objects.get(customer=customer)
-curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
+last_query = Curate_Query.objects.filter(
+        curate_customer=curate_customer).filter(time_stamp=date.today())[0]
+article_query_instances = Article_Curate_Query.objects.filter(
+        curate_query=last_query)
+db_articles = [i.article for i in article_query_instances]
 
-# Load data
 
-# Get all sources connected to the curate_customer
-source = Source.objects.get(
-    product_customer_id=curate_customer.id)
-
-agent = source.agent_object
-
-# Get the articles as dict
-data = data_provider.query_source(agent)
-
-# Save the articles into the database
-for a in data:
-    art, created = Article.objects.get_or_create(
-        source=source,
-        title=a['title'],
-        url=a['url'],
-        body=a['body'],
-        images=a['images'],
-        description=a['description'])
-
-    Article_Curate_Query.objects.get_or_create(article=art, curate_query=curate_query)
-    db_articles.append(art)
+words = sum([len(i.body) for i in db_articles])
 
 # Semantic Analysis
 wv_model.load_data(db_articles)
@@ -63,24 +47,23 @@ def test(dict, test_params):
     return weight_cluster_size * dict['no_clusters'] + weight_coverage * sum(cluster_lengths) / dict['no_articles']
 
 
-test_params = [1, 1]
+test_params = [1, 0]
 # [range, step], test_params
 params = [[0, 0.5, 0.001], test_params]
 
 sel = selector.Selection(len(db_articles), sim)
 
-
-selection = sel.by_test(test, params, [2, 15])
+selection = sel.by_test(test, params, [1, 20])
 selected_articles = [db_articles[i[0]] for i in selection['articles']]
 
 # Database object creation
-curate_query.processed_words = words
-curate_query.no_clusters = selection[
+last_query.processed_words = words
+last_query.no_clusters = selection[
                     'no_clusters']
-curate_query.clustering = selection['clustering']
-curate_query.save()
+last_query.clustering = selection['clustering']
+last_query.save()
 
 for i in range(0, len(selected_articles)):
-    a = Article_Curate_Query.objects.get(article=selected_articles[i],curate_query=curate_query)
+    a = Article_Curate_Query.objects.get(article=selected_articles[i])
     a.rank = i + 1
     a.save()

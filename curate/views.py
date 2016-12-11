@@ -2,23 +2,25 @@ from django.shortcuts import render
 from datetime import date
 # Create your views here.
 
-from curate.models import *
-from curate.feeds import *
+from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
+from scope.models import Customer, Article
 
+def interface(request,customer_key):
+    print request
+    # if request.user.is_authenticated():
+    #     # User ALSO HAS TO BE NH!
+    #     user_id = request.user.id
 
-def interface(request):
-    existingfeed = 0
-    if request.user.is_authenticated():
-        # User ALSO HAS TO BE NH!
-        user_id = request.user.id
-
-    else:
-        user_id = None
+    # else:
+    #     user_id = None
         # if this is a POST request we need to process the form data
+    customer = Customer.objects.get(customer_key=customer_key) #will be replaced by authentication
+    curate_customer = Curate_Customer.objects.get(customer=customer)
+    last_query = Curate_Query.objects.filter(curate_customer=curate_customer).filter(time_stamp=date.today())[0]
+    article_query_instances = Article_Curate_Query.objects.filter(curate_query=last_query).filter(rank__gt = 0).order_by("rank")
+    suggestions = [i.article for i in article_query_instances]
 
     selection_made = False
-    suggestions = Select_NH.objects.filter(
-        timestamp=date.today()).order_by('rank')
     try:
         if len(suggestions.filter(is_selected=True)) != 0:
             selection_made = True
@@ -37,6 +39,7 @@ def interface(request):
                     q = suggestions[i - 1]
                     q.is_selected = True
                     q.save()
+                    selection_made = True
             except:
                 pass
             try:
@@ -48,9 +51,10 @@ def interface(request):
             except:
                 pass
 
-        selection_made = True
+
+        
 
     #log_inf, log_link = check_login(request)
     #context = {"suggestions":suggestions, 'log_inf':log_inf, 'log_link':log_link}
-    context = {"suggestions": suggestions, 'selection_made': selection_made}
-    return render(request, 'nh/interface.html', context)
+    context = {"suggestions": suggestions, 'selection_made': selection_made, 'customer_key': customer_key}
+    return render(request, 'curate/interface.html', context)

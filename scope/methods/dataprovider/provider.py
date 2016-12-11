@@ -1,5 +1,5 @@
 
-from . import ImapHandler
+from .imap_handler import ImapHandler
 from scope.models import AgentImap
 
 
@@ -9,7 +9,7 @@ class Provider(object):
     def __init__(self):
         self.imap = ImapHandler()
 
-    def query_agent(self, agent):
+    def query_source(self, agent):
         if type(agent) == AgentImap:
             return self.imap.get_data(agent)
 

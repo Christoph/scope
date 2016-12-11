@@ -29,22 +29,23 @@ class Graph(object):
         score_new = 0
         best_thresh = 0.
         best_score = 0
-        for s in [x * t[0][2] for x in xrange(t[0][0] / t[0][2], t[0][1] / t[0][2])]:
-            self.graph.addEdges_global_thresh(s, sim)
+        for s in [x * t[0][2] for x in xrange(int(t[0][0] / t[0][2]), int(t[0][1] / t[0][2]))]:
+            self.addEdges_global_thresh(s, sim)
             structure = self.central_articles(size_bound)
             score_new = test(structure, t[1])
+            print structure
             if score_new > best_score:
                 best_score = score_new
                 best_thresh = s
 
-        self.graph.addEdges_global_thresh(best_thresh, sim)
+        self.addEdges_global_thresh(best_thresh, sim)
 
     def central_articles(self, size_bound):
 
         clusters = sorted(nx.connected_component_subgraphs(
             self.graph), key=len, reverse=True)
         clustering = nx.average_clustering(self.graph)
-        if len(size_bound) == 2:
+        if type(size_bound) == 'list':
             cluster_list = sorted([[len(i), nx.average_clustering(i), i]
                                    for i in clusters if size_bound[0] <= len(i) <= size_bound[1]], reverse=True)
         else:

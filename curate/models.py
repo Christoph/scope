@@ -3,7 +3,6 @@
 from django.db import models
 from scope.models import Article
 from scope.models import Customer
-from scope.models import Source
 
 # Create your models here.
 
@@ -24,6 +23,7 @@ class Curate_Query(models.Model):
 
 class Article_Curate_Query(models.Model):
     is_selected = models.BooleanField(default=False)
+    is_mistake = models.BooleanField(default=False)
     rank = models.IntegerField(null=True, blank=True)
     article = models.ForeignKey(Article)
     curate_query = models.ForeignKey(Curate_Query)

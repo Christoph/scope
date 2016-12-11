@@ -15,6 +15,8 @@
   border: 2px solid;
   border-radius: 2px;
   border-color: rgb(121, 179, 179);
+  background: #fff;
+  opacity: 0.9;
   position: fixed;
   top: 10%;
   left: 80%;
@@ -54,7 +56,7 @@ function updateClass(box, id) {
         <div class="forms">
 
             <!-- Tab panes -->
-            <form action="{% url 'nh:interface' %}" id="searchform" method="post">
+            <form action="{% url 'curate:interface' customer_key=customer_key %}" id="searchform" method="post">
                 {% csrf_token %}
                 {% for suggestion in suggestions %}
 
@@ -79,7 +81,7 @@ function updateClass(box, id) {
                           id="selection-{{ forloop.counter }}"
                           style="margin-top: 6px"
                           type="checkbox"
-                          name="select{{ suggestion.rank }}"
+                          name="select{{ forloop.counter }}"
                           onchange="updateClass(this, {{ forloop.counter }})"
                           {% if suggestion.is_selected %} checked {% endif %}
                           >
@@ -98,7 +100,7 @@ function updateClass(box, id) {
                             {% if suggestion.is_mistake %} class="mistake" {% endif %}
                             style="margin-top: 6px"
                             type="checkbox"
-                            name="select{{ suggestion.rank }}"
+                            name="mistake{{ forloop.counter }}"
                             onchange="updateClass(this, {{ forloop.counter }})"
                             {% if suggestion.is_mistake %} checked {% endif %}
                             >
