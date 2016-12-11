@@ -1,8 +1,7 @@
 # from __future__ import unicode_literals
 
 from django.db import models
-from scope.models import Article
-from scope.models import Customer
+from scope.models import Article, Customer, Agent
 
 # Create your models here.
 
@@ -27,3 +26,4 @@ class Article_Curate_Query(models.Model):
     rank = models.IntegerField(null=True, blank=True)
     article = models.ForeignKey(Article)
     curate_query = models.ForeignKey(Curate_Query)
+    agent = models.ForeignKey(Agent, null=True, blank=True)

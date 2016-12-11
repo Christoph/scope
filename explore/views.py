@@ -21,7 +21,7 @@ from django.core.mail import send_mail,EmailMessage
 from scope.models import Article
 from homepage.forms import AlertEditForm,NameForm, AlertForm, RegistrationForm,ContactForm,RegistrationForm2,SourceForm
 #from curate.models import Select
-from explore.models import Query, Sources
+from explore.models import Sources, Query
 from alert.models import Alert, Send
 
 from conf.celery import app

@@ -7,7 +7,7 @@ import scope.methods.semantics.word_vector as word_vector
 import scope.methods.graphs.selector as selector
 import scope.methods.dataprovider.provider as provider
 
-from scope.models import Article, Customer, Source
+from scope.models import Article, Customer, Agent
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
 
 reload(sys)
@@ -27,7 +27,7 @@ curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
 # Load data
 
 # Get all sources connected to the curate_customer
-source = Source.objects.get(
+source = Agent.objects.get(
     product_customer_id=curate_customer.id)
 
 agent = source.agent_object
@@ -37,15 +37,15 @@ data = data_provider.query_source(agent)
 
 # Save the articles into the database
 for a in data:
+
+    source = Source.objects.get_or_create(url = a['url'].netloc)
     art, created = Article.objects.get_or_create(
-        source=source,
         title=a['title'],
         url=a['url'],
-        body=a['body'],
-        images=a['images'],
-        description=a['description'])
+        defaults={"source": source, "body": a['body'], "images": a['images'], "description": a['description']})
 
-    Article_Curate_Query.objects.get_or_create(article=art, curate_query=curate_query)
+    Article_Curate_Query.objects.get_or_create(
+        article=art, curate_query=curate_query)
     db_articles.append(art)
 
 # Semantic Analysis
@@ -76,11 +76,12 @@ selected_articles = [db_articles[i[0]] for i in selection['articles']]
 # Database object creation
 curate_query.processed_words = words
 curate_query.no_clusters = selection[
-                    'no_clusters']
+    'no_clusters']
 curate_query.clustering = selection['clustering']
 curate_query.save()
 
 for i in range(0, len(selected_articles)):
-    a = Article_Curate_Query.objects.get(article=selected_articles[i],curate_query=curate_query)
+    a = Article_Curate_Query.objects.get(
+        article=selected_articles[i], curate_query=curate_query)
     a.rank = i + 1
     a.save()

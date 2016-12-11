@@ -7,7 +7,7 @@ import datetime
 from captcha.fields import CaptchaField
 from django.core import validators
 from django.contrib.auth.models import User
-from explore.models import Sources
+from scope.models import Source
 
 
 
@@ -68,14 +68,14 @@ class RegistrationForm2(forms.Form):
 class NameForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(NameForm, self).__init__(*args, **kwargs)
-        self.fields['sources'].choices = [(i.url,i.name) for i in Sources.objects.all()]
+        self.fields['sources'].choices = [(i.url,i.name) for i in Source.objects.all()]
     query_text = forms.CharField(label='Custom Search Term: Graphite performs an independent search for all terms separated by a comma. To perform a single joint search on several terms A and B enter "A+B"', max_length=300, required=False)
     sources = forms.MultipleChoiceField(label= 'Select sources',widget=forms.SelectMultiple(attrs= {'id': 'sources'}),
                                              choices=(), required=False)
 
 class SourceForm(ModelForm):
     class Meta:
-        model = Sources
+        model = Source
         fields = ['name','url']
         labels = {
             'name': 'Feed name',
@@ -88,7 +88,7 @@ class UserForm(forms.Form):
 class AlertForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(AlertForm, self).__init__(*args, **kwargs)
-        self.fields['sources'].choices = [(i.url,i.name) for i in Sources.objects.all()]
+        self.fields['sources'].choices = [(i.url,i.name) for i in Source.objects.all()]
     query = forms.CharField(label = 'Specify the query terms for this alert, separating different queries with a comma',  max_length=500, widget=forms.TextInput(attrs={'size': '60'}),required=False)
     sources = forms.MultipleChoiceField(label= 'Select sources',widget=forms.SelectMultiple(attrs= {'id': 'sources'}),
                                              choices=(), required=False)

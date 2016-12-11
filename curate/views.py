@@ -1,12 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from datetime import date
 # Create your views here.
 
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
-from scope.models import Customer, Article
+from scope.models import Customer, Article, UserProfile
+
 
 def interface(request,customer_key):
-    print request
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+        if not customer_key == user_profile.customer.customer_key:
+            return redirect('/login/?next=%s' % request.path)
+    except: 
+        return redirect('/login/?next=%s' % request.path)
     # if request.user.is_authenticated():
     #     # User ALSO HAS TO BE NH!
     #     user_id = request.user.id

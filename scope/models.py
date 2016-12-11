@@ -6,13 +6,6 @@ from django.contrib.contenttypes.models import ContentType
 # Create your models here.
 
 
-class UserProfile(models.Model):
-    # TODO: Model should be removed
-    user = models.ForeignKey(User, default=None, null=True)
-    activation_key = models.CharField(max_length=40)
-    key_expires = models.DateTimeField()
-
-
 class Customer(models.Model):
     name = models.CharField(max_length=200)
     customer_key = models.CharField(max_length=200)
@@ -22,7 +15,15 @@ class Customer(models.Model):
         return self.name
 
 
-class Source(models.Model):
+class UserProfile(models.Model):
+    # TODO: Model should be removed
+    user = models.ForeignKey(User, default=None, null=True)
+    activation_key = models.CharField(max_length=40)
+    key_expires = models.DateTimeField()
+    customer = models.ForeignKey(Customer, default=None, null=True)
+
+
+class Agent(models.Model):
     product_customer_type = models.ForeignKey(
         ContentType, related_name="product_customer")
     product_customer_id = models.PositiveIntegerField()
@@ -32,6 +33,13 @@ class Source(models.Model):
     agent_type = models.ForeignKey(ContentType, related_name="agent_type")
     agent_id = models.PositiveIntegerField()
     agent_object = GenericForeignKey("agent_type", "agent_id")
+
+
+class Source(models.Model):
+    name = models.CharField(max_length = 200)
+    url = models.CharField(max_length=200)
+    def __unicode__(self):
+        return self.name
 
 
 class AgentImap(models.Model):

@@ -49,14 +49,14 @@ provider = Provider.Provider()
 
 db_articles = []
 
-customer = Customer.objects.get(name="Neuland Herzer")
+customer = Customer.objects.get(name="Neuland Herzer Test")
 curate_customer = Curate_Customer.objects.get(customer=customer)
 curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
 
 # Load data
 
 # Get all sources connected to the curate_customer
-source = Source.objects.get(
+source = Agent.objects.get(
     product_customer_id=curate_customer.id)
 
 agent = source.agent_object
