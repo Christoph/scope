@@ -331,4 +331,4 @@ def send_sample(request):
         )
 
 def landing(request):
-    return render(request,'homepage/landing.html')
+    return render(request,'homepage/landing2.html')
