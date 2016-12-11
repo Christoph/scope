@@ -14,8 +14,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 """
 
-from .importer import ImportGlobal
-from .base import *
+from conf.settings.importer import ImportGlobal
+from conf.settings.base import *
 
 im = ImportGlobal()
 
@@ -24,23 +24,6 @@ ALLOWED_HOSTS = []
 CURRENT_DOMAIN = 'http://127.0.0.1:8000'
 CURRENT_NAME = 'scope'
 CURRENT_SLOGAN = "see more"
-
-INSTALLED_APPS = (
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'explore',
-    'scope',
-    'alert',
-    'captcha',
-    'curate',
-    'twitter_bootstrap',
-    'django.contrib.sites',
-    'widget_tweaks',
-    'djangobower')
 
 SITE_ID = 1
 

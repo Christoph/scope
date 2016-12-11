@@ -14,9 +14,9 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 """
 
-from .importer import ImportGlobal
+from conf.settings.importer import ImportGlobal
 import djcelery
-from .base import *
+from conf.settings.base import *
 
 im = ImportGlobal()
 
@@ -26,22 +26,8 @@ CURRENT_DOMAIN = 'http://www.scope.ai'
 CURRENT_NAME = 'scope'
 
 ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai')
-INSTALLED_APPS = (
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'explore',
-    'scope',
-    'alert',
-    'captcha',
-    'curate',
-    'twitter_bootstrap',
-    'django.contrib.sites',
-    'widget_tweaks',
-    'djangobower',
+
+INSTALLED_APPS += (
     'djcelery',
     'kombu.transport.django')
 
@@ -60,7 +46,7 @@ LOCKDOWN_URL_EXCEPTIONS = (
     r'pydata$',
     # r'lichtenfels$',
     r'contact$'
- )
+    )
 
 DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql_psycopg2',
                          'NAME': im.get_env_variable('DATABASE_NAME'),

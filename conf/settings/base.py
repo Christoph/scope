@@ -23,6 +23,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 SECRET_KEY = im.get_env_variable('SECRET_KEY')
 X_FRAME_OPTIONS = 'DENY'
 
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'explore',
+    'scope',
+    'alert',
+    'captcha',
+    'curate',
+    'twitter_bootstrap',
+    'django.contrib.sites',
+    'widget_tweaks',
+    'djangobower')
+
+
 ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai')
 
 SITE_ID = 1
