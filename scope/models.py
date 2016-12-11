@@ -39,7 +39,7 @@ class Source(models.Model):
     name = models.CharField(max_length = 200)
     url = models.CharField(max_length=200)
     def __unicode__(self):
-        return self.name
+        return self.url
 
 
 class AgentImap(models.Model):

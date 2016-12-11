@@ -7,7 +7,7 @@ import scope.methods.semantics.word_vector as word_vector
 import scope.methods.graphs.selector as selector
 import scope.methods.dataprovider.provider as provider
 
-from scope.models import Article, Customer, Agent
+from scope.models import Customer
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
 
 reload(sys)
@@ -17,7 +17,6 @@ pre = preprocess.PreProcessing("english")
 wv_model = word_vector.Model("en")
 data_provider = provider.Provider()
 
-db_articles = []
 words = 0
 
 customer = Customer.objects.get(name="Neuland Herzer Test")
@@ -26,27 +25,8 @@ curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
 
 # Load data
 
-# Get all sources connected to the curate_customer
-source = Agent.objects.get(
-    product_customer_id=curate_customer.id)
-
-agent = source.agent_object
-
-# Get the articles as dict
-data = data_provider.query_source(agent)
-
-# Save the articles into the database
-for a in data:
-
-    source = Source.objects.get_or_create(url = a['url'].netloc)
-    art, created = Article.objects.get_or_create(
-        title=a['title'],
-        url=a['url'],
-        defaults={"source": source, "body": a['body'], "images": a['images'], "description": a['description']})
-
-    Article_Curate_Query.objects.get_or_create(
-        article=art, curate_query=curate_query)
-    db_articles.append(art)
+# Collect and save articles to the database
+db_articles = data_provider.collect_from_agents(curate_customer, curate_query)
 
 # Semantic Analysis
 wv_model.load_data(db_articles)

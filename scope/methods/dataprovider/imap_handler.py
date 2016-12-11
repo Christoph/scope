@@ -73,8 +73,6 @@ class ImapHandler(object):
                 continue
 
         for article in articles:
-            # and "tech" in article.text:
-            # TODO: Problem: ")" will be added as article
             if article.title not in constants.EXCLUDE and \
                constants.UNSUBSCRIBE_EXCLUDE not in article.text:
                 out.append({
