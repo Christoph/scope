@@ -20,9 +20,11 @@ class ImapHandler(object):
         # Still problems with links like:
         # http://www.cinemablend.com/news/1595010/why-jason-momoa-relates-so-closely-to-aquaman
         urls = set(list(re.findall(
-            ('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|'
+            (r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|'
              '(?:%[0-9a-fA-F][0-9a-fA-F]))+'),
             content)))
+
+        print urls
 
         # Get real article urls
         for url in urls:
@@ -56,7 +58,7 @@ class ImapHandler(object):
         mail_pwd = source.pwd.encode("utf-8")
         mail_link = source.imap.encode("utf-8")
         mail_box = source.mailbox.encode("utf-8")
-        mail_interval = source.interval.encode("utf-8")
+        mail_interval = source.interval
 
         out = []
 
