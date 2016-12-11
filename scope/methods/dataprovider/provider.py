@@ -43,7 +43,7 @@ class Provider(object):
                           "images": a['images'],
                           "description": a['description']})
 
-            Article_Curate_Query.objects.get_or_create(
+            Article_Curate_Query.objects.create(
                 article=art, curate_query=curate_query)
 
             db_articles.append(art)

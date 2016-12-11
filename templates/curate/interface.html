@@ -10,6 +10,30 @@
   background-color: rgb(213, 90, 20);
 }
 
+.btn-mistake {
+    background-color: rgb(213, 90, 20);
+    color: white;
+    border: 1px white solid;
+}
+
+.btn-mistake:hover {
+    color: black;
+    border: 1px black solid;
+}
+
+.btn-suggest {
+    background-color: rgb(121, 179, 179);
+    color: white;
+    border: 1px white solid;
+}
+
+.btn-suggest:hover {
+    color: black;
+    border: 1px black solid;
+}
+
+
+
 .numberbox {
 
   border: 2px solid;
@@ -48,7 +72,7 @@ function updateClass(box, id) {
     <h1 align=center>Newsletter - <strong>News Selection</strong></h1>
     <!-- .entry-header -->
 
-    <div class="numberbox"></div>
+
 
 
     <div ALIGN=CENTER>
@@ -60,13 +84,13 @@ function updateClass(box, id) {
                 {% csrf_token %}
                 {% for suggestion in suggestions %}
 
-                <div class="row well" id="suggestion-{{ forloop.counter }}">
+                <div class="row well {% if suggestion.is_mistake %} mistake {% endif %} {% if suggestion.is_selected %} suggest {% endif %}" id="suggestion-{{ forloop.counter }}">
 
                     <div class="col-md-8" style="word-wrap: break-word; text-align: left;">
 
-                        <h2> {{suggestion.title}} </h2>
+                        <h2> {{suggestion.article.title}} </h2>
 
-                        <p> {{suggestion.summary}} </p>
+                        <p> {{suggestion.article.description}} </p>
 
                     </div>
 
@@ -74,12 +98,12 @@ function updateClass(box, id) {
 
                         <div class="row">
 
-                        <label class="checkbox-inline" style="font-size: 20px">
+                        <label class="checkbox-inline btn btn-suggest" style="font-size: 20px; width: 150px">
 
                           <input
                           class = "selectbox"
                           id="selection-{{ forloop.counter }}"
-                          style="margin-top: 6px"
+                          style="margin-top: 6px; margin-left:10px; opacity: 0"
                           type="checkbox"
                           name="select{{ forloop.counter }}"
                           onchange="updateClass(this, {{ forloop.counter }})"
@@ -92,13 +116,13 @@ function updateClass(box, id) {
                         </div>
 
                         <div class="row">
-                          <label class="checkbox-inline" style="font-size: 20px">
+                          <label class="checkbox-inline btn btn-mistake {% if suggestion.is_mistake %} btn-mistake {% endif %}" style="font-size: 20px; margin-top: 10px; width: 150px">
 
                             <input
                             class = "mistakebox"
                             id="mistake-{{ forloop.counter }}"
                             {% if suggestion.is_mistake %} class="mistake" {% endif %}
-                            style="margin-top: 6px"
+                            style="margin-top: 6px; margin-left:10px; opacity: 0"
                             type="checkbox"
                             name="mistake{{ forloop.counter }}"
                             onchange="updateClass(this, {{ forloop.counter }})"
@@ -122,9 +146,11 @@ function updateClass(box, id) {
 
             </form>
 
-
+        <div class="numberbox"></div>
         </div>
+
     </div>
+
 
 {% endblock content %}
 

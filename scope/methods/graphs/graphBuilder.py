@@ -34,6 +34,7 @@ class Graph(object):
             structure = self.central_articles(size_bound)
             score_new = test(structure, t[1])
             print structure
+            print score_new
             if score_new > best_score:
                 best_score = score_new
                 best_thresh = s
@@ -45,7 +46,7 @@ class Graph(object):
         clusters = sorted(nx.connected_component_subgraphs(
             self.graph), key=len, reverse=True)
         clustering = nx.average_clustering(self.graph)
-        if type(size_bound) == 'list':
+        if isinstance(size_bound, list):
             cluster_list = sorted([[len(i), nx.average_clustering(i), i]
                                    for i in clusters if size_bound[0] <= len(i) <= size_bound[1]], reverse=True)
         else:
