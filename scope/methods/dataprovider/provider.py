@@ -3,16 +3,13 @@ from scope.models import AgentImap
 from . import imap_handler
 
 
-reload(imap_handler)
-
-
 class Provider(object):
     """docstring for crawler."""
 
     def __init__(self):
         self.imap = imap_handler.ImapHandler()
 
-    def query_source(self, agent):
+    def query_agents(self, agent):
         if type(agent) == AgentImap:
             return self.imap.get_data(agent)
 

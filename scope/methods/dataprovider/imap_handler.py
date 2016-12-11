@@ -1,68 +1,18 @@
-import re
 import imaplib
-import urllib2
-from cookielib import CookieJar
 import email
 import quopri
-from newspaper import Article
-from urlparse import urlparse
 from datetime import date, timedelta
+from newspaper import Article
 from . import constants
+from . import url_extractor
+
+reload(url_extractor)
 
 
 class ImapHandler(object):
     """docstring for ImapHandler."""
-
     def __init__(self):
-        self.cj = CookieJar()
-        self.url_opener = urllib2.build_opener(
-            urllib2.HTTPCookieProcessor(self.cj))
-        self.url_opener.addheaders = [
-            ('User-Agent',
-             ('Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127',
-              'Firefox/2.0.0.11'))]
-
-    def _get_urls_from_string(self, content):
-        test_list = []
-        urls_list = []
-
-        # list set to remove duplicates
-        # Still problems with links like:
-        # http://www.cinemablend.com/news/1595010/why-jason-momoa-relates-so-closely-to-aquaman
-        urls = set(list(re.findall(
-            (r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|'
-             '(?:%[0-9a-fA-F][0-9a-fA-F]))+'),
-            content)))
-
-        print urls
-
-        # Get real article urls
-        for url in urls:
-            try:
-                url = url.rstrip(')')
-                # req = urllib2.Request(url)
-                # res = urllib2.urlopen(req)
-                res = self.url_opener.open(url)
-                finalurl = res.geturl()
-                check_url = urlparse(finalurl)
-            # TODO: Shoudnt catch all exceptions
-            except:
-                print "error while checking url: " + url
-                continue
-
-            # TODO: Not sure what is the use of this lines
-            # Maybe creating a blacklist and not a whitelist?
-            for x in constants.SUBSCRIBED_URLS:
-                if x in finalurl:
-                    test_list.append("yes")
-            if len(test_list) == 0 and (check_url.path != '/' and
-                                        check_url.path != '' and
-                                        check_url.path != '/en/'):
-                urls_list.append(finalurl)
-
-            # urls_list.append(finalurl)
-
-        return urls_list
+        self.url_extractor = url_extractor.Extractor()
 
     def get_data(self, source):
         mail_user = source.user.encode("utf-8")
@@ -106,13 +56,12 @@ class ImapHandler(object):
             else:
                 content = mail.get_payload()
 
-            urls = self._get_urls_from_string(content)
+            urls = self.url_extractor.get_urls_from_string(content)
 
             all_urls.extend(urls)
 
         articles = [Article(x) for x in list(set(all_urls))]
 
-        print "download"
         # Download alls articles
         for a in articles:
             try:
