@@ -269,12 +269,6 @@ a:hover, a:focus {
     opacity: 0.6;
 }
 
-.nav > li > a {
-    position: relative;
-    display: block;
-    padding: 10px 10px;
-}
-
 .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
     border-color: #4ec3cd;
 }

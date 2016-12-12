@@ -36,11 +36,11 @@ sim = wv_model.similarity_matrix()
 # Extract Selection
 
 
-def test(dict, test_params):
-    cluster_lengths = [i[0] for i in dict['articles']]
+def test(dictionary, test_params):
+    cluster_lengths = [i[0] for i in dictionary['articles']]
     weight_cluster_size = test_params[0]
     weight_coverage = test_params[1]
-    return weight_cluster_size * dict['no_clusters'] + weight_coverage * sum(cluster_lengths) / dict['no_articles']
+    return weight_cluster_size * dictionary['no_clusters'] + weight_coverage * sum(cluster_lengths) / dictionary['no_articles']
 
 
 test_params = [1, 0]

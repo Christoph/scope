@@ -6,7 +6,7 @@ class Selection(object):
     def __init__(self, no, sim):
         self.graph = Graph("normal")
         self.no = no
-        self.sim = sim 
+        self.sim = sim
 
     def _create_graph(self):
         self.graph.linkDataset(self.no)
