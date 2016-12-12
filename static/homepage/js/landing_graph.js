@@ -9,10 +9,10 @@ var force = d3.layout.force()
     .size([width, height]);
 
 var svg = d3.select("#graphbox").append("svg")
-    .attr("width", width)
-    .attr("height", height)
+    // .attr("width", width)
+    // .attr("height", height)
     .attr("id","landing")
-    .style("background","#f2f2f2");
+    // .style("background","#f2f2f2");
 
 d3.json(landing, function(error, graph) {
   if (error) throw error;
@@ -39,14 +39,14 @@ d3.json(landing, function(error, graph) {
 
       .call(force.drag);
 
-  var button = d3.select("#graphbox")
-    .append("a")
-    .attr("class", "btn btn-secondary btn-lg")
-    .attr("href","/")
-    // .attr("role","button")
-    .html('Check it out')
-    .on('mouseover',function(){rot = 1;node.style("fill", '#ff7f0e')})
-    .on('mouseout',function(){rot = 80;node.style("fill", '#ffbb78')});
+  // var button = d3.select("#graphbox")
+  //   .append("a")
+  //   .attr("class", "btn btn-secondary btn-lg")
+  //   .attr("href","/")
+  //   // .attr("role","button")
+  //   .html('Check it out')
+  //   .on('mouseover',function(){rot = 1;node.style("fill", '#ff7f0e')})
+  //   .on('mouseout',function(){rot = 80;node.style("fill", '#ffbb78')});
 
 
    // var timer = setTimeout(init_positions,4000);

@@ -22,6 +22,10 @@
     * npm install
     * python manage.py bower install --settings=conf.settings.local
 
+    in case there is a problem with the binary:
+     "sudo ln -s /usr/bin/nodejs /usr/bin/node"
+
+
     * CAUTION: Following commands download around 1.4 GB
     * python -m spacy.en.download all
     * python -m spacy.de.download all
@@ -33,12 +37,19 @@
         * export DATABASE_NAME='taskbuster_db'
         * export DATABASE_USER='myusername'
         * export DATABASE_PASSWORD='mypassword'
-        * export SECRET_KEY='key'
+        * export SECRET_KEY='key's
+        * export BROKER_URL=""
+        * export EMAIL_HOST_PASSWORD=""
+        * export OUT_EMAIL="example@scope.ai"
+
     * Add to .virtualenvs/scope/bin/predeactivate
         * unset DATABASE_NAME
         * unset DATABASE_USER
         * unset DATABASE_PASSWORD
         * unset SECRET_KEY
+        * unset BROKER_URL
+        * unset EMAIL_HOST_PASSWORD
+        * unset OUT_EMAIL
 
 
 ### 3. Create the last24h_sources table per hand in psql
@@ -49,8 +60,11 @@
         url varchar(200)
     );
 
-### 4. Run db migration
+    shouldn't be necessary anymore!
+
+### 4. Run db migration 
     * python manage.py migrate --fake
 
+    for first time: don't use the fake flag
 ### 5. Run the server
     * python manage.py runserver

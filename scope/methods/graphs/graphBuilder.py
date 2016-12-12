@@ -45,9 +45,9 @@ class Graph(object):
         clusters = sorted(nx.connected_component_subgraphs(
             self.graph), key=len, reverse=True)
         clustering = nx.average_clustering(self.graph)
-        if type(size_bound) == 'list':
+        if isinstance(size_bound, list):
             cluster_list = sorted([[len(i), nx.average_clustering(i), i]
-                                   for i in clusters if size_bound[0] <= len(i) <= size_bound[1]], reverse=True)
+                                   for i in clusters if (size_bound[0] <= len(i) <= size_bound[1])], reverse=True)
         else:
             cluster_list = sorted([[len(i), nx.average_clustering(i), i]
                                    for i in clusters if size_bound <= len(i)], reverse=True)

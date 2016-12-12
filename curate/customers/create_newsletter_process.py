@@ -17,8 +17,6 @@ pre = preprocess.PreProcessing("english")
 wv_model = word_vector.Model("en")
 data_provider = provider.Provider()
 
-words = 0
-
 customer = Customer.objects.get(name="Neuland Herzer Test")
 curate_customer = Curate_Customer.objects.get(customer=customer)
 curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
@@ -27,7 +25,7 @@ curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
 
 # Collect and save articles to the database
 db_articles = data_provider.collect_from_agents(curate_customer, curate_query)
-
+words = sum([len(i.body) for i in db_articles])
 # Semantic Analysis
 wv_model.load_data(db_articles)
 

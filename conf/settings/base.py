@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'djangobower')
 
 
-ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai')
+ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai', 'robot@scope.ai')
 
 SITE_ID = 1
 
@@ -57,11 +57,16 @@ MIDDLEWARE_CLASSES = (
 
 GOOGLE_ANALYTICS = {'google_analytics_id': 'UA-71839611-1'}
 ROOT_URLCONF = 'conf.urls'
+
+EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
 EMAIL_HOST = 'smtp.zoho.com'
-EMAIL_PORT = '465'
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'robot@scope.ai'
-EMAIL_HOST_PASSWORD = 'scope2016'
+EMAIL_PORT = 465
+EMAIL_USE_TSL = False
+EMAIL_USE_SSL = True
+SERVER_EMAIL = im.get_env_variable('OUT_EMAIL')
+EMAIL_HOST_USER = im.get_env_variable('OUT_EMAIL')
+DEFAULT_FROM_EMAIL = im.get_env_variable('OUT_EMAIL')
+EMAIL_HOST_PASSWORD = im.get_env_variable('EMAIL_HOST_PASSWORD')
 AUTH_PROFILE_MODULE = 'scope.UserProfile'
 TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates',
               'DIRS': [os.path.join(BASE_DIR, 'templates')],
