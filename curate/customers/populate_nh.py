@@ -1,9 +1,9 @@
-from scope.models import Article, Customer, Source, AgentImap
-from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
+from scope.models import Customer, Agent, AgentImap
+from curate.models import Curate_Customer
 import datetime
 
 # Create IMAP object
-imap = AgentImap(
+imap, create = AgentImap.objects.get_or_create(
     user="enews@neulandherzer.net",
     pwd="Ensemble_Enema",
     imap="imap.1und1.de",
@@ -12,23 +12,21 @@ imap = AgentImap(
 imap.save()
 
 # Create Customer
-customer = Customer(
-    name="Neuland Herzer", customer_key="key", email="test@test.com")
+customer, create = Customer.objects.get_or_create(
+    name="Neuland Herzer", customer_key="neuland_herzer", email="felix.fischer@neulandherzer.com")
 
-customer.save()
 
 # Create Curate_Customer
-curate_customer = Curate_Customer(
+curate_customer, create = Curate_Customer.objects.get_or_create(
     customer=customer,
     key="key",
-    expires=datetime.date.today() + datetime.timedelta(days=365))
-
-curate_customer.save()
+    defaults = {"expires": datetime.date.today() + datetime.timedelta(days=365)}
+    )
 
 # Create Source for the Curate_Customer
-source = Source(
+agent = Agent(
     product_customer_object=curate_customer,
     agent_object=imap
 )
 
-source.save()
+agent.save()
