@@ -17,7 +17,7 @@ pre = preprocess.PreProcessing("english")
 wv_model = word_vector.Model("en")
 data_provider = provider.Provider()
 
-customer = Customer.objects.get(name="Neuland Herzer Test")
+customer = Customer.objects.get(customer_key=customer_key)
 curate_customer = Curate_Customer.objects.get(customer=customer)
 curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
 
@@ -41,9 +41,9 @@ def test(dict, test_params):
     return weight_cluster_size * dict['no_clusters'] + weight_coverage * sum(cluster_lengths) / dict['no_articles']
 
 
-test_params = [1, 1]
+test_params = [weight1, weight2]
 # [range, step], test_params
-params = [[0, 0.5, 0.001], test_params]
+params = [[lower_step, upper_step, step_size], test_params]
 
 sel = selector.Selection(len(db_articles), sim)
 

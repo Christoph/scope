@@ -36,7 +36,7 @@ def interface(request,customer_key):
             try:
                 xx = request.POST['select' + str(i)]
                 if xx == 'on':
-                    s = suggestions[1][i-1]
+                    s = suggestions[i-1]
                     s.is_selected = True
                     s.save()
                     selection_made = True
@@ -45,7 +45,7 @@ def interface(request,customer_key):
             try:
                 xx = request.POST['mistake' + str(i)]
                 if xx == 'on':
-                    s = suggestions[1][i-1]
+                    s = suggestions[i-1]
                     s.is_mistake = True
                     s.save()
             except:
