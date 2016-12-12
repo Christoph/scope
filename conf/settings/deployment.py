@@ -29,7 +29,8 @@ ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai')
 
 INSTALLED_APPS += (
     'djcelery',
-    'kombu.transport.django')
+   # 'kombu.transport.django'
+)
 
 djcelery.setup_loader()
 
@@ -52,5 +53,5 @@ DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql_psycopg2',
                          'NAME': im.get_env_variable('DATABASE_NAME'),
                          'USER': im.get_env_variable('DATABASE_USER'),
                          'PASSWORD': im.get_env_variable('DATABASE_PASSWORD'),
-                         'HOST': im.get_env_variable('DATABASE_HOST'),
-                         'PORT': im.get_env_variable('DATABASE_PORT')}}
+                         'HOST': 'localhost',
+                         'PORT': ''}}
