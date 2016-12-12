@@ -2,10 +2,12 @@ import re
 from urlparse import urlparse
 import urllib2
 from cookielib import CookieJar
+from scope.methods.dataprovider import constants
 
 
 class Extractor(object):
     """Helper methods for the data provider module."""
+
     def __init__(self):
         self.cj = CookieJar()
         # Some pages need cookie support.
@@ -18,7 +20,6 @@ class Extractor(object):
               'Firefox/2.0.0.11'))]
 
     def get_urls_from_string(self, content):
-        test_list = []
         urls_list = []
 
         # list set to remove duplicates
@@ -38,31 +39,14 @@ class Extractor(object):
                 res = self.url_opener.open(url)
                 finalurl = res.geturl()
                 check_url = urlparse(finalurl)
+
             # TODO: Shoudnt catch all exceptions
             except:
                 print "error while checking url: " + url
                 continue
 
-            # TODO: Not sure what is the use of this lines
-            # Maybe creating a blacklist and not a whitelist?
-            # for x in constants.SUBSCRIBED_URLS:
-            #     if x in finalurl:
-            #         test_list.append("yes")
-            #     else:
-            #         print "Not taken in first test: " + finalurl
-
-            # if len(test_list) == 0 and (check_url.path != '/' and
-            #                             check_url.path != '' and
-            #                             check_url.path != '/en/'):
-            #     urls_list.append(finalurl)
-            # else:
-            #     print "Not taken in second test: " + finalurl
-
-            if len(check_url.path) > 1 and check_url.path != "/unsupported-browser":
+            if (len(check_url.path) > 1 and
+                    check_url.path not in constants.URL_PATH_BLACKLIST):
                 urls_list.append(finalurl)
-            else:
-                print "Bad url: " + finalurl
-
-            # urls_list.append(finalurl)
 
         return urls_list

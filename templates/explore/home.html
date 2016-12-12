@@ -4,16 +4,16 @@
 
 {% block head %}
 
-    <script align='center' type="text/javascript" src="{% static 'last24h/d3.min.js' %}"></script> 
-    <script type='text/javascript'> var json =  "{% static 'last24h/ug_nl_cluster.json' %}",
-    tgt = "{% static 'last24h/tgt_cluster.json' %}",
+    <script align='center' type="text/javascript" src="{% static 'd3/d3.min.js' %}"></script> 
+    <script type='text/javascript'> var json =  "{% static 'explore/ug_nl_cluster.json' %}",
+    tgt = "{% static 'explore/tgt_cluster.json' %}",
     custom = 0,
     nodefac = 0.6,
     linkdist = 60,
-    worksurl = "{% url 'how_it_works'%}",
-    customsearchurl = "{% url 'customsearch'%}",
-    grewsalerturl = "{% url 'grews_alert'%}",
-    registerurl = "{% url 'register'%}",
+    worksurl = "{% url 'homepage:how_it_works'%}",
+    customsearchurl = "{% url 'explore:customsearch'%}",
+    grewsalerturl = "{% url 'explore:alert'%}",
+    registerurl = "{% url 'homepage:register'%}",
     init_message = "<div align='center'><h3 style='margin-top:0px'align=center>The news at your fingertips!</h3><h4>Explore and analyse the newsscape using an <a data-toggle='modal' data-target='#myModal'>intuitive interface.</a></h4><h4>Create your own <a href=" + customsearchurl + ">custom graph</a> right now, or <a href=" + grewsalerturl + ">subscribe</a> to regular alerts.</h4><h4>Share interesting graphs and insights with your friends!</h4></div>"
       // <p>Reading lists that maximise relevance while minimizing redundancy (<span class='glyphicon glyphicon-star'></span>-button)</p>
     </script>
@@ -23,5 +23,5 @@
         
 
 {% block vis %}
-<script type='text/javascript' src="{% static 'last24h/graph.js' %}"> </script>
+<script type='text/javascript' src="{% static 'explore/js/graph.js' %}"> </script>
 {% endblock %}

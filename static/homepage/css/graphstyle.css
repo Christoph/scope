@@ -14,13 +14,13 @@
 .path {
   stroke-width: 1px;
 }
- 
+
 //small screen sizes
 @media (max-width: 991px) {
     .mobile-only {
         display:block !important;
     }
- 
+
     .desktop-only {
         display:none !important;
     }
@@ -45,11 +45,11 @@ overflow: visible
 margin: 15px 0;
 }
 
-.svg-mobile {margin-bottom:0px;} 
+.svg-mobile {margin-bottom:0px;}
 .index_form {
   margin:auto;
-  text-align: center;                        
-  font-size: 100%;           
+  text-align: center;
+  font-size: 100%;
   border: None;
   width: auto;
   background: None;
@@ -81,13 +81,13 @@ circle {
   stroke: #fff;
   stroke-width: 1.5px;
   pointer-events: auto;
-  
+
 }
 
 .link {
   stroke: #999;
   stroke-opacity: .9;
-}    
+}
 svg {float: right;
         background: #fff;
         width: 100%;
@@ -104,7 +104,7 @@ svg {float: right;
 }
 
     rect{position:relative;}
-    
+
 text {
   font: 13px "Source Sans Pro", sans-serif;
     font-weight: 600;
@@ -115,63 +115,63 @@ text {
     opacity: 1;
 }
     texto a:link,
-    texto a:hover, 
+    texto a:hover,
     texto a:visited {
    }
 
 svg bubble {
   fill: url(/#tile-ww);
 }
-    
-texto {   
-  position: relative; 
+
+texto {
+  position: relative;
   width: 90%;
   height: 100%;
   float: left;
   text-align: left;
   font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
-  font: 20px; 
+  font: 20px;
   line-height: 1;
   padding: 12px;
-      overflow:scroll; 
-    clear:right;   
-    
-} 
+      overflow:scroll;
+    clear:right;
+
+}
     texto a:link,
-    texto a:hover, 
+    texto a:hover,
     texto a:visited {
         position:relative;
         bottom: 0px;
-    color: #2a2a2a; 
+    color: #2a2a2a;
         vertical-align: bottom;
    }
     .suggestion{}
-    
 
-image {  
-background-size: contain; 
-  position: relative; 
+
+image {
+background-size: contain;
+  position: relative;
   width: 200px;
   height: 200px;
   float: left;
   pointer-events: none;
   opacity: 0.95;
   -o-object-fit: contain;
-    
-} 
+
+}
 
 titul {
    position: absolute;
  top:100px;
-  text-align: center;                        
-  font: 14px "Source Sans Pro", sans-serif;           
+  text-align: center;
+  font: 14px "Source Sans Pro", sans-serif;
   line-height: 1;
   padding: 12px;
   pointer-events: none;
   width: 300px;
   line-height: 1;
   padding: 12px;
-  background: #fff;          
+  background: #fff;
   pointer-events: none;
 }
 
@@ -185,21 +185,21 @@ titul {
   background-color: #7f7f7f;
 }
 
-centtext {   
+centtext {
   position: absolute;
     float: left;
-  text-align: left;                        
-  font: 16px "Source Sans Pro", sans-serif;           
+  text-align: left;
+  font: 16px "Source Sans Pro", sans-serif;
 
   width: 250px;
   height:250px;
   line-height: 1;
   padding: 12px;
-  background: #fff;          
+  background: #fff;
   pointer-events: auto;
   overflow: auto;
 }
-   
+
 
 .forms {
 	max-width:500px;
@@ -207,7 +207,7 @@ centtext {
   margin-top: 50px;
   margin-bottom: 50px;
   border-radius: 30px;
-  
+
 
 }
 
@@ -295,7 +295,7 @@ div.tab-content {
 	border-bottom: 1px solid #ff7f0e;
 	margin-bottom: 20px;
 	border-radius: 20px 20px 0 0;
-	
+
 	border: 1px solid  #ff7f0e;
 }
 
@@ -309,7 +309,7 @@ div.tab-content {
 
 
 
-#customtab > li.active > a{ 
+#customtab > li.active > a{
 	background-color:#ff7f0e !important;
   border: 1px solid  #ff7f0e;
 
@@ -330,7 +330,7 @@ div.tab-content {
   border-bottom: 1px solid #1f77b4;
   margin-bottom: 20px;
   border-radius: 20px 20px 0 0;
-  
+
   border: 1px solid  #1f77b4;
 }
 
@@ -344,7 +344,7 @@ div.tab-content {
 
 
 
-#customtab2 > li.active > a{ 
+#customtab2 > li.active > a{
   background-color:#1f77b4 !important;
   border: 1px solid  #1f77b4;
 
@@ -381,7 +381,7 @@ div.tab-content {
 
 #profiletab > li > a:hover{
 	background-color:#fff !important;
-	border: none; 
+	border: none;
 }
 #profiletab > li.active {
 	background-color:#fff !important;
@@ -433,9 +433,9 @@ tbody >tr:nth-child(odd) {
   #leftcol {
     position: relative;
     float:left;
-    overflow-y: scroll; 
+    overflow-y: scroll;
   }
-  
+
   #rightcol {
     position: relative;
     float:left;

@@ -6,7 +6,6 @@ from datetime import date
 import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.word_vector as word_vector
 import scope.methods.graphs.selector as selector
-import scope.methods.dataprovider.provider as provider
 
 from scope.models import Customer
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
@@ -16,9 +15,6 @@ sys.setdefaultencoding('utf8')
 
 pre = preprocess.PreProcessing("english")
 wv_model = word_vector.Model("en")
-data_provider = provider.Provider()
-
-
 
 # will be replaced by authentication
 customer = Customer.objects.get(name="Neuland Herzer Test")
@@ -40,11 +36,11 @@ sim = wv_model.similarity_matrix()
 # Extract Selection
 
 
-def test(dict, test_params):
-    cluster_lengths = [i[0] for i in dict['articles']]
+def test(dictionary, test_params):
+    cluster_lengths = [i[0] for i in dictionary['articles']]
     weight_cluster_size = test_params[0]
     weight_coverage = test_params[1]
-    return weight_cluster_size * dict['no_clusters'] + weight_coverage * sum(cluster_lengths) / dict['no_articles']
+    return weight_cluster_size * dictionary['no_clusters'] + weight_coverage * sum(cluster_lengths) / dictionary['no_articles']
 
 
 test_params = [1, 0]
