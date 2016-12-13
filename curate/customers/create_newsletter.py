@@ -100,8 +100,7 @@ for article in np_articles:
         if article.title not in exclude and unsubscribe_exclude not in article.text:
             data.append({
                 "body": article.text, "title": article.title,
-                "url": article.url, "image": article.top_image,
-                "description": article.text[0:400] + "..."})
+                "url": article.url, "image": article.top_image})
     except:
         pass
 

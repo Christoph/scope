@@ -49,13 +49,18 @@ class AgentImap(models.Model):
     mailbox = models.CharField(blank=True, max_length=100)
     interval = models.IntegerField(blank=True, default=24)
 
+class AgentEventRegistry(models.Model):
+    user = models.CharField(blank=True, max_length=100)
+    pwd = models.CharField(blank=True, max_length=100)
+    lang = models.CharField(blank=True, max_length=10)
+    concepts = models.CharField(blank=True, max_length=200)
+    locations = models.CharField(blank=True, max_length=200)
 
 class Article(models.Model):
     source = models.ForeignKey(Source, blank=True, null=True)
     title = models.CharField(max_length=300)
     url = models.CharField(max_length=500)
     images = models.CharField(max_length=1000, blank=True)
-    description = models.CharField(max_length=500, blank=True)
     keywords = models.CharField(max_length=200, blank=True)
     body = models.TextField()
     time_created = models.DateField(auto_now_add=True)

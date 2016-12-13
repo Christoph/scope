@@ -1,7 +1,7 @@
-from scope.models import AgentImap, Agent, Source, Article
+from scope.models import AgentImap, Agent, Source, Article, AgentEventRegistry
 from curate.models import Article_Curate_Query
 
-from . import imap_handler
+from . import imap_handler, er_handler
 
 
 class Provider(object):
@@ -9,6 +9,7 @@ class Provider(object):
 
     def __init__(self):
         self.imap = imap_handler.ImapHandler()
+        self.er = er_handler.EventRegistry()
 
     def collect_from_agents(self, curate_customer, curate_query):
         db_articles = []
@@ -25,6 +26,9 @@ class Provider(object):
             if isinstance(agent, AgentImap):
                 db_articles.extend(self._save_articles(
                     self.imap.get_data(agent), curate_query))
+            if isinstance(agent, AgentEventRegistry):
+                db_articles.extend(self._save_articles(
+                    self.er.get_data(agent), curate_query))
 
         return db_articles
 
@@ -40,8 +44,7 @@ class Provider(object):
                 title=a['title'],
                 url=a['url'],
                 defaults={"source": source, "body": a['body'],
-                          "images": a['images'],
-                          "description": a['description']})
+                          "images": a['images']})
 
             Article_Curate_Query.objects.create(
                 article=art, curate_query=curate_query)

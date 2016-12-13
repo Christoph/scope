@@ -78,7 +78,6 @@ class ImapHandler(object):
                 out.append({
                     "body": article.text, "title": article.title,
                     "url": article.url, "images": article.top_image,
-                    "description": article.text[0:294] + "...",
                     "source": urlparse(article.url).netloc})
 
         return out

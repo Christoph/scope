@@ -50,8 +50,7 @@ class Curate():
 		        title=a['title'],
 		        url=a['url'],
 		        body=a['body'],
-		        images=a['images'],
-		        description=a['description'])
+		        images=a['images'])
 
 	        Article_Curate_Query.objects.get_or_create(
 	            article=art, curate_query=curate_query)
@@ -94,7 +93,7 @@ class Curate():
     def from_db(self):
         db_articles, words = self._retrieve_from_db()
         selected_articles = self._process(db_articles, words)
-      
+
         return selected_articles
 
     def from_sources(self):
@@ -102,4 +101,3 @@ class Curate():
         selected_articles = self._process(db_articles, words)
 
 		return selected_articles
-
