@@ -7,30 +7,28 @@ from newspaper import Article
 from . import constants
 from . import url_extractor
 
-reload(url_extractor)
-
 
 class ImapHandler(object):
     """docstring for ImapHandler."""
-    def __init__(self):
+    def __init__(self, agent):
         self.url_extractor = url_extractor.Extractor()
+        self.mail_user = agent.user.encode("utf-8")
+        self.mail_pwd = agent.pwd.encode("utf-8")
+        self.mail_link = agent.imap.encode("utf-8")
+        self.mail_box = agent.mailbox.encode("utf-8")
+        self.mail_interval = agent.interval
 
-    def get_data(self, source):
-        mail_user = source.user.encode("utf-8")
-        mail_pwd = source.pwd.encode("utf-8")
-        mail_link = source.imap.encode("utf-8")
-        mail_box = source.mailbox.encode("utf-8")
-        mail_interval = source.interval
+    def get_data(self):
 
         out = []
 
         # Connect to Mailbox
-        mailbox = imaplib.IMAP4_SSL(mail_link)
-        mailbox.login(mail_user, mail_pwd)
-        mailbox.select(mail_box)
+        mailbox = imaplib.IMAP4_SSL(self.mail_link)
+        mailbox.login(self.mail_user, self.mail_pwd)
+        mailbox.select(self.mail_box)
 
         # Get all mails from the last interval hours
-        yesterday = date.today() - timedelta(hours=mail_interval)
+        yesterday = date.today() - timedelta(hours=self.mail_interval)
 
         # you could filter using the IMAP rules here (check
         # http://www.example-code.com/csharp/imap-search-critera.asp)
@@ -53,17 +51,30 @@ class ImapHandler(object):
 
             # Get mail payload
             if mail.is_multipart():
+                print "multipart"
                 content = mail.get_payload()[0].get_payload()
             else:
+                print "single part"
                 content = mail.get_payload()
 
             urls = self.url_extractor.get_urls_from_string(content)
 
             all_urls.extend(urls)
 
-        articles = [Article(x) for x in list(set(all_urls))]
+        # Remove duplicates over different newsletters
+        all_urls = list(set(all_urls))
+        articles = []
 
-        # Download alls articles
+        for url in all_urls:
+            try:
+                articles.append(Article(url))
+            except:
+                print "Error while  converting " + url
+                continue
+
+        # articles = [Article(x) for x in list(set(all_urls))]
+
+        # Download all articles
         for a in articles:
             try:
                 a.download()
@@ -71,6 +82,8 @@ class ImapHandler(object):
             except:
                 print "Error while downloading: " + a.url
                 continue
+
+        print "Articles downloaded and parsed"
 
         for article in articles:
             if article.title not in constants.EXCLUDE and \

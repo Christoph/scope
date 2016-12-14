@@ -23,17 +23,20 @@ class Extractor(object):
         urls_list = []
 
         # list set to remove duplicates
-        # Still problems with links like:
-        # http://www.cinemablend.com/news/1595010/why-jason-momoa-relates-so-closely-to-aquaman
+        # possible alternative
+        # http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[:/?#\[\]@+\-\._~=]|[!$&\'()*+,;=]|(?:%[0-9a-fA-F][0-9a-fA-F]))+
+        # old one
+        # r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|'
+        # '(?:%[0-9a-fA-F][0-9a-fA-F]))+')
         urls = set(list(re.findall(
-            (r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|'
-             '(?:%[0-9a-fA-F][0-9a-fA-F]))+'),
+            (r'http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[:/?#\[\]@+\-\._~=]|[!$&\'()*+,;=]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'),
             content)))
 
         # Get real article urls
         for url in urls:
             try:
                 url = url.rstrip(')')
+                url = url.rstrip('>')
                 # req = urllib2.Request(url)
                 # res = urllib2.urlopen(req)
                 res = self.url_opener.open(url)
