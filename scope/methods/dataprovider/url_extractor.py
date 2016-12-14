@@ -49,7 +49,9 @@ class Extractor(object):
                 continue
 
             if (len(check_url.path) > 1 and
-                    check_url.path not in constants.URL_PATH_BLACKLIST):
+                    check_url.path not in constants.URL_PATH_BLACKLIST and
+                    check_url.hostname not in
+                    constants.URL_HOSTNAME_BLACKLIST):
                 urls_list.append(finalurl)
 
         return urls_list

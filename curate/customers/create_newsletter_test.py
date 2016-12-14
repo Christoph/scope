@@ -21,7 +21,7 @@ pre = preprocess.PreProcessing("english")
 wv_model = word_vector.Model("en")
 data_provider = provider.Provider()
 
-customer_key = "nh"
+customer_key = "neuland_herzer"
 lower_step = 0.
 upper_step = 0.1
 step_size = 0.005
