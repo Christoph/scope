@@ -12,6 +12,10 @@ class Selection(object):
         self.graph.linkDataset(self.no)
         self.graph.addNodes()
 
+    def by_clustering(self, clustering):
+        self._create_graph()
+        return self.graph.addEdges_clustering(self.sim, clustering)
+
     def global_thresh(self, threshold, size_bound):
         self._create_graph()
         self.graph.addEdges_global_thresh(threshold, self.sim)

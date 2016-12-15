@@ -37,3 +37,6 @@ class Model(object):
                 sim[j, i] = sim[i, j]
 
         return sim
+
+    def document_vectors(self):
+        return [d.vector for d in self.data]
