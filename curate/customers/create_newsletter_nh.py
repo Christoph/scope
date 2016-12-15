@@ -71,8 +71,7 @@ for a in data:
         title=a['title'],
         url=a['url'],
         body=a['body'],
-        images=a['images'],
-        description=a['description'])
+        images=a['images'])
 
     Article_Curate_Query.objects.create(article=art, curate_query=curate_query)
     db_articles.append(art)
@@ -92,7 +91,7 @@ for i in range(0, len(data)):
     except:
         source = "No Source Information"
 
-    ug.add_node(i, title=data[i]["title"], url=data[i]["url"], suggest=0, summary=data[i]["description"][0:200],
+    ug.add_node(i, title=data[i]["title"], url=data[i]["url"], suggest=0, summary=data[i]["body"][0:200],
                 images=data[i]["images"], comp=0, source=source, keywords='',
                 time=None)
 

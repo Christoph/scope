@@ -1,14 +1,11 @@
-from scope.models import AgentImap, Agent, Source, Article
+from scope.models import AgentImap, Agent, Source, Article, AgentEventRegistry
 from curate.models import Article_Curate_Query
 
-from . import imap_handler
+from . import imap_handler, er_handler
 
 
 class Provider(object):
     """docstring for crawler."""
-
-    def __init__(self):
-        self.imap = imap_handler.ImapHandler()
 
     def collect_from_agents(self, curate_customer, curate_query):
         db_articles = []
@@ -19,16 +16,23 @@ class Provider(object):
             product_customer_id=curate_customer.id)
 
         for con in connector:
-            agents.append(con.agent_object)
+            print "============= New Agent ==============="
+            if isinstance(con.agent_object, AgentImap):
+                print "imap"
+                imap = imap_handler.ImapHandler(con.agent_object)
 
-        for agent in agents:
-            if isinstance(agent, AgentImap):
                 db_articles.extend(self._save_articles(
-                    self.imap.get_data(agent), curate_query))
+                    imap.get_data(), curate_query, con))
+            if isinstance(con.agent_object, AgentEventRegistry):
+                print "er"
+                er = er_handler.EventRegistry(con.agent_object)
+
+                db_articles.extend(self._save_articles(
+                    er.get_data(), curate_query, con))
 
         return db_articles
 
-    def _save_articles(self, articles, curate_query):
+    def _save_articles(self, articles, curate_query, agent):
         db_articles = []
 
         # Save the articles into the database
@@ -40,11 +44,10 @@ class Provider(object):
                 title=a['title'],
                 url=a['url'],
                 defaults={"source": source, "body": a['body'],
-                          "images": a['images'],
-                          "description": a['description']})
+                          "images": a['images']})
 
             Article_Curate_Query.objects.create(
-                article=art, curate_query=curate_query)
+                article=art, curate_query=curate_query, agent=agent)
 
             db_articles.append(art)
 

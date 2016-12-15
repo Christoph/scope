@@ -18,3 +18,17 @@ SUBSCRIBED_URLS = ["launch.us", "launch.co", "index.co", "azhar",
                    "wikipedia.org"]
 
 URL_PATH_BLACKLIST = ["/unsupported-browser"]
+
+URL_HOSTNAME_BLACKLIST = ["www.facebook.com",
+                          "www.producthunt.com",
+                          "www.technologyreview.com",
+                          "www.morningreader.com",
+                          "www.mailchimp.com",
+                          "www.twitter.com",
+                          "play.google.com",
+                          "www.technologyreview.com/newsletters",
+                          "www.typeform.com",
+                          "ev.inside.com",
+                          "itunes.apple.com",
+                          "www.youtube.com",
+                          "www.wikipedia.org"]
