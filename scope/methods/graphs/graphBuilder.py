@@ -15,43 +15,41 @@ class Graph(object):
         if type is "di":
             self.graph = nx.DiGraph()
 
-        self.clustering = clustering_methods.Methods()
-
     def linkDataset(self, no):
         self.no = no
 
     def addNodes(self):
         self.graph.add_nodes_from(range(0, self.no))
 
-    def addEdges_from_clustering(self, sim, clustering, params):
-        self.graph.remove_edges_from(self.graph.edges())
-
-        if clustering == "affinity_propagation":
-            labels, center_indices = self.clustering.affinity_propagation(sim)
-        if clustering == "dbscan":
-            threshold = params["threshold"]
-            metric = params["metric"]
-            algorithm = params["algorithm"]
-            labels = self.clustering.DBSCAN(sim, threshold, metric, algorithm)
-        if clustering == "hierachical":
-            vecs = params["vecs"]
-            method = params["method"]
-            metric = params["metric"]
-            cluster_criterion = params["cluster_criterion"]
-            cluster_threshold = params["cluster_threshold"]
-            links, labels, c = self.clustering.hierarchical_clustering(
-                vecs, method, metric, cluster_criterion, cluster_threshold)
-
-        # For each cluster
-        for i in range(0, len(center_indices)-1):
-            elements = np.where(labels == i)[0]
-            groups = list(itertools.permutations(elements, 2))
-
-            for edge in groups:
-                dist = (1. - sim[edge[0], edge[1]])
-                self.graph.add_edge(edge[0], edge[1], {'weight': dist})
-
-        return center_indices
+    # def addEdges_from_clustering(self, sim, clustering, params):
+    #     self.graph.remove_edges_from(self.graph.edges())
+    #
+    #     if clustering == "affinity_propagation":
+    #         labels, center_indices = self.clustering.affinity_propagation(sim)
+    #     if clustering == "dbscan":
+    #         threshold = params["threshold"]
+    #         metric = params["metric"]
+    #         algorithm = params["algorithm"]
+    #         labels = clustering_methods.db_scan(sim, threshold, metric, algorithm)
+    #     if clustering == "hierachical":
+    #         vecs = params["vecs"]
+    #         method = params["method"]
+    #         metric = params["metric"]
+    #         cluster_criterion = params["cluster_criterion"]
+    #         cluster_threshold = params["cluster_threshold"]
+    #         links, labels, c = clustering_methods.hierarchical_clustering(
+    #             vecs, method, metric, cluster_criterion, cluster_threshold)
+        #
+        # # For each cluster
+        # for i in range(0, len(center_indices)-1):
+        #     elements = np.where(labels == i)[0]
+        #     groups = list(itertools.permutations(elements, 2))
+        #
+        #     for edge in groups:
+        #         dist = (1. - sim[edge[0], edge[1]])
+        #         self.graph.add_edge(edge[0], edge[1], {'weight': dist})
+        #
+        # return center_indices
 
     def addEdges_global_thresh(self, threshold, sim):
         self.graph.remove_edges_from(self.graph.edges())

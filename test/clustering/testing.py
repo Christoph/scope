@@ -14,7 +14,10 @@ from scipy.spatial.distance import pdist
 from scipy.cluster.hierarchy import fcluster
 
 from scope.models import Article
+
 import scope.methods.semantics.word_vector as word_vector
+from scope.methods.graphs import clustering_methods
+from test.clustering import cluster_plot as plt
 
 wv = word_vector.Model("en")
 
@@ -39,23 +42,9 @@ for obj in serializers.deserialize("json", data):
 
 # Get semantic informations
 wv.load_data(articles)
-vec = wv.document_vectors()
+vecs = wv.document_vectors()
 sim = wv.similarity_matrix()
 
 # clustering
 
-ward =  AgglomerativeClustering(n_clusters=4, linkage='ward')
-ward.fit(X2)
-
-
-# Z = linkage(X, 'average', 'cosine')
-Z = linkage(X, 'ward', 'euclidean')
-Z2 = linkage(X2, 'ward', 'euclidean')
-
-# compares hierachical cluster with the actual pairwise distance
-# closer to 1 means the clustering preserves the original distances
-c, coph_dists = cophenet(Z, pdist(X, 'euclidean'))
-
-
-clusters = fcluster(Z, 10, criterion='distance')
-clusters_set = fcluster(Z2, 4, criterion='maxclust')
+links, labels, c = clustering_methods.hierarchical_clustering(vecs, "ward", "euclidean", "distance", 10)

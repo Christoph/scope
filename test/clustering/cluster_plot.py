@@ -1,29 +1,50 @@
 from matplotlib import pyplot as plt
 from scipy.cluster.hierarchy import dendrogram
+from sklearn.decomposition import PCA
 
+def _dim_reducer(X):
+    pca = PCA(n_components=2)
+    return pca.fit_transform(X)
 
 def plot_data(X):
     plt.figure(figsize=(10, 8))
-    plt.scatter(X[:, 0], X[:, 1])
+
+    if len(X[0]) > 2:
+        x = _dim_reducer(X)
+    else:
+        x = X
+
+    plt.scatter(x[:, 0], x[:, 1])
     plt.show()
 
 
 def plot_clustering(X, labels):
     plt.figure(figsize=(10, 8))
-    # plot points with cluster dependent colors
-    plt.scatter(X[:, 0], X[:, 1], c=labels)
+
+    if len(X[0]) > 2:
+        x = _dim_reducer(X)
+    else:
+        x = X
+
+    plt.scatter(x[:, 0], x[:, 1], c=labels)
     plt.show()
 
 
 def plot_clustering_with_center(X, labels, center):
+
+    if len(X[0]) > 2:
+        x = _dim_reducer(X)
+    else:
+        x = X
+
     plt.figure(figsize=(10, 8))
     # plot points with cluster dependent colors
-    plt.scatter(X[:, 0], X[:, 1], c=labels)
-    plt.scatter(X[center, 0], X[center, 1], c='r',
+    plt.scatter(x[:, 0], x[:, 1], c=labels)
+    plt.scatter(x[center, 0], x[center, 1], c='r',
                 marker='x', s=100, linewidth='5')
     plt.show()
 
-def fancy_dendrogram(*args, **kwargs):
+def _fancy_dendrogram(*args, **kwargs):
     max_d = kwargs.pop('max_d', None)
     if max_d and 'color_threshold' not in kwargs:
         kwargs['color_threshold'] = max_d
@@ -46,10 +67,10 @@ def fancy_dendrogram(*args, **kwargs):
                              va='top', ha='center')
         if max_d:
             plt.axhline(y=max_d, c='k')
-    return ddata
+    # return ddata
 
 def plot_dendrogram(link, truncation):
-    fancy_dendrogram(
+    _fancy_dendrogram(
         link,
         truncate_mode='lastp',
         p=truncation,
