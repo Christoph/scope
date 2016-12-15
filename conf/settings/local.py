@@ -20,7 +20,7 @@ from conf.settings.base import *
 im = ImportGlobal()
 
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 CURRENT_DOMAIN = 'http://127.0.0.1:8000'
 CURRENT_NAME = 'scope'
 CURRENT_SLOGAN = "see more"
