@@ -25,7 +25,7 @@
             <p>To change your password, please click <a href="{% url 'password_change'%}">here</a>.</p>
             <div class="state_profile"></div>
             <div class="forms" id="form_details_light">
-                <form action="{% url 'profile' %}" id="profileedit" method="post">
+                <form action="{% url 'homepage:profile' %}" id="profileedit" method="post">
                 {% csrf_token %}
 
                     {% if form2.first.errors %}
@@ -80,13 +80,13 @@
 
 
         <div role="tabpanel" class="tab-pane" id="alerts">  
-            Manage your alerts here or <a href="{% url 'grews_alert'%}" >create a new one</a>.
+            Manage your alerts here or <a href="{% url 'explore:alert'%}" >create a new one</a>.
             
                  <div class="state_alert"></div>
 {% if alert_info %}
     {% for alert, form in alert_info %}
                 <div class="forms" id="form_alert_light">
-                            <form action="{% url 'profile' %}" id="alertedit" method="post">
+                            <form action="{% url 'homepage:profile' %}" id="alertedit" method="post">
                                 <h3 class="entry-title"><a href={{alert.latest_url}}>{{alert.query}}</a></h3>
                                 {% csrf_token %}
                                 {{ form.no }}
@@ -150,7 +150,7 @@
             </div>
             </div>
             {% else %}
-            <p>No searches yet. Perform one <a href="{% url 'customsearch' %}">here</a></p>
+            <p>No searches yet. Perform one <a href="{% url 'explore:customsearch' %}">here</a></p>
                 {% endif %} 
         </div>
         </div>

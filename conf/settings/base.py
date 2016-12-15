@@ -96,6 +96,8 @@ STATICFILES_FINDERS = (
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "data")
+
 ]
 
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '../components/')
@@ -110,3 +112,4 @@ BOWER_INSTALLED_APPS = (
 )
 
 STATIC_URL = '/static/'
+LOGIN_REDIRECT_URL = '/profile'
