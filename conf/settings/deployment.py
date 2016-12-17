@@ -21,15 +21,15 @@ from conf.settings.base import *
 im = ImportGlobal()
 
 DEBUG = False
+X_FRAME_OPTIONS = 'DENY'
 ALLOWED_HOSTS = ['.grpht.info', '46.101.94.4', '.scope.ai']
 CURRENT_DOMAIN = 'http://www.scope.ai'
-CURRENT_NAME = 'scope'
 
 ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai')
 
 INSTALLED_APPS += (
     'djcelery',
-   # 'kombu.transport.django'
+   'kombu.transport.django'
 )
 
 djcelery.setup_loader()

@@ -23,6 +23,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 SECRET_KEY = im.get_env_variable('SECRET_KEY')
 X_FRAME_OPTIONS = 'DENY'
 
+CURRENT_NAME = 'scope'
+CURRENT_SLOGAN = "see more"
+
+
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
