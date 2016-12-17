@@ -21,12 +21,9 @@ im = ImportGlobal()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SECRET_KEY = im.get_env_variable('SECRET_KEY')
-X_FRAME_OPTIONS = 'DENY'
 
 CURRENT_NAME = 'scope'
 CURRENT_SLOGAN = "see more"
-
-
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -116,5 +113,6 @@ BOWER_INSTALLED_APPS = (
     "font-awesome",
 )
 
+STATIC_ROOT = os.path.join(BASE_DIR, '../static/')
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/profile'
