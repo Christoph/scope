@@ -17,7 +17,7 @@ pre = preprocess.PreProcessing("english")
 lsi_model = lsi.Model()
 
 # will be replaced by authentication
-customer = Customer.objects.get(name="Neuland Herzer Test")
+customer = Customer.objects.get(name=customer_key)
 curate_customer = Curate_Customer.objects.get(customer=customer)
 last_query = Curate_Query.objects.filter(
         curate_customer=curate_customer).filter(time_stamp=date.today())[0]
