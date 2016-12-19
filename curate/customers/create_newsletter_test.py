@@ -7,6 +7,8 @@ import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.word_vector as word_vector
 import scope.methods.graphs.selector as selector
 import scope.methods.dataprovider.provider as provider
+import scope.methods.semantics.lsi as lsi
+
 
 from scope.models import Customer
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
@@ -19,6 +21,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 pre = preprocess.PreProcessing("english")
+lsi_model = lsi.Model()
 wv_model = word_vector.Model("en")
 data_provider = provider.Provider()
 
@@ -41,10 +44,15 @@ curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
 db_articles = data_provider.collect_from_agents(curate_customer, curate_query)
 
 words = sum([len(i.body) for i in db_articles])
+
 # Semantic Analysis
 wv_model.load_data(db_articles)
-
 sim = wv_model.similarity_matrix()
+
+vecs = pre.stemm([a.body for a in db_articles])
+lsi_model.compute(vecs, 100)
+
+sim_lsi = lsi_model.similarity()
 
 # Extract Selection
 
@@ -68,7 +76,7 @@ test_params = [weight1, weight2]
 # [range, step], test_params
 params = [[lower_step, upper_step, step_size], test_params]
 
-sel = selector.Selection(len(db_articles), sim)
+sel = selector.Selection(len(db_articles), sim_lsi)
 
 
 selection = sel.by_test(test, params, [2, 15])

@@ -1,5 +1,6 @@
 import gensim
 import nltk
+import numpy as np
 
 
 class Model(object):
@@ -33,5 +34,9 @@ class Model(object):
         # self.lsi_model2.save('last24h/static/commerz/vw.lsi')
         # self.index2.save('last24h/static/commerz/vw.index')
 
-    def similarity(self, index):
-        return self.index2[self.lsi_model2[self.corp[index]]]
+    def similarity(self):
+        sim = np.zeros((len(self.corp), len(self.corp)))
+        for i in range(0, len(self.corp)):
+            sim = np.insert(sim, i, self.index2[self.lsi_model2[self.corp[i]]], axis=1)
+
+        return sim
