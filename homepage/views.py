@@ -249,7 +249,7 @@ def logout(request):
     return render(request, 'homepage/logout.html')
 
     
-# def login_user(request):
+# def login(request):
 #     state = ""
 #     username = password = ''
 #     if request.POST:
@@ -259,10 +259,11 @@ def logout(request):
 #         user = authenticate(username=username, password=password)
 #         if user is not None:
 #             if user.is_active:
-#                 login(request, user)
+#                 login(request)
+#                 print "logged in"
 #                 #state = "You are succesfully logged in. Please proceed to"
 #                 #render(request, 'last24h/index.html')
-#                 return HttpResponseRedirect(reverse('profile'))
+#                 return HttpResponseRedirect(reverse('homepage:profile'))
 #             # Redirect to a success page.
 #             else:
 #             # Return a 'disabled account' error message
@@ -271,7 +272,7 @@ def logout(request):
 #         # Return an 'invalid login' error message.
 #             state = "Your username and/or password were incorrect."
 
-#     return render(request, 'homepage/auth.html',{'state':state, 'username': username,})
+#     return render(request, 'registration/login.html',{'state':state, 'username': username})
 
 #@login_required(login_url='/login')
 def how_it_works(request):
@@ -331,4 +332,4 @@ def send_sample(request):
         )
 
 def landing(request):
-    return render(request,'homepage/landing3.html')
+    return render(request,'homepage/landing.html')

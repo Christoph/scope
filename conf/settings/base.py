@@ -21,7 +21,9 @@ im = ImportGlobal()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SECRET_KEY = im.get_env_variable('SECRET_KEY')
-X_FRAME_OPTIONS = 'DENY'
+
+CURRENT_NAME = 'scope'
+CURRENT_SLOGAN = "see more"
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -95,7 +97,10 @@ STATICFILES_FINDERS = (
 )
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    # os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "data"),
+    # os.path.join(BASE_DIR, "../components/bower_components")
+
 ]
 
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '../components/')
@@ -110,3 +115,4 @@ BOWER_INSTALLED_APPS = (
 )
 
 STATIC_URL = '/static/'
+LOGIN_REDIRECT_URL = '/profile'

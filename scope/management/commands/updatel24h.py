@@ -18,7 +18,6 @@ import math
 from django.core.mail import send_mail
 from time import mktime
 from datetime import datetime
-from last24h.models import Suggest
 from django.conf import settings
 
 
@@ -27,5 +26,5 @@ class Command(BaseCommand):
     def handle(self,*args,**options): 
         import numpy
         import scipy
-        execfile(settings.STATIC_ROOT + 'last24h/create_homegraph.py')
+        execfile('explore/scripts/create_homegraph.py')
        # send_mail('successful update', 'Successful update. headlines are:' , 'grphtcontact@gmail.com', ['pvboes@gmail.com'])

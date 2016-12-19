@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     # ...
-    url(r'custom-search$', views.customsearch, name='customsearch'),
+    url(r'customsearch$', views.customsearch, name='customsearch'),
     url(r'cs=(?P<strin>.*)$', views.custom_results, name='csr'),
     url(r'mobile$',views.mobile,name='mobile'),
     url(r'^$', views.home, name='home'),
