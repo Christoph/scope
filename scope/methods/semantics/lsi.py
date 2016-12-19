@@ -1,6 +1,7 @@
 import gensim
 import nltk
 import numpy as np
+from sklearn import preprocessing
 
 
 class Model(object):
@@ -9,6 +10,7 @@ class Model(object):
         self.index2 = []
         self.lsi_model2 = []
         self.corp = []
+        self.scaler = preprocessing.MinMaxScaler()
 
     def compute(self, term_vecs, n2):
         # Convert term vectors into gensim dictionary
@@ -37,6 +39,9 @@ class Model(object):
     def similarity(self):
         sim = np.zeros((len(self.corp), len(self.corp)))
         for i in range(0, len(self.corp)):
-            sim = np.insert(sim, i, self.index2[self.lsi_model2[self.corp[i]]], axis=1)
+            sim = np.insert(
+                sim, i, self.index2[self.lsi_model2[self.corp[i]]], axis=1)
 
-        return sim
+        scaled = self.scaler.fit_transform(sim)
+
+        return scaled

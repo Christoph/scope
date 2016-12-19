@@ -59,8 +59,6 @@ def sim_based_test(sim, params, test):
     for s in np.arange(params[0][0], params[0][1], params[0][2]):
         # Get labels with threshold
         labels = sim_based_threshold(sim, s)
-        print s
-        print np.bincount(labels.astype(int))
 
         score_new = test(labels, params[1])
 

@@ -25,12 +25,12 @@ lsi_model = lsi.Model()
 wv_model = word_vector.Model("en")
 data_provider = provider.Provider()
 
-customer_key = "nh"
-lower_step = 0.5
-upper_step = 1
+customer_key = "neuland_herzer"
+lower_step = 0
+upper_step = 0.5
 step_size = 0.01
-lower_bound = 2
-upper_bound = 16
+lower_bound = 6
+upper_bound = 20
 weight1 = 1
 weight2 = 0
 
@@ -47,11 +47,13 @@ words = sum([len(i.body) for i in db_articles])
 
 # Semantic Analysis
 wv_model.load_data(db_articles)
+# Good params fpr w2v [0.001, 0.02, 0.0001]
 sim = wv_model.similarity_matrix()
 
 vecs = pre.stemm([a.body for a in db_articles])
 lsi_model.compute(vecs, 100)
 
+# Good params for lsi [0.5, 1, 0.01]
 sim_lsi = lsi_model.similarity()
 
 # Extract Selection
@@ -63,24 +65,15 @@ def test(dict, test_params):
     weight_coverage = test_params[1]
     return weight_cluster_size * dict['no_clusters'] + weight_coverage * sum(cluster_lengths) / dict['no_articles']
 
-def test_labels(labels, params):
-    selected = len(labels) - np.sum(labels == np.max(labels))
-    if selected == 0:
-        coverage = 1
-    else:
-        coverage = selected/len(labels)
-    max_clust = np.max(np.bincount(labels.astype(int)))
-    return params["coverage_weight"] * coverage + params["max_clust_weight"] * max_clust
 
 test_params = [weight1, weight2]
-# [range, step], test_params
 params = [[lower_step, upper_step, step_size], test_params]
 
+
 sel = selector.Selection(len(db_articles), sim_lsi)
-
-
-selection = sel.by_test(test, params, [2, 15])
+selection = sel.by_test(test, params, [lower_bound, upper_bound])
 selected_articles = [db_articles[i[0]] for i in selection['articles']]
+
 
 # Database object creation
 curate_query.processed_words = words
