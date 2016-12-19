@@ -26,11 +26,11 @@ wv_model = word_vector.Model("en")
 data_provider = provider.Provider()
 
 customer_key = "nh"
-lower_step = 0.
-upper_step = 0.1
-step_size = 0.005
+lower_step = 0.5
+upper_step = 1
+step_size = 0.01
 lower_bound = 2
-upper_bound = 20
+upper_bound = 16
 weight1 = 1
 weight2 = 0
 
