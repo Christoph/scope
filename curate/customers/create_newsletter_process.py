@@ -48,7 +48,7 @@ params = [[lower_step, upper_step, step_size], test_params]
 sel = selector.Selection(len(db_articles), sim)
 
 
-selection = sel.by_test(test, params, [2, 15])
+selection = sel.by_test(test, params, [upper_bound, lower_bound])
 selected_articles = [db_articles[i[0]] for i in selection['articles']]
 
 # Database object creation

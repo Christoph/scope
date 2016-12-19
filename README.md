@@ -41,6 +41,7 @@
         * export BROKER_URL=""
         * export EMAIL_HOST_PASSWORD=""
         * export OUT_EMAIL="example@scope.ai"
+        * export DJANGO_SETTINGS_MODULE=conf.settings.local /deployment
 
     * Add to .virtualenvs/scope/bin/predeactivate
         * unset DATABASE_NAME
@@ -50,6 +51,7 @@
         * unset BROKER_URL
         * unset EMAIL_HOST_PASSWORD
         * unset OUT_EMAIL
+        * unset DJANGO_SETTINGS_MODULE
 
 
 ### 3. For Production

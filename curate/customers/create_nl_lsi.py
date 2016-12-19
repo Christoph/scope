@@ -30,7 +30,7 @@ words = sum([len(i.body) for i in db_articles])
 
 # Semantic Analysis
 vecs = pre.stemm([a.body for a in db_articles])
-lsi_model.compute(vecs, 100)
+lsi_model.compute(vecs, lsi_dim)
 
 sim = lsi_model.similarity()
 
@@ -44,13 +44,13 @@ def test(dictionary, test_params):
     return weight_cluster_size * dictionary['no_clusters'] + weight_coverage * sum(cluster_lengths) / dictionary['no_articles']
 
 
-test_params = [1, 0]
+test_params = [weight1, weight2]
 # [range, step], test_params
-params = [[0, 0.5, 0.001], test_params]
+params = [[lower_step, upper_step, step_size], test_params]
 
 sel = selector.Selection(len(db_articles), sim)
 
-selection = sel.by_test(test, params, [1, 20])
+selection = sel.by_test(test, params, [upper_bound, lower_bound])
 selected_articles = [db_articles[i[0]] for i in selection['articles']]
 
 # Database object creation
