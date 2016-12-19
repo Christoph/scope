@@ -15,6 +15,7 @@ class Command(BaseCommand):
         parser.add_argument('upper_bound', nargs='+', type=int)
         parser.add_argument('weight1', nargs='+', type=float)
         parser.add_argument('weight2', nargs='+', type=float)
+        parser.add_argument('lsi_dim', nargs='+', type=int)
 
     def handle(self, *args, **options):
         customer_key = options['customer_key'][0]
@@ -25,8 +26,9 @@ class Command(BaseCommand):
         upper_bound = options['upper_bound'][0]
         weight1 = options['weight1'][0]
         weight2 = options['weight2'][0]
+        lsi_dim = options['lsi_dim'][0]
         sys.argv = ['curate/customers/create_newsletter_process.py', customer_key,
-                    lower_step, upper_step, step_size, lower_bound, upper_bound, weight1, weight2]
+                    lower_step, upper_step, step_size, lower_bound, upper_bound, weight1, weight2, lsi_dim]
         execfile('curate/customers/create_nl_lsi.py')
         send_mail('successful update', 'go to <a href="127.0.0.1:8000/curate/nh/interface> here</a>',
                   'robot@scope.ai', ['pvboes@gmail.com'],'go to <a href="127.0.0.1:8000/curate/nh/interface> here</a>')
