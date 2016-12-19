@@ -16,8 +16,7 @@ def affinity_propagation(sim):
 
         returns: labels, center_indices
     '''
-    aff = AffinityPropagation(
-        preference=preference, affinity="precomputed")
+    aff = AffinityPropagation(affinity="precomputed")
 
     aff.fit_predict(sim)
 
@@ -50,7 +49,7 @@ def hierarchical_clustering(vecs, method, metric,
         method: 'ward', 'single', 'complete', 'average', 'weighted'
                 'centroid', 'median'
         metric: 'euclidean', 'cosine', 'minkowski', 'cityblock',
-                'seuclidean', 'sqeuclidean', 'correlation', ...
+                'seuclidean', 'sqeuclidean', ...
         cluster_criterion: 'distance' or 'maxclust'
         cluster_threshold: distance -> observations in each flat cluster
                             have no greater a cophenetic distance than t
@@ -59,18 +58,14 @@ def hierarchical_clustering(vecs, method, metric,
                                 cluster is no more than r and no more than
                                 t flat clusters are formed
 
-        returns: link_matrix, labels, coph_dists
+        returns: link_matrix, labels
     '''
 
     # Compute linkage
     link_matrix = linkage(vecs, method, metric)
 
-    # compares hierachical cluster with the actual pairwise distance
-    # closer to 1 means the clustering preserves the original distances
-    c, coph_dists = cophenet(link_matrix, pdist(vecs, metric))
-
     # cluster
     labels = fcluster(
         link_matrix, cluster_threshold, criterion=cluster_criterion)
 
-    return link_matrix, labels, c
+    return link_matrix, labels

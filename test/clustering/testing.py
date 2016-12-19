@@ -21,16 +21,14 @@ from test.clustering import cluster_plot as plt
 
 wv = word_vector.Model("en")
 
-# Generate test data
-np.random.seed(4711)  # for repeatability of this tutorial
-a = np.random.multivariate_normal([10, 0], [[3, 1], [1, 4]], size=[100,])
-b = np.random.multivariate_normal([0, 20], [[3, 1], [1, 4]], size=[50,])
-X = np.concatenate((a, b),)
+# Helper functions
+def normalize_vecs(vecs):
+    min_v = np.min(vecs)
+    max_v = np.max(vecs)
 
-c = np.random.multivariate_normal([40, 40], [[20, 1], [1, 30]], size=[200,])
-d = np.random.multivariate_normal([80, 80], [[30, 1], [1, 30]], size=[200,])
-e = np.random.multivariate_normal([0, 100], [[100, 1], [1, 100]], size=[200,])
-X2 = np.concatenate((X, c, d, e),)
+    out = (vecs-min_v)/(max_v - min_v)
+
+    return out
 
 # Get data from json
 with open('test/clustering/articles.json', 'r') as stream:
@@ -43,8 +41,51 @@ for obj in serializers.deserialize("json", data):
 # Get semantic informations
 wv.load_data(articles)
 vecs = wv.document_vectors()
+nvecs = normalize_vecs(vecs)
 sim = wv.similarity_matrix()
 
-# clustering
+# clustering helper
+def compare_metrics_hc(data, metric_list):
+    out = []
+    for m in metric_list:
+        out.append(clustering_methods.hierarchical_clustering(data, m, "euclidean", "distance", 1))
+    return out
 
-links, labels, c = clustering_methods.hierarchical_clustering(vecs, "ward", "euclidean", "distance", 10)
+def compare_distances_hc_distance(data, metric, distance_list, cluster_criterion, cluster_threshold):
+    out = []
+    for d in distance_list:
+        out.append(clustering_methods.hierarchical_clustering(data, metric, d, cluster_criterion, cluster_threshold))
+    return out
+
+def compare_distances_hc_clustering(data, metric, distance, cluster_criterion, cluster_threshold_list):
+    out = []
+    for t in cluster_threshold_list:
+        out.append(clustering_methods.hierarchical_clustering(data, metric, distance, cluster_criterion, t))
+    return out
+
+# compares hierachical cluster with the actual pairwise distance
+# closer to 1 means the clustering preserves the original distances
+# try:
+#     c, coph_dists = cophenet(link_matrix, pdist(vecs, metric))
+# except ValueError:
+#     print "Value error with: "+metric+" and "+method
+
+# Generate test data
+metric_list = ["ward", "single", "complete", "average", "centroid", "median", "weighted"]
+metric_test = compare_metrics_hc(nvecs, metric_list)
+metric_test_links = [t[0] for t in metric_test]
+
+# plt.plot_compare_dendrogram(60, metric_test_links, metric_list)
+
+distance_list = ['euclidean', 'cosine', 'minkowski', 'cityblock',
+    'seuclidean', 'sqeuclidean']
+distance_test = compare_distances_hc_distance(nvecs, "weighted", distance_list, "maxclust", 10)
+distance_test_links = [t[0] for t in distance_test]
+
+# plt.plot_compare_dendrogram(20, distance_test_links, distance_list)
+
+threshold_list = range(6,18)
+threshold_test = compare_distances_hc_clustering(nvecs, "weighted", "sqeuclidean", "maxclust", threshold_list)
+threshold_test_clustering = [t[1] for t in threshold_test]
+
+# plt.plot_compare_clustering(nvecs, threshold_test_clustering, threshold_list)
