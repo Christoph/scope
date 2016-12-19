@@ -114,6 +114,5 @@ BOWER_INSTALLED_APPS = (
     "font-awesome",
 )
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/profile'

@@ -14,9 +14,16 @@ class Feed(Feed):
     link = "/nh/"
     description = "Daily neulandherzer newsletter"
 
-    def items(self):
-        customer = Customer.objects.get(customer_key="nh") #will be replaced by authentication
-        curate_customer = Curate_Customer.objects.get(customer=customer)
+    def get_object(self, request, customer_key):
+        return Customer.objects.get(customer_key=customer_key)
+
+    def items(self, obj):
+        # user_profile = UserProfile.objects.get(user=request.user)
+        # customer_key == user_profile.customer.customer_key:
+        # print customer_key
+        # customer = Customer.objects.get(customer_key=customer_key)
+        print obj
+        curate_customer = Curate_Customer.objects.get(customer=obj)
         last_query = Curate_Query.objects.filter(curate_customer=curate_customer).filter(time_stamp=date.today()).order_by("pk").reverse()[0]
         article_query_instances = Article_Curate_Query.objects.filter(curate_query=last_query).filter(is_selected=True).order_by("rank")
         suggestions = [i.article for i in article_query_instances]

@@ -12,6 +12,10 @@ class Curate_Customer(models.Model):
     expires = models.DateField(blank=True)
 
 
+class Curate_Customer_Selection(models.Model):
+    curate_customer = models.ForeignKey(Curate_Customer)
+    name = models.CharField(max_length=100)
+
 class Curate_Query(models.Model):
     curate_customer = models.ForeignKey(Curate_Customer)
     time_stamp = models.DateField(auto_now_add=True)
@@ -27,3 +31,8 @@ class Article_Curate_Query(models.Model):
     article = models.ForeignKey(Article)
     curate_query = models.ForeignKey(Curate_Query)
     agent = models.ForeignKey(Agent, null=True, blank=True)
+
+class Article_Curate_Query_Selection(models.Model):
+    curate_cutomer_seletion = models.ForeignKey(Curate_Customer_Selection)
+    article_curate_query = models.ForeignKey(Article_Curate_Query)
+    is_true = models.BooleanField(default=False)

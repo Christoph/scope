@@ -31,3 +31,8 @@ DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql_psycopg2',
                          'PASSWORD': im.get_env_variable('DATABASE_PASSWORD'),
                          'HOST': '',
                          'PORT': ''}}
+
+
+STATICFILES_DIRS += [
+    os.path.join(BASE_DIR, "static"),
+]

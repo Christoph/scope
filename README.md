@@ -52,15 +52,10 @@
         * unset OUT_EMAIL
 
 
-### 3. Create the last24h_sources table per hand in psql
-    * python manage.py dbshell
-    * create table last24h_sources (
-        id integer PRIMARY KEY,
-        name varchar(200),
-        url varchar(200)
-    );
-
-    shouldn't be necessary anymore!
+### 3. For Production
+    * Bower requires collectstatic for production, so new packages with bower also need to be collected 
+    * If you get rif of an app, collectstatic --clear will get rid of stale static files
+    * On the local version, Bower has a bower_components folder at the base_dir level that somehow is not produced in deployment (and is included in .gitignore)
 
 ### 4. Run db migration 
     * python manage.py migrate --fake
