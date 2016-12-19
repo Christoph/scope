@@ -58,11 +58,12 @@ selected_articles = [db_articles[i[0]] for i in selection['articles']]
 # Database object creation
 curate_query.processed_words = words
 curate_query.no_clusters = selection[
-                    'no_clusters']
+    'no_clusters']
 curate_query.clustering = selection['clustering']
 curate_query.save()
 
 for i in range(0, len(selected_articles)):
-    a = Article_Curate_Query.objects.get(article=selected_articles[i])
+    a = Article_Curate_Query.objects.get(
+        article=selected_articles[i], curate_query=curate_query)
     a.rank = i + 1
     a.save()
