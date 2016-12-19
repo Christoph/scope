@@ -44,6 +44,18 @@ vecs = wv.document_vectors()
 nvecs = normalize_vecs(vecs)
 sim = wv.similarity_matrix()
 
+def test_labels(labels, params):
+    selected = len(labels) - np.sum(labels == np.max(labels))
+    if selected == 0:
+        coverage = 1
+    else:
+        coverage = selected/len(labels)
+    max_clust = np.max(np.bincount(labels.astype(int)))
+    return params["coverage_weight"] * coverage + params["max_clust_weight"] * max_clust
+
+
+params = [[0.001, 0.05, 0.001], {"coverage_weight": 1, "max_clust_weight": 1}]
+
 # clustering helper
 def compare_metrics_hc(data, metric_list):
     out = []
@@ -63,12 +75,6 @@ def compare_distances_hc_clustering(data, metric, distance, cluster_criterion, c
         out.append(clustering_methods.hierarchical_clustering(data, metric, distance, cluster_criterion, t))
     return out
 
-# compares hierachical cluster with the actual pairwise distance
-# closer to 1 means the clustering preserves the original distances
-# try:
-#     c, coph_dists = cophenet(link_matrix, pdist(vecs, metric))
-# except ValueError:
-#     print "Value error with: "+metric+" and "+method
 
 # Generate test data
 metric_list = ["ward", "single", "complete", "average", "centroid", "median", "weighted"]

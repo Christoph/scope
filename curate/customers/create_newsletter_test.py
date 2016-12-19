@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 
 # from curate.models import Select
 
@@ -54,6 +55,14 @@ def test(dict, test_params):
     weight_coverage = test_params[1]
     return weight_cluster_size * dict['no_clusters'] + weight_coverage * sum(cluster_lengths) / dict['no_articles']
 
+def test_labels(labels, params):
+    selected = len(labels) - np.sum(labels == np.max(labels))
+    if selected == 0:
+        coverage = 1
+    else:
+        coverage = selected/len(labels)
+    max_clust = np.max(np.bincount(labels.astype(int)))
+    return params["coverage_weight"] * coverage + params["max_clust_weight"] * max_clust
 
 test_params = [weight1, weight2]
 # [range, step], test_params
