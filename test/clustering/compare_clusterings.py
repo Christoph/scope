@@ -12,6 +12,8 @@ from scipy.cluster.hierarchy import fcluster
 
 from scope.methods.graphs import clustering_methods
 
+params_simbased = [[0.001, 0.05, 0.001], {"coverage_weight": 1, "max_clust_weight": 0}]
+
 #  DATA FOR CUSTOM CLUSTERING
 def test_labels(labels, params):
     selected = len(labels) - np.sum(labels == np.max(labels))
@@ -23,8 +25,16 @@ def test_labels(labels, params):
     max_clust = np.max(np.bincount(labels))
     return params["coverage_weight"] * coverage + params["max_clust_weight"] * max_clust
 
+# Helper
+def get_article_cluster(articles, labels):
+    out = []
+    elements= np.unique(labels)
 
-params_simbased = [[0.001, 0.05, 0.001], {"coverage_weight": 1, "max_clust_weight": 0}]
+    for element in elements:
+        out.append(articles[np.where(labels == element)[0]])
+
+    return out
+
 
 def get_labels(sim, vecs):
     labels_sim = clustering_methods.sim_based_test(sim, params_simbased, test_labels)
