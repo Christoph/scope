@@ -1,4 +1,5 @@
 from sklearn.cluster import AffinityPropagation, DBSCAN
+from sklearn.cluster import KMeans
 
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.cluster.hierarchy import cophenet
@@ -55,6 +56,7 @@ def sim_based_test(sim, params, test):
     '''
 
     best_score = 0
+    out_labels = []
 
     for s in np.arange(params[0][0], params[0][1], params[0][2]):
         # Get labels with threshold
@@ -85,6 +87,14 @@ def affinity_propagation(sim):
 
 
 # Centroid-based clustering
+# K-means makes the assumptions that all clusters are convex
+
+def k_means(vecs, n_clusters):
+    km = KMeans(n_clusters=n_clusters)
+
+    km.fit(vecs)
+
+    return km.labels_, km.cluster_centers_
 
 def db_scan(sim, threshold, metric, algorithm):
     '''

@@ -19,7 +19,8 @@ def test_labels(labels, params):
         coverage = 1
     else:
         coverage = selected/len(labels)
-    max_clust = np.max(np.bincount(labels.astype(int)))
+
+    max_clust = np.max(np.bincount(labels))
     return params["coverage_weight"] * coverage + params["max_clust_weight"] * max_clust
 
 
@@ -30,5 +31,6 @@ def get_labels(sim, vecs):
     labels_aff, centers_aff = clustering_methods.affinity_propagation(sim)
     links_hc, labels_hc = clustering_methods.hierarchical_clustering(vecs, "ward", "euclidean", "maxclust", 12)
     labels_dbscan = clustering_methods.db_scan(sim, threshold=0.3, metric="euclidean", algorithm="auto")
+    labels_km, centers_km = clustering_methods.k_means(vecs, 16)
 
-    return {"l_sim": labels_sim, "l_aff": labels_aff, "l_hc":labels_hc, "l_db": labels_dbscan}
+    return {"l_sim": labels_sim, "l_aff": labels_aff, "l_hc":labels_hc, "l_db": labels_dbscan, "l_km": labels_km}
