@@ -78,23 +78,6 @@ def plot_compare_clustering(data, labels, titles):
     plt.tight_layout(h_pad=-0.5, w_pad=-0.5)
     plt.show()
 
-def plot_compare_clusterings(X, l1, l2):
-    plt.figure(1)
-
-    if len(X[0]) > 2:
-        x = _dim_reducer(X)
-    else:
-        x = X
-
-    plt.subplot(211)
-    plt.scatter(x[:, 0], x[:, 1], c=labels)
-
-    plt.subplot(212)
-    plt.scatter(x[:, 0], x[:, 1], c=labels)
-
-    plt.show()
-
-
 def plot_clustering_with_center(X, labels, center):
 
     if len(X[0]) > 2:

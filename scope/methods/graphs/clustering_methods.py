@@ -62,9 +62,6 @@ def sim_based_test(sim, params, test):
 
         score_new = test(labels, params[1])
 
-        print "score"
-        print score_new
-
         if score_new > best_score:
             best_score = score_new
             out_labels = labels
@@ -102,7 +99,7 @@ def db_scan(sim, threshold, metric, algorithm):
 
         returns: labels
     '''
-    db = DBSCAN(sim, threshold=threshold, algorithm=algorithm, metric=metric)
+    db = DBSCAN(eps=threshold, algorithm=algorithm, metric=metric)
 
     db.fit_predict(sim)
 
