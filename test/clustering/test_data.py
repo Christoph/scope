@@ -33,6 +33,8 @@ articles = []
 for obj in serializers.deserialize("json", data):
     articles.append(obj.object)
 
+articles = np.array(articles)
+
 # GET SEMANTIC INFORMATION
 wv.load_data(articles)
 vecs = wv.document_vectors()
