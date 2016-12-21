@@ -47,7 +47,7 @@ def sim_based_threshold(sim, threshold):
     # Add group for all non grouped elements
     labels[labels == 0] = np.max(labels)+1
 
-    return labels
+    return labels.astype(int)
 
 def sim_based_test(sim, params, test):
     '''

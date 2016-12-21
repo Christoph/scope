@@ -23,7 +23,7 @@ def test_labels(labels, params):
     return params["coverage_weight"] * coverage + params["max_clust_weight"] * max_clust
 
 
-params_simbased = [[0.001, 0.05, 0.001], {"coverage_weight": 1, "max_clust_weight": 1}]
+params_simbased = [[0.001, 0.05, 0.001], {"coverage_weight": 1, "max_clust_weight": 0}]
 
 def get_labels(sim, vecs):
     labels_sim = clustering_methods.sim_based_test(sim, params_simbased, test_labels)

@@ -45,5 +45,5 @@ sim_lsi = lsi_model.similarity()
 
 
 # Compare Clusterings
-labels = labels = get_labels(sim, nvecs)
-plt.plot_compare_clustering(nvecs, labels.values(), labels.keys())
+# labels = labels = get_labels(sim, nvecs)
+# plt.plot_compare_clustering(nvecs, labels.values(), labels.keys())
