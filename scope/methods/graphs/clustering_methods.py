@@ -90,6 +90,16 @@ def affinity_propagation(sim):
 # K-means makes the assumptions that all clusters are convex
 
 def k_means(vecs, n_clusters):
+    '''
+        Centroid-based clustering.
+
+        Params:
+        vecs: Document vectors
+        n_clusters: Number of clusters
+
+        returns: labels, center_indices
+    '''
+    
     km = KMeans(n_clusters=n_clusters)
 
     km.fit(vecs)
