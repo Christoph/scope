@@ -11,10 +11,16 @@ class Curate_Customer(models.Model):
     key = models.CharField(max_length=100, blank=True)
     expires = models.DateField(blank=True)
 
+    def __unicode__(self):              # __unicode__ on Python 2
+        return self.customer.name
+
 
 class Curate_Customer_Selection(models.Model):
     curate_customer = models.ForeignKey(Curate_Customer)
     name = models.CharField(max_length=100)
+    color = models.CharField(max_length=100, default="#fff")
+    def __unicode__(self):              # __unicode__ on Python 2
+        return self.name
 
 class Curate_Query(models.Model):
     curate_customer = models.ForeignKey(Curate_Customer)
@@ -23,16 +29,22 @@ class Curate_Query(models.Model):
     clustering = models.CharField(max_length=200, blank=True)
     no_clusters = models.IntegerField(null=True, blank=True)
 
+    def __unicode__(self):              # __unicode__ on Python 2
+        return self.time_stamp.isoformat() + ', ' + self.curate_customer.customer.name
+
 
 class Article_Curate_Query(models.Model):
-    is_selected = models.BooleanField(default=False)
-    is_mistake = models.BooleanField(default=False)
+    # is_selected = models.BooleanField(default=False)
+    # is_mistake = models.BooleanField(default=False)
     rank = models.IntegerField(null=True, blank=True)
     article = models.ForeignKey(Article)
     curate_query = models.ForeignKey(Curate_Query)
+    selection_options = models.ManyToManyField(Curate_Customer_Selection, blank=True)
     agent = models.ForeignKey(Agent, null=True, blank=True)
+    def __unicode__(self):              # __unicode__ on Python 2
+        return self.article.title + ', ' + self.curate_query.time_stamp.isoformat() + ', ' + self.curate_query.curate_customer.customer.name
 
-class Article_Curate_Query_Selection(models.Model):
-    curate_cutomer_seletion = models.ForeignKey(Curate_Customer_Selection)
-    article_curate_query = models.ForeignKey(Article_Curate_Query)
-    is_true = models.BooleanField(default=False)
+# class Article_Curate_Query_Selection(models.Model):
+#     curate_cutomer_seletion = models.ForeignKey(Curate_Customer_Selection)
+#     article_curate_query = models.ForeignKey(Article_Curate_Query)
+#     is_true = models.BooleanField(default=False)

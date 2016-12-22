@@ -40,7 +40,8 @@ INSTALLED_APPS = (
     'twitter_bootstrap',
     'django.contrib.sites',
     'widget_tweaks',
-    'djangobower')
+    'djangobower',
+    'mathfilters')
 
 
 ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai', 'robot@scope.ai')
