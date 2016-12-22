@@ -3,28 +3,20 @@
 
 <style media="screen">
 
-.well.suggest {
-  background-color: #06aed5;
+.well {
+  border: 1px solid;
 }
 
-.well.mistake {
-  background-color: #dd1c1a;
-}
 
 .btn-option {
-    color: white;
-    border: 1px white solid;
+    color: black;
+    border: 1px black solid;
+    margin-top: 10px;
 }
 
 .btn-option:hover {
     color: black;
     border: 1px black solid;
-}
-
-.btn-suggest {
-    background-color: #06aed5;
-    color: white;
-    border: 1px white solid;
 }
 
 {% for option in options %}
@@ -33,7 +25,14 @@
       background-color: {{option.color}};
     }
 
+{% if selection_made is False %}
     .btn-option.btn-{{option.name}}:hover {
+      background-color: {{option.color}};
+    }
+
+    {% endif %}
+
+        .btn-option.btn-{{option.name}}.active {
       background-color: {{option.color}};
     }
 
@@ -74,23 +73,6 @@
 
 </style>
 
-<script type="text/javascript">
-function updateClass(box, id) {
-
-   if(box.id == "selection-"+id)
-   {
-       $( "div#suggestion-"+id ).toggleClass( "suggest" );
-   }
-
-   if(box.id == "mistake-"+id)
-   {
-       $( "div#suggestion-"+id ).toggleClass( "mistake" );
-   }
-};
-
-</script>
-
-
     <h1 align=center>Newsletter - <strong>News Selection</strong></h1>
     <!-- .entry-header -->
 
@@ -106,12 +88,7 @@ function updateClass(box, id) {
                 {% csrf_token %}
                 {% for suggestion in suggestions %}
 
-                <div class="row well 
-
-                    {% for option in options %}
-                      {% if option in suggestion.selected_options %} {{option.name}}-class {% endif %}
-                    {% endfor %}" 
-                    id="suggestion-{{ forloop.counter }}">
+                <div class="row well">
 
                     <div class="col-md-8" style="word-wrap: break-word; text-align: left;">
 
@@ -123,31 +100,29 @@ function updateClass(box, id) {
                     </div>
 
                     <div class="col-md-4" style="text-align: left; margin-top: 4%">
-
+  
+                
                         
                         {% for option in options %}
-
-                          <div class="row">
-
-                        <label class="checkbox-inline btn btn-option btn-{{option.name}}" style="font-size: 20px; width: 150px">
+                        <div class="row btn-group" data-toggle="buttons">
+                        <button class="checkbox-inline btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px" {% if query.selection_made %}disabled="disabled"{% endif %}>
 
                           <input
                           id="{{option.name}}-{{ forloop.parentloop.counter }}"
                           style="margin-top: 6px; margin-left:10px; opacity: 0;"
-                          class="{{option.name}}"
+                          class="{{option.name}}-class" 
                           type="checkbox"
                           name="{{option.name}}{{ forloop.parentloop.counter }}"
-                          onchange="updateClass(this, checked)"
-                          {% if option in suggestion.selected_options %} checked {% endif %}
+                          {% if option in suggestion.selection_options.all %} checked {% endif %}
                           >
                          {{option.name|title}}
 
-                        </label>
+                        </button>
 
                         </div>
                           
                         {% endfor %}
-                    
+                      
 
                     </div>
 
@@ -155,13 +130,13 @@ function updateClass(box, id) {
 
                 {% endfor %} 
 
-                {% if selection_made %}
+                {% if query.selection_made %}
 
-                <input class="btn btn-primary" type="button" value="Already selected"> 
+                <input class="btn btn-primary" type="button" value="Already selected" {% if query.selection_made %}disabled="disabled"{% endif %}> 
 
                 {% else %}
 
-                <input class="btn btn-primary" type="submit" value="Create Newsletter"> 
+                <input class="btn btn-primary" type="submit" value="Create Newsletter" > 
 
                 {% endif %}
 
@@ -190,11 +165,13 @@ var count = 0;
 
 function addClickHandlers() {
 
+
 {% for option in options %}
 
 jQuery('.{{option.name}}-class').on('click', function(event) {
 
-count = $("[class='{{option.name}}-class']:checked").length;
+
+count = $("[class='btn-{{option.name}}']:active").length;
 $('#numberbox-{{option.name}}').html(count);
 $('#numberbox-{{option.name}}').css("display","block");
 

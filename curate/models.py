@@ -17,10 +17,16 @@ class Curate_Customer(models.Model):
 
 class Curate_Customer_Selection(models.Model):
     curate_customer = models.ForeignKey(Curate_Customer)
+    type = models.CharField(max_length=3, choices=(
+        ("sel","selection"),
+        ("mis","mistake"),
+        ("oth","other"),
+        ), default="sel"
+        )
     name = models.CharField(max_length=100)
     color = models.CharField(max_length=100, default="#fff")
     def __unicode__(self):              # __unicode__ on Python 2
-        return self.name
+        return self.name + ', ' + self.curate_customer.customer.name
 
 class Curate_Query(models.Model):
     curate_customer = models.ForeignKey(Curate_Customer)
@@ -28,6 +34,7 @@ class Curate_Query(models.Model):
     processed_words = models.CharField(max_length=200, blank=True)
     clustering = models.CharField(max_length=200, blank=True)
     no_clusters = models.IntegerField(null=True, blank=True)
+    selection_made = models.BooleanField(default=False)
 
     def __unicode__(self):              # __unicode__ on Python 2
         return self.time_stamp.isoformat() + ', ' + self.curate_customer.customer.name
