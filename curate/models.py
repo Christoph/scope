@@ -44,7 +44,3 @@ class Article_Curate_Query(models.Model):
     def __unicode__(self):              # __unicode__ on Python 2
         return self.article.title + ', ' + self.curate_query.time_stamp.isoformat() + ', ' + self.curate_query.curate_customer.customer.name
 
-# class Article_Curate_Query_Selection(models.Model):
-#     curate_cutomer_seletion = models.ForeignKey(Curate_Customer_Selection)
-#     article_curate_query = models.ForeignKey(Article_Curate_Query)
-#     is_true = models.BooleanField(default=False)
