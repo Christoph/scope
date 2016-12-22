@@ -13,6 +13,15 @@ modernizr.js
 bower_components/
 node_modules/
 
+static/admin/
+static/bootstrap-select/
+static/bootstrap/
+static/d3/
+static/font-awesome/
+static/jquery-ui/
+static/jquery/
+static/lodash/
+static/twitter_bootstrap/
 *.csv
 *.bin
 *.json
