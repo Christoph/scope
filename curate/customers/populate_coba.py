@@ -1,5 +1,5 @@
 from scope.models import Customer, Agent, AgentImap
-from curate.models import Curate_Customer
+from curate.models import Curate_Customer, Curate_Customer_Selection
 import datetime
 
 # Create IMAP object
@@ -29,3 +29,11 @@ agent = Agent(
 )
 
 agent.save()
+
+# Create selections"learn", "simple", "advanced"
+selection = Curate_Customer_Selection(curate_customer=curate_customer, name="learn", type="mis", color="#e0340f")
+selection.save()
+selection = Curate_Customer_Selection(curate_customer=curate_customer, name="simple", type="sel", color="#8ab6ee")
+selection.save()
+selection = Curate_Customer_Selection(curate_customer=curate_customer, name="advanced", type="sel", color="#4a2fec")
+selection.save()
