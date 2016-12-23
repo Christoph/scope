@@ -1,5 +1,5 @@
 from scope.models import Customer, Agent, AgentImap
-from curate.models import Curate_Customer
+from curate.models import Curate_Customer, Curate_Customer_Selection
 import datetime
 
 # Create IMAP object
