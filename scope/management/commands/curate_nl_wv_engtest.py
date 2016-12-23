@@ -1,14 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.core.mail import send_mail
-from datetime import date 
 from django.conf import settings
-<<<<<<< HEAD
-=======
-
-
-from scope.models import Customer
->>>>>>> 45ec26fa257587e6aa2c0a793cdd48dd11cef5a4
-
 
 from scope.models import Customer
 import sys
