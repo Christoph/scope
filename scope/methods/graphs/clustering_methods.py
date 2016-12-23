@@ -2,6 +2,7 @@ from sklearn.cluster import AffinityPropagation, DBSCAN
 from sklearn.cluster import KMeans
 
 from sklearn.mixture import GaussianMixture, BayesianGaussianMixture
+from sklearn.metrics import silhouette_score, calinski_harabaz_score
 
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.cluster.hierarchy import cophenet
@@ -14,6 +15,13 @@ from collections import defaultdict
 
 # Subspace clustering due to curse of dimensionality?
 # Maybe PCS like method before clustering?
+
+
+def internal_measure(vecs, labels):
+    # score = silhouette_score(vecs, labels)
+    score = calinski_harabaz_score(vecs, labels)
+
+    return score
 
 
 def sim_based_threshold(sim, threshold):
@@ -83,6 +91,30 @@ def affinity_propagation(sim):
     return aff.labels_, aff.cluster_centers_indices_
 
 # Distribution-based clustering
+
+def gauss_mix_test(vecs, params):
+    '''
+        vecs: document vectors
+        params: list of component values to test [from, to , step]
+
+        returns: best clustering
+    '''
+
+    out = []
+    score = 0
+
+    for s in np.arange(params[0], params[1], params[2]):
+        gmm = GaussianMixture(n_components=s).fit(vecs)
+        labels = gmm.predict(vecs)
+
+        # new_score = silhouette_score(vecs, labels)
+        new_score = calinski_harabaz_score(vecs, labels)
+
+        if new_score > score:
+            out = labels
+            score = new_score
+
+    return out
 
 def gauss_mix(vecs, components):
     '''
