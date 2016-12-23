@@ -8,7 +8,7 @@ from django.core import serializers
 from scope.models import Article
 
 import scope.methods.semantics.word_vector as word_vector
-from test.clustering import cluster_plot as plt
+# from test.clustering import cluster_plot as plt
 import scope.methods.semantics.lsi as lsi
 import scope.methods.semantics.preprocess as preprocess
 

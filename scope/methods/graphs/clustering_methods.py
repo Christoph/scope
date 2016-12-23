@@ -1,6 +1,8 @@
 from sklearn.cluster import AffinityPropagation, DBSCAN
 from sklearn.cluster import KMeans
 
+from sklearn.mixture import GaussianMixture, BayesianGaussianMixture
+
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.cluster.hierarchy import cophenet
 from scipy.cluster.hierarchy import fcluster
@@ -45,9 +47,6 @@ def sim_based_threshold(sim, threshold):
         for e in group:
             labels[e-1] = label
 
-    # Add group for all non grouped elements
-    labels[labels == 0] = np.max(labels)+1
-
     return labels.astype(int)
 
 def sim_based_test(sim, params, test):
@@ -77,7 +76,7 @@ def affinity_propagation(sim):
 
         returns: labels, center_indices
     '''
-    aff = AffinityPropagation(affinity="precomputed")
+    aff = AffinityPropagation()
 
     aff.fit_predict(sim)
 
@@ -85,6 +84,28 @@ def affinity_propagation(sim):
 
 # Distribution-based clustering
 
+def gauss_mix(vecs, components):
+    '''
+        vecs: document vectors
+        compnents: number of components
+
+        returns: labels
+    '''
+    gmm = GaussianMixture(n_components=components).fit(vecs)
+
+    return gmm.predict(vecs)
+
+def bayes_gauss_mix(vecs, weight_concentration_prior):
+    '''
+        vecs: document vectors
+        weight_concentration_prior: number of components
+
+        returns: labels
+    '''
+    gmm = BayesianGaussianMixture(
+        weight_concentration_prior=weight_concentration_prior).fit(vecs)
+
+    return gmm.predict(vecs)
 
 # Centroid-based clustering
 # K-means makes the assumptions that all clusters are convex
@@ -99,7 +120,7 @@ def k_means(vecs, n_clusters):
 
         returns: labels, center_indices
     '''
-    
+
     km = KMeans(n_clusters=n_clusters)
 
     km.fit(vecs)
