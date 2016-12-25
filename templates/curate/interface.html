@@ -101,7 +101,6 @@
 
                     <div class="col-md-4" style="text-align: left; margin-top: 4%">
   
-                
                         
                         {% for option in options %}
                         <div class="row btn-group" data-toggle="buttons">
@@ -169,9 +168,9 @@ function addClickHandlers() {
 {% for option in options %}
 
 
-jQuery('.btn-{{option.name}}').on('click', function(event) {
+jQuery('.{{option.name}}-class').on('click', function(event) {
 
-var count = $("input[class={{option.name}}-class]:checked");
+count = $("input[class={{option.name}}-class]:checked");
 console.log(count)
 $('#numberbox-{{option.name}}').html(count.length);
 $('#numberbox-{{option.name}}').css("display","block");
