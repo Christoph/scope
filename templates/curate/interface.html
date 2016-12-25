@@ -104,12 +104,12 @@
                         
                         {% for option in options %}
                         <div class="row btn-group" data-toggle="buttons">
-                        <label class="btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px" {% if query.selection_made %}disabled="disabled"{% endif %}>
+                        <label class="checkbox-inline btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px" {% if query.selection_made %}disabled="disabled"{% endif %}>
 
                           <input
+                          class="{{option.name}}-class"
                           id="{{option.name}}-{{ forloop.parentloop.counter }}"
-                          style="margin-top: 6px; margin-left:10px; opacity: 0;"
-                          class="{{option.name}}-class" 
+                          style="margin-top: 6px; margin-left:10px; opacity: 0;" 
                           type="checkbox"
                           name="{{option.name}}{{ forloop.parentloop.counter }}"
                           
@@ -167,10 +167,12 @@ function addClickHandlers() {
 
 {% for option in options %}
 
+count = $("[class={{option.name}}-class]:checked").length;
+console.log(count)
 
 jQuery('.{{option.name}}-class').on('click', function(event) {
 
-count = $("input[class={{option.name}}-class]:checked");
+count = $("[class={{option.name}}-class]:checked");
 console.log(count)
 $('#numberbox-{{option.name}}').html(count.length);
 $('#numberbox-{{option.name}}').css("display","block");
