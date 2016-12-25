@@ -105,7 +105,7 @@
                         
                         {% for option in options %}
                         <div class="row btn-group" data-toggle="buttons">
-                        <button class="checkbox-inline btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px" {% if query.selection_made %}disabled="disabled"{% endif %}>
+                        <label class="btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px" {% if query.selection_made %}disabled="disabled"{% endif %}>
 
                           <input
                           id="{{option.name}}-{{ forloop.parentloop.counter }}"
@@ -113,11 +113,11 @@
                           class="{{option.name}}-class" 
                           type="checkbox"
                           name="{{option.name}}{{ forloop.parentloop.counter }}"
-                          {% if option in suggestion.selection_options.all %} checked {% endif %}
+                          
                           >
                          {{option.name|title}}
 
-                        </button>
+                        </label>
 
                         </div>
                           
@@ -142,10 +142,11 @@
 
             </form>
 
+            </div>
+
         {% for option in options %}
 
         <div class="numberbox {{option.name}}-class" id="numberbox-{{option.name}}"></div>
-        </div>
           
         {% endfor %}
 
@@ -165,14 +166,14 @@ var count = 0;
 
 function addClickHandlers() {
 
-
 {% for option in options %}
 
-jQuery('.{{option.name}}-class').on('click', function(event) {
 
+jQuery('.btn-{{option.name}}').on('click', function(event) {
 
-count = $("[class='btn-{{option.name}}']:active").length;
-$('#numberbox-{{option.name}}').html(count);
+var count = $("input[class={{option.name}}-class]:checked");
+console.log(count)
+$('#numberbox-{{option.name}}').html(count.length);
 $('#numberbox-{{option.name}}').css("display","block");
 
  });

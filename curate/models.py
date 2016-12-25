@@ -5,7 +5,6 @@ from scope.models import Article, Customer, Agent
 
 # Create your models here.
 
-
 class Curate_Customer(models.Model):
     customer = models.ForeignKey(Customer)
     key = models.CharField(max_length=100, blank=True)

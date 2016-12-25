@@ -1,17 +1,8 @@
 import sys
-
-# from curate.models import Select
-
-import scope.methods.semantics.preprocess as preprocess
-import scope.methods.semantics.word_vector as word_vector
-import scope.methods.graphs.selector as selector
-import scope.methods.dataprovider.provider as provider
-
-from scope.models import Customer
-from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
+import ConfigParser
 
 from curate.scripts import curate_process
-
+import curate.methods.tests as tests
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -27,12 +18,16 @@ sys.setdefaultencoding('utf8')
 # lsi_dim = 20
 
 
-def test(stats, weights):
-    cluster_lengths = [i[0] for i in stats['articles']]
-    weight_cluster_size = weights[0]
-    weight_coverage = weights[1]
-    return weight_cluster_size * stats['no_clusters'] + weight_coverage * sum(cluster_lengths) / stats['no_articles']
+config = ConfigParser.RawConfigParser()
+config.read('curate/customers/' + customer_key + '.cfg')
 
+model = config.get('general','current_model')
+
+test = tests.Curate_Test(config.get('general','current_test')).test
+
+for test_params.append
+
+weight1 = config.get('test','test_type')
 
 test_params = [weight1, weight2]
 params = [[lower_step, upper_step, step_size], test_params]
