@@ -160,18 +160,21 @@
 
 jQuery(document).ready(addClickHandlers());
 
-function addClickHandlers() {
-
-var count = 0;
-
-$(document).on('change', 'input', function (event) {
-
-{% for option in options %}
+function eval_checkboxes() {
+  {% for option in options %}
 $('#numberbox-{{option.name}}').html(jQuery(".{{option.name}}-input:checked").length);
 $('#numberbox-{{option.name}}').css("display","block");
   {% endfor %}
-  });
 }
+
+
+function addClickHandlers() {
+$(document).on('change', 'input', eval_checkboxes());
+}
+
+//  {% if query.selection_made %}
+// eval_checkboxes();
+// {% endif %}
 
 </script>
 

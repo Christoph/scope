@@ -4,7 +4,7 @@ from curate.models import Curate_Customer, Curate_Customer_Selection
 import datetime
 
 
-def create_profile(name, email, imap_dict={}, selection_dict={}):
+def create_profile(name, email, selection_dict, imap_dict={}):
     proc_name = name.lower().replace(' ', '_')
     pwd = proc_name[0:3] + "willlesen"
 
@@ -27,7 +27,7 @@ def create_profile(name, email, imap_dict={}, selection_dict={}):
 
     imap.save()
     # Create User
-    user, created = User.get_or_create(username=name, pwd=pwd)
+    user, created = User.get_or_create(username=proc_name, pwd=pwd)
 
     # Create UserProfile
     userprofile, created = UserProfile.get_or_create(user=user, customer=customer, defaults={
@@ -41,7 +41,8 @@ def create_profile(name, email, imap_dict={}, selection_dict={}):
     curate_customer, created = Curate_Customer.objects.get_or_create(
         customer=customer,
         key="key",
-        defaults={"expires": datetime.date.today() + datetime.timedelta(days=365)}
+        defaults={"expires": datetime.date.today(
+        ) + datetime.timedelta(days=365)}
     )
 
     # Create Source for the Curate_Customer
@@ -58,10 +59,3 @@ def create_profile(name, email, imap_dict={}, selection_dict={}):
         selection.save()
 
     # Create selections"learn", "simple", "advanced"
-
-    selection = Curate_Customer_Selection(
-        curate_customer=curate_customer, name="simple", type="sel", color="#8ab6ee")
-    selection.save()
-    selection = Curate_Customer_Selection(
-        curate_customer=curate_customer, name="advanced", type="sel", color="#4a2fec")
-    selection.save()
