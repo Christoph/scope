@@ -48,10 +48,9 @@ class Extractor(object):
                 print "error while checking url: " + url
                 continue
 
-            if (len(check_url.path) > 1 and
-                    check_url.path not in constants.URL_PATH_BLACKLIST and
+            if (check_url.path not in constants.URL_PATH_BLACKLIST and
                     check_url.hostname not in
-                    constants.URL_HOSTNAME_BLACKLIST):
+                    constants.URL_HOSTNAME_BLACKLIST):  # len(check_url.path) > 1 and
                 urls_list.append(finalurl)
 
         return urls_list

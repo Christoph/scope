@@ -13,7 +13,7 @@ imap.save()
 
 # Create Customer
 customer = Customer.objects.get_or_create(
-    name="CoBaTest", customer_key="coba", email="test@scope.ai")[0]
+    name="Commerzbank Germany", customer_key="commerzbank_germany", email="michael.schneider2@commerzbank.com")[0]
 
 # Create Curate_Customer
 curate_customer = Curate_Customer.objects.get_or_create(

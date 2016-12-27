@@ -16,7 +16,7 @@ def interface(request,customer_key):
 
     customer = Customer.objects.get(customer_key=customer_key) #will be replaced by authentication
     curate_customer = Curate_Customer.objects.get(customer=customer)
-    query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").reverse()[0]
+    query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").last()
     article_query_instances = Article_Curate_Query.objects.filter(curate_query=query).filter(rank__gt = 0).order_by("rank")
     suggestions = article_query_instances
     options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer)
