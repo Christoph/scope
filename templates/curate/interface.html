@@ -147,7 +147,6 @@
         {% for option in options %}
 
         <div class="numberbox {{option.name}}-class" id="numberbox-{{option.name}}"></div>
-          
         {% endfor %}
 
 
@@ -156,9 +155,10 @@
 {% endblock content %}
 
 {% block scripts %}
+
 <script type='text/javascript'>
 
-jQuery(document).ready(addClickHandlers());
+ {% if query.selection_made is False %}
 
 function eval_checkboxes() {
   {% for option in options %}
@@ -167,14 +167,16 @@ $('#numberbox-{{option.name}}').css("display","block");
   {% endfor %}
 }
 
+jQuery(document).ready(addClickHandlers());
 
 function addClickHandlers() {
-$(document).on('change', 'input', eval_checkboxes());
+$(document).on('change', 'input', function(event) {
+  eval_checkboxes()
+  }
+);
 }
 
-//  {% if query.selection_made %}
-// eval_checkboxes();
-// {% endif %}
+{% endif %}
 
 </script>
 

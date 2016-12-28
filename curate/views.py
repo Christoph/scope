@@ -34,8 +34,13 @@ def interface(request,customer_key):
                         s.save()
                 except:
                     pass
-
+    stats = {}
+    for option in options.all():
+        stat = [i for i in suggestions if option in i.selection_options.all()]
+        stats[option] = len(stat)
+    stats['test'] = 7
+    print stats
     #log_inf, log_link = check_login(request)
     #context = {"suggestions":suggestions, 'log_inf':log_inf, 'log_link':log_link}
-    context = {"suggestions": suggestions, "options": options, 'query': query, 'customer_key': customer_key}
+    context = {"stats": stats, "suggestions": suggestions, "options": options, 'query': query, 'customer_key': customer_key}
     return render(request, 'curate/interface.html', context)

@@ -12,10 +12,16 @@ from scope.models import Customer, UserProfile
 class Feed(Feed):
     title = "Today's NHBrief"
     link = "/nh/"
-    description = "Daily neulandherzer newsletter"
+    description = "Newsletter created with the help of Scope Technology"
 
-    def get_object(self, request, customer_key):
-        return Customer.objects.get(customer_key=customer_key)
+    def get_object(self, request, customer_key, selected_option="sel"):
+        return [Customer.objects.get(customer_key=customer_key), selected_option]
+
+    def title(self, obj):
+        return "Selected articles by" + obj[0].name
+
+    def link(self, obj):
+        return "/" + obj[0].customer_key + "/"
 
     def items(self, obj):
         # user_profile = UserProfile.objects.get(user=request.user)
@@ -23,9 +29,12 @@ class Feed(Feed):
         # print customer_key
         # customer = Customer.objects.get(customer_key=customer_key)
         print obj
-        curate_customer = Curate_Customer.objects.get(customer=obj)
+        curate_customer = Curate_Customer.objects.get(customer=obj[0])
         last_query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").last()
-        select_options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).filter(type="sel").all()
+        if obj[1] == "sel":
+            select_options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).filter(type="sel").all()
+        else:
+            select_options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).filter(name=obj[1]).all()
         suggestions = []
         for i in Article_Curate_Query.objects.filter(curate_query=last_query).all():
             for option in select_options:
