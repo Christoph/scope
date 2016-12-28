@@ -41,7 +41,7 @@ curate_query = Curate_Query.objects.create(curate_customer=curate_customer)
 # Load data
 
 # Collect and save articles to the database
-db_articles = data_provider.collect_from_agents(curate_customer, curate_query)
+db_articles = data_provider.collect_from_agents(curate_customer, curate_query, "eng")
 
 words = sum([len(i.body) for i in db_articles])
 

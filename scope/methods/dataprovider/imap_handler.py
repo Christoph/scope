@@ -74,7 +74,7 @@ class ImapHandler(object):
         articles = []
         newspaper_lang_dict = {
             'ger': 'de',
-            'eng': 'en', 
+            'eng': 'en',
         }
 
         for i in range(0, len(all_urls)):
@@ -116,6 +116,117 @@ class ImapHandler(object):
                     "source": urlparse(article.url).netloc})
 
         return out
+
+    def get_data_new(self):
+        out = []
+
+        # Connect to Mailbox
+        mailbox = imaplib.IMAP4_SSL(self.mail_link)
+        mailbox.login(self.mail_user, self.mail_pwd)
+        mailbox.select(self.mail_box)
+
+        # Get all mails from the last interval hours
+        yesterday = date.today() - timedelta(hours=self.mail_interval)
+
+        # you could filter using the IMAP rules here (check
+        # http://www.example-code.com/csharp/imap-search-critera.asp)
+        resp, items = mailbox.search(None, '(SINCE "' + yesterday.strftime("%d-%b-%Y") + '")')
+        items = items[0].split()  # getting the mails ids
+
+        all_urls = []
+
+        # Get the whole mail content
+        for emailid in items:
+            # fetching the mail, "`(RFC822)`" means "get the whole stuff",
+            # but you can ask for headers only, etc
+            resp, data = mailbox.fetch(emailid, "(RFC822)")
+
+            email_body = data[0][1]  # getting the mail content
+
+            # Convert to mail object
+
+            mail = email.message_from_string(email_body)
+
+            # All mail text/plain contents
+            contents = self._get_content(mail)
+
+            # Add urls from each content
+            for content in contents:
+                all_urls.extend(
+                    self.url_extractor.get_urls_from_string(content))
+
+        # Remove duplicates over different newsletters
+        all_urls = list(set(all_urls))
+
+        articles = []
+        newspaper_lang_dict = {
+            'ger': 'de',
+            'eng': 'en',
+        }
+
+        for i in range(0, len(all_urls)):
+            try:
+                if self.language == "mix":
+                    articles.append(Article(all_urls[i]))
+                else:
+                    articles.append(Article(
+                        all_urls[i],
+                        language=newspaper_lang_dict[self.language]))
+            except:
+                print "Error while  converting " + all_urls[i]
+                continue
+
+        # Download all articles
+        for a in articles:
+            try:
+                a.download()
+                a.parse()
+            except:
+                print "Error while downloading: " + a.url
+                continue
+
+        print "Articles downloaded and parsed"
+
+        for article in articles:
+            print article.title
+            if article.title not in constants.EXCLUDE and \
+               constants.UNSUBSCRIBE_EXCLUDE not in article.text:
+                out.append({
+                    "body": article.text, "title": article.title,
+                    "url": article.url, "images": article.top_image,
+                    "source": urlparse(article.url).netloc})
+
+        return out
+
+    def _get_content(self, mail):
+        contents = []
+
+        if mail.is_multipart():
+            # Walk over all parts
+            for part in mail.walk():
+                self._get_decoding(contents, part)
+        else:
+            self._get_decoding(contents, mail)
+
+        return contents
+
+    def _get_decoding(self, contents, part):
+        # Get content type
+        ctype = part.get_content_type()
+        # Get content encoding
+        cenc = str(part.get('Content-Transfer-Encoding'))
+
+        # Check if its text/plain and not text/html or multipart
+        if ctype == 'text/plain':
+            if cenc == 'quoted-printable':
+                print "is MIME encoded"
+                # If MIME encoded - decode and add
+                contents.append(part.get_payload(decode=True))
+            else:
+                print "is not MIME encoded"
+                # Else - add without decoding
+                contents.append(part.get_payload())
+
 
     def get_data_old(self):
         m = imaplib.IMAP4_SSL(self.mail_link)

@@ -21,7 +21,7 @@ class Provider(object):
                 imap = imap_handler.ImapHandler(con.agent_object, language)
 
                 db_articles.extend(self._save_articles(
-                    imap.get_data(), curate_query, con))
+                    imap.get_data_new(), curate_query, con))
             if isinstance(con.agent_object, AgentEventRegistry):
                 print "er"
                 er = er_handler.EventRegistry(con.agent_object)
