@@ -27,10 +27,10 @@ def create_profile(name, email, imap_dict={}, selection_dict={}):
 
     imap.save()
     # Create User
-    user, created = User.get_or_create(username=name, pwd=pwd)
+    user, created = User.objects.get_or_create(username=name, pwd=pwd)
 
     # Create UserProfile
-    userprofile, created = UserProfile.get_or_create(user=user, customer=customer, defaults={
+    userprofile, created = UserProfile.objects.get_or_create(user=user, customer=customer, defaults={
                                                      "activation_key": "activation_key", "expires": datetime.date.today() + datetime.timedelta(days=365)})
 
     # Create Customer
@@ -59,9 +59,9 @@ def create_profile(name, email, imap_dict={}, selection_dict={}):
 
     # Create selections"learn", "simple", "advanced"
 
-    selection = Curate_Customer_Selection(
-        curate_customer=curate_customer, name="simple", type="sel", color="#8ab6ee")
-    selection.save()
-    selection = Curate_Customer_Selection(
-        curate_customer=curate_customer, name="advanced", type="sel", color="#4a2fec")
-    selection.save()
+    # selection = Curate_Customer_Selection(
+    #     curate_customer=curate_customer, name="simple", type="sel", color="#8ab6ee")
+    # selection.save()
+    # selection = Curate_Customer_Selection(
+    #     curate_customer=curate_customer, name="advanced", type="sel", color="#4a2fec")
+    # selection.save()
