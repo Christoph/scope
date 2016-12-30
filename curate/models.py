@@ -43,8 +43,6 @@ class Curate_Query(models.Model):
 
 
 class Article_Curate_Query(models.Model):
-    # is_selected = models.BooleanField(default=False)
-    # is_mistake = models.BooleanField(default=False)
     rank = models.IntegerField(null=True, blank=True)
     article = models.ForeignKey(Article)
     curate_query = models.ForeignKey(Curate_Query)

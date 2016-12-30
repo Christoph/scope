@@ -27,15 +27,16 @@ def create_profile(name, email, selection_dict, imap_dict={}):
 
     imap.save()
     # Create User
-    user, created = User.get_or_create(username=proc_name, pwd=pwd)
-
-    # Create UserProfile
-    userprofile, created = UserProfile.get_or_create(user=user, customer=customer, defaults={
-                                                     "activation_key": "activation_key", "expires": datetime.date.today() + datetime.timedelta(days=365)})
+    user, created = User.objects.get_or_create(username=proc_name, password=pwd)
 
     # Create Customer
     customer, created = Customer.objects.get_or_create(
         name=name, customer_key=proc_name, email=email)
+
+    # Create UserProfile
+    userprofile, created = UserProfile.objects.get_or_create(user=user, customer=customer, defaults={
+                                                     "activation_key": "activation_key", "expires": datetime.date.today() + datetime.timedelta(days=365)})
+
 
     # Create Curate_Customer
     curate_customer, created = Curate_Customer.objects.get_or_create(
