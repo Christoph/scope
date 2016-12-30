@@ -22,7 +22,7 @@ class UserProfile(models.Model):
     expires = models.DateTimeField()
     customer = models.ForeignKey(Customer, default=None, null=True)
     def __unicode__(self):              # __unicode__ on Python 2
-        return self.user.name
+        return self.user.username
 
 
 class Agent(models.Model):
