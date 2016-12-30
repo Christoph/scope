@@ -27,7 +27,7 @@ def create_profile(name, email, imap_dict={}, selection_dict={}):
 
     imap.save()
     # Create User
-    user, created = User.objects.get_or_create(username=name, pwd=pwd)
+    user, created = User.objects.get_or_create(username=name, password=pwd)
 
     # Create UserProfile
     userprofile, created = UserProfile.objects.get_or_create(user=user, customer=customer, defaults={
