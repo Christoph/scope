@@ -34,6 +34,9 @@ class Agent(models.Model):
     agent_id = models.PositiveIntegerField()
     agent_object = GenericForeignKey("agent_type", "agent_id")
 
+    def __unicode__(self):              # __unicode__ on Python 2
+        return str(self.agent_id) + ', ' + str(self.agent_type)
+
 
 class Source(models.Model):
     name = models.CharField(max_length = 200, )

@@ -1,4 +1,5 @@
 from sklearn.cluster import AffinityPropagation, DBSCAN
+from sklearn.cluster import KMeans
 
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.cluster.hierarchy import cophenet
@@ -47,7 +48,7 @@ def sim_based_threshold(sim, threshold):
     # Add group for all non grouped elements
     labels[labels == 0] = np.max(labels)+1
 
-    return labels
+    return labels.astype(int)
 
 def sim_based_test(sim, params, test):
     '''
@@ -55,15 +56,13 @@ def sim_based_test(sim, params, test):
     '''
 
     best_score = 0
+    out_labels = []
 
     for s in np.arange(params[0][0], params[0][1], params[0][2]):
         # Get labels with threshold
         labels = sim_based_threshold(sim, s)
 
         score_new = test(labels, params[1])
-
-        print "score"
-        print score_new
 
         if score_new > best_score:
             best_score = score_new
@@ -88,6 +87,24 @@ def affinity_propagation(sim):
 
 
 # Centroid-based clustering
+# K-means makes the assumptions that all clusters are convex
+
+def k_means(vecs, n_clusters):
+    '''
+        Centroid-based clustering.
+
+        Params:
+        vecs: Document vectors
+        n_clusters: Number of clusters
+
+        returns: labels, center_indices
+    '''
+    
+    km = KMeans(n_clusters=n_clusters)
+
+    km.fit(vecs)
+
+    return km.labels_, km.cluster_centers_
 
 def db_scan(sim, threshold, metric, algorithm):
     '''
@@ -102,7 +119,7 @@ def db_scan(sim, threshold, metric, algorithm):
 
         returns: labels
     '''
-    db = DBSCAN(sim, threshold=threshold, algorithm=algorithm, metric=metric)
+    db = DBSCAN(eps=threshold, algorithm=algorithm, metric=metric)
 
     db.fit_predict(sim)
 
