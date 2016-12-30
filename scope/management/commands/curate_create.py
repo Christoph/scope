@@ -39,7 +39,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if  options['customer_key'][0] == 'all':
-            curate_customers = Curate_Customer.objects.filter(expires__lt = date.today())
+            curate_customers = Curate_Customer.objects.filter(expires__gt = date.today())
             customers = [i.customer for i in curate_customers]
         else:
             customers = [Customer.objects.get(customer_key=options['customer_key'][0])]
