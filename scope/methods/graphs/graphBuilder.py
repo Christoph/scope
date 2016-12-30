@@ -67,8 +67,6 @@ class Graph(object):
             self.addEdges_global_thresh(s, sim)
             structure = self.central_articles(size_bound)
             score_new = test(structure, t[1])
-            print structure
-            print best_thresh, score_new
             if score_new > best_score:
                 best_score = score_new
                 best_thresh = s

@@ -19,8 +19,10 @@ class UserProfile(models.Model):
     # TODO: Model should be removed
     user = models.ForeignKey(User, default=None, null=True)
     activation_key = models.CharField(max_length=40)
-    key_expires = models.DateTimeField()
+    expires = models.DateTimeField()
     customer = models.ForeignKey(Customer, default=None, null=True)
+    def __unicode__(self):              # __unicode__ on Python 2
+        return self.user.name
 
 
 class Agent(models.Model):

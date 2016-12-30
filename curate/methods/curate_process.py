@@ -44,7 +44,8 @@ class Curate(object):
         return db_articles, words
 
     def _retrieve_from_db(self):
-        self.query = Curate_Query.objects.filter(curate_customer=self.curate_customer).order_by("pk").reverse()[0]
+        self.query = Curate_Query.objects.filter(
+            curate_customer=self.curate_customer).order_by("pk").reverse()[0]
         article_query_instances = Article_Curate_Query.objects.filter(
             curate_query=self.query)
         db_articles = [i.article for i in article_query_instances]
@@ -54,8 +55,8 @@ class Curate(object):
     def _semantic_analysis(self, db_articles):
         if self.semantic_model == "lsi":
             lsi_language_dict = {
-                'ger':'german',
-                'eng':'english',
+                'ger': 'german',
+                'eng': 'english',
             }
             pre = preprocess.PreProcessing(lsi_language_dict[self.language])
             lsi_model = lsi.Model()
@@ -67,8 +68,8 @@ class Curate(object):
             sim = lsi_model.similarity()
         if self.semantic_model == "wv":
             wv_language_dict = {
-                'ger':'de',
-                'eng':'en',
+                'ger': 'de',
+                'eng': 'en',
             }
             wv_model = word_vector.Model(wv_language_dict[self.language])
 
@@ -87,7 +88,7 @@ class Curate(object):
         if self.selection_method == "by_test":
             steps = [self.config.getfloat(self.semantic_model, 'lower_step'),
                      self.config.getfloat(self.semantic_model, 'upper_step'),
-                     self.config.getfloat(self.semantic_model, 'step_size') ]
+                     self.config.getfloat(self.semantic_model, 'step_size')]
             current_test = self.config.get('by_test', 'test')
             test = tests.Curate_Test(current_test).test
             test_params = []
@@ -116,18 +117,12 @@ class Curate(object):
 
     def from_db(self):
         db_articles, words = self._retrieve_from_db()
-        for i in db_articles:
-            print i.title, i.body
-        if len(db_articles) == 0:
-            print "empty"
         selected_articles = self._process(db_articles, words)
 
         return selected_articles
 
     def from_sources(self):
         db_articles, words = self._retrieve_from_sources()
-        for i in db_articles:
-            print i.title, i.body
         selected_articles = self._process(db_articles, words)
 
         return selected_articles
