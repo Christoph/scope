@@ -11,7 +11,7 @@
 .btn-option {
     color: black;
     border: 1px black solid;
-    margin-top: 10px;
+    margin: 10px;
 }
 
 .btn-option:hover {
@@ -95,7 +95,7 @@
                         <p><img class="image" src="{{suggestion.article.images}}" alt=""></p>
                         <h2><a href="{{suggestion.article.url}}">{{suggestion.article.title}}</a> </h2>
 
-                        <p> {{suggestion.article.body|slice:"0:200"}} </p>
+                        <p> {{suggestion.article.body|truncatewords:50}} </p>
 
                     </div>
 
@@ -113,7 +113,7 @@
                           id="{{option.name}}-{{ forloop.parentloop.counter }}"
                           style="margin-top: 6px; margin-left:10px; opacity: 1;" 
                           >
-                         {{option.name|title}}
+                         {{option.human_readable_name|title}}
                         </label>
 
                           

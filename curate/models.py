@@ -27,6 +27,9 @@ class Curate_Customer_Selection(models.Model):
     def __unicode__(self):              # __unicode__ on Python 2
         return self.name + ', ' + self.curate_customer.customer.name
 
+    def human_readable_name(self):
+        return self.name.replace('_', ' ')
+
 class Curate_Query(models.Model):
     curate_customer = models.ForeignKey(Curate_Customer)
     time_stamp = models.DateField(auto_now_add=True)
