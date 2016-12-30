@@ -7,9 +7,8 @@ from . import imap_handler, er_handler
 class Provider(object):
     """docstring for crawler."""
 
-    def collect_from_agents(self, curate_customer, curate_query):
+    def collect_from_agents(self, curate_customer, curate_query, language):
         db_articles = []
-        agents = []
 
         # Get all sources connected to the curate_customer
         connector = Agent.objects.filter(
@@ -19,10 +18,10 @@ class Provider(object):
             print "============= New Agent ==============="
             if isinstance(con.agent_object, AgentImap):
                 print "imap"
-                imap = imap_handler.ImapHandler(con.agent_object)
+                imap = imap_handler.ImapHandler(con.agent_object, language)
 
                 db_articles.extend(self._save_articles(
-                    imap.get_data(), curate_query, con))
+                    imap.get_data_new(), curate_query, con))
             if isinstance(con.agent_object, AgentEventRegistry):
                 print "er"
                 er = er_handler.EventRegistry(con.agent_object)
