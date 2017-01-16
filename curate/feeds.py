@@ -3,10 +3,23 @@ from django.urls import reverse
 
 #from .models import Select
 
-from datetime import date
+from datetime import date, datetime
+import string
 
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
 from scope.models import Customer, UserProfile
+
+def truncate_words_and_prod_sentence(s, thresh):
+    split = s.split(' ')
+    l = 0
+    i = 0
+    while l < thresh  and i<len(split):
+        l = len([len(split[k]) for k in range(0,i)]) + i
+        i += 1
+
+    final = string.join([split[k] for k in range(0,i)], " ")
+    final = string.join(final.split('.')[:-1], ".") + '.'
+    return final
 
 
 class Feed(Feed):
@@ -18,7 +31,7 @@ class Feed(Feed):
         return [Customer.objects.get(customer_key=customer_key), selected_option]
 
     def title(self, obj):
-        return "Selected articles by" + obj[0].name
+        return "Selected articles by " + obj[0].name
 
     def link(self, obj):
         return "/" + obj[0].customer_key + "/"
@@ -48,8 +61,20 @@ class Feed(Feed):
         return item.title
 
     def item_description(self, item):
-        return item.body[0:200]
+        return truncate_words_and_prod_sentence(item.body, 200)
 
     # item_link is only needed if NewsItem has no get_absolute_url method.
     def item_link(self, item):
         return item.url
+
+    def item_pubdate(self, item):
+        # return datetime.strftime(item.pubdate.replace(tzinfo=None),'%a %x %H:%M')
+        return item.pubdate
+
+    def item_enclosure_url(self, item):
+        return item.images
+
+    item_enclosure_mime_type = "jpeg"
+
+    def item_author_name(self, item):
+        return item.source.name

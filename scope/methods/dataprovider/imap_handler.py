@@ -113,7 +113,8 @@ class ImapHandler(object):
                 out.append({
                     "body": article.text, "title": article.title,
                     "url": article.url, "images": article.top_image,
-                    "source": urlparse(article.url).netloc})
+                    "source": urlparse(article.url).netloc,
+                    "pubdate": article.publish_date})
 
         return out
 
@@ -194,7 +195,8 @@ class ImapHandler(object):
                 out.append({
                     "body": article.text, "title": article.title,
                     "url": article.url, "images": article.top_image,
-                    "source": urlparse(article.url).netloc})
+                    "source": urlparse(article.url).netloc, 
+                    "pubdate": article.publish_date})
 
         return out
 
@@ -319,6 +321,7 @@ class ImapHandler(object):
                 out.append({
                     "body": article.text, "title": article.title,
                     "url": article.url, "images": article.top_image,
-                    "source": urlparse(article.url).netloc})
+                    "source": urlparse(article.url).netloc, 
+                    "pubdate": article.publish_date})
 
         return out
