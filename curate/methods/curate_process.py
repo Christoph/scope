@@ -82,7 +82,7 @@ class Curate(object):
 
         sim = self._semantic_analysis(db_articles)
 
-        sel = selector.Selection(len(db_articles), sim)
+        sel = selector.Selection(db_articles, sim)
         size_bound = [self.config.getint('general', 'lower_bound'),
                       self.config.getint('general', 'upper_bound')]
         if self.selection_method == "by_test":
