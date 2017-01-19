@@ -7,6 +7,7 @@ import scope.methods.semantics.lsi as lsi
 import scope.methods.graphs.selector as selector
 import scope.methods.dataprovider.provider as provider
 import curate.methods.tests as tests
+from scope.methods.learning import binary_classifier
 
 from scope.models import Customer
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
@@ -32,6 +33,11 @@ class Curate(object):
             customer=self.customer)
         self.language = self.config.get(
             'general', 'language')
+
+    def _classifier(self, db_articles):
+        classifier = binary_classifier.nh_classifier(word_vector.pipeline)
+
+        return classifier.classify(db_articles)
 
     def _retrieve_from_sources(self):
         self.query = Curate_Query.objects.create(
@@ -80,9 +86,11 @@ class Curate(object):
 
     def _process(self, db_articles, words):
 
-        sim = self._semantic_analysis(db_articles)
+        filtered_articles = self._classifier(db_articles)
 
-        sel = selector.Selection(db_articles, sim)
+        sim = self._semantic_analysis(filtered_articles)
+
+        sel = selector.Selection(filtered_articles, sim)
         size_bound = [self.config.getint('general', 'lower_bound'),
                       self.config.getint('general', 'upper_bound')]
         if self.selection_method == "by_test":
@@ -99,7 +107,7 @@ class Curate(object):
         if self.selection_method == "global_thresh":
             threshold = self.config.getfloat('global_thresh', 'threshold')
             selection = sel.global_thresh(self.test, threshold, size_bound)
-        selected_articles = [db_articles[i[0]]
+        selected_articles = [filtered_articles[i[0]]
                              for i in selection['articles']]
 
         self.query.processed_words = words

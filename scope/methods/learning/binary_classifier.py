@@ -24,7 +24,7 @@ class nh_classifier(object):
             metrics=['accuracy'])
 
         # Load weights
-        self.model.load_weights("weights.h5")
+        self.model.load_weights("curatte/customers/nh_weights.h5")
 
     def classify(self, db_articles):
         classified_articles = []
