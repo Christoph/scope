@@ -2,6 +2,7 @@ import django
 django.setup()
 
 import numpy as np
+import pandas as pd
 import json
 import spacy
 from django.core import serializers
@@ -26,3 +27,5 @@ classifier = binary_classifier.nh_classifier(pipeline)
 
 # Classify articles
 classified_aricles = classifier.classify(db_articles)
+
+# Test performance

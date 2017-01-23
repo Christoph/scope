@@ -38,12 +38,14 @@ class Curate(object):
             'ger': 'de',
             'eng': 'en',
         }
+
         self.wv_model = word_vector.Model(wv_language_dict[self.language])
 
-    def _classifier(self, db_articles):
-        classifier = binary_classifier.nh_classifier(self.wv_model.pipeline)
+        self.classifier = binary_classifier.nh_classifier(
+            self.wv_model.pipeline, customer_key)
 
-        return classifier.classify(db_articles)
+    def _classifier(self, db_articles):
+        return self.classifier.classify(db_articles)
 
     def _retrieve_from_sources(self):
         self.query = Curate_Query.objects.create(
@@ -79,11 +81,6 @@ class Curate(object):
 
             sim = lsi_model.similarity()
         if self.semantic_model == "wv":
-            # wv_language_dict = {
-            #     'ger': 'de',
-            #     'eng': 'en',
-            # }
-            # wv_model = word_vector.Model(wv_language_dict[self.language])
 
             self.wv_model.load_data(db_articles)
             sim = self.wv_model.similarity_matrix()
@@ -92,7 +89,10 @@ class Curate(object):
 
     def _process(self, db_articles, words):
 
-        filtered_articles = self._classifier(db_articles)
+        if(self.config.getint('classifier', 'is_tech')):
+            filtered_articles = self._classifier(db_articles)
+        else:
+            filtered_articles = db_articles
 
         sim = self._semantic_analysis(filtered_articles)
 
