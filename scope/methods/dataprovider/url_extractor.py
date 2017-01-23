@@ -46,6 +46,7 @@ class Extractor(object):
             (r'http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[:/?#\[\]@+\-\._~=]|[!$&\'()*+,;=]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'),
             content)))
 
+        print "Url check filter"
         # Get real article urls
         for url in urls:
             try:
@@ -66,5 +67,7 @@ class Extractor(object):
                     check_url.hostname not in
                     constants.URL_HOSTNAME_BLACKLIST):  # len(check_url.path) > 1 and
                 urls_list.append(finalurl)
+            else:
+                print check_url
 
         return urls_list

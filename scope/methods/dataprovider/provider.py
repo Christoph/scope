@@ -28,7 +28,7 @@ class Provider(object):
                 er = er_handler.EventRegistry(con.agent_object)
 
                 db_articles.extend(self._save_articles(
-                    er.get_data(), curate_query, con))
+                    er.get_data_new(), curate_query, con))
 
         return db_articles
 
@@ -39,7 +39,7 @@ class Provider(object):
         for a in articles:
             # Check if source already exists
             source, created = Source.objects.get_or_create(
-                url=a['source'], 
+                url=a['source'],
                 defaults={"name": tldextract.extract(a['source']).domain.title()})
 
             art, created = Article.objects.get_or_create(

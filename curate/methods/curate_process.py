@@ -89,10 +89,15 @@ class Curate(object):
 
     def _process(self, db_articles, words):
 
+        print "db_articles"
+        print len(db_articles)
         if(self.config.getint('classifier', 'is_tech')):
             filtered_articles = self._classifier(db_articles)
         else:
             filtered_articles = db_articles
+
+        print "filtered_articles"
+        print len(filtered_articles)
 
         sim = self._semantic_analysis(filtered_articles)
 
