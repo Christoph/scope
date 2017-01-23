@@ -6,8 +6,8 @@ import numpy as np
 from keras.models import load_model
 
 
-class nh_classifier(object):
-    """The tech classifier for NH."""
+class binary_classifier(object):
+    """Creates a binary classifier by loading the model and weights."""
     def __init__(self, pipeline, customer_key):
         # Spacy pipeline
         self.pipeline = pipeline

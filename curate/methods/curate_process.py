@@ -41,7 +41,7 @@ class Curate(object):
 
         self.wv_model = word_vector.Model(wv_language_dict[self.language])
 
-        self.classifier = binary_classifier.nh_classifier(
+        self.classifier = binary_classifier.binary_classifier(
             self.wv_model.pipeline, customer_key)
 
     def _classifier(self, db_articles):

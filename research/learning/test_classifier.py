@@ -23,7 +23,7 @@ for obj in serializers.deserialize("json", data):
 db_articles = np.array(db_articles)
 
 # Load classifier
-classifier = binary_classifier.nh_classifier(pipeline)
+classifier = binary_classifier.binary_classifier(pipeline, "neuland_herzer")
 
 # Classify articles
 classified_aricles = classifier.classify(db_articles)
