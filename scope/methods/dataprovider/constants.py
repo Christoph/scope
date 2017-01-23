@@ -34,4 +34,5 @@ URL_HOSTNAME_BLACKLIST = ["www.facebook.com",
                           "ev.inside.com",
                           "itunes.apple.com",
                           "www.youtube.com",
-                          "www.wikipedia.org"]
+                          "www.wikipedia.org",
+                          "betalist.com"]

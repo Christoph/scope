@@ -1,3 +1,7 @@
+'''
+Url extraction class
+'''
+
 import re
 from urlparse import urlparse
 import urllib2
@@ -17,15 +21,15 @@ class Extractor(object):
 
         headers = [
             ('User-Agent',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'),
+             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'),
             ('Accept',
-                'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'),
+             'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'),
             ('Connection', 'keep-alive'),
             ('Accept-Language', 'en-US,en;q=0.8,de;q=0.6'),
             ('Accept-Encoding', 'gzip, deflate, sdch'),
             ('Upgrade-Insecure-Requests', '1'),
             ('Cache-Control', 'max-age=0')
-            ]
+        ]
 
         self.url_opener.addheaders = headers
 
