@@ -4,21 +4,23 @@ Binary classifier class.
 
 import numpy as np
 from keras.models import load_model
+import pandas as pd
 
 
 class binary_classifier(object):
     """Creates a binary classifier by loading the model and weights."""
+
     def __init__(self, pipeline, customer_key):
         # Spacy pipeline
         self.pipeline = pipeline
 
         # Load model
         self.model = load_model(
-            "curate/customers/"+customer_key+"_model.h5")
+            "curate/customers/" + customer_key + "_model.h5")
 
         # Load weights
         self.model.load_weights(
-            "curate/customers/"+customer_key+"_weights.h5")
+            "curate/customers/" + customer_key + "_weights.h5")
 
     def classify(self, db_articles):
         '''
@@ -26,6 +28,7 @@ class binary_classifier(object):
         '''
 
         classified_articles = []
+        not_articles = []
 
         # Classify articles
         for article in db_articles:
@@ -38,15 +41,18 @@ class binary_classifier(object):
 
             if cl == 1:
                 classified_articles.append(article)
+            else:
+                not_articles.append(article)
 
         return classified_articles
 
-    def classify_labels(self, db_articles):
+    def classify_labels(self, db_articles, save_text):
         '''
         Classify articles and output a labels vector.
+        save_text saves the classification as clustering.csv
         '''
 
-        labels = np.zeros(len(db_articles))
+        # labels = np.zeros(len(db_articles))
 
         docs = [self.pipeline(item.body) for item in db_articles]
 
@@ -54,4 +60,19 @@ class binary_classifier(object):
 
         labels = self.model.predict_classes(np.array(vecs))
 
-        return labels
+        if save_text:
+            titles = [item.title.replace("\"", "") for item in db_articles]
+            texts = [item.body.replace("\"", "").replace("\n", "") for item in db_articles]
+
+            df = pd.DataFrame(
+                np.transpose(
+                    [labels.tolist(),
+                     titles,
+                     texts]),
+                columns=["label", "title", "text"])
+
+            df.to_csv("clustering.csv", index=False)
+
+            return df
+        else:
+            return labels

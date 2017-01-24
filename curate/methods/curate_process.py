@@ -91,8 +91,12 @@ class Curate(object):
 
         print "db_articles"
         print len(db_articles)
-        if(self.config.getint('classifier', 'is_tech')):
+
+        if self.config.getint('classifier', 'is_tech'):
             filtered_articles = self._classifier(db_articles)
+
+            # Debug line - creates clustering csv
+            # self.classifier.classify_labels(db_articles, True)
         else:
             filtered_articles = db_articles
 

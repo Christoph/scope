@@ -65,7 +65,7 @@ class Extractor(object):
 
             if (check_url.path not in constants.URL_PATH_BLACKLIST and
                     check_url.hostname not in
-                    constants.URL_HOSTNAME_BLACKLIST):  # len(check_url.path) > 1 and
+                    constants.URL_HOSTNAME_BLACKLIST):
                 urls_list.append(finalurl)
             else:
                 print check_url

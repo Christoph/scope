@@ -12,4 +12,6 @@ raw = [[0, t.title, t.body.replace("\n", "")] for t in articles]
 
 out = pd.DataFrame(raw, columns=["is_tech", "title", "text"])
 
+out[['title', 'text']] = out[['title', 'text']].apply(pd.to_string)
+
 out.to_csv("train.csv", index=False, encoding="utf-8")
