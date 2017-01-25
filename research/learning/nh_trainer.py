@@ -39,7 +39,7 @@ model = Sequential()
 model.add(Dense(300, init='uniform', activation='relu', input_dim=300))
 model.add(Dense(1, init='uniform', activation='sigmoid'))
 model.compile(
-    sloss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Split data beforehand
 X_train, X_test, y_train, y_test = train_test_split(
@@ -66,10 +66,10 @@ print "Test %s: %.2f%%" % (model.metrics_names[1], scores[1] * 100)
 # print result.T
 
 
-def save_model():
+def save_model(computed_model):
     '''
     Save model
     '''
 
-    model.save("curate/customers/neuland_herzer_model.h5")
-    model.save_weights("curate/customers/neuland_herzer_weights.h5")
+    computed_model.save("curate/customers/neuland_herzer_model.h5")
+    computed_model.save_weights("curate/customers/neuland_herzer_weights.h5")
