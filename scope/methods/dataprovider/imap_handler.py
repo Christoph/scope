@@ -21,103 +21,107 @@ class ImapHandler(object):
         self.mail_interval = agent.interval
         self.language = language
 
-    def get_data(self):
-        out = []
-
-        # Connect to Mailbox
-        mailbox = imaplib.IMAP4_SSL(self.mail_link)
-        mailbox.login(self.mail_user, self.mail_pwd)
-        mailbox.select(self.mail_box)
-
-        # Get all mails from the last interval hours
-        yesterday = date.today() - timedelta(hours=self.mail_interval)
-
-        # you could filter using the IMAP rules here (check
-        # http://www.example-code.com/csharp/imap-search-critera.asp)
-        resp, items = mailbox.search(None, '(SINCE "' + yesterday.strftime("%d-%b-%Y") + '")')
-        items = items[0].split()  # getting the mails ids
-
-        all_urls = []
-        all_urls2 = []
-
-        # Get the whole mail content
-        for emailid in items:
-            # fetching the mail, "`(RFC822)`" means "get the whole stuff",
-            # but you can ask for headers only, etc
-            resp, data = mailbox.fetch(emailid, "(RFC822)")
-
-            email_body = data[0][1]  # getting the mail content
-
-            # Convert to mail object
-
-            mail = email.message_from_string(email_body)
-            mail2 = email.message_from_string(quopri.decodestring(email_body))
-
-            # Get mail payload
-            if mail.is_multipart():
-                print "multipart"
-                content = mail.get_payload()[0].get_payload()
-                content2 = mail2.get_payload()[0].get_payload()
-            else:
-                print "single part"
-                content = mail.get_payload()
-                content2 = mail2.get_payload()[0].get_payload()
-
-            urls = self.url_extractor.get_urls_from_string(content)
-            urls2 = self.url_extractor.get_urls_from_string(content2)
-
-            all_urls.extend(urls)
-            all_urls2.extend(urls2)
-
-        # Remove duplicates over different newsletters
-        all_urls = list(set(all_urls))
-        all_urls2 = list(set(all_urls2))
-        articles = []
-        newspaper_lang_dict = {
-            'ger': 'de',
-            'eng': 'en',
-        }
-
-        for i in range(0, len(all_urls)):
-            try:
-                if self.language == "mix":
-                    articles.append(Article(all_urls[i]))
-                else:
-                    articles.append(Article(all_urls[i], language=newspaper_lang_dict[self.language]))
-            except:
-                try:
-                    if self.language == "mix":
-                        articles.append(Article(all_urls2[i]))
-                    else:
-                        articles.append(Article(all_urls2[i], language=newspaper_lang_dict[self.language]))
-                except Exception as ex:
-                    print ex
-                    print "Error while  converting " + all_urls[i]
-                    continue
-                continue
-
-        # Download all articles
-        for a in articles:
-            try:
-                a.download()
-                a.parse()
-            except:
-                print "Error while downloading: " + a.url
-                continue
-
-        print "Articles downloaded and parsed"
-
-        for article in articles:
-            print article.title
-            if article.title not in constants.EXCLUDE and \
-               constants.UNSUBSCRIBE_EXCLUDE not in article.text:
-                out.append({
-                    "body": article.text, "title": article.title,
-                    "url": article.url, "images": article.top_image,
-                    "source": urlparse(article.url).netloc,
-                    "pubdate": article.publish_date})
-
-        return out
+    # def get_data(self):
+    #     out = []
+    #
+    #     # Connect to Mailbox
+    #     mailbox = imaplib.IMAP4_SSL(self.mail_link)
+    #     mailbox.login(self.mail_user, self.mail_pwd)
+    #     mailbox.select(self.mail_box)
+    #
+    #     # Get all mails from the last interval hours
+    #     yesterday = date.today() - timedelta(hours=self.mail_interval)
+    #
+    #     # you could filter using the IMAP rules here (check
+    #     # http://www.example-code.com/csharp/imap-search-critera.asp)
+    #     resp, items = mailbox.search(None, '(SINCE "' + yesterday.strftime("%d-%b-%Y") + '")')
+    #     items = items[0].split()  # getting the mails ids
+    #
+    #     all_urls = []
+    #     all_urls2 = []
+    #
+    #     # Get the whole mail content
+    #     for emailid in items:
+    #         # fetching the mail, "`(RFC822)`" means "get the whole stuff",
+    #         # but you can ask for headers only, etc
+    #         resp, data = mailbox.fetch(emailid, "(RFC822)")
+    #
+    #         email_body = data[0][1]  # getting the mail content
+    #
+    #         # Convert to mail object
+    #
+    #         mail = email.message_from_string(email_body)
+    #         mail2 = email.message_from_string(quopri.decodestring(email_body))
+    #
+    #         # Get mail payload
+    #         if mail.is_multipart():
+    #             print "multipart"
+    #             content = mail.get_payload()[0].get_payload()
+    #             content2 = mail2.get_payload()[0].get_payload()
+    #         else:
+    #             print "single part"
+    #             content = mail.get_payload()
+    #             content2 = mail2.get_payload()[0].get_payload()
+    #
+    #         urls = self.url_extractor.get_urls_from_string(content)
+    #         urls2 = self.url_extractor.get_urls_from_string(content2)
+    #
+    #         all_urls.extend(urls)
+    #         all_urls2.extend(urls2)
+    #
+    #     # Remove duplicates over different newsletters
+    #     all_urls = list(set(all_urls))
+    #     all_urls2 = list(set(all_urls2))
+    #     articles = []
+    #     newspaper_lang_dict = {
+    #         'ger': 'de',
+    #         'eng': 'en',
+    #     }
+    #
+    #     for i in range(0, len(all_urls)):
+    #         try:
+    #             if self.language == "mix":
+    #                 articles.append(Article(all_urls[i]))
+    #             else:
+    #                 articles.append(Article(all_urls[i], language=newspaper_lang_dict[self.language]))
+    #         except:
+    #             try:
+    #                 if self.language == "mix":
+    #                     articles.append(Article(all_urls2[i]))
+    #                 else:
+    #                     articles.append(Article(all_urls2[i], language=newspaper_lang_dict[self.language]))
+    #             except Exception as ex:
+    #                 print ex
+    #                 print "Error while  converting " + all_urls[i]
+    #                 continue
+    #             continue
+    #
+    #     # Download all articles
+    #     for a in articles:
+    #         try:
+    #             a.download()
+    #             a.parse()
+    #         except:
+    #             print "Error while downloading: " + a.url
+    #             continue
+    #
+    #     print "Articles downloaded and parsed"
+    #
+    #     print "Article filter"
+    #     for article in articles:
+    #         if article.title not in constants.EXCLUDE and \
+    #            constants.TITLE_BLACKLIST not in article.title and \
+    #            constants.UNSUBSCRIBE_EXCLUDE not in article.text:
+    #             out.append({
+    #                 "body": article.text, "title": article.title,
+    #                 "url": article.url, "images": article.top_image,
+    #                 "source": urlparse(article.url).netloc,
+    #                 "pubdate": article.publish_date})
+    #         else:
+    #             print article.title
+    #             print article.url
+    #
+    #     return out
 
     def get_data_new(self):
         out = []
@@ -189,15 +193,17 @@ class ImapHandler(object):
 
         print "Articles downloaded and parsed"
 
+        print "Article filter"
         for article in articles:
-            print article.title
-            if article.title not in constants.EXCLUDE and \
-               constants.UNSUBSCRIBE_EXCLUDE not in article.text:
-                out.append({
-                    "body": article.text, "title": article.title,
-                    "url": article.url, "images": article.top_image,
-                    "source": urlparse(article.url).netloc, 
-                    "pubdate": article.publish_date})
+            if  article.title not in constants.EXCLUDE and not self._blacklist_comparison(constants.TITLE_BLACKLIST, article.title) and not self._blacklist_comparison(constants.TEXT_BLACKLIST, article.text) and len(article.text) > 0:
+                    out.append({
+                        "body": article.text, "title": article.title,
+                        "url": article.url, "images": article.top_image,
+                        "source": urlparse(article.url).netloc,
+                        "pubdate": article.publish_date})
+            else:
+                print "Filtered"
+                print article.title
 
         return out
 
@@ -212,6 +218,17 @@ class ImapHandler(object):
             self._get_decoding(contents, mail)
 
         return contents
+
+    def _blacklist_comparison(self, blacklist, text):
+        for item in blacklist:
+            if text.find(item) > 0:
+                print "Blacklisted"
+                print text
+
+                return True
+            else:
+                return False
+
 
     def _get_decoding(self, contents, part):
         # Get content type
@@ -322,7 +339,7 @@ class ImapHandler(object):
                 out.append({
                     "body": article.text, "title": article.title,
                     "url": article.url, "images": article.top_image,
-                    "source": urlparse(article.url).netloc, 
+                    "source": urlparse(article.url).netloc,
                     "pubdate": article.publish_date})
 
         return out

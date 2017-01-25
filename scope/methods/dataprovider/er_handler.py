@@ -1,3 +1,7 @@
+'''
+Handels Event Registry API
+'''
+
 from datetime import datetime, timedelta
 from eventregistry import EventRegistry, QueryArticles, ArticleInfoFlags
 from eventregistry import RequestArticlesInfo, ReturnInfo
@@ -6,28 +10,43 @@ from eventregistry import RequestArticlesInfo, ReturnInfo
 class EventRegistryHandler(object):
     """docstring for ImapHandler."""
     def __init__(self, agent):
+        self.user = agent.user.encode("utf-8")
+        self.pwd = agent.pwd.encode("utf-8")
         self.lang = agent.lang.encode("utf-8")
         self.concepts = agent.concepts.encode("utf-8").split(",")
-        self.locations = agent.locations.encode("utf-8").split(",")
 
-    def get_data(self):
+        if len(agent.locations.encode("utf-8")) > 0:
+            self.locations = agent.locations.encode("utf-8").split(",")
+        else:
+            self.locations = []
+
+    def get_data(self, timespan, number):
+        '''
+        Get data with the agent configuration.
+
+        timespan[int]: How many days into the past
+        number[int]: Number of articles to retrieve. Defaults to all
+        '''
 
         out = []
+        pages = 0
 
         er = EventRegistry()
-        er.login("christoph.kralj@gmail.com", "XzbiyLnpeh8MBtC{$4hv")
+        er.login(self.user, self.pwd)
 
         # Create query using language
         q = QueryArticles(lang=self.lang)
 
         # Set search params
-        q.setDateLimit(datetime.today() - timedelta(days=1), datetime.today())
+        q.setDateLimit(
+            datetime.today() - timedelta(days=timespan), datetime.today())
 
         if len(self.concepts) > 1:
             for con in self.concepts:
                 q.addConcept(er.getConceptUri(con))
 
         if len(self.locations) > 0:
+            print self.locations
             for loc in self.locations:
                 q.addLocation(er.getLocationUri(loc))
 
@@ -42,9 +61,13 @@ class EventRegistryHandler(object):
         try:
             pages = articles["articles"]["pages"]
         except KeyError:
+            print "Key Error"
             print articles
 
         q.clearRequestedResults()
+
+        print "Rough article count"
+        print 200 * pages
 
         # Get all articles
         for i in xrange(1, pages+1):
@@ -67,5 +90,10 @@ class EventRegistryHandler(object):
                     "url": article["url"], "images": article["image"],
                     "source": article["source"]["uri"],
                     "source_name": article["source"]["title"]})
+
+            if len(out) > number:
+                out = out[0:number]
+
+                return out
 
         return out

@@ -39,7 +39,7 @@ class Provider(object):
         for a in articles:
             # Check if source already exists
             source, created = Source.objects.get_or_create(
-                url=a['source'], 
+                url=a['source'],
                 defaults={"name": tldextract.extract(a['source']).domain.title()})
 
             art, created = Article.objects.get_or_create(
