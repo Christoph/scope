@@ -194,16 +194,14 @@ class ImapHandler(object):
 
         print "Article filter"
         for article in articles:
-            if  article.title not in constants.EXCLUDE and not \
-                self._blacklist_comparison(constants.TITLE_BLACKLIST, article.title) and not \
-                self._blacklist_comparison(constants.UNSUBSCRIBE_EXCLUDE, article.text):
+            if  article.title not in constants.EXCLUDE and not self._blacklist_comparison(constants.TITLE_BLACKLIST, article.title) and not self._blacklist_comparison(constants.TEXT_BLACKLIST, article.text) and len(article.text) > 0:
                     out.append({
                         "body": article.text, "title": article.title,
                         "url": article.url, "images": article.top_image,
                         "source": urlparse(article.url).netloc,
                         "pubdate": article.publish_date})
             else:
-                print "Article Title Filter"
+                print "Filtered"
                 print article.title
 
         return out
