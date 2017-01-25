@@ -64,12 +64,3 @@ print "Test %s: %.2f%%" % (model.metrics_names[1], scores[1] * 100)
 # result = np.vstack((predictions[:, 0], y_test))
 # print "Comparrison"
 # print result.T
-
-
-def save_model(computed_model):
-    '''
-    Save model
-    '''
-
-    computed_model.save("curate/customers/neuland_herzer_model.h5")
-    computed_model.save_weights("curate/customers/neuland_herzer_weights.h5")
