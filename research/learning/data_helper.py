@@ -2,9 +2,27 @@
 Helper function for learning data aquisition.
 '''
 
+import numpy as np
+import pandas as pd
+
 from scope.methods.dataprovider import er_handler
 from scope.models import AgentEventRegistry
 
+def save_articles(name, data):
+    data.to_csv(name+".csv", index=False, encoding="utf-8")
+
+def get_labeld_er_data(keyword, timespan, number):
+    data = get_er_data(keyword, timespan, number)
+
+    labels = np.zeros(len(data), dtype=int) + 1
+    titles = [item["title"] for item in data]
+    bodys = [item["body"] for item in data]
+
+    raw = np.transpose([labels, titles, bodys])
+
+    out = pd.DataFrame(raw, columns=[keyword, "title", "text"])
+
+    return out
 
 def get_er_data(keywords, timespan, number):
     agent = AgentEventRegistry(
