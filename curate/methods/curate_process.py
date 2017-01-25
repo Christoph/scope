@@ -89,19 +89,19 @@ class Curate(object):
 
     def _process(self, db_articles, words):
 
-        print "db_articles"
+        print "Number of articles"
         print len(db_articles)
 
-        if self.config.getint('classifier', 'is_tech'):
+        if self.config.getint('classifier', 'pre_pipeline'):
             filtered_articles = self._classifier(db_articles)
 
+            print "Number of filtered articles"
+            print len(filtered_articles)
+
             # Debug line - creates clustering csv
-            # self.classifier.classify_labels(db_articles, True)
+            self.classifier.classify_labels(db_articles, True)
         else:
             filtered_articles = db_articles
-
-        print "filtered_articles"
-        print len(filtered_articles)
 
         sim = self._semantic_analysis(filtered_articles)
 
