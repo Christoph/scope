@@ -46,6 +46,55 @@ class binary_classifier(object):
 
         return classified_articles
 
+    def classify_by_count(self, db_articles, min_count):
+        '''
+        Classify articles and get at least min_count many
+        '''
+
+        classified_articles = []
+        good = 0.2
+        counter = 0
+
+        while counter < min_count:
+            good = good - 0.05
+
+            counter = self._get_count(db_articles, good)
+
+            print "Classified articles"
+            print good
+            print counter
+
+        # Classify articles
+        for article in db_articles:
+            data = article.body
+            doc = self.pipeline(data)
+
+            # Predict class
+            cl = self.model.predict(
+                doc.vector.reshape(1, 300), verbose=0)
+
+            if cl >= good:
+                classified_articles.append(article)
+
+        return classified_articles
+
+    def _get_count(self, db_articles, threshold):
+        counter = 0
+
+        # Classify articles
+        for article in db_articles:
+            data = article.body
+            doc = self.pipeline(data)
+
+            # Predict class
+            cl = self.model.predict(
+                doc.vector.reshape(1, 300), verbose=0)
+
+            if cl >= threshold:
+                counter = counter + 1
+
+        return counter
+
     def classify_labels(self, db_articles, save_text):
         '''
         Classify articles and output a labels vector.

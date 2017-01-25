@@ -45,7 +45,19 @@ class Curate(object):
             self.wv_model.pipeline, customer_key)
 
     def _classifier(self, db_articles):
-        return self.classifier.classify(db_articles)
+        filtered_articles = []
+
+        # filtered_articles = self.classifier.classify(db_articles)
+        filtered_articles = self.classifier.classify_by_count(
+            db_articles, 80)
+
+        # Debug line - creates clustering csv
+        # self.classifier.classify_labels(db_articles, True)
+
+        print "Number of filtered articles"
+        print len(filtered_articles)
+
+        return filtered_articles
 
     def _retrieve_from_sources(self):
         self.query = Curate_Query.objects.create(
@@ -94,12 +106,6 @@ class Curate(object):
 
         if self.config.getint('classifier', 'pre_pipeline'):
             filtered_articles = self._classifier(db_articles)
-
-            print "Number of filtered articles"
-            print len(filtered_articles)
-
-            # Debug line - creates clustering csv
-            self.classifier.classify_labels(db_articles, True)
         else:
             filtered_articles = db_articles
 
