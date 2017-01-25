@@ -11,7 +11,6 @@ from scope.models import AgentEventRegistry
 def save_articles(name, data):
     data.to_csv(name+".csv", index=False, encoding="utf-8")
 
-
 def save_model(computed_model, name):
     '''
     Save model
