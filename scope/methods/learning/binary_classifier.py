@@ -52,7 +52,7 @@ class binary_classifier(object):
         '''
 
         classified_articles = []
-        good = 0.2
+        good = 1.0
         counter = 0
 
         while counter < min_count:
