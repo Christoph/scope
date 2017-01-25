@@ -28,7 +28,7 @@ class Provider(object):
                 er = er_handler.EventRegistry(con.agent_object)
 
                 db_articles.extend(self._save_articles(
-                    er.get_data_new(), curate_query, con))
+                    er.get_data(), curate_query, con))
 
         return db_articles
 
