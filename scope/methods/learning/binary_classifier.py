@@ -62,11 +62,13 @@ class binary_classifier(object):
 
         if save_text:
             titles = [item.title.replace("\"", "") for item in db_articles]
-            texts = [item.body.replace("\"", "").replace("\n", "") for item in db_articles]
+            texts = [item.body.replace("\"", "").replace("\n", "")
+                     for item in db_articles]
+            labels_out = [item for item in labels]
 
             df = pd.DataFrame(
                 np.transpose(
-                    [labels.tolist(),
+                    [labels_out,
                      titles,
                      texts]),
                 columns=["label", "title", "text"])
