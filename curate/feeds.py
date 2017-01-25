@@ -7,6 +7,8 @@ import string
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
 from scope.models import Customer
 
+from datetime import date, datetime
+
 def truncate_words_and_prod_sentence(s, thresh):
     split = s.split(' ')
     l = 0
@@ -53,8 +55,8 @@ class Feed(Feed):
     link = "/nh/"
     description = "Newsletter created with the help of Scope Technology"
 
-    def get_object(self, request, customer_key, selected_option="sel"):
-        return [Customer.objects.get(customer_key=customer_key), selected_option]
+    def get_object(self, request, customer_key, selected_option="sel", date=None):
+        return [Customer.objects.get(customer_key=customer_key), selected_option, date]
 
     def title(self, obj):
         return "Selected articles by " + obj[0].name
@@ -67,15 +69,20 @@ class Feed(Feed):
         # customer_key == user_profile.customer.customer_key:
         # print customer_key
         # customer = Customer.objects.get(customer_key=customer_key)
-        print obj
+        #print obj
         curate_customer = Curate_Customer.objects.get(customer=obj[0])
-        last_query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").last()
+        if date==None:
+            query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").last()
+        else:
+            date_parsed = datetime.strptime(obj[2],'%d%m%Y').date()
+            print date_parsed
+            query = Curate_Query.objects.filter(curate_customer=curate_customer).filter(time_stamp=date_parsed).order_by("pk").last()
         if obj[1] == "sel":
             select_options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).filter(type="sel").all()
         else:
             select_options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).filter(name=obj[1]).all()
         suggestions = []
-        for i in Article_Curate_Query.objects.filter(curate_query=last_query).all():
+        for i in Article_Curate_Query.objects.filter(curate_query=query).all():
             for option in select_options:
                 if option in i.selection_options.all():
                     suggestions.append(i.article)

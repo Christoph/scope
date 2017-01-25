@@ -1,7 +1,7 @@
 # from __future__ import unicode_literals
 
 from django.db import models
-from scope.models import Article, Customer, Agent
+from scope.models import Article, Customer, Agent, Source
 
 # Create your models here.
 
@@ -9,6 +9,8 @@ class Curate_Customer(models.Model):
     customer = models.ForeignKey(Customer)
     key = models.CharField(max_length=100, blank=True)
     expires = models.DateField(blank=True)
+    bad_source = models.ManyToManyField(Source, blank=True)
+    too_frequent = models.ManyToManyField('Article_Curate_Query', blank=True)
 
     def __unicode__(self):              # __unicode__ on Python 2
         return self.customer.name
@@ -27,6 +29,21 @@ class Curate_Customer_Selection(models.Model):
     def __unicode__(self):              # __unicode__ on Python 2
         return self.name + ', ' + self.curate_customer.customer.name
 
+    def human_readable_name(self):
+        return self.name.replace('_', ' ')
+
+class Curate_Rejection_Reasons(models.Model):
+    selection = models.ForeignKey(Curate_Customer_Selection, related_name='rejection_reason')
+    name = models.CharField(max_length=100)
+    type = models.CharField(max_length=3, choices=(
+        ("sou","bad source"),
+        ("con","bad content"),
+        ("frq","too frequent"),
+        ("oth","other")
+        ), default="con"
+        )
+    def __unicode__(self):              # __unicode__ on Python 2
+        return self.name + ', ' + self.selection.name + ', ' + self.selection.curate_customer.customer.name
     def human_readable_name(self):
         return self.name.replace('_', ' ')
 

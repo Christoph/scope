@@ -1,64 +1,72 @@
 {% extends "homepage/base.html" %} {% load widget_tweaks %} {% load staticfiles %} {% block content %}
-{% load mathfilters %}
-
-<style media="screen">
-
-.well {
+  {% load mathfilters %}
+  <style media="screen">
+  .well {
   border: 1px solid;
-}
+  }
+  .btn-option {
+  color: black;
+  border: 1px black solid;
+  margin: 10px;
+  }
+  .btn-option:hover {
+  color: black;
+  border: 1px black solid;
+  }
 
+  .reasons {
+    opacity: 0.7;
+    width: 150px;
+    position: relative;
+    float: left;
+    border: solid 1.5px;
 
-.btn-option {
-    color: black;
-    border: 1px black solid;
-    margin: 10px;
-}
+    }
 
-.btn-option:hover {
-    color: black;
-    border: 1px black solid;
-}
+  .btn-reasons {
+    width:90px;
+    text-align: center;
+  }
 
-{% for option in options %}
+  .reason-label{
+    width: 90%;
+    margin-left: 5%;
+  }
+  {% for option in options %}
+    .{{option.name}}-border {
+      border-color: {{option.color}};
+    } 
 
     .{{option.name}}-class {
-      background-color: {{option.color}};
+    background-color: {{option.color}};
     }
 
-{% if selection_made is False %}
-    .btn-option.btn-{{option.name}}:hover {
+    {% if selection_made is False %}
+      .btn-option.btn-{{option.name}}:hover {
       background-color: {{option.color}};
-    }
-
+      }
     {% endif %}
-
-        .btn-option.btn-{{option.name}}.active {
-      background-color: {{option.color}};
+    .btn-option.btn-{{option.name}}.active {
+    background-color: {{option.color}};
     }
-
     #numberbox-{{option.name}} {
-      left: {{forloop.counter|mul:3|add:75}}%;
-      border-color: {{option.color}};
+    left: {{forloop.counter|mul:3|add:75}}%;
+    border-color: {{option.color}};
     }
-
-{% endfor %}
-
-.btn-suggest:hover {
-    color: black;
-    border: 1px black solid;
-}
-
-.image {
+  {% endfor %}
+  .btn-suggest:hover {
+  color: black;
+  border: 1px black solid;
+  }
+  .image {
   position: relative;
   width: 100%;
   height:100%;
   max-width: 400px;
   max-height: 200px;
   overflow: hidden;
-}
-
-.numberbox {
-
+  }
+  .numberbox {
   border: 2px solid;
   border-radius: 2px;
   background: #fff;
@@ -69,116 +77,98 @@
   font-size: 30px;
   text-align:center;
   display:none;
-}
-
-</style>
-
-    <h1 align=center>Newsletter - <strong>News Selection</strong></h1>
-    <!-- .entry-header -->
-
-
-
-
-    <div ALIGN=CENTER>
-
-        <div class="forms">
-
-            <!-- Tab panes -->
-            <form action="{% url 'curate:interface' customer_key=customer_key %}" id="searchform" method="post">
-                {% csrf_token %}
-                {% for suggestion in suggestions %}
-
-                <div class="row well">
-
-                    <div class="col-md-8" style="word-wrap: break-word; text-align: left;">
-
-                        <p><img class="image" src="{{suggestion.article.images}}" alt=""></p>
-                        <h2><a href="{{suggestion.article.url}}">{{suggestion.article.title}}</a> </h2>
-
-                        <p> {{suggestion.article.body|truncatewords:50}} </p>
-
-                    </div>
-
-                    <div class="col-md-4" style="text-align: left; margin-top: 4%">
-  
-                      <div class="row">
-                       
-                        <div class="btn-group selector" data-toggle="buttons">
-                        {% for option in options %}
-                        <label class="checkbox-inline btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px" {% if query.selection_made %}disabled="disabled"{% endif %}>
-                          <input
-                          type="checkbox"
-                          name="{{option.name}}{{ forloop.parentloop.counter }}"
-                          class="{{option.name}}-input"
-                          id="{{option.name}}-{{ forloop.parentloop.counter }}"
-                          style="margin-top: 6px; margin-left:10px; opacity: 1;" 
+  }
+  </style>
+  <h1 align=center>Newsletter - <strong>News Selection</strong></h1>
+  <!-- .entry-header -->
+  <div ALIGN=CENTER>
+    <div class="forms">
+      <!-- Tab panes -->
+      <form action="{% url 'curate:interface' customer_key=customer_key %}" id="searchform" method="post">
+        {% csrf_token %}
+        {% for suggestion in suggestions %}
+          <div class="row well">
+            <div class="col-md-8" style="word-wrap: break-word; text-align: left;">
+              <p><img class="image" src="{{suggestion.article.images}}" alt=""></p>
+              <h2><a href="{{suggestion.article.url}}">{{suggestion.article.title}}</a> </h2>
+              <p> {{suggestion.article.body|truncatewords:50}} </p>
+            </div>
+            <div class="col-md-4" style="text-align: left; margin-top: 4%">
+              
+              <div class="row">
+                
+                <div class="btn-group selector" data-toggle="buttons">
+                  {% for option in options %}
+                    <label class="checkbox-inline btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px" {% if query.selection_made %}disabled="disabled"{% endif %}
+                    
+                    data-toggle="collapse" href="#{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse" aria-expanded="false" aria-controls="{option.name}}{{ forloop.parentloop.counter }}rejection_collapse"
+                    
+                    
+                    >
+                    <input
+                    type="checkbox"
+                    name="{{option.name}}{{ forloop.parentloop.counter }}"
+                    class="{{option.name}}-input"
+                    id="{{option.name}}-{{ forloop.parentloop.counter }}"
+                    style="margin-top: 6px; margin-left:10px; opacity: 1;"
+                    >
+                    {{option.human_readable_name|title}}
+                  </label>
+                  {% if option.rejection_reason.all.count > 0 %}
+                    <div class="collapse reasons {{option.name}}-border" id="{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse">
+                  
+                      {% for reason in option.rejection_reason.all %}
+                        <label class="checkbox-inline btn btn-option btn-{{option.name}} reason-label" {% if query.selection_made %}disabled="disabled"{% endif %}>
+                          <input 
+                          type="checkbox" 
+                          name="{{option.name}}{{ forloop.parentloop.counter }}{{reason.name}}" 
+                          class="{{option.name}}_reason"
+                          style="margin-top: 6px; margin-left:10px; opacity: 0;"
                           >
-                         {{option.human_readable_name|title}}
-                        </label>
-
+                          {{reason.human_readable_name|title}}
+                          </label>
                           
                         {% endfor %}
+                  </div>
+                  
+                  {% endif %}
+                  
 
-
-                        </div>
-                        </div>
-                      
-
-                    </div>
-
+                  {% endfor %}
                 </div>
-
-                {% endfor %} 
-
-                {% if query.selection_made %}
-
-                <input class="btn btn-primary" type="button" value="Already selected" {% if query.selection_made %}disabled="disabled"{% endif %}> 
-
-                {% else %}
-
-                <input class="btn btn-primary" type="submit" value="Create Newsletter" > 
-
-                {% endif %}
-
-            </form>
-
+                
+              </div>
             </div>
-
-        {% for option in options %}
-
+            </div>
+          {% endfor %}
+          {% if query.selection_made %}
+            <input class="btn btn-primary" type="button" value="Already selected" {% if query.selection_made %}disabled="disabled"{% endif %}>
+          {% else %}
+            <input class="btn btn-primary" type="submit" value="Create Newsletter" >
+          {% endif %}
+        </form>
+      </div>
+      {% for option in options %}
         <div class="numberbox {{option.name}}-class" id="numberbox-{{option.name}}"></div>
-        {% endfor %}
-
-
+      {% endfor %}
     </div>
-
-{% endblock content %}
-
-{% block scripts %}
-
-<script type='text/javascript'>
-
- {% if query.selection_made is False %}
-
-function eval_checkboxes() {
-  {% for option in options %}
-$('#numberbox-{{option.name}}').html(jQuery(".{{option.name}}-input:checked").length);
-$('#numberbox-{{option.name}}').css("display","block");
-  {% endfor %}
-}
-
-jQuery(document).ready(addClickHandlers());
-
-function addClickHandlers() {
-$(document).on('change', 'input', function(event) {
-  eval_checkboxes()
-  }
-);
-}
-
-{% endif %}
-
-</script>
-
-
-{% endblock scripts %}
+  {% endblock content %}
+  {% block scripts %}
+    <script type='text/javascript'>
+    {% if query.selection_made is False %}
+      function eval_checkboxes() {
+      {% for option in options %}
+        $('#numberbox-{{option.name}}').html(jQuery(".{{option.name}}-input:checked").length);
+        $('#numberbox-{{option.name}}').css("display","block");
+      {% endfor %}
+      }
+      jQuery(document).ready(addClickHandlers());
+      function addClickHandlers() {
+      $(document).on('change', 'input', function(event) {
+      eval_checkboxes()
+      }
+      );
+      }
+    {% endif %}
+    </script>
+  {% endblock scripts %}

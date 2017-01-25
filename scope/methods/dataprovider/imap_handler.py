@@ -1,6 +1,7 @@
 import imaplib
 import email
 import quopri
+import urllib2
 from urlparse import urlparse
 from datetime import date, timedelta
 from newspaper import Article
@@ -275,7 +276,7 @@ class ImapHandler(object):
                 email.utils.parseaddr(mail.get('from'))[0])[0]
             senders_list.append(sender)
             # senders + sender + '<br/>'
-            senders = '<br/>'.join(list(set(senders_list)))
+            # senders = '<br/>'.join(list(set(senders_list)))
             for url in urls:
                 try:
                     req = urllib2.Request(url)
