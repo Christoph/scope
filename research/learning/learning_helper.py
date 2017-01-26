@@ -16,8 +16,8 @@ def save_model(computed_model, name):
     Save model
     '''
 
-    computed_model.save("curate/customers/"+name+"_model.h5")
-    computed_model.save_weights("curate/customers/"+name+"_weights.h5")
+    computed_model.save("curate/customers/"+name+"/"+name+"_model.h5")
+    computed_model.save_weights("curate/customers/"+name+"/"+name+"_weights.h5")
 
 def get_labeld_er_data(keyword, timespan, number):
     data = get_er_data(keyword, timespan, number)
