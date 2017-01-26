@@ -13,6 +13,7 @@ class binary_classifier(object):
     def __init__(self, pipeline, customer_key):
         # Spacy pipeline
         self.pipeline = pipeline
+        self.name = customer_key
 
         # Load model
         self.model = load_model(
@@ -46,6 +47,43 @@ class binary_classifier(object):
 
         return classified_articles
 
+    def update_model(self, train, positive):
+        '''
+        Update the model with new input.
+        '''
+
+        print "update"
+        print train
+        print positive
+
+        X = []
+        y = []
+
+        # Prepare data
+        if len(train) <= len(positive):
+            for i in range(0, len(train)):
+                X.append(self.pipeline(train[i].body).vector)
+                y.append(0)
+                X.append(self.pipeline(positive[i]).vector)
+                y.append(1)
+        elif len(train) > len(positive):
+            for i in range(0, len(train)):
+                X.append(self.pipeline(train[i].body).vector)
+                y.append(0)
+            for i in range(0, len(positive)):
+                X.append(self.pipeline(positive[i]).vector)
+                y.append(1)
+
+        self.model.fit(np.array(X), y, batch_size=1, verbose=0)
+
+        # Save updated model
+        self.model.save(
+            "curate/customers/"+self.name+"/"+self.name+"_model.h5")
+        self.model.save_weights(
+            "curate/customers/"+self.name+"/"+self.name+"_weights.h5")
+
+        print self.name + " model updated."
+
     def classify_by_count(self, db_articles, min_count):
         '''
         Classify articles and get at least min_count many
@@ -55,7 +93,7 @@ class binary_classifier(object):
         good = 1.0
         counter = 0
 
-        while counter < min_count:
+        while counter < min_count and good >= 0:
             good = good - 0.02
 
             counter = self._get_count(db_articles, good)
