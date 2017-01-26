@@ -21,15 +21,12 @@ def interface(request,customer_key, date_stamp=None):
             query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").last()
     else:
         date_parsed = datetime.strptime(date_stamp,'%d%m%Y').date()
-        print date_parsed
         query = Curate_Query.objects.filter(curate_customer=curate_customer).filter(time_stamp=date_parsed).order_by("pk").last()
     suggestions = Article_Curate_Query.objects.filter(curate_query=query).filter(rank__gt = 0).order_by("rank")
     options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer)
     if request.method == 'POST':
-        print request.POST
-        # query.selection_made = True
-        # CHANGE THIS BACK
-        #query.save()
+        query.selection_made = True
+        query.save()
         training_articles = []
         for i in range(1, len(suggestions) + 1):
             for option in options:                    
@@ -56,7 +53,7 @@ def interface(request,customer_key, date_stamp=None):
                         s.save()
                 except:
                     pass
-                    
+
         #here comes the part with training the classifier, based on the training_articles dict
 
     stats = {}
