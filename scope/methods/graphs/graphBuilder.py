@@ -93,13 +93,15 @@ class Graph(object):
         for cluster in cluster_list:
 
             for node in cluster[2]:
-                logger.info(self.graph.node[node]['title'])
-            logger.info('and')
+                logger.debug(self.graph.node[node]['title'])
+            logger.debug('and')
             closeness = nx.closeness_centrality(cluster[2], distance=True)
             closeness_ordered = sorted(closeness.items(),
                                        key=lambda close: close[1], reverse=True)
+
             central_article = closeness_ordered[0][0]
+            
             selection['articles'].append(
                 [central_article, cluster[0], cluster[1]])
-        logger.info("NEWCLUSTER")
+        logger.debug("NEWCLUSTER")
         return selection

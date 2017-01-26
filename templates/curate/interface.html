@@ -101,7 +101,7 @@
                   {% for option in options %}
                     <label class="checkbox-inline btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px" {% if query.selection_made %}disabled="disabled"{% endif %}
                     
-                    data-toggle="collapse" href="#{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse" aria-expanded="false" aria-controls="{option.name}}{{ forloop.parentloop.counter }}rejection_collapse"
+                    data-toggle="collapse" href="#{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse" aria-expanded="false" aria-controls="{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse"
                     
                     
                     >
@@ -118,10 +118,10 @@
                     <div class="collapse reasons {{option.name}}-border" id="{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse">
                   
                       {% for reason in option.rejection_reason.all %}
-                        <label class="checkbox-inline btn btn-option btn-{{option.name}} reason-label" {% if query.selection_made %}disabled="disabled"{% endif %}>
+                        <label class="checkbox-inline btn btn-option btn-{{option.name}} reason-label" style="margin-left: 5%;" {% if query.selection_made %}disabled="disabled"{% endif %}>
                           <input 
                           type="checkbox" 
-                          name="{{option.name}}{{ forloop.parentloop.counter }}{{reason.name}}" 
+                          name="{{option.name}}{{ forloop.parentloop.parentloop.counter }}{{reason.name}}" 
                           class="{{option.name}}_reason"
                           style="margin-top: 6px; margin-left:10px; opacity: 0;"
                           >

@@ -1,3 +1,5 @@
+import logging
+
 class Curate_Test(object):
     """docstring for Curate_Test"""
 

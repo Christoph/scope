@@ -21,7 +21,8 @@ class Curate(object):
 
     def __init__(self, customer_key):
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('curate/customers/' + customer_key + '.cfg')
+        self.config.read('curate/customers/' + customer_key +
+                         "/" + customer_key + '.cfg')
         self.provider = provider.Provider()
         self.semantic_model = self.config.get(
             'general', 'current_semantic_model')
@@ -49,13 +50,16 @@ class Curate(object):
 
         # filtered_articles = self.classifier.classify(db_articles)
         filtered_articles = self.classifier.classify_by_count(
-            db_articles, 80)
+            db_articles, self.config.getint('classifier', 'min_count'))
 
         # Debug line - creates clustering csv
         # self.classifier.classify_labels(db_articles, True)
 
         print "Number of filtered articles"
         print len(filtered_articles)
+        for article in filtered_articles:
+            print article.title
+
 
         return filtered_articles
 
@@ -128,8 +132,10 @@ class Curate(object):
         if self.selection_method == "global_thresh":
             threshold = self.config.getfloat('global_thresh', 'threshold')
             selection = sel.global_thresh(self.test, threshold, size_bound)
+
+        previous_articles = Article_Curate_Query.objects.filter(curate_query__curate_customer=self.curate_customer).filter(rank__gt=0)
         selected_articles = [filtered_articles[i[0]]
-                             for i in selection['articles']]
+                             for i in selection['articles'] if not previous_articles.filter(article__url=filtered_articles[i[0]].url).exists()]
 
         self.query.processed_words = words
         self.query.no_clusters = selection[

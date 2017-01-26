@@ -16,11 +16,11 @@ class binary_classifier(object):
 
         # Load model
         self.model = load_model(
-            "curate/customers/" + customer_key + "_model.h5")
+            "curate/customers/" + customer_key + "/" + customer_key + "_model.h5")
 
         # Load weights
         self.model.load_weights(
-            "curate/customers/" + customer_key + "_weights.h5")
+            "curate/customers/" + customer_key + "/" + customer_key + "_weights.h5")
 
     def classify(self, db_articles):
         '''
@@ -56,7 +56,7 @@ class binary_classifier(object):
         counter = 0
 
         while counter < min_count:
-            good = good - 0.05
+            good = good - 0.02
 
             counter = self._get_count(db_articles, good)
 

@@ -23,9 +23,10 @@ from explore.models import Query, Sources
 from alert.models import Alert, Send
 from scope.models import UserProfile
 
-from time import mktime
+# from time import mktime
 from datetime import timedelta
-from datetime import datetime, date
+from datetime import datetime
+import json
 
 
 
@@ -330,6 +331,24 @@ def send_sample(request):
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+# @csrf_exempt
+def contact_landing(request):
+    if request.method == 'POST':
+        email_address = request.POST.get('email')
+        name = request.POST.get('name')
+        message = request.POST.get('message')
+        email_subject = "Website Contact Form:" + name
+        email_body = 'You have received a new message from your website contact form.\n\n. Here are the details:\n\nName: ' + name + '\n\nEmail: ' + email_address + '\n\nMessage:\n ' + message
+        send_mail(email_subject,
+                          email_body,'robot@scope.ai',
+                         ['hello@scope.ai'])
+        data = 'success'
+        return HttpResponse(data,content_type="application/json")
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )  
 
 def landing(request):
     return render(request,'homepage/landing3.html')

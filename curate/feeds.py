@@ -78,7 +78,7 @@ class Feed(Feed):
             print date_parsed
             query = Curate_Query.objects.filter(curate_customer=curate_customer).filter(time_stamp=date_parsed).order_by("pk").last()
         if obj[1] == "sel":
-            select_options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).filter(type="sel").all()
+            select_options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).filter(kind="sel").all()
         else:
             select_options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).filter(name=obj[1]).all()
         suggestions = []

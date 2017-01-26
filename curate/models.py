@@ -18,7 +18,7 @@ class Curate_Customer(models.Model):
 
 class Curate_Customer_Selection(models.Model):
     curate_customer = models.ForeignKey(Curate_Customer)
-    type = models.CharField(max_length=3, choices=(
+    kind = models.CharField(max_length=3, choices=(
         ("sel","selection"),
         ("mis","mistake"),
         ("oth","other"),
@@ -35,7 +35,7 @@ class Curate_Customer_Selection(models.Model):
 class Curate_Rejection_Reasons(models.Model):
     selection = models.ForeignKey(Curate_Customer_Selection, related_name='rejection_reason')
     name = models.CharField(max_length=100)
-    type = models.CharField(max_length=3, choices=(
+    kind = models.CharField(max_length=3, choices=(
         ("sou","bad source"),
         ("con","bad content"),
         ("frq","too frequent"),

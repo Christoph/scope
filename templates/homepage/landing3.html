@@ -165,7 +165,7 @@
 
 <!-- Team Section -->
 <div id="testimonials" class="text-center">
-<img class="team_image" src="img/best_small.jpg" alt="">
+<img class="team_image" src="{% static 'homepage/img/best_small.jpg' %}" alt="">
 </div>
 
 
@@ -247,6 +247,7 @@
 
       <h3>Leave us a message</h3>
       <form name="sentMessage" id="contactForm" novalidate>
+      {% csrf_token %}
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
@@ -272,7 +273,7 @@
         <h3>Follow us</h3>
         <ul>
           <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-          <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+          <li><a href="https://twitter.com/scope_ai"><i class="fa fa-twitter"></i></a></li>
         </ul>
       </div>
     </div>
@@ -302,7 +303,7 @@
 <script type="text/javascript" src="{% static 'homepage/js/jquery.isotope.js' %}"></script> 
 <script type="text/javascript" src="{% static 'homepage/js/jquery.parallax.js' %}"></script> 
 <script type="text/javascript" src="{% static 'homepage/js/jqBootstrapValidation.js' %}"></script> 
-{# <script type="text/javascript" src="{% static 'homepage/js/contact_me.js' %}"></script>  #}
+<script type="text/javascript" src="{% static 'homepage/js/contact_me.js' %}"></script> 
 <script type='text/javascript' src="{% static 'homepage/js/landing_graph.js' %}"> </script>
 <!-- Javascripts
     ================================================== --> 
