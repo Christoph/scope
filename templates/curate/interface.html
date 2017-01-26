@@ -102,7 +102,7 @@
                 
                 <div class="btn-group selector" data-toggle="buttons">
                   {% for option in options %}
-                    <label class="checkbox-inline btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px" {% if query.selection_made %}disabled="disabled"{% endif %}
+                    <label class="checkbox-inline btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px; border-radius:2px; margin-left: 10px;" {% if query.selection_made %}disabled="disabled"{% endif %}
                     
                     data-toggle="collapse" href="#{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse" aria-expanded="false" aria-controls="{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse"
                     

@@ -23,7 +23,7 @@ def interface(request,customer_key, date_stamp=None):
         date_parsed = datetime.strptime(date_stamp,'%d%m%Y').date()
         query = Curate_Query.objects.filter(curate_customer=curate_customer).filter(time_stamp=date_parsed).order_by("pk").last()
     suggestions = Article_Curate_Query.objects.filter(curate_query=query).filter(rank__gt = 0).order_by("rank")
-    options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer)
+    options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).oder_by("pk")
     if request.method == 'POST':
         query.selection_made = True
         query.save()
