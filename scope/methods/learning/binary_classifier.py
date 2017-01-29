@@ -97,7 +97,7 @@ class binary_classifier(object):
         if len(db_articles) <= min_count:
             best = 0.0
         else:
-            while counter < min_count and good < 1.0:
+            while counter > min_count and good < 1.0:
                 best = good
 
                 if good <= 0.1:
