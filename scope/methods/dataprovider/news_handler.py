@@ -2,8 +2,10 @@
 Handels newspaper crawling
 '''
 
-import newspaper
 from urlparse import urlparse
+from lxml.etree import XMLSyntaxError
+
+import newspaper
 
 from scope.models import Article
 
@@ -16,12 +18,12 @@ class NewsSourceHandler(object):
             try:
                 a.download()
                 a.parse()
+            except XMLSyntaxError:
+                print "Parse error detected"
+                print a.url
 
-                # Remove newline characters
-                a.text = a.text.replace("\n", "")
-            except:
-                print "Error while downloading: " + a.url
-                continue
+            # Remove newline characters
+            a.text = a.text.replace("\n", "")
 
         print "Articles downloaded and parsed"
         return articles
@@ -70,13 +72,19 @@ class NewsSourceHandler(object):
 
         source = newspaper.build(url, memoize_articles=False)
 
-        articles = self._download_articles(source.articles)
+        try:
+            articles = self._download_articles(source.articles)
+        except XMLSyntaxError:
+            print "Error during download"
 
         for article in articles:
-            out.append({
-                "body": article.text, "title": article.title,
-                "url": article.url, "images": article.top_image,
-                "source": urlparse(article.url).netloc,
-                "pubdate": article.publish_date})
+            if len(article.text) > 0 and len(article.title) > 0:
+                out.append({
+                    "body": article.text, "title": article.title,
+                    "url": article.url, "images": article.top_image,
+                    "source": urlparse(article.url).netloc,
+                    "pubdate": article.publish_date})
+            else:
+                print "Article not correctly parsed."
 
         return out
