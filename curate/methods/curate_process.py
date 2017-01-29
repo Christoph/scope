@@ -92,42 +92,42 @@ class Curate(object):
         return positive_articles, negative_articles
 
     def _retrieve_from_sources(self):
-        self.query=Curate_Query.objects.create(
+        self.query = Curate_Query.objects.create(
             curate_customer=self.curate_customer)
         # Get the articles as dict
-        db_articles=self.provider.collect_from_agents(
+        db_articles = self.provider.collect_from_agents(
             self.curate_customer, self.query, self.language)
-        words=sum([len(i.body) for i in db_articles])
+        words = sum([len(i.body) for i in db_articles])
 
         return db_articles, words
 
     def _retrieve_from_db(self):
-        self.query=Curate_Query.objects.filter(
+        self.query = Curate_Query.objects.filter(
             curate_customer=self.curate_customer).order_by("pk").reverse()[0]
-        article_query_instances=Article_Curate_Query.objects.filter(
+        article_query_instances = Article_Curate_Query.objects.filter(
             curate_query=self.query)
-        db_articles=[i.article for i in article_query_instances]
-        words=sum([len(i.body) for i in db_articles])
+        db_articles = [i.article for i in article_query_instances]
+        words = sum([len(i.body) for i in db_articles])
         return db_articles, words
 
     def _semantic_analysis(self, db_articles):
         if self.semantic_model == "lsi":
-            lsi_language_dict={
+            lsi_language_dict = {
                 'ger': 'german',
                 'eng': 'english',
             }
-            pre=preprocess.PreProcessing(lsi_language_dict[self.language])
-            lsi_model=lsi.Model()
-            lsi_dim=self.config.getint('lsi', 'lsi_dim')
+            pre = preprocess.PreProcessing(lsi_language_dict[self.language])
+            lsi_model = lsi.Model()
+            lsi_dim = self.config.getint('lsi', 'lsi_dim')
 
-            vecs=pre.stemm([a.body for a in db_articles])
+            vecs = pre.stemm([a.body for a in db_articles])
             lsi_model.compute(vecs, lsi_dim)
 
-            sim=lsi_model.similarity()
+            sim = lsi_model.similarity()
         if self.semantic_model == "wv":
 
             self.wv_model.load_data(db_articles)
-            sim=self.wv_model.similarity_matrix()
+            sim = self.wv_model.similarity_matrix()
 
         return sim
 
@@ -137,56 +137,60 @@ class Curate(object):
         print len(db_articles)
 
         if self.config.getint('classifier', 'pre_pipeline'):
-            filtered_articles=self._classifier(db_articles)
+            filtered_articles = self._classifier(db_articles)
         else:
-            filtered_articles=db_articles
+            filtered_articles = db_articles
 
-        sim=self._semantic_analysis(filtered_articles)
+        if len(filtered_articles) > 0:
+            sim = self._semantic_analysis(filtered_articles)
 
-        sel=selector.Selection(filtered_articles, sim)
-        size_bound=[self.config.getint('general', 'lower_bound'),
-                      self.config.getint('general', 'upper_bound')]
-        if self.selection_method == "by_test":
-            steps=[self.config.getfloat(self.semantic_model, 'lower_step'),
-                     self.config.getfloat(self.semantic_model, 'upper_step'),
-                     self.config.getfloat(self.semantic_model, 'step_size')]
-            current_test=self.config.get('by_test', 'test')
-            test=tests.Curate_Test(current_test).test
-            test_params=[]
-            for i in self.config.options(current_test):
-                test_params.append(self.config.getfloat(current_test, i))
-            params=[steps, test_params]
-            selection=sel.by_test(test, params, size_bound)
-        if self.selection_method == "global_thresh":
-            threshold=self.config.getfloat('global_thresh', 'threshold')
-            selection=sel.global_thresh(self.test, threshold, size_bound)
+            sel = selector.Selection(filtered_articles, sim)
+            size_bound = [self.config.getint('general', 'lower_bound'),
+                          self.config.getint('general', 'upper_bound')]
+            if self.selection_method == "by_test":
+                steps = [self.config.getfloat(self.semantic_model, 'lower_step'),
+                         self.config.getfloat(
+                             self.semantic_model, 'upper_step'),
+                         self.config.getfloat(self.semantic_model, 'step_size')]
+                current_test = self.config.get('by_test', 'test')
+                test = tests.Curate_Test(current_test).test
+                test_params = []
+                for i in self.config.options(current_test):
+                    test_params.append(self.config.getfloat(current_test, i))
+                params = [steps, test_params]
+                selection = sel.by_test(test, params, size_bound)
+            if self.selection_method == "global_thresh":
+                threshold = self.config.getfloat('global_thresh', 'threshold')
+                selection = sel.global_thresh(self.test, threshold, size_bound)
 
-        previous_articles=Article_Curate_Query.objects.filter(
-            curate_query__curate_customer=self.curate_customer).filter(rank__gt=0)
-        selected_articles=[filtered_articles[i[0]]
-                             for i in selection['articles'] if not previous_articles.filter(article__url=filtered_articles[i[0]].url).exists()]
+            previous_articles = Article_Curate_Query.objects.filter(
+                curate_query__curate_customer=self.curate_customer).filter(rank__gt=0)
+            selected_articles = [filtered_articles[i[0]]
+                                 for i in selection['articles'] if not previous_articles.filter(article__url=filtered_articles[i[0]].url).exists()]
 
-        self.query.processed_words=words
-        self.query.no_clusters=selection[
-            'no_clusters']
-        self.query.clustering=selection['clustering']
-        self.query.save()
+            self.query.processed_words = words
+            self.query.no_clusters = selection[
+                'no_clusters']
+            self.query.clustering = selection['clustering']
+            self.query.save()
 
-        for i in range(0, len(selected_articles)):
-            a=Article_Curate_Query.objects.get(
-                article=selected_articles[i], curate_query=self.query)
-            a.rank=i + 1
-            a.save()
+            for i in range(0, len(selected_articles)):
+                a = Article_Curate_Query.objects.get(
+                    article=selected_articles[i], curate_query=self.query)
+                a.rank = i + 1
+                a.save()
+        else:
+            selected_articles = []
         return selected_articles
 
     def from_db(self):
-        db_articles, words=self._retrieve_from_db()
-        selected_articles=self._process(db_articles, words)
+        db_articles, words = self._retrieve_from_db()
+        selected_articles = self._process(db_articles, words)
 
         return selected_articles
 
     def from_sources(self):
-        db_articles, words=self._retrieve_from_sources()
-        selected_articles=self._process(db_articles, words)
+        db_articles, words = self._retrieve_from_sources()
+        selected_articles = self._process(db_articles, words)
 
         return selected_articles
