@@ -92,9 +92,10 @@ class binary_classifier(object):
         classified_articles = []
         good = -0.01
         best = 0.0
-        counter = 0
+        counter = len(db_articles)
 
-        if len(db_articles) <= min_count:
+        if counter <= min_count:
+            print "not enough articles"
             best = 0.0
         else:
             while counter > min_count and good < 1.0:
@@ -102,7 +103,7 @@ class binary_classifier(object):
 
                 if good <= 0.1:
                     good = good + 0.01
-                elif good > 0.1 and good < 0.5:
+                elif good > 0.1 and good <= 0.5:
                     good = good + 0.02
                 else:
                     good = good + 0.05
@@ -112,6 +113,9 @@ class binary_classifier(object):
                 print "Classified articles"
                 print good
                 print counter
+
+        print "Used threshold"
+        print best
 
         # Classify articles
         for article in db_articles:
