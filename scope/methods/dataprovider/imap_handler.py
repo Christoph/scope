@@ -140,7 +140,8 @@ class ImapHandler(object):
 
         # you could filter using the IMAP rules here (check
         # http://www.example-code.com/csharp/imap-search-critera.asp)
-        resp, items = mailbox.search(None, '(SINCE "' + yesterday.strftime("%d-%b-%Y") + '")')
+        resp, items = mailbox.search(
+            None, '(SINCE "' + yesterday.strftime("%d-%b-%Y") + '")')
         items = items[0].split()  # getting the mails ids
 
         all_urls = []
@@ -172,12 +173,12 @@ class ImapHandler(object):
 
         print "Article filter"
         for article in articles:
-            if  article.title not in constants.EXCLUDE and not self._blacklist_comparison(constants.TITLE_BLACKLIST, article.title) and not self._blacklist_comparison(constants.TEXT_BLACKLIST, article.text) and len(article.text) > 0:
-                    out.append({
-                        "body": article.text, "title": article.title,
-                        "url": article.url, "images": article.top_image,
-                        "source": urlparse(article.url).netloc,
-                        "pubdate": article.publish_date})
+            if article.title not in constants.EXCLUDE and not self._blacklist_comparison(constants.TITLE_BLACKLIST, article.title) and not self._blacklist_comparison(constants.TEXT_BLACKLIST, article.text) and len(article.text) > 0:
+                out.append({
+                    "body": article.text, "title": article.title,
+                    "url": article.url, "images": article.top_image,
+                    "source": urlparse(article.url).netloc,
+                    "pubdate": article.publish_date})
             else:
                 print "Filtered"
                 print article.title
@@ -206,7 +207,6 @@ class ImapHandler(object):
             else:
                 return False
 
-
     def _get_decoding(self, contents, part):
         # Get content type
         ctype = part.get_content_type()
@@ -223,7 +223,6 @@ class ImapHandler(object):
                 print "is not MIME encoded"
                 # Else - add without decoding
                 contents.append(part.get_payload())
-
 
     def get_data_old(self):
         m = imaplib.IMAP4_SSL(self.mail_link)
@@ -262,7 +261,8 @@ class ImapHandler(object):
             resp, data = m.fetch(emailid, "(RFC822)")
             email_body = data[0][1]  # getting the mail content
             # [i.split('"')[0].replace("=","").replace("click?upn3D","click?upn=") for i in email_body.replace("\r\n","").split('href=3D"') if i[0:4] == 'http']
-            urls = list(set([i.split('"')[0].replace("=", "").replace("3D", "=") for i in email_body.replace("\r\n", "").split('href=3D"') if i[0:4] == 'http']))
+            urls = list(set([i.split('"')[0].replace("=", "").replace(
+                "3D", "=") for i in email_body.replace("\r\n", "").split('href=3D"') if i[0:4] == 'http']))
             no_urls = no_urls + len(urls)
             # parsing the mail content to get a mail object
             mail = email.message_from_string(email_body)
