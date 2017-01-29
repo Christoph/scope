@@ -2,6 +2,8 @@
 Handles the different data providers and saves the articles.
 '''
 
+from django.core.exceptions import ValidationError
+
 from scope.models import AgentImap, Agent, Source, Article, AgentEventRegistry
 from scope.models import AgentNewspaper
 from curate.models import Article_Curate_Query
@@ -49,20 +51,24 @@ class Provider(object):
 
         # Save the articles into the database
         for a in articles:
-            # Check if source already exists
-            source, created = Source.objects.get_or_create(
-                url=a['source'],
-                defaults={"name": tldextract.extract(a['source']).domain.title()})
+            try:
+                # Check if source already exists
+                source, created = Source.objects.get_or_create(
+                    url=a['source'],
+                    defaults={"name": tldextract.extract(a['source']).domain.title()})
 
-            art, created = Article.objects.get_or_create(
-                title=a['title'],
-                url=a['url'],
-                defaults={"source": source, "body": a['body'],
-                          "images": a['images'], "pubdate": a['pubdate']})
+                art, created = Article.objects.get_or_create(
+                    title=a['title'],
+                    url=a['url'],
+                    defaults={"source": source, "body": a['body'],
+                              "images": a['images'], "pubdate": a['pubdate']})
 
-            Article_Curate_Query.objects.create(
-                article=art, curate_query=curate_query, agent=agent)
+                Article_Curate_Query.objects.create(
+                    article=art, curate_query=curate_query, agent=agent)
 
-            db_articles.append(art)
+                db_articles.append(art)
+            except ValidationError:
+                print "Validation Error"
+                continue
 
         return db_articles
