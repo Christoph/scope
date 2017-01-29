@@ -3,6 +3,7 @@ Handels newspaper crawling
 '''
 
 import newspaper
+from urlparse import urlparse
 
 from scope.models import Article
 
@@ -65,9 +66,17 @@ class NewsSourceHandler(object):
 
     def get_articles_from_source(self, url):
         ''' Download and parse articles from source.'''
+        out = []
+
         source = newspaper.build(url, memoize_articles=False)
 
-        # articles = self._check_urls(source.articles)
-        articles = source.articles
+        articles = self._download_articles(source.articles)
 
-        return self._download_articles(articles)
+        for article in articles:
+            out.append({
+                "body": article.text, "title": article.title,
+                "url": article.url, "images": article.top_image,
+                "source": urlparse(article.url).netloc,
+                "pubdate": article.publish_date})
+
+        return out
