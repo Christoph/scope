@@ -90,17 +90,28 @@ class binary_classifier(object):
         '''
 
         classified_articles = []
-        good = 1.0
+        good = -0.01
+        best = 0.0
         counter = 0
 
-        while counter < min_count and good >= 0:
-            good = good - 0.02
+        if len(db_articles) <= min_count:
+            best = 0.0
+        else:
+            while counter < min_count and good < 1.0:
+                best = good
 
-            counter = self._get_count(db_articles, good)
+                if good <= 0.1:
+                    good = good + 0.01
+                elif good > 0.1 and good < 0.5:
+                    good = good + 0.02
+                else:
+                    good = good + 0.05
 
-            print "Classified articles"
-            print good
-            print counter
+                counter = self._get_count(db_articles, good)
+
+                print "Classified articles"
+                print good
+                print counter
 
         # Classify articles
         for article in db_articles:
@@ -111,7 +122,7 @@ class binary_classifier(object):
             cl = self.model.predict(
                 doc.vector.reshape(1, 300), verbose=0)
 
-            if cl >= good:
+            if cl >= best:
                 classified_articles.append(article)
 
         return classified_articles
