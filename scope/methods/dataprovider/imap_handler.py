@@ -8,6 +8,8 @@ from newspaper import Article
 from . import constants
 from . import url_extractor
 
+from scope.methods.dataprovider import news_handler
+
 
 class ImapHandler(object):
     """docstring for ImapHandler."""
@@ -20,6 +22,8 @@ class ImapHandler(object):
         self.mail_box = agent.mailbox.encode("utf-8")
         self.mail_interval = agent.interval
         self.language = language
+
+        self.news = news_handler.NewsSourceHandler()
 
     # def get_data(self):
     #     out = []
@@ -164,34 +168,7 @@ class ImapHandler(object):
         # Remove duplicates over different newsletters
         all_urls = list(set(all_urls))
 
-        articles = []
-        newspaper_lang_dict = {
-            'ger': 'de',
-            'eng': 'en',
-        }
-
-        for i in range(0, len(all_urls)):
-            try:
-                if self.language == "mix":
-                    articles.append(Article(all_urls[i]))
-                else:
-                    articles.append(Article(
-                        all_urls[i],
-                        language=newspaper_lang_dict[self.language]))
-            except:
-                print "Error while  converting " + all_urls[i]
-                continue
-
-        # Download all articles
-        for a in articles:
-            try:
-                a.download()
-                a.parse()
-            except:
-                print "Error while downloading: " + a.url
-                continue
-
-        print "Articles downloaded and parsed"
+        articles = self.news.get_articles_from_list(all_urls, self.language)
 
         print "Article filter"
         for article in articles:
