@@ -61,6 +61,9 @@ class AgentEventRegistry(models.Model):
     concepts = models.CharField(blank=True, max_length=200)
     locations = models.CharField(blank=True, max_length=200)
 
+class AgentNewspaper(models.Model):
+    url = models.CharField(blank=True, max_length=200)
+
 class Article(models.Model):
     source = models.ForeignKey(Source, blank=True, null=True)
     title = models.CharField(max_length=500)
