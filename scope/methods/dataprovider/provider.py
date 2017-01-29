@@ -1,8 +1,13 @@
+'''
+Handles the different data providers and saves the articles.
+'''
+
 from scope.models import AgentImap, Agent, Source, Article, AgentEventRegistry
+from scope.models import AgentNewspaper
 from curate.models import Article_Curate_Query
 from tldextract import tldextract
 
-from . import imap_handler, er_handler
+from . import imap_handler, er_handler, news_handler
 
 
 class Provider(object):
@@ -29,6 +34,13 @@ class Provider(object):
 
                 db_articles.extend(self._save_articles(
                     er.get_data(), curate_query, con))
+            if isinstance(con.agent_object, AgentNewspaper):
+                print "newspaper"
+                news = news_handler.NewsSourceHandler()
+
+                db_articles.extend(self._save_articles(
+                    news.get_articles_from_source(
+                        con.agent_object.url), curate_query, con))
 
         return db_articles
 
