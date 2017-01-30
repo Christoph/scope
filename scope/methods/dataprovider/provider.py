@@ -63,10 +63,12 @@ class Provider(object):
                     defaults={"source": source, "body": a['body'],
                               "images": a['images'], "pubdate": a['pubdate']})
 
-                Article_Curate_Query.objects.create(
-                    article=art, curate_query=curate_query, agent=agent)
+                if source not in curate_query.curate_customer.bad_source.all():
+                    Article_Curate_Query.objects.create(
+                        article=art, curate_query=curate_query, agent=agent)
 
-                db_articles.append(art)
+                    db_articles.append(art)
+
             except ValidationError:
                 print "Validation Error"
                 continue

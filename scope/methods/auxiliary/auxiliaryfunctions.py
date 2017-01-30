@@ -1,6 +1,7 @@
 
 import csv, sys
 from datetime import date, timedelta
+import string
 
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
 from scope.models import Customer
@@ -54,10 +55,15 @@ def export_to_csv(customer_key, range, name, type):
 	write_csv(article_list,name + '_' + customer_key + '_' + date.today().isoformat())
 
 
-#######to add new training data:
+def truncate_words_and_prod_sentence(s, thresh):
+    split = s.split(' ')
+    l = 0
+    i = 0
+    while l < thresh  and i<len(split):
+        l = len([len(split[k]) for k in range(0,i)]) + i
+        i += 1
 
-### in curate/views.py in @interface in line 32-34 (although yo woudl of course load the classifier on line 24 or so.)
-def add_to_classifier(curate_selection_option, article_curate_instance,curate_customer):
-	classifier = load_classifier(curate_customer)
-	add_to_classifier(text=article_curate_instance.article.body, label=curate_selection_option.name)
+    final = string.join([split[k] for k in range(0,i)], " ")
+    final = string.join(final.split('.')[:-1], ".") + '.'
+    return final
 

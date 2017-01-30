@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
-# Create your views here.
+import ConfigParser
+
+from curate.methods.mail import send_newsletter
+from conf.settings.importer import ImportGlobal
 
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
 from scope.models import Customer, UserProfile
 
+im = ImportGlobal()
 
 def interface(request,customer_key, date_stamp=None):
     try:
@@ -25,9 +29,11 @@ def interface(request,customer_key, date_stamp=None):
     suggestions = Article_Curate_Query.objects.filter(curate_query=query).filter(rank__gt = 0).order_by("rank")
     options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).order_by("pk")
     if request.method == 'POST':
+        config = ConfigParser.RawConfigParser()
+        config.read('curate/customers/' + customer_key +
+                         "/" + customer_key + '.cfg')
         query.selection_made = True
         query.save()
-        training_articles = []
         for i in range(1, len(suggestions) + 1):
             for option in options:                    
                 try:
@@ -42,11 +48,9 @@ def interface(request,customer_key, date_stamp=None):
                                     if reason.kind == "sou":
                                         curate_customer.bad_source.add(s.article.source)
                                         curate_customer.save()
-                                    elif reason.kind == "con":
-                                        training_articles.append(s.article)
-                                    elif reason.kind == "frq":
-                                        curate_customer.too_frequent.add(s)
-                                        curate_customer.save()
+                                    else:
+                                        reason.current_members.add(s)
+                                        reason.save()
                             except:
                                 pass
                         s.selection_options.add(option)
@@ -54,7 +58,11 @@ def interface(request,customer_key, date_stamp=None):
                 except:
                     pass
 
-        #here comes the part with training the classifier, based on the training_articles dict
+        try:
+            if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment":
+                send_newsletter(customer_key)
+        except:
+            pass
 
     stats = {}
     for option in options.all():

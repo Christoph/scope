@@ -1,25 +1,11 @@
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Rss201rev2Feed
-
-#from .models import Select
-import string
+from datetime import date, datetime
+from scope.methods.auxiliary.auxiliaryfunctions import truncate_words_and_prod_sentence
 
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
 from scope.models import Customer
 
-from datetime import date, datetime
-
-def truncate_words_and_prod_sentence(s, thresh):
-    split = s.split(' ')
-    l = 0
-    i = 0
-    while l < thresh  and i<len(split):
-        l = len([len(split[k]) for k in range(0,i)]) + i
-        i += 1
-
-    final = string.join([split[k] for k in range(0,i)], " ")
-    final = string.join(final.split('.')[:-1], ".") + '.'
-    return final
 
 # class ExtendedRSSFeed(Rss201rev2Feed):
 class ExtendedRSSFeed(Rss201rev2Feed):

@@ -11,7 +11,7 @@ import curate.methods.tests as tests
 from scope.methods.learning import binary_classifier
 
 from scope.models import Customer
-from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer
+from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Rejection_Reasons
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -43,19 +43,16 @@ class Curate(object):
 
         self.wv_model = word_vector.Model(wv_language_dict[self.language])
 
-        self.classifier = binary_classifier.binary_classifier(
-            self.wv_model.pipeline, customer_key)
+        if self.config.getint('classifier', 'pre_pipeline'):
+            self.classifier = binary_classifier.binary_classifier(
+                self.wv_model.pipeline, customer_key)
 
     def _classifier(self, db_articles):
         filtered_articles = []
 
         # update classifier
-        pos, neg = self._update_classifier()
+        self._update_classifier()
 
-        if len(neg) > 0:
-            self.classifier.update_model(neg, pos)
-
-        # Filter articles
 
         # filtered_articles = self.classifier.classify(db_articles)
         filtered_articles = self.classifier.classify_by_count(
@@ -72,24 +69,28 @@ class Curate(object):
         return filtered_articles
 
     def _update_classifier(self):
-        # if we want to train since last training:
+        # positive articles
         time_since_last_training = date.today() - timedelta(
             days=self.config.getint('classifier', 'training_interval'))
-        queries = Curate_Query.objects.filter(
+        queries = Curate_Query.objects.filter(curate_customer= self.curate_customer).filter(
             time_stamp__gt=time_since_last_training).filter(
                 selection_made=True)
         relevant_articles = Article_Curate_Query.objects.filter(
             curate_query__in=queries)
-        positive_articles = []
-        negative_articles = []
-
+        pos = []
         for article_instance in relevant_articles:
             if article_instance.selection_options.filter(kind="sel").exists():
-                positive_articles.append(article_instance.article)
-            elif article_instance.selection_options.filter(kind="mis").exists():
-                negative_articles.append(article_instance.article)
+                pos.append(article_instance.article)
+        
+        #neative articles 
+        content_reasons = Curate_Rejection_Reasons.objects.filter(selection.curate_customer = self.curate_customer).filter(kind="con")
+        neg = content_reasons.current_members.all()
 
-        return positive_articles, negative_articles
+        if len(neg) > 0:
+            self.classifier.update_model(neg, pos)
+
+        content_reasons.current_members.clear()
+        content_reasons.save()
 
     def _retrieve_from_sources(self):
         self.query = Curate_Query.objects.create(

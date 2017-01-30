@@ -10,7 +10,6 @@ class Curate_Customer(models.Model):
     key = models.CharField(max_length=100, blank=True)
     expires = models.DateField(blank=True)
     bad_source = models.ManyToManyField(Source, blank=True)
-    too_frequent = models.ManyToManyField('Article_Curate_Query', blank=True)
 
     def __unicode__(self):              # __unicode__ on Python 2
         return self.customer.name
@@ -42,6 +41,7 @@ class Curate_Rejection_Reasons(models.Model):
         ("oth","other")
         ), default="con"
         )
+    current_members = models.ManyToManyField('Article_Curate_Query', blank=True, null=True)
     def __unicode__(self):              # __unicode__ on Python 2
         return self.name + ', ' + self.selection.name + ', ' + self.selection.curate_customer.customer.name
     def human_readable_name(self):
