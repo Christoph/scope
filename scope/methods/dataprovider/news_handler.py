@@ -2,6 +2,7 @@
 Handels newspaper crawling
 '''
 
+from datetime import datetime, timedelta
 from urlparse import urlparse
 from lxml.etree import XMLSyntaxError
 
@@ -66,9 +67,10 @@ class NewsSourceHandler(object):
 
         return out
 
-    def get_articles_from_source(self, url):
+    def get_articles_from_source(self, url, timespan):
         ''' Download and parse articles from source.'''
         out = []
+        old = datetime.now() - timedelta(hours=timespan)
 
         source = newspaper.build(url, memoize_articles=False)
 
@@ -78,12 +80,17 @@ class NewsSourceHandler(object):
             print "Error during download"
 
         for article in articles:
-            if len(article.text) > 0 and len(article.title) > 0:
-                out.append({
-                    "body": article.text, "title": article.title,
-                    "url": article.url, "images": article.top_image,
-                    "source": urlparse(article.url).netloc,
-                    "pubdate": article.publish_date})
+            if len(article.text) > 0 and len(article.title) > 0 and article.publish_date is not None:
+
+                if article.publish_date > old:
+                    out.append({
+                        "body": article.text, "title": article.title,
+                        "url": article.url, "images": article.top_image,
+                        "source": urlparse(article.url).netloc,
+                        "pubdate": article.publish_date})
+                else:
+                    print "Article is too old"
+                    print article.publish_date
             else:
                 print "Article not correctly parsed."
 

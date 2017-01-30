@@ -42,7 +42,7 @@ class Provider(object):
 
                 db_articles.extend(self._save_articles(
                     news.get_articles_from_source(
-                        con.agent_object.url), curate_query, con))
+                        con.agent_object.url, 24), curate_query, con))
 
         return db_articles
 
