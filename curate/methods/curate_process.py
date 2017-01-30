@@ -136,8 +136,13 @@ class Curate(object):
         out = []
         bad_sources = self.curate_customer.bad_source.all()
 
+        # the selection-made filter here is because the oarticle_curate_objects fo these aticles have already been created at this point
+        queries = Curate_Query.objects.filter(
+            curate_customer=self.curate_customer).filter(
+                selection_made=True)
+
         relevant_articles = [i.article for i in Article_Curate_Query.objects.filter(
-            curate_query__curate_customer=self.curate_customer)]
+            curate_query__in=queries)]
 
         for a in all_articles:
             if a.source not in bad_sources and a not in relevant_articles:
