@@ -32,7 +32,7 @@ def interface(request,customer_key, date_stamp=None):
         config = ConfigParser.RawConfigParser()
         config.read('curate/customers/' + customer_key +
                          "/" + customer_key + '.cfg')
-        query.selection_made = True
+        query.selection_made = True#
         query.save()
         for i in range(1, len(suggestions) + 1):
             for option in options:                    

@@ -83,15 +83,14 @@ class Curate(object):
             if article_instance.selection_options.filter(kind="sel").exists():
                 pos.append(article_instance.article)
 
-        negative articles
-        content_reasons = Curate_Rejection_Reasons.objects.filter(selection.curate_customer = self.curate_customer).filter(kind="con")
-        neg = content_reasons.current_members.all()
+        content_reasons = Curate_Rejection_Reasons.objects.filter(selection__curate_customer = self.curate_customer).filter(kind="con")
+        for reason in content_reasons:
+            neg.extend(reason.current_members.all())
+            reason.current_members.clear()
+            reason.save()
 
         if len(neg) > 0:
             self.classifier.update_model(neg, pos)
-
-        content_reasons.current_members.clear()
-        content_reasons.save()
 
     def _retrieve_from_sources(self):
         self.query = Curate_Query.objects.create(
@@ -135,14 +134,10 @@ class Curate(object):
 
     def _check_articles(self, all_articles):
         out = []
-        bad_sources = self.query.curate_customer.bad_source.all()
+        bad_sources = self.curate_customer.bad_source.all()
 
-        queries = Curate_Query.objects.filter(
-            curate_customer=self.curate_customer).filter(
-                selection_made=True)
-
-        relevant_articles = Article_Curate_Query.objects.filter(
-            curate_query__in=queries)
+        relevant_articles = [i.article for i in Article_Curate_Query.objects.filter(
+            curate_query__curate_customer=self.curate_customer)]
 
         for a in all_articles:
             if a.source not in bad_sources and a not in relevant_articles:
@@ -187,10 +182,10 @@ class Curate(object):
                 threshold = self.config.getfloat('global_thresh', 'threshold')
                 selection = sel.global_thresh(self.test, threshold, size_bound)
 
-            previous_articles = Article_Curate_Query.objects.filter(
-                curate_query__curate_customer=self.curate_customer).filter(rank__gt=0)
+            # previous_articles = Article_Curate_Query.objects.filter(
+            #     curate_query__curate_customer=self.curate_customer).filter(rank__gt=0)
             selected_articles = [filtered_articles[i[0]]
-                                 for i in selection['articles'] if not previous_articles.filter(article__url=filtered_articles[i[0]].url).exists()]
+                                 for i in selection['articles']]
 
             self.query.processed_words = words
             self.query.no_clusters = selection[

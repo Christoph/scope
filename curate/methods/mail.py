@@ -29,7 +29,7 @@ def send_newsletter(customer_key):
 	send_dict = {}
 	for option in selection_options:
 		articles = [i.article for i in Article_Curate_Query.objects.filter(curate_query=query).filter(
-			selection_options= option).all()]
+			selection_options= option).order_by("rank").all()]
 		send_dict[option.name] = articles
 
 
