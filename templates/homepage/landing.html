@@ -1,267 +1,302 @@
-{% load staticfiles %} {% load widget_tweaks %}
+
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scope</title>
+<meta name="description" content="">
+<meta name="author" content="">
 
-    <meta property="og:title" content="{{name}}">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{domain}}">
-    <meta property="og:site_name" content="{{name}}">
-    <meta property="og:description" content="">
-    <meta property="og:image" content="{{domain}}" href="{% static 'homepage/img/logo.png' %}">
+<!-- Bootstrap -->
+<link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %} ">
+{# <link rel="stylesheet" type="text/css"  href="css/bootstrap.css"> #}
+<link href="{% static 'font-awesome/css/font-awesome.min.css' %} " rel="stylesheet">
+{# <link rel="stylesheet" type="text/css" href="fonts/font-awesome/css/font-awesome.css"> #}
+<!-- <link rel="stylesheet" href="css/graphstyle.css"> -->
+<!-- <link rel="stylesheet" type="text/css"  href="css/main.css"> -->
 
-    <title>{{name}} | {{slogan}}</title>
-    <link rel="image_src" href="{% static 'homepage/img/logo.png' %}">
-    <link rel="icon" href="{% static 'homepage/img/logo.png' %}">
+<!-- Stylesheet
+    ================================================== -->
+<link rel="stylesheet" type="text/css"  href="{% static 'homepage/css/style.css' %}">
+{# <link rel="stylesheet" type="text/css" href="css/prettyPhoto.css"> #}
+<!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800,600,300' rel='stylesheet' type='text/css'> -->
+{# <script type="text/javascript" src="{% static 'homepage/js/modernizr.custom.js' %}"></script> #}
 
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="{% static 'homepage/css/animate.css' %}">
-    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %} ">
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,600&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-
-    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %} ">
-    <link rel="stylesheet" href="{% static 'bootstrap-select/dist/css/bootstrap-select.min.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/graphstyle.css' %}">
-    <link rel="stylesheet" href="{% static 'homepage/css/main.css' %}">
-    <script src="{% static 'homepage/js/modernizr-2.7.1.js' %}"></script>
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
-
-<body style="height:100vh">
-    <div class="navbar navbar-inverse navbar-fixed-top">
-            <ul>
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            </button>
-                <a class="navbar-brand" href="{% url 'homepage:landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}<img width="50px" src="{% static 'homepage/img/logo.png' %}">graphite {% endif %}<!-- </span> --><small> - see more</small></a>
-
-            </ul>
-            <ul class="nav navbar-nav navbar-right" style="margin-right: 5%">
-                <a style="color:gray;font-size: x-large" href=https://twitter.com/scope_ai?lang=en> <i class="fa fa-twitter" aria-hidden="true"></i></a>
-                <a style="color:gray;font-size: x-large" href="mailto:hello@scope.ai"> <i class="fa fa-envelope" aria-hidden="true"></i></a>
-            </ul>
-
-
-
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+<div id="preloader">
+  <div id="status"> <img src="{% static 'homepage/img/preloader.gif' %}" height="64" width="64" alt=""> </div>
+</div>
+<!-- Navigation -->
+<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand page-scroll navbar-toggle" href="#contact"> <i class="fa fa-envelope"></i> </a>
+      <a class="navbar-brand page-scroll" href="#page-top"></i><img src="{% static 'homepage/img/logos/scope_logo1.png' %}" style="width: 100px;"></a></div>
+    
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+      <ul class="nav navbar-nav">
+        <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+        <li class="hidden"> <a href="#page-top"></a> </li>
+        <li> <a class="page-scroll" href="#contact">Contact</a> </li>
+      </ul>
     </div>
+    <!-- /.navbar-collapse --> 
+  </div>
+  <!-- /.container --> 
+</nav>
 
-    <header>
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-6">
-                    <a class="navbar-brand" href="{% url 'homepage:landing' %}"><!-- <span style ="font-size:18px"> -->{% if name %}{{name}}{% else %}graphite {% endif %}<!-- </span> --><!-- <small> - less noise, more news</small> --></a>
-                </div>
-                <div class="col-xs-6 signin text-right navbar-nav">
-                    <!-- <a href="#pricing" class="scroll">Pricing</a> -->
-                    <!-- &nbsp; &nbsp;<a href="#">Log In</a> -->
-                </div>
-            </div>
+<!-- Header -->
+<div id="intro">
+  <div class="intro-body" id="intro-container">
+<!--     <div class="container">
+      <div class="row" id="intro-container">
+         <div class="col-md-10 col-md-offset-1" > 
+          <h1><span class="brand-heading">Scope</span> - see more</h1>
+          <p class="intro-text ">A full-service digital agency that loves what we do</p>
+          <a href="#about" class="btn btn-secondary btn-lg page-scroll">Learn More</a> </div> 
+      </div>
+    </div> -->
+  </div>
+</div>
 
-            <div class="row header-info">
-                <div class="col-sm-10 col-sm-offset-1 text-center">
-                    <h1 class="wow fadeIn" data-wow-delay="0.4s" style="color:#fff">See more</h1>
-                    <br />
-                    <p class="lead wow fadeIn" data-wow-delay="0s">We produce tools that let you stay on top of the news and documents relevant to you, while still saving your time.</p>
-
-                    <div class="row">
-
-
-                        <div class="col-xs-6 text-right wow fadeInUp" data-wow-delay="0.9s">
-                            <a href="#products" class="btn btn-secondary btn-lg scroll">Products</a>
-                        </div>
-                        <div class="col-xs-6 text-left wow fadeInUp" data-wow-delay="1s">
-                            <a href="#about" class="btn btn-secondary btn-lg scroll">About</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-    </header>
-
-    <div class="mouse-icon hidden-xs">
-        <div class="scroll"></div>
+<!-- Services Section -->
+<div id="services" class="text-center">
+  <div class="container">
+    <div class="section-title center">
+      <h2 class="wow fadeIn" data-wow-delay="0s">Our Services</h2>
+      <hr>
     </div>
-
-    <section id="products" class="pad-sm light-gray-bg" style="min-height:100vh;">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-4" style="height:100vh">
-                    <div class="row">
-                        <div class="col-sm-8 col-sm-offset-2 text-center wow fadeIn" data-wow-delay="0s">
-                            <i class="fa fa-list margin-30"></i>
-                            <h2 class="wow black margin-30">Automated Curation</h2>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-12 col-md-12 wow text-center fadeInUp" data-wow-delay="0.3s">
-                            <hr class="line" style="color:#1f77b4">
-                            <h3 class="wow fadeIn black">Minimize redundancy</h3>
-                            <p class="wow grey">Our technology identifies relevant articles while minimizing redundancy. This you stay informed while having to read much less.</p>
-                            <h3 class="wow fadeIn">Objective</h3>
-                            <p class="wow grey">Don't risk getting caught up in your interest bubble anymore.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4" style="height:100vh">
-                    <div class="row">
-                        <div class="col-sm-8 col-sm-offset-2 text-center wow fadeIn" data-wow-delay="0s">
-                            <i class="fa fa-search margin-30" aria-hidden="true"></i>
-                            <h2 class="wow black margin-30">Analysis Tool</h2>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-md-12 wow fadeInUp text-center" data-wow-delay="0.4s">
-                            <hr class="line" style="color:#1f77b4">
-                            <!-- <h3 class="wow fadeIn">Analysis tool</h3>
-                 <p class="wow grey">Keep up with news trends and reporting dynamics of a fast moving world.</p> -->
-                            <p class="wow grey"></p>
-                            <h3 class="wow fadeIn">In-Depth overview</h3>
-                            <p class="wow grey">We develop a tool for journalists and news analysts that lets them explore correlations and trends in news publishing.</p>
-                            <h3 class="wow fadeIn">Complex content, simple layout</h3>
-                            <p class="wow grey">The tool is designed to be intuitive andrequires no technical knowledge.</p>
-                            <!-- <h3 class="wow fadeIn">Proactive</h3>
-                    <p class="wow grey">Sextant proactively makes you aware of unusual and interesting correlations or behaviour in the news world.</p> -->
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4" style="height: 100vh">
-                    <div class="row">
-                        <div class="col-sm-8 col-sm-offset-2 text-center wow fadeIn" data-wow-delay="0s">
-                            <i class="fa fa-envelope-o margin-30"></i>
-                            <h2 class="wow black margin-30">Intelligent Alerts</h2>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-md-12 wow fadeInUp text-center" data-wow-delay="0.5s">
-                            <hr class="line" style="color:#1f77b4">
-
-                            <h3 class="wow fadeIn">Bye bye fixed frequency</h3>
-                            <p class="wow grey">Our alerts will collect new content until the novelty compared to earlier alerts surpasses a certain threshold you set.</p>
-                            <h3 class="wow fadeIn">Trend detection</h3>
-                            <p class="wow grey">By focussing on relative changes, our IAlerts are the ideal tool to follow the development of topics you care about.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="row">
+      <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="service"> 
+        <h2 class="wow black" data-wow-delay="0.4s">Automated Curation</h2>
+                            <p class="wow grey lead">We help you create great newsletters for your employees and customers. Our algorithms do the boring work. You save time without having to compromise quality.</p>
         </div>
-    </section>
+      </div>
+      <div class="col-md-6 col-sm-12 col-xs-12">
+      <div class="service">
+        <img src="{% static 'homepage/img/curation.png' %}" style="width: 60%;">
+      </div>
+      </div>
+      </div>
+<!--       </div>
+      </div> -->
 
-
-    <section id="about" class="pad-sm light-gray-bg graph" style="min-height:100vh">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-8 col-sm-offset-2 text-center wow fadeIn" data-wow-delay="0s">
-                    <!--  <i class="fa fa-list margin-30"></i> -->
-                    <h2 class="wow black text-left margin-10">About</h2>
-                </div>
+    <div class="row">
+         <div class="col-md-6 col-sm-12 col-xs-12">
+           <div class="service">
+        <img src="{% static 'homepage/img/selection.png' %}" style="width: 60%;">
+      </div>
+         </div>
+      <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="service">
+        <h2 class="wow black">Intelligent Alerts</h2>
+                            <p class="wow grey lead">We provide a new generation of alert that only sends new information out if it is found to be both <strong>novel</strong> and <strong>relevant</strong> - keeping your head free to deal with more important things.</p>
+      </div>
             </div>
-
-            <div class="row">
-                <div class="col-sm-8 col-md-8 wow fadeInUp" data-wow-delay="0.3s">
-                    <hr class="line" style="color:#ffbb78">
-                    <h3 class="wow fadeIn black">Technology</h3>
-                    <p class="wow grey">At its core, our technolgy uses a combination of semantic analysis, deep learning and graph theoretical models to algorithmically check the overlap between texts and then create a reading list from a given input that maximises the
-                        overview the user has by following this list.</p>
-                    <h3 class="wow fadeIn">The Startup</h3>
-                    <p class="wow grey">We're a young and dynamic group of programmers, interface designers and entrepreneurs that is currently based in Berlin and Vienna.</p>
-                    <h3 class="wow fadeIn">Traction</h3>
-                    <p class="wow grey">Currently we are running first pilots with medium sized and large corporates to fine-tune our services. If you are interested, don't hesitate to get in touch!</p>
-                </div>
             </div>
+            <div class="row">
+      <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="service"> 
+<h2 class="wow black">Bursting information bubbles</h2>
+                            <p class="wow grey lead">We believe that information bubbles that only confirm your opinion are harmful for every business. Our technology allows us to burst information bubbles, reducing the risk for you to miss crucial information.</p>
+                        </div>
         </div>
-    </section>
+         <div class="col-md-6 col-sm-12 col-xs-12">
+           <div class="service">
+        <img src="{% static 'homepage/img/bridging.png' %}" style="width: 60%;">
+      </div>
+         </div>
+      </div>
+    </div>
+  </div>
 
-    <section id="team" class="pad-lg bg-light-gray" style="height:90vh">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-8 col-sm-offset-2 text-center">
-                    <h2 class="wow black">Meet the team</h2>
-                    <!-- <hr class="line" style="color:grey"> -->
-                    <!-- <h3 class="section-subheading text-muted"></h3> -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 text-center">
-                    <div class="team-member">
-                        <img width="200" src="{% static 'homepage/img/paul.jpg' %}" class="img-responsive img-circle" alt="">
-                        <h4>Paul Boës</h4>
-                        <!-- <p class="text-muted">CEO</p> -->
-                        <ul class="list-inline social-buttons">
-                            <li><a href="https://twitter.com/_paulboes_"><i class="fa fa-twitter"></i></a>
+<!-- About Section -->
+<div id="about">
+  <div class="container">
+    <div class="row section-title text-center center">
+    <div class="col-xs-12 col-sm-12 col-md-8">
+      
+      <h2>About</h2>
+      <hr>
+    </div>
+      
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-md-4">
+        <div>
+          <h3>Who We Are</h3>
+          <p class="lead">We're a young and dynamic team based in Berlin and Vienna. As researchers, our skill sets combine training in natural language processing, machine learning and interface design as well as strong mathematical and statistical skills. These are teamed with our entrepreneurial experience and drive, always looking to translate our ideas and research into forms that help be more efficient at what their doing best.</p>
+      
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-8 col-md-4">
+        <div>
+          <h3>What We Do</h3>
+          <p class="lead">At the core of all our services lies a technolgy that uses a combination of semantic analysis, deep learning and graph theoretical models. These let us automate the curation and selection of large bodies of text, such as news articles. All our algorithms are geared towards maximising your overview over the input articles, meaning it's all about minimizing the chance that you miss out on  important topics.</p>
+        
+        </div>
+      </div>
+      <div class="col-xs-0 col-sm-0 col-md-4"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Team Section -->
+<div id="testimonials" class="text-center">
+<img class="team_image" src="{% static 'homepage/img/best_small.jpg' %}" alt="">
+</div>
+
+
+<!-- Header -->
+<div id="team_pres">
+    <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-4 col-sm-4">
+       
+          <div class="caption" align="center">
+            <h2 class="team_present" >Richard Lutschounig</h2>
+            <p><h4 class="team_present">CBO</h4></p>
+            <p>
+                                      <ul class="list-inline social-buttons">
+                            <!--  <li><a href="#"><i class="fa fa-twitter"></i></a>
+                            </li> -->
+                            <li><a href="https://www.linkedin.com/in/richard-lutschounig-27a7b1106/en"><i class="fa fa-linkedin" ></i></a>
+                            </li>
+                        </ul>
+            </p>
+          </div>
+        </div>
+      <div class="col-xs-12 col-md-4 col-sm-4">
+       
+          <div class="caption" align="center">
+            <h2 class="team_present">Paul Boës</h2>
+            <p><h4 class="team_present">CEO</h4></p>
+            <p>                        <ul class="list-inline social-buttons">
+                            <li><a href="https://twitter.com/_paulboes_"><i class="fa fa-twitter" ></i></a>
                             </li>
                             <li><a href="https://www.linkedin.com/in/paul-boes"><i class="fa fa-linkedin"></i></a>
                             </li>
-                            <li><a href="https://beingbutlumps.wordpress.com"><i class="fa fa-pencil"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xs-4 text-center">
-                    <div class="team-member">
-                        <img width="200" src="{% static 'homepage/img/chris.jpg' %}" class="img-responsive img-circle" alt="">
+                            <li><a href="https://beingbutlumps.wordpress.com"><i class="fa fa-pencil" ></i></a></li>
+                        </ul></p>
+          </div>
+        </div>
+      <div class="col-xs-12 col-md-4 col-sm-4" data-toggle="tooltip" data-placement="left">
+<!--                             <div class="team-member" >
+                        <img width="200" src="img/chris_port.jpg" class="img-responsive img-circle" alt="">
                         <h4>Christoph Kralj</h4>
-                        <!-- <p class="text-muted">CTO</p> -->
                         <ul class="list-inline social-buttons">
                             <li><a href="https://github.com/Christoph/"><i class="fa fa-github"></i></a>
                             </li>
                             <li><a href="https://www.linkedin.com/in/christoph-kralj-63a5a8132"><i class="fa fa-linkedin"></i></a>
                             </li>
                         </ul>
-                    </div>
-                </div>
-                <div class="col-xs-4 text-center">
-                    <div class="team-member">
-                        <img width="200" src="{% static 'homepage/img/richard.jpg' %}" class="img-responsive img-circle" alt="">
-                        <h4>Richard Lutschounig</h4>
-                        <!-- <p class="text-muted">CBO</p> -->
-                        <ul class="list-inline social-buttons">
-                            <!--  <li><a href="#"><i class="fa fa-twitter"></i></a>
-                            </li> -->
-                            <li><a href="https://www.linkedin.com/in/richard-lutschounig-27a7b1106/en"><i class="fa fa-linkedin"></i></a>
+                    </div> -->
+          <div class="caption" align="center">
+            <h2 class="team_present">Christoph Kralj</h2>
+            <p><h4 class="team_present">CTO</h4></p>
+            <p>
+                                      <ul class="list-inline social-buttons">
+                            <li><a href="https://github.com/Christoph/"><i class="fa fa-github"></i></a>
+                            </li>
+                            <li><a href="https://www.linkedin.com/in/christoph-kralj-63a5a8132"><i class="fa fa-linkedin" ></i></a>
                             </li>
                         </ul>
-                    </div>
-                </div>
+            </p>
+          </div>
+       </div>
+  </div>
+ </div>
+</div>
+
+
+
+<!-- Contact Section -->
+<div id="contact" class="text-center">
+
+  <div class="container">
+
+
+
+    <div class="col-md-8 col-md-offset-2">
+<div class="section-title center">
+      <h2>Contact</h2>
+      <hr>
+    </div>
+
+      <h3>Sounds interesting? Drop us a message!</h3>
+      <form name="sentMessage" id="contactForm" novalidate>
+      {% csrf_token %}
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <input type="text" id="name" class="form-control" placeholder="Name" required="required">
+              <p class="help-block text-danger"></p>
             </div>
-
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <input type="email" id="email" class="form-control" placeholder="Email" required="required">
+              <p class="help-block text-danger"></p>
+            </div>
+          </div>
         </div>
-
-
-    </section>
-
-
-    <!--   </footer> -->
-
-    <footer class="landing">
-        <div class="container">
-            <p class="text-muted"><small>&copy; Copyright 2016
-         <a href="{% url 'homepage:disclaimer' %}" rel="designer">Disclaimer</a>
-         </small></p>
+        <div class="form-group">
+          <textarea name="message" id="message" class="form-control" rows="4" placeholder="Message" required></textarea>
+          <p class="help-block text-danger"></p>
         </div>
-    </footer>
-
-
-    <!-- Javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src=" {% static 'bootstrap/dist/js/bootstrap.min.js' %} "></script>
-    <script src=" {% static 'bootstrap-select/dist/js/bootstrap-select.min.js' %} "></script>
-    <script>
-        window.jQuery || document.write('<script src="js/jquery-1.11.0.min.js"><\/script>')
+        <div id="success"></div>
+        <button type="submit" class="btn btn-default">Send Message</button>
+      </form>
+      <div class="social">
+        <h3>Follow us</h3>
+        <ul>
+          <li><a href="https://www.facebook.com/Scope-722027004625664/"><i class="fa fa-facebook"></i></a></li>
+          <li><a href="https://twitter.com/scope_ai"><i class="fa fa-twitter"></i></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="footer">
+  <div class="container">
+    <p>Copyright 2015-2017 &copy; Paul Boës <a href="{% url 'homepage:disclaimer' %}">Disclaimer</a></p>
+  </div>
+</div>
+<script align='center' type="text/javascript" src="{% static 'd3/d3.min.js' %}"></script> 
+    <script type='text/javascript'> 
+    var max_width = 1000;
+    // if ($(window).width() > max_width) 
+      var json =  "{% static 'homepage/json/landing_graph.json' %}",
+      tgt = "{% static 'homepage/json/tgt_cluster.json' %}",
+      single =  "{% static 'homepage/json/single_cluster.json' %}",
+      nodefac = 0.6,
+      linkdist = 60;
     </script>
-    <script src="{% static 'homepage/js/wow.min.js' %}"></script>
-    <script src="{% static 'homepage/js/main.js' %}"></script>
-
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) --> 
+<script type="text/javascript" src="{% static 'homepage/js/jquery.1.11.1.js' %}"></script> 
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script type="text/javascript" src="{% static 'homepage/js/bootstrap.js' %}"></script> 
+<script type="text/javascript" src="{% static 'homepage/js/SmoothScroll.js' %}"></script> 
+<script type="text/javascript" src="{% static 'homepage/js/jquery.prettyPhoto.js' %}"></script> 
+<script type="text/javascript" src="{% static 'homepage/js/jquery.isotope.js' %}"></script> 
+<script type="text/javascript" src="{% static 'homepage/js/jquery.parallax.js' %}"></script> 
+<script type="text/javascript" src="{% static 'homepage/js/jqBootstrapValidation.js' %}"></script> 
+<script type="text/javascript" src="{% static 'homepage/js/contact_me.js' %}"></script> 
+<script type='text/javascript' src="{% static 'homepage/js/landing_graph.js' %}"> </script>
+<!-- Javascripts
+    ================================================== --> 
+<script type="text/javascript" src="{% static 'homepage/js/landing_main.js' %}"></script>
 </body>
-
 </html>
