@@ -61,7 +61,7 @@ class Curate(object):
         # Debug line - creates clustering csv
         # self.classifier.classify_labels(db_articles, True)
 
-        print "Number of filtered articles"
+        print "Number of articles after classification"
         print len(filtered_articles)
         # for article in filtered_articles:
         #     print article.title
@@ -78,11 +78,12 @@ class Curate(object):
         relevant_articles = Article_Curate_Query.objects.filter(
             curate_query__in=queries)
         pos = []
+        neg = []
         for article_instance in relevant_articles:
             if article_instance.selection_options.filter(kind="sel").exists():
                 pos.append(article_instance.article)
-        
-        #neative articles 
+
+        negative articles
         content_reasons = Curate_Rejection_Reasons.objects.filter(selection.curate_customer = self.curate_customer).filter(kind="con")
         neg = content_reasons.current_members.all()
 
@@ -132,9 +133,31 @@ class Curate(object):
 
         return sim
 
-    def _process(self, db_articles, words):
+    def _check_articles(self, all_articles):
+        out = []
+        bad_sources = self.query.curate_customer.bad_source.all()
+
+        queries = Curate_Query.objects.filter(
+            curate_customer=self.curate_customer).filter(
+                selection_made=True)
+
+        relevant_articles = Article_Curate_Query.objects.filter(
+            curate_query__in=queries)
+
+        for a in all_articles:
+            if a.source not in bad_sources and a not in relevant_articles:
+                out.append(a)
+
+        return out
+
+    def _process(self, all_articles, words):
 
         print "Number of articles"
+        print len(all_articles)
+
+        db_articles = self._check_articles(all_articles)
+
+        print "Number of articles after filtering"
         print len(db_articles)
 
         if self.config.getint('classifier', 'pre_pipeline'):
