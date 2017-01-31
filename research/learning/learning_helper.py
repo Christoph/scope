@@ -19,20 +19,31 @@ def save_model(computed_model, name):
     computed_model.save("curate/customers/"+name+"/"+name+"_model.h5")
     computed_model.save_weights("curate/customers/"+name+"/"+name+"_weights.h5")
 
-def get_labeld_er_data(keyword, timespan, number):
-    data = get_er_data(keyword, timespan, number)
+def get_training_dataset(group_dict, size):
+    pass
 
-    labels = np.zeros(len(data), dtype=int) + 1
+def get_labeld_er_data(keyword, timespan, number, label, blacklistDF):
+    blacklist = blacklistDF.title.tolist()
+
+    data = get_er_data(keyword, timespan, number, blacklist)
+
+    labels = np.zeros(len(data), dtype=int) + label
     titles = [item["title"] for item in data]
     bodys = [item["body"] for item in data]
 
     raw = np.transpose([labels, titles, bodys])
 
-    out = pd.DataFrame(raw, columns=[keyword, "title", "text"])
+    raw = pd.DataFrame(raw, columns=["label", "title", "text"])
 
-    return out
+    # Remove duplicates in title and text
+    out = raw.drop_duplicates("title").drop_duplicates("text")
 
-def get_er_data(keywords, timespan, number):
+    # Remove short articles
+    clean = out[out.apply(lambda x: len(x.text), axis=1) > 50]
+
+    return clean
+
+def get_er_data(keywords, timespan, number, blacklist):
     agent = AgentEventRegistry(
         user="christoph.kralj@gmail.com",
         pwd="XzbiyLnpeh8MBtC{$4hv",
@@ -42,6 +53,6 @@ def get_er_data(keywords, timespan, number):
 
     er = er_handler.EventRegistryHandler(agent)
 
-    data = er.get_data(timespan, number)
+    data = er.get_data_with_checks(timespan, number, blacklist)
 
     return data
