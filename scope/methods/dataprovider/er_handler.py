@@ -20,7 +20,7 @@ class EventRegistryHandler(object):
         else:
             self.locations = []
 
-    def get_data_with_checks(self, timespan, number, blacklist):
+    def get_data_with_checks(self, timespan, number, blacklist, text_min_length):
         '''
         Get data with the agent configuration.
 
@@ -86,7 +86,7 @@ class EventRegistryHandler(object):
             q.clearRequestedResults()
 
             for article in articles["articles"]["results"]:
-                if article["title"] not in blacklist and len(article["body"].replace("\n", " ")) > 50:
+                if article["title"] not in blacklist and len(article["body"].replace("\n", " ")) > text_min_length:
                     out.append({
                         "body": article["body"].replace("\n", " "), "title": article["title"],
                         "url": article["url"], "images": article["image"],
