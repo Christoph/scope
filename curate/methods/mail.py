@@ -49,8 +49,7 @@ def mail_template(customer, send_dict, query, no, html=True):
 				query.time_stamp.strftime("%a %d/%m %Y") + \
 						   '. Enjoy!</h2><br/><hr align="center" width="80%" style="color:#588B8B;border-color: #588B8B;border:2px solid;"></tr>'
 			for item in send_dict.items():
-				print item
-				content = content + '<tr border="1px solid #588B8B" style="width:80%;"><td bgcolor="#588B8B" style="color:#fff; text-align:center;"><br/><h3><strong> Selection option "' + str(item[0]) + '": </strong></h3><br/></td> </tr>'
+				# content = content + '<tr border="1px solid #588B8B" style="width:80%;"><td bgcolor="#588B8B" style="color:#fff; text-align:center;"><br/><h3><strong> Selection option "' + str(item[0]) + '": </strong></h3><br/></td> </tr>'
 				articles = item[1]
 				for j in range (0, len(articles)):
 					article = articles[j]
