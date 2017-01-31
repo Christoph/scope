@@ -130,9 +130,6 @@ def gridsearch_svm(X, Y):
     X_train = np.array(X_train)
     X_test = np.array(X_test)
 
-    grid_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],
-                     'C': [1, 10, 100, 1000]}]
-
     rand_parameters = {
                "C": sp_randint(1, 10000),
                "gamma": sp_randfloat(1e-2, 1e-5),
@@ -227,6 +224,22 @@ def single_layer_model(optimizer='adam', init='normal'):
 
     return model
 
+def single_layer_basic_model():
+    optimizer='adam'
+    init='normal'
+    # baseline model
+    model = Sequential()
+
+    model.add(Dense(10, init=init, activation='relu', input_dim=300))
+    # test.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(1, init=init, activation='sigmoid'))
+
+    model.compile(
+        loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+
+    return model
+
 def gridsearch_neuralnet(X, Y):
     '''
     Architecture test class using grid search.
@@ -234,16 +247,32 @@ def gridsearch_neuralnet(X, Y):
 
     model = KerasClassifier(build_fn=single_layer_model, verbose=0)
 
-    optimizers = ['rmsprop', 'adam']
-    init = ['glorot_uniform', 'normal']
-    epochs = [10]
-    batches = [10]
+    # optimizers = ['rmsprop', 'adam']
+    # init = ['glorot_uniform', 'normal']
+    # epochs = [10]
+    # batches = [10]
+    #
+    # param_grid = dict(optimizer=optimizers, nb_epoch=epochs, batch_size=batches, init=init)
 
-    param_grid = dict(optimizer=optimizers, nb_epoch=epochs, batch_size=batches, init=init)
+    batch_size = [10, 20, 40]
+    epochs = [10, 20, 30]
+    optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
 
-    grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=4, verbose=1, cv=None)
+    # for SGD
+    learn_rate = [0.001, 0.01, 0.1, 0.2, 0.3]
+    momentum = [0.0, 0.2, 0.4, 0.6, 0.8, 0.9]
 
-    keras.backend.get_session().run(tf.global_variables_initializer())
+    activation = ['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear']
+
+
+    init_mode = ['uniform', 'lecun_uniform', 'normal', 'zero', 'glorot_normal', 'glorot_uniform', 'he_normal', 'he_uniform']
+
+
+    param_grid = dict(batch_size=batch_size, nb_epoch=epochs)
+
+    grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, verbose=1, cv=None)
+
+    # keras.backend.get_session().run(tf.global_variables_initializer())
 
     grid_result = grid.fit(np.array(X), Y)
 
@@ -288,7 +317,7 @@ def train_neuralnet(X, Y, init, optimizer, batch_size, nb_epochs):
 
     # Split data beforehand
     X_train, X_test, y_train, y_test = train_test_split(
-        X, Y, test_size=0.5, random_state=seed)
+        X, Y, test_size=0.33, random_state=seed)
 
     X_train = np.array(X_train)
     X_test = np.array(X_test)
