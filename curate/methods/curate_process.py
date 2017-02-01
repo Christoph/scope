@@ -62,9 +62,9 @@ class Curate(object):
         # self.classifier.classify_labels(db_articles, True)
 
         print "Number of articles after classification"
-        print len(filtered_articles)
-        # for article in filtered_articles:
-        #     print article.title
+        print len(filtered_articles)        
+        for article in filtered_articles:
+            print article.title
 
         return filtered_articles
 
@@ -107,6 +107,9 @@ class Curate(object):
             curate_customer=self.curate_customer).order_by("pk").reverse()[0]
         article_query_instances = Article_Curate_Query.objects.filter(
             curate_query=self.query)
+        for i in article_query_instances:
+            i.rank = 0
+            i.save()
         db_articles = [i.article for i in article_query_instances]
         words = sum([len(i.body) for i in db_articles])
         return db_articles, words

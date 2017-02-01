@@ -103,7 +103,7 @@ class binary_classifier(object):
 
                 if good <= 0.1:
                     good = good + 0.01
-                elif good > 0.1 and good <= 0.5:
+                elif good > 0.1 and good <= 0.2:
                     good = good + 0.02
                 else:
                     good = good + 0.05

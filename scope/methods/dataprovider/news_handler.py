@@ -27,6 +27,7 @@ class NewsSourceHandler(object):
                 print a.url
 
 
+
             # Remove newline characters
             a.text = a.text.replace("\n", "")
 
