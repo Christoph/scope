@@ -57,4 +57,5 @@ URL_HOSTNAME_BLACKLIST = ["www.facebook.com",
                           "www.youtube.com",
                           "www.wikipedia.org",
                           "betalist.com",
-                          "searchsystem.co"]
+                          "searchsystem.co",
+                          "www.smashingmagazine.com"]
