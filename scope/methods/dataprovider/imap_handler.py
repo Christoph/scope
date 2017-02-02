@@ -219,6 +219,9 @@ class ImapHandler(object):
                 print "is MIME encoded"
                 # If MIME encoded - decode and add
                 contents.append(part.get_payload(decode=True))
+            elif cenc == 'base64':
+                print "is base64 encoded"
+                contents.append(part.get_payload(decode=True))
             else:
                 print "is not MIME encoded"
                 # Else - add without decoding

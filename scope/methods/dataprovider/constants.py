@@ -40,9 +40,10 @@ TITLE_BLACKLIST = ["Bei Twitter anmelden",
                    "This Week In Startups",
                    "Smashing Email Newsletter"]
 
-URL_HOSTNAME_BLACKLIST = ["www.facebook.com",
+URL_HOSTNAME_BLACKLIST = ["www.w3.org",
+                          "www.facebook.com",
                           "www.producthunt.com",
-                          "www.morningreader.com",
+                          "morningreader.com",
                           "www.mailchimp.com",
                           "www.twitter.com",
                           "twitter.com",
