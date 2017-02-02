@@ -42,7 +42,6 @@ TITLE_BLACKLIST = ["Bei Twitter anmelden",
 
 URL_HOSTNAME_BLACKLIST = ["www.facebook.com",
                           "www.producthunt.com",
-                          "www.technologyreview.com",
                           "www.morningreader.com",
                           "www.mailchimp.com",
                           "www.twitter.com",
