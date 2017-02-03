@@ -15,7 +15,6 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 from conf.settings.importer import ImportGlobal
-import djcelery
 from conf.settings.base import *
 
 im = ImportGlobal()
