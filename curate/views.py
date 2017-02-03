@@ -1,11 +1,9 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
 import ConfigParser
-from django.core.mail import send_mail
 
-from curate.methods.mail import send_newsletter
 from conf.settings.importer import ImportGlobal
-
+from curate.tasks import send_newsletter_task, selection_made_task
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
 from scope.models import Customer, UserProfile
 
@@ -58,11 +56,11 @@ def interface(request,customer_key, date_stamp=None):
                         s.save()
                 except:
                     pass
-
-        #send_mail(subject = customer_key + "did selection", message="", from_email="robot@scope.ai", recipient_list =['paul@scope.ai'])  
+                    
+        selection_made_task.delay(customer_key)
         try:
             if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment":
-                send_newsletter(customer_key)
+                send_newsletter_task.delay(customer_key)
         except:
             pass
 
@@ -72,5 +70,3 @@ def interface(request,customer_key, date_stamp=None):
         stats[option] = len(stat)
     context = {"stats": stats, "suggestions": suggestions, "options": options, 'query': query, 'customer_key': customer_key}
     return render(request, 'curate/interface.html', context)
-
-

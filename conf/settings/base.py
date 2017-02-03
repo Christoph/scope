@@ -16,6 +16,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 from .importer import ImportGlobal
 import os
+# import djcelery
 
 im = ImportGlobal()
 
@@ -41,12 +42,21 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'widget_tweaks',
     'djangobower',
-    'mathfilters')
+    'mathfilters',
+    )
 
 
 ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai', 'robot@scope.ai')
 
 SITE_ID = 1
+
+# djcelery.setup_loader()
+
+BROKER_URL = im.get_env_variable('BROKER_URL')
+CELERY_ACCEPT_CONTENT = ['pickle',
+                         'json',
+                         'msgpack',
+                         'yaml']
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

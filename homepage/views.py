@@ -352,3 +352,6 @@ def contact_landing(request):
 
 def landing(request):
     return render(request,'homepage/landing.html')
+
+def testpage(request):
+    return render(request,'homepage/testpage.html')

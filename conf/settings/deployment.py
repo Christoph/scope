@@ -15,7 +15,6 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 from conf.settings.importer import ImportGlobal
-import djcelery
 from conf.settings.base import *
 
 im = ImportGlobal()
@@ -28,17 +27,7 @@ CURRENT_DOMAIN = 'http://www.scope.ai'
 ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai')
 
 INSTALLED_APPS += (
-    'djcelery',
-   'kombu.transport.django'
 )
-
-djcelery.setup_loader()
-
-BROKER_URL = im.get_env_variable('BROKER_URL')
-CELERY_ACCEPT_CONTENT = ['pickle',
-                         'json',
-                         'msgpack',
-                         'yaml']
 
 LOCKDOWN_PASSWORDS = ('scope2016')
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
