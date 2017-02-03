@@ -38,7 +38,8 @@ TITLE_BLACKLIST = ["Bei Twitter anmelden",
                    "Subscribe to read",
                    "Job Application Form",
                    "This Week In Startups",
-                   "Smashing Email Newsletter"]
+                   "Smashing Email Newsletter",
+                   "Nieman Journalism Lab  Pushing to the Future of Journalism"]
 
 URL_HOSTNAME_BLACKLIST = ["www.w3.org",
                           "www.facebook.com",
