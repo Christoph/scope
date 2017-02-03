@@ -59,8 +59,7 @@ def interface(request,customer_key, date_stamp=None):
                 except:
                     pass
 
-        
-        send_mail(subject = customer_key + "did selection", message="", from_email="robot@scope.ai", recipient_list =['paul@scope.ai'])  
+        #send_mail(subject = customer_key + "did selection", message="", from_email="robot@scope.ai", recipient_list =['paul@scope.ai'])  
         try:
             if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment":
                 send_newsletter(customer_key)
