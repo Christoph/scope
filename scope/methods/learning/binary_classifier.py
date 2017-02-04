@@ -90,29 +90,33 @@ class binary_classifier(object):
         '''
 
         classified_articles = []
-        good = -0.01
         best = 0.0
-        counter = len(db_articles)
 
-        if counter <= min_count:
+        if len(db_articles) <= min_count:
             print "not enough articles"
-            best = 0.0
         else:
-            while counter > min_count and good < 1.0:
-                best = good
+            lo = 0.0
+            hi = 1.0
+            found = False
+            count = 0
+            count_old = 0
 
-                if good <= 0.1:
-                    good = good + 0.01
-                elif good > 0.1 and good <= 0.2:
-                    good = good + 0.02
+            while lo<=hi and not found:
+                best = (lo + hi)/2
+
+                count_old = count
+                count = self._get_count(db_articles, best)
+
+                print best
+                print count
+
+                if count == count_old or count == min_count:
+	                   found = True
                 else:
-                    good = good + 0.05
-
-                counter = self._get_count(db_articles, good)
-
-                print "Classified articles"
-                print good
-                print counter
+                    if count > min_count:
+                        lo = best
+                    else:
+                        hi = best
 
         print "Used threshold"
         print best
