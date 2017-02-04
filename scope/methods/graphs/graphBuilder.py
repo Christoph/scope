@@ -1,9 +1,11 @@
 import networkx as nx
-import numpy as np
-import itertools
+# import numpy as np
+# import itertools
+import logging
 
-from scope.methods.graphs import clustering_methods
+# from scope.methods.graphs import clustering_methods
 
+logger = logging.getLogger('django')
 
 class Graph(object):
     """docstring for Graph."""
@@ -18,8 +20,9 @@ class Graph(object):
     def linkDataset(self, no):
         self.no = no
 
-    def addNodes(self):
-        self.graph.add_nodes_from(range(0, self.no))
+    def addNodes(self, db_articles):
+        for i in range(0, len(db_articles)):
+            self.graph.add_node(i,title=db_articles[i].title)#add_nodes_from(range(0, self.no))
 
     # def addEdges_from_clustering(self, sim, clustering, params):
     #     self.graph.remove_edges_from(self.graph.edges())
@@ -67,8 +70,6 @@ class Graph(object):
             self.addEdges_global_thresh(s, sim)
             structure = self.central_articles(size_bound)
             score_new = test(structure, t[1])
-            print structure
-            print best_thresh, score_new
             if score_new > best_score:
                 best_score = score_new
                 best_thresh = s
@@ -90,11 +91,17 @@ class Graph(object):
         selection = {'no_clusters': len(cluster_list), 'no_articles': len(
             self.graph.nodes()), 'clustering': clustering, 'articles': []}
         for cluster in cluster_list:
+
+            for node in cluster[2]:
+                logger.debug(self.graph.node[node]['title'])
+            logger.debug('and')
             closeness = nx.closeness_centrality(cluster[2], distance=True)
             closeness_ordered = sorted(closeness.items(),
                                        key=lambda close: close[1], reverse=True)
+
             central_article = closeness_ordered[0][0]
+            
             selection['articles'].append(
                 [central_article, cluster[0], cluster[1]])
-
+        logger.debug("NEWCLUSTER")
         return selection

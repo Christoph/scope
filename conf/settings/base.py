@@ -16,6 +16,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 from .importer import ImportGlobal
 import os
+# import djcelery
 
 im = ImportGlobal()
 
@@ -40,12 +41,22 @@ INSTALLED_APPS = (
     'twitter_bootstrap',
     'django.contrib.sites',
     'widget_tweaks',
-    'djangobower')
+    'djangobower',
+    'mathfilters',
+    )
 
 
 ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai', 'robot@scope.ai')
 
 SITE_ID = 1
+
+# djcelery.setup_loader()
+
+BROKER_URL = im.get_env_variable('BROKER_URL')
+CELERY_ACCEPT_CONTENT = ['pickle',
+                         'json',
+                         'msgpack',
+                         'yaml']
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -116,3 +127,19 @@ BOWER_INSTALLED_APPS = (
 
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/profile'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}

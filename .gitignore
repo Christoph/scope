@@ -25,3 +25,6 @@ static/twitter_bootstrap/
 *.csv
 *.bin
 *.json
+*.h5
+
+.cache/

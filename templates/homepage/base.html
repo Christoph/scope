@@ -36,22 +36,28 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-                    <a class="navbar-brand" href="{% url 'explore:home' %}"><span style ="font-size:20px">{% if name %}{{name}}{% else %}scope {% endif %}</span><small> - {{slogan}}</small></a>
+                    <a class="navbar-brand" href="{% url 'homepage:landing' %}"><img src="{% static 'homepage/img/logos/scope_logo1.png' %}" style="width: 100px;">
+                    {# <span style ="font-size:20px">{% if name %}{{name}}{% else %}scope {% endif %}</span><small> - {{slogan}}</small> #}
+                    </a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="{% url 'explore:customsearch' %}"><i class="fa fa-search" aria-hidden="true"></i></a>
+                    <!-- {% url 'explore:customsearch' %} -->
+                        <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a>
                             <title>Custom Search</title>
                         </li>
-                        <li><a href="{% url 'explore:alert' %}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a></li>
-                        <li><a href="{% url 'homepage:how_it_works' %}"><i class="fa fa-info" aria-hidden="true"></i></a></li>
+                        <!-- {% url 'explore:alert' %} -->
+                        <li><a href="#"><i class="fa fa-envelope-o" aria-hidden="true"></i></a></li>
+    <!-- {% url 'homepage:how_it_works' %} -->
+                        <li><a href="#"><i class="fa fa-info" aria-hidden="true"></i></a></li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user" aria-hidden="true"></i></a> {% if log_inf %}
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user" aria-hidden="true"></i></a> 
+    <!--                         {% if log_inf %}
                             <ul class="dropdown-menu">
                                 <li><a href="{% with log_link|first as name %}{% url name %}{% endwith %}">{{log_inf|first}}</a></li>
                                 <li><a href="{% with log_link|last as name %}{% url name %}{% endwith %}">{{log_inf|last}}</a></li>
                             </ul>
-                            {% endif %}
+                            {% endif %} -->
                         </li>
 
                     </ul>
@@ -159,7 +165,9 @@
 
     <footer class="footer">
         <div class="container">
-            <p class="text-muted"><small>&copy; Copyright 2015-2016, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a> <a href="{% url 'homepage:contact' %}">Contact</a>  <a href="{% url 'homepage:disclaimer' %}" rel="designer">Disclaimer/License</a></small></p>
+            <p class="text-muted"><small>&copy; Copyright 2015-2017, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a> 
+            <!-- <a href="{% url 'homepage:contact' %}">Contact</a>  <a href="{% url 'homepage:disclaimer' %}" rel="designer">Disclaimer/License</a> -->
+            </small></p>
         </div>
     </footer>
 </body>

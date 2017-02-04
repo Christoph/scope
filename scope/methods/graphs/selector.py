@@ -3,14 +3,14 @@ from scope.methods.graphs.graphBuilder import Graph
 class Selection(object):
     """docstring for Selection"""
 
-    def __init__(self, no, sim):
+    def __init__(self, db_articles, sim):
         self.graph = Graph("normal")
-        self.no = no
+        self.db_articles = db_articles
         self.sim = sim
 
     def _create_graph(self):
-        self.graph.linkDataset(self.no)
-        self.graph.addNodes()
+        self.graph.linkDataset(len(self.db_articles))
+        self.graph.addNodes(self.db_articles)
 
     def by_clustering(self, clustering):
         self._create_graph()

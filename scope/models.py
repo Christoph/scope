@@ -16,11 +16,12 @@ class Customer(models.Model):
 
 
 class UserProfile(models.Model):
-    # TODO: Model should be removed
     user = models.ForeignKey(User, default=None, null=True)
     activation_key = models.CharField(max_length=40)
-    key_expires = models.DateTimeField()
+    expires = models.DateTimeField()
     customer = models.ForeignKey(Customer, default=None, null=True)
+    def __unicode__(self):              # __unicode__ on Python 2
+        return self.user.username
 
 
 class Agent(models.Model):
@@ -34,9 +35,12 @@ class Agent(models.Model):
     agent_id = models.PositiveIntegerField()
     agent_object = GenericForeignKey("agent_type", "agent_id")
 
+    def __unicode__(self):              # __unicode__ on Python 2
+        return str(self.agent_id) + ', ' + str(self.agent_type)
+
 
 class Source(models.Model):
-    name = models.CharField(max_length = 200, )
+    name = models.CharField(max_length = 200)
     url = models.CharField(max_length=200)
     def __unicode__(self):
         return self.url
@@ -48,6 +52,8 @@ class AgentImap(models.Model):
     imap = models.CharField(blank=True, max_length=100)
     mailbox = models.CharField(blank=True, max_length=100)
     interval = models.IntegerField(blank=True, default=24)
+    def __unicode__(self):              # __unicode__ on Python 2
+        return str(self.id) + ', ' + self.user
 
 class AgentEventRegistry(models.Model):
     user = models.CharField(blank=True, max_length=100)
@@ -55,6 +61,13 @@ class AgentEventRegistry(models.Model):
     lang = models.CharField(blank=True, max_length=10)
     concepts = models.CharField(blank=True, max_length=200)
     locations = models.CharField(blank=True, max_length=200)
+    def __unicode__(self):              # __unicode__ on Python 2
+        return str(self.id) + ', ' + self.user
+
+class AgentNewspaper(models.Model):
+    url = models.CharField(blank=True, max_length=200)
+    def __unicode__(self):              # __unicode__ on Python 2
+        return str(self.id) + ', ' + self.url
 
 class Article(models.Model):
     source = models.ForeignKey(Source, blank=True, null=True)
@@ -64,6 +77,8 @@ class Article(models.Model):
     keywords = models.CharField(max_length=200, blank=True)
     body = models.TextField()
     time_created = models.DateField(auto_now_add=True)
+    pubdate = models.DateTimeField(blank=True, null=True)
+
 
     def __unicode__(self):              # __unicode__ on Python 2
         return self.title

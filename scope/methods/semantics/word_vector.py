@@ -6,8 +6,11 @@ import nltk
 class Model(object):
     """docstring for Model."""
     def __init__(self, lang):
+        print lang
         if(lang == "de"):
             self.stop_words = nltk.corpus.stopwords.words('german')
+
+            self.pipeline = spacy.load("de")
 
             # Add german stopwords to spacy
             for word in self.stop_words:
@@ -17,8 +20,6 @@ class Model(object):
             for word in spacy.de.language_data.STOP_WORDS:
                 lexeme = self.pipeline.vocab[word.decode()]
                 lexeme.is_stop = True
-
-            self.pipeline = spacy.load("de")
 
         if(lang == "en"):
             self.pipeline = spacy.load("en")
