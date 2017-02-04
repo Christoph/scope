@@ -59,6 +59,7 @@ print len(db_articles)
 
 words = sum([len(i.body) for i in db_articles])
 
+print "CLASSIFY"
 filtered_articles = classifier.classify_by_count(
     db_articles, min_count)
 
