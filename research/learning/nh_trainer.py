@@ -11,7 +11,7 @@ import keras
 import tensorflow as tf
 
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.layers import Dense, Dropout, Merge
 from keras.layers import LSTM
 from keras.layers.embeddings import Embedding
 from keras.layers.normalization import BatchNormalization
@@ -139,7 +139,7 @@ def gridsearch_svm(X, Y):
     print()
 
     clf = RandomizedSearchCV(SVC(C=1), param_distributions=rand_parameters,
-                                   n_iter=10, cv=5, verbose=1, n_jobs=4)
+                                   n_iter=10, cv=5, verbose=1, n_jobs=-1)
     clf.fit(X_train, y_train)
 
 
@@ -272,7 +272,7 @@ def gridsearch_neuralnet(X, Y):
 
     grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, verbose=1, cv=None)
 
-    # keras.backend.get_session().run(tf.global_variables_initializer())
+    keras.backend.get_session().run(tf.global_variables_initializer())
 
     grid_result = grid.fit(np.array(X), Y)
 
@@ -293,7 +293,7 @@ def kfold_neuralnet(X, Y, nb_epoch, batch_size):
 
     # Split data beforehand
     X_train, X_test, y_train, y_test = train_test_split(
-        X, Y, test_size=0.5, random_state=seed)
+        X, Y, test_size=0.33, random_state=seed)
 
     X_train = np.array(X_train)
     X_test = np.array(X_test)
@@ -310,7 +310,7 @@ def kfold_neuralnet(X, Y, nb_epoch, batch_size):
     print "Mean Accuracy:"
     print(results.mean())
 
-def train_neuralnet(X, Y, init, optimizer, batch_size, nb_epochs):
+def train_neuralnet(X, Y):
     '''
     Train neural model.
     '''
@@ -322,18 +322,51 @@ def train_neuralnet(X, Y, init, optimizer, batch_size, nb_epochs):
     X_train = np.array(X_train)
     X_test = np.array(X_test)
 
+    # params
+    batch_size = 20
+    nb_epochs = 200
+
+    init = "normal"
+    optimizer = "adam"
+
     # baseline model
     model = Sequential()
 
-    model.add(Dense(10, init=init, activation='relu', input_dim=300))
-    # test.add(BatchNormalization())
+    model.add(Dense(300, init=init, activation='relu', input_dim=300))
+    # model.add(BatchNormalization())
     model.add(Dropout(0.5))
     model.add(Dense(1, init=init, activation='sigmoid'))
 
     model.compile(
         loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
-    test_history = model.fit(
-        X_train, y_train, batch_size=batch_size, nb_epoch=nb_epochs, verbose=1)
+    model.fit( X_train, y_train, batch_size=batch_size, nb_epoch=nb_epochs, verbose=1)
+
+    # title_branch = Sequential()
+    # title_branch.add(Dense(100, input_dim=300))
+    #
+    # text_branch = Sequential()
+    # text_branch.add(Dense(100, input_dim=300))
+    #
+    # merged = Merge([title_branch, text_branch], mode='concat')
+    #
+    # model = Sequential()
+    # model.add(merged)
+    # model.add(Dropout(0.5))
+    # model.add(Dense(1, activation='sigmoid'))
+    #
+    # model.compile(
+    #     loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    #
+    # keras.backend.get_session().run(tf.global_variables_initializer())
+    #
+    # model.fit([W_train, X_train], y_train, batch_size=batch_size, nb_epoch=nb_epochs, verbose=1)
+
+
+    test_scores = model.evaluate(X_test, y_test, verbose=1)
+
+    print ()
+    print "Test Results"
+    print "Test %s: %.2f%%" % (model.metrics_names[1], test_scores[1] * 100)
 
     return model
