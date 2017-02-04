@@ -57,14 +57,14 @@ def sim_based_threshold(sim, threshold):
 
     return labels.astype(int)
 
-def affinity_propagation(sim):
+def affinity_propagation(sim, preference=None):
     '''
         sim: similarity matrix
         preference: influences the number of clusters
 
         returns: labels, center_indices
     '''
-    aff = AffinityPropagation()
+    aff = AffinityPropagation(preference=preference)
 
     aff.fit_predict(sim)
 
