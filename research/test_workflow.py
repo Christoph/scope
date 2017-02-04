@@ -1,6 +1,8 @@
 import django
 django.setup()
 
+import numpy as np
+
 from scope.models import Customer
 from curate.models import Curate_Query, Article_Curate_Query
 from curate.models import Curate_Customer
@@ -41,6 +43,12 @@ all_articles = [i.article for i in article_query_instances]
 
 db_articles = []
 bad_sources = curate_customer.bad_source.all()
+
+# check if duplicate titles exist and remove them
+titles = [a.title for a in all_articles]
+u, indices = np.unique(titles, return_index=True)
+all_articles = np.array(all_articles)[indices]
+all_articles = all_articles.tolist()
 
 for a in all_articles:
     if a.source not in bad_sources:
