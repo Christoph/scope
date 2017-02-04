@@ -57,26 +57,6 @@ def sim_based_threshold(sim, threshold):
 
     return labels.astype(int)
 
-def sim_based_test(sim, params, test):
-    '''
-        Custom clustering method using a test method.
-    '''
-
-    best_score = 0
-    out_labels = []
-
-    for s in np.arange(params[0][0], params[0][1], params[0][2]):
-        # Get labels with threshold
-        labels = sim_based_threshold(sim, s)
-
-        score_new = test(labels, params[1])
-
-        if score_new > best_score:
-            best_score = score_new
-            out_labels = labels
-
-    return out_labels
-
 def affinity_propagation(sim):
     '''
         sim: similarity matrix
