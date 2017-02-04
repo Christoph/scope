@@ -1,16 +1,30 @@
 import django
 django.setup()
 
-
 from scope.models import Customer
 from curate.models import Curate_Query, Article_Curate_Query
 from curate.models import Curate_Customer
 
+import scope.methods.semantics.word_vector as word_vector
+from scope.methods.learning import binary_classifier
+
 # params
 customer_key = "neuland_herzer"
+min_count = 100
+language = "eng"
 
+
+# initializations
+wv_language_dict = {
+    'ger': 'de',
+    'eng': 'en',
+}
+wv_model = word_vector.Model(wv_language_dict[language])
+classifier = binary_classifier.binary_classifier(
+    wv_model.pipeline, customer_key)
 
 # get data from db
+print "GET DATA"
 customer = Customer.objects.get(
     customer_key=customer_key)
 curate_customer = Curate_Customer.objects.get(
@@ -25,10 +39,6 @@ for i in article_query_instances:
 
 all_articles = [i.article for i in article_query_instances]
 
-print "initial articles:"
-print len(all_articles)
-
-# check articles
 db_articles = []
 bad_sources = curate_customer.bad_source.all()
 
@@ -36,18 +46,26 @@ for a in all_articles:
     if a.source not in bad_sources:
         db_articles.append(a)
 
-print "good articles:"
+print "articles:"
 print len(db_articles)
 
 words = sum([len(i.body) for i in db_articles])
 
-# classify
+filtered_articles = classifier.classify_by_count(
+    db_articles, min_count)
 
+print "articles after classification"
+print len(filtered_articles)
+for article in filtered_articles:
+    print article.title
 
 # semantic analysis
+print "SEMANTIC ANALYSIS"
 
 
 # clustering
+print "CLUSTERING"
 
 
 # select articles
+print "SELECT ARTILCES"
