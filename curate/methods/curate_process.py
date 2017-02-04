@@ -62,9 +62,9 @@ class Curate(object):
         # self.classifier.classify_labels(db_articles, True)
 
         print "Number of articles after classification"
-        print len(filtered_articles)
-        # for article in filtered_articles:
-        #     print article.title
+        print len(filtered_articles)        
+        for article in filtered_articles:
+            print article.title
 
         return filtered_articles
 
@@ -107,6 +107,9 @@ class Curate(object):
             curate_customer=self.curate_customer).order_by("pk").reverse()[0]
         article_query_instances = Article_Curate_Query.objects.filter(
             curate_query=self.query)
+        for i in article_query_instances:
+            i.rank = 0
+            i.save()
         db_articles = [i.article for i in article_query_instances]
         words = sum([len(i.body) for i in db_articles])
         return db_articles, words
@@ -132,33 +135,35 @@ class Curate(object):
 
         return sim
 
-    def _check_articles(self, all_articles):
-        out = []
-        bad_sources = self.curate_customer.bad_source.all()
-
-        # the selection-made filter here is because the oarticle_curate_objects fo these aticles have already been created at this point
-        queries = Curate_Query.objects.filter(
-            curate_customer=self.curate_customer).filter(
-                selection_made=True)
-
-        relevant_articles = [i.article for i in Article_Curate_Query.objects.filter(
-            curate_query__in=queries)]
-
-        for a in all_articles:
-            if a.source not in bad_sources and a not in relevant_articles:
-                out.append(a)
-
-        return out
-
-    def _process(self, all_articles, words):
-
+    def _check_articles(self, all_articles, db = False):
         print "Number of articles"
         print len(all_articles)
 
-        db_articles = self._check_articles(all_articles)
+        out = []
+        bad_sources = self.curate_customer.bad_source.all()
+
+        if db == False:
+            # the selection-made filter here is because the oarticle_curate_objects fo these aticles have already been created at this point
+            queries = Curate_Query.objects.filter(
+                curate_customer=self.curate_customer).filter(
+                    selection_made=True)
+
+            relevant_articles = [i.article for i in Article_Curate_Query.objects.filter(
+                curate_query__in=queries)]
+
+            for a in all_articles:
+                if a.source not in bad_sources and a not in relevant_articles:
+                    out.append(a)
+        else: 
+            for a in all_articles:
+                if a.source not in bad_sources:
+                    out.append(a)
 
         print "Number of articles after filtering"
-        print len(db_articles)
+        print len(out)
+        return out
+
+    def _process(self, db_articles, words):
 
         if self.config.getint('classifier', 'pre_pipeline'):
             filtered_articles = self._classifier(db_articles)
@@ -209,12 +214,14 @@ class Curate(object):
 
     def from_db(self):
         db_articles, words = self._retrieve_from_db()
+        db_articles = self._check_articles(db_articles, db= True)
         selected_articles = self._process(db_articles, words)
 
         return selected_articles
 
     def from_sources(self):
         db_articles, words = self._retrieve_from_sources()
+        db_articles = self._check_articles(db_articles)
         selected_articles = self._process(db_articles, words)
 
         return selected_articles

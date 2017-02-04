@@ -148,24 +148,26 @@ class ImapHandler(object):
 
         # Get the whole mail content
         for emailid in items:
+            try:
             # fetching the mail, "`(RFC822)`" means "get the whole stuff",
             # but you can ask for headers only, etc
-            resp, data = mailbox.fetch(emailid, "(RFC822)")
+                resp, data = mailbox.fetch(emailid, "(RFC822)")
 
-            email_body = data[0][1]  # getting the mail content
+                email_body = data[0][1]  # getting the mail content
 
-            # Convert to mail object
+                # Convert to mail object
 
-            mail = email.message_from_string(email_body)
+                mail = email.message_from_string(email_body)
 
-            # All mail text/plain contents
-            contents = self._get_content(mail)
+                # All mail text/plain contents
+                contents = self._get_content(mail)
 
-            # Add urls from each content
-            for content in contents:
-                all_urls.extend(
-                    self.url_extractor.get_urls_from_string(content))
-
+                # Add urls from each content
+                for content in contents:
+                    all_urls.extend(
+                        self.url_extractor.get_urls_from_string(content))
+            except:
+                pass
         # Remove duplicates over different newsletters
         all_urls = list(set(all_urls))
 
@@ -218,6 +220,9 @@ class ImapHandler(object):
             if cenc == 'quoted-printable':
                 print "is MIME encoded"
                 # If MIME encoded - decode and add
+                contents.append(part.get_payload(decode=True))
+            elif cenc == 'base64':
+                print "is base64 encoded"
                 contents.append(part.get_payload(decode=True))
             else:
                 print "is not MIME encoded"

@@ -22,6 +22,11 @@ class NewsSourceHandler(object):
             except XMLSyntaxError:
                 print "Parse error detected"
                 print a.url
+            except ValueError:
+                print "Value error detected"
+                print a.url
+
+
 
             # Remove newline characters
             a.text = a.text.replace("\n", "")

@@ -53,7 +53,7 @@ class AgentImap(models.Model):
     mailbox = models.CharField(blank=True, max_length=100)
     interval = models.IntegerField(blank=True, default=24)
     def __unicode__(self):              # __unicode__ on Python 2
-        return self.id + ', ' + self.user
+        return str(self.id) + ', ' + self.user
 
 class AgentEventRegistry(models.Model):
     user = models.CharField(blank=True, max_length=100)
@@ -62,12 +62,12 @@ class AgentEventRegistry(models.Model):
     concepts = models.CharField(blank=True, max_length=200)
     locations = models.CharField(blank=True, max_length=200)
     def __unicode__(self):              # __unicode__ on Python 2
-        return self.id + ', ' + self.user
+        return str(self.id) + ', ' + self.user
 
 class AgentNewspaper(models.Model):
     url = models.CharField(blank=True, max_length=200)
     def __unicode__(self):              # __unicode__ on Python 2
-        return self.id + ', ' + self.url
+        return str(self.id) + ', ' + self.url
 
 class Article(models.Model):
     source = models.ForeignKey(Source, blank=True, null=True)
