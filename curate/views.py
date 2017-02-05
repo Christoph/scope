@@ -33,12 +33,14 @@ def interface(request,customer_key, date_stamp=None):
                          "/" + customer_key + '.cfg')
         query.selection_made = True
         query.save()
+        selected_articles = []
         for i in range(1, len(suggestions) + 1):
             for option in options:                    
                 try:
                     xx = request.POST[option.name + str(i)]
                     if xx == 'on':
                         s = suggestions[i-1]
+                        selected_articles.append({"title": s.article.title, "body": s.article.body[0:200], "selection": option.name})
                         for reason in option.rejection_reason.all():
                             try:
                                 yy = request.POST[option.name + str(i) + reason.name]
@@ -57,7 +59,10 @@ def interface(request,customer_key, date_stamp=None):
                 except:
                     pass
                     
-        selection_made_task.delay(customer_key)
+        try:
+            selection_made_task.delay(customer_key, selected_articles)
+        except:
+            pass
         try:
             if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment":
                 send_newsletter_task.delay(customer_key)
