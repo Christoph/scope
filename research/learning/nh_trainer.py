@@ -7,14 +7,28 @@ import pandas as pd
 import spacy
 from gensim import corpora, models
 
+import keras
+import tensorflow as tf
+
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.layers import Dense, Dropout, Merge
 from keras.layers import LSTM
 from keras.layers.embeddings import Embedding
 from keras.layers.normalization import BatchNormalization
 from keras.preprocessing.sequence import pad_sequences
+from keras.wrappers.scikit_learn import KerasClassifier
+
+from scipy.stats import randint as sp_randint
+from scipy.stats import uniform as sp_randfloat
 
 from sklearn.model_selection import train_test_split
+from sklearn import svm
+from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report
+from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import RandomizedSearchCV
 
 
 # fix random seed for reproducibility
@@ -22,20 +36,12 @@ seed = 7
 np.random.seed(seed)
 
 
-def load_data():
+def load_data(filename):
     '''
     Load data for the test function
     '''
 
-    # Hand labeled statistics
-    # is_tech [1]: 46
-    # not tech [0]: 469
-    # needed additional tech articles: 423
-
-    data_hand = pd.read_csv("tech_hand_labeled.csv")
-    data_tech = pd.read_csv("tech_er_423.csv")
-
-    data = pd.concat([data_hand, data_tech])
+    data = pd.read_csv(filename)
 
     # Convert data to word vectors and splits columns
     pipeline = spacy.load("en")
@@ -60,13 +66,13 @@ def load_data():
     #
     # U = padded_tfidf
     V = [pipeline(t).vector for t in texts_clean]
-    W = [pipeline(t.decode("utf-8")).vector for t in data["title"]]
+    W = [pipeline(t.decode("utf-8")).vector for t in data["title"].astype(str)]
     X = [pipeline(t.decode("utf-8")).vector for t in data["text"]]
     Y = data["label"].as_matrix()
 
     return V, W, X, Y
 
-def load_data_sequence():
+def load_data_sequence(filename):
     '''
     Load data for the test function
     '''
@@ -76,10 +82,7 @@ def load_data_sequence():
     # not tech [0]: 469
     # needed additional tech articles: 423
 
-    data_hand = pd.read_csv("tech_hand_labeled.csv")
-    data_tech = pd.read_csv("tech_er_423.csv")
-
-    data = pd.concat([data_hand, data_tech])
+    data = pd.read_csv(filename)
 
     # Convert data to word vectors and splits columns
     pipeline = spacy.load("en")
@@ -108,236 +111,185 @@ def load_data_sequence():
 
     return X, Y
 
+def test_neural_model(model, X, Y):
+    test_scores = model.evaluate(X, Y, verbose=1)
 
-'''
-input - 300(uniform, relu) - 1(uniform, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.84%
-test_acc: 84.19%
+    print "Test Results"
+    print "Test %s: %.2f%%" % (model.metrics_names[1], test_scores[1] * 100)
 
-input - 300(normal, relu) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.84%
-test_acc: 84.52%
+    predictions = model.predict_classes(X_test, verbose=0)
+    result = np.vstack((predictions[:, 0], y_test))
+    print "Comparrison"
+    print result.T
 
-input - 300(normal, relu) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.89%
-test_acc: 83.23%
-
-input - 300(glorot_normal, relu) - 1(glorot_normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.84%
-test_acc: 83.55%
-
-input - 300(he_normal, relu) - 1(he_normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.84%
-test_acc: 83.55%
-
-BEST INIT: normal
-
-input - 300(normal, tanh) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.04%
-test_acc: 80.97%
-
-input - 300(normal, hard_sigmoid) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 92.83%
-test_acc: 83.87%
-
-BEST ACTIVATION: relu
-
-input - 300(normal, relu) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adagrad
-train_acc: 95.86%
-test_acc: 82.90%
-
-input - 300(normal, relu) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: RMSprop
-train_acc: 99.68%
-test_acc: 84.19%
-
-BEST OPT: adam
-
-Using [0,1] normalized input!
-input - 300(normal, relu) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 50.8.84%
-test_acc: 48.39%
-
-input - 300(normal, relu) - Dropout(0.2) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.84%
-test_acc: 83.55%
-
-input - 300(normal, relu) - Dropout(0.5) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.36%
-test_acc: 85.48%
-
-input - dense(300, normal, relu) - BatchNormalization() - Dropout(0.5) -
-dense(1, normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: XX%
-test_acc: XX%
-
-input -
-dense(300, normal, relu) - Dropout(0.5) -
-dense(300, normal, relu) - Dropout(0.5) -
-dense(1, normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 97.13%
-test_acc: 84.19%
-
-input -
-dense(300, normal, relu) - Dropout(0.5) -
-dense(300, normal, relu) - Dropout(0.5) -
-dense(300, normal, relu) - Dropout(0.5) -
-dense(1, normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 96.97%
-test_acc: 83.55%
-
-input -
-dense(300, normal, relu) - Dropout(0.5) -
-dense(200, normal, relu) - Dropout(0.4) -
-dense(100, normal, relu) - Dropout(0.3) -
-dense(1, normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 97.29%
-test_acc: 82.90%
-
-BEST STRUCTURE: 1 layer + dropout 0.5
-
-input - 200(normal, relu) - Dropout(0.5) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 98.89%
-test_acc: 84.84%
-
-input - 600(normal, relu) - Dropout(0.5) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.52%
-test_acc: 84.52%
-
-BEST LAYER SIZE: 600
-
-batch size: 100
-input - 600(normal, relu) - Dropout(0.5) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 96.02%
-test_acc: 85.48%
-
-batch size: 40
-input - 600(normal, relu) - Dropout(0.5) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 98.57%
-test_acc: 85.48%
-
-batch size: 5
-input - 600(normal, relu) - Dropout(0.5) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.04%
-test_acc: 83.55%
-
-BEST BATCH SIZE: 20
-
-nb_epochs: 200
-batch size: 20
-input - 600(normal, relu) - Dropout(0.5) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 100.00%
-test_acc: 84.52%
-
-nb_epochs: 200
-batch size: 20
-input - 300(normal, relu) - Dropout(0.5) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.68%
-test_acc: 83.55%
-
-BEST OVERALL: has lowest cost function values
-
-nb_epochs: 300
-batch size: 20
-input - 600(normal, relu) - Dropout(0.5) - 1(normal, sigmoid)
-loss: binary_crossentropy
-optimizer: adam
-train_acc: 99.84%
-test_acc: 84.19%
-
-'''
-
-def test_sequence_architecture(X, Y, nb_epochs):
-    '''
-    Architecture test class.
-    '''
-
-    input_size = len(X[0])
-    vocab_size = np.max(X) + 1
-
+def gridsearch_svm(X, Y):
     # Split data beforehand
     X_train, X_test, y_train, y_test = train_test_split(
-        X, Y, test_size=0.33, random_state=seed)
+        X, Y, test_size=0.5, random_state=seed)
 
     X_train = np.array(X_train)
     X_test = np.array(X_test)
 
+    rand_parameters = {
+               "C": sp_randint(1, 10000),
+               "gamma": sp_randfloat(1e-2, 1e-5),
+               "kernel": ["rbf"]}
+
+    print("# Tuning hyper-parameters")
+    print()
+
+    clf = RandomizedSearchCV(SVC(C=1), param_distributions=rand_parameters,
+                                   n_iter=10, cv=5, verbose=1, n_jobs=-1)
+    clf.fit(X_train, y_train)
+
+
+    print("Best: %f using %s" % (clf.best_score_, clf.best_params_))
+    print()
+    print("Grid scores on development set:")
+    print()
+    means = clf.cv_results_['mean_test_score']
+    stds = clf.cv_results_['std_test_score']
+    for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+        print("%0.3f (+/-%0.03f) for %r"
+              % (mean, std * 2, params))
+    print()
+
+    print("Detailed classification report:")
+    print()
+    print("The model is trained on the full development set.")
+    print("The scores are computed on the full evaluation set.")
+    print()
+    y_true, y_pred = y_test, clf.predict(X_test)
+    print(classification_report(y_true, y_pred))
+    print()
+
+    return clf.best_params_
+
+def train_svm(X, Y, kernel, gamma, C):
+    # Split data beforehand
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, Y, test_size=0.5, random_state=seed)
+
+    X_train = np.array(X_train)
+    X_test = np.array(X_test)
+
+    # train
+    clf = SVC(kernel=kernel, gamma=gamma, C=C).fit(X_train, y_train)
+
+    # evaluate
+    test_scores = clf.score(X_test, y_test)
+
+    print "Result"
+    print "Test Accuracy:"
+    print test_scores
+
+    return clf
+
+def lstm_model(optimizer='adam', init='normal', vocab_size=1000):
+    # vocab_size = np.max(X) + 1
     # baseline model
     model = Sequential()
 
     model.add(Embedding(vocab_size, 32, input_length=input_size))
     model.add(LSTM(100))
     model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    test_history = model.fit(
-        X_train, y_train, batch_size=64, nb_epoch=nb_epochs, verbose=1)
+def three_layer_model(optimizer='adam', init='normal'):
+    model = Sequential()
 
-    test_scores = model.evaluate(X_test, y_test, verbose=0)
+    model.add(Dense(50, init=init, activation='relu', input_dim=input_size))
+    model.add(BatchNormalization())
+    model.add(Dense(250, init=init, activation='relu', input_dim=input_size))
+    model.add(BatchNormalization())
+    model.add(Dense(10, init=init, activation='relu', input_dim=input_size))
+    model.add(Dropout(0.5))
+    model.add(Dense(1, init=init, activation='sigmoid'))
 
-    print "Result"
-    print "Training Accuracy: %.2f%%" % (test_history.history["acc"][-1] * 100)
-    print "Test %s: %.2f%%" % (model.metrics_names[1], test_scores[1] * 100)
-
-    # predictions = model.predict_classes(X_test, verbose=0)
-    # result = np.vstack((predictions[:, 0], y_test))
-    # print "Comparrison"
-    # print result.T
+    model.compile(
+        loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
     return model
 
+def single_layer_model(optimizer='adam', init='normal'):
+    # baseline model
+    model = Sequential()
 
-def test_architecture(X, Y, nb_epochs):
+    model.add(Dense(10, init=init, activation='relu', input_dim=300))
+    # test.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(1, init=init, activation='sigmoid'))
+
+    model.compile(
+        loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+
+    return model
+
+def single_layer_basic_model():
+    optimizer='adam'
+    init='normal'
+    # baseline model
+    model = Sequential()
+
+    model.add(Dense(10, init=init, activation='relu', input_dim=300))
+    # test.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(1, init=init, activation='sigmoid'))
+
+    model.compile(
+        loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+
+    return model
+
+def gridsearch_neuralnet(X, Y):
     '''
-    Architecture test class.
+    Architecture test class using grid search.
     '''
 
-    input_size = len(X[0])
+    model = KerasClassifier(build_fn=single_layer_model, verbose=0)
+
+    # optimizers = ['rmsprop', 'adam']
+    # init = ['glorot_uniform', 'normal']
+    # epochs = [10]
+    # batches = [10]
+    #
+    # param_grid = dict(optimizer=optimizers, nb_epoch=epochs, batch_size=batches, init=init)
+
+    batch_size = [10, 20, 40]
+    epochs = [10, 20, 30]
+    optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
+
+    # for SGD
+    learn_rate = [0.001, 0.01, 0.1, 0.2, 0.3]
+    momentum = [0.0, 0.2, 0.4, 0.6, 0.8, 0.9]
+
+    activation = ['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear']
+
+
+    init_mode = ['uniform', 'lecun_uniform', 'normal', 'zero', 'glorot_normal', 'glorot_uniform', 'he_normal', 'he_uniform']
+
+
+    param_grid = dict(batch_size=batch_size, nb_epoch=epochs)
+
+    grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, verbose=1, cv=None)
+
+    keras.backend.get_session().run(tf.global_variables_initializer())
+
+    grid_result = grid.fit(np.array(X), Y)
+
+    # summarize results
+    print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+    means = grid_result.cv_results_['mean_test_score']
+    stds = grid_result.cv_results_['std_test_score']
+    params = grid_result.cv_results_['params']
+    for mean, stdev, param in zip(means, stds, params):
+    	print("%f (%f) with: %r" % (mean, stdev, param))
+
+    return model, {"score": grid_result.best_score_, "params": grid_result.best_params_}
+
+def kfold_neuralnet(X, Y, nb_epoch, batch_size):
+    '''
+    Architecture test class using kfold cross validation.
+    '''
 
     # Split data beforehand
     X_train, X_test, y_train, y_test = train_test_split(
@@ -346,29 +298,75 @@ def test_architecture(X, Y, nb_epochs):
     X_train = np.array(X_train)
     X_test = np.array(X_test)
 
+    model = KerasClassifier(build_fn=single_layer_model, nb_epoch=nb_epoch, batch_size=batch_size, verbose=0)
+
+    keras.backend.get_session().run(tf.global_variables_initializer())
+
+    # evaluate using 10-fold cross validation
+    kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=seed)
+    results = cross_val_score(model, np.array(X), np.array(Y), cv=kfold)
+
+    print " "
+    print "Mean Accuracy:"
+    print(results.mean())
+
+def train_neuralnet(X, Y):
+    '''
+    Train neural model.
+    '''
+
+    # Split data beforehand
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, Y, test_size=0.33, random_state=seed)
+
+    X_train = np.array(X_train)
+    X_test = np.array(X_test)
+
+    # params
+    batch_size = 20
+    nb_epochs = 200
+
+    init = "normal"
+    optimizer = "adam"
+
     # baseline model
-    test = Sequential()
+    model = Sequential()
 
-    test.add(Dense(600, init='normal', activation='relu', input_dim=input_size))
-    # test.add(BatchNormalization())
-    test.add(Dropout(0.5))
+    model.add(Dense(300, init=init, activation='relu', input_dim=300))
+    # model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(1, init=init, activation='sigmoid'))
 
-    test.add(Dense(1, init='normal', activation='sigmoid'))
-    test.compile(
-        loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(
+        loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
-    test_history = test.fit(
-        X_train, y_train, batch_size=20, nb_epoch=nb_epochs, verbose=1)
+    model.fit( X_train, y_train, batch_size=batch_size, nb_epoch=nb_epochs, verbose=1)
 
-    test_scores = test.evaluate(X_test, y_test, verbose=0)
+    # title_branch = Sequential()
+    # title_branch.add(Dense(100, input_dim=300))
+    #
+    # text_branch = Sequential()
+    # text_branch.add(Dense(100, input_dim=300))
+    #
+    # merged = Merge([title_branch, text_branch], mode='concat')
+    #
+    # model = Sequential()
+    # model.add(merged)
+    # model.add(Dropout(0.5))
+    # model.add(Dense(1, activation='sigmoid'))
+    #
+    # model.compile(
+    #     loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    #
+    # keras.backend.get_session().run(tf.global_variables_initializer())
+    #
+    # model.fit([W_train, X_train], y_train, batch_size=batch_size, nb_epoch=nb_epochs, verbose=1)
 
-    print "Result"
-    print "Training Accuracy: %.2f%%" % (test_history.history["acc"][-1] * 100)
-    print "Test %s: %.2f%%" % (test.metrics_names[1], test_scores[1] * 100)
 
-    # predictions = model.predict_classes(X_test, verbose=0)
-    # result = np.vstack((predictions[:, 0], y_test))
-    # print "Comparrison"
-    # print result.T
+    test_scores = model.evaluate(X_test, y_test, verbose=1)
 
-    return test
+    print ()
+    print "Test Results"
+    print "Test %s: %.2f%%" % (model.metrics_names[1], test_scores[1] * 100)
+
+    return model
