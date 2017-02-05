@@ -154,3 +154,8 @@ def compute_clusterings(sim, filtered_articles):
 
     selected_articles_affinity = np.array(filtered_articles)[
         center_indices_affinity]
+
+    return {
+        "custom": selected_articles_custom,
+        "affinitiy": selected_articles_affinity
+    }

@@ -9,3 +9,5 @@ reload(funcs)
 data = funcs.preprocess(False)
 
 similarities = funcs.semantic_analysis(data, 20)
+
+articles = funcs.compute_clusterings(similarities["custom"][0], data)
