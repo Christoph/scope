@@ -123,10 +123,13 @@ def semantic_analysis(data, dim_reduction):
     sim_svd_rbf = rbf_kernel(svd)
 
     return {
-        "custom": [sim],
-        "tfidf": [sim_tfidf_cos, sim_tfidf_rbf],
-        "nmf": [sim_nmf_cos, sim_nmf_rbf],
-        "svd": [sim_svd_cos, sim_svd_rbf]
+        "custom": sim,
+        "sim_tfidf_cos": sim_tfidf_cos,
+        "sim_tfidf_rbf": sim_tfidf_rbf,
+        "sim_nmf_cos": sim_nmf_cos,
+        "sim_nmf_rbf": sim_nmf_rbf,
+        "sim_svd_cos": sim_svd_cos,
+        "sim_svd_rbf": sim_svd_rbf
     }
 
 
@@ -135,7 +138,6 @@ def compute_clusterings(sim, filtered_articles):
     print "CLUSTERING"
 
     size_bound = [2, 18]
-    params_global = {"threshold": 0.12}
     test = tests.Curate_Test("clusters").test
     params_lsi = [[0.001, 0.5, 0.001], [1, 0.01, 1, 15]]
 
