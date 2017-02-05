@@ -15,43 +15,25 @@ from scope.methods.graphs import clustering_methods
 from scope.methods.graphs import selection_methods
 import curate.methods.tests as tests
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import NMF, TruncatedSVD
+from sklearn.metrics.pairwise import cosine_similarity, rbf_kernel, sigmoid_kernel
+
 # PARAMS
-# general
+
+# classifier
+
+
+
+# custom
+
+
+
+# initializations
 customer_key = "neuland_herzer"
 language = "eng"
 
-# classifier
-classifier_type = "nn300"  # none, nn300
-
-# nn300
-min_count = 100
-
-# semantics
-semantic_model = "lsi"  # lsi, wv
-
-# clustering
-clustering_type = "affinity"  # none, custom, affinity
-
-# custom
-size_bound = [2, 18]
-lsi_dim = 20
-params_global = {"threshold": 0.12}
-test = tests.Curate_Test("clusters").test
-params_lsi = [[0.001, 0.5, 0.001], [1, 0.01, 1, 15]]
-params_wv = [[0.08, 0.2,  0.0001], [1, 0.01, 1, 15]]
-
-# affinity
-# no params
-
-# kmeans
-n_clusters = 8
-
-# initializations
 db_articles = []
-vecs = []
-sim = []
-labels = []
-selection = []
 threshold = 0.0
 wv_language_dict = {
     'ger': 'de',
@@ -65,8 +47,9 @@ wv_model = word_vector.Model(wv_language_dict[language])
 classifier = binary_classifier.binary_classifier(
     wv_model.pipeline, customer_key)
 
-# get data from db
+# GET DATA
 print "GET DATA"
+
 customer = Customer.objects.get(
     customer_key=customer_key)
 curate_customer = Curate_Customer.objects.get(
@@ -98,7 +81,10 @@ print len(db_articles)
 
 words = sum([len(i.body) for i in db_articles])
 
+# CLASSIFY
 print "CLASSIFY"
+min_count = 100
+classifier_type = "none"  # none, nn300
 
 if classifier_type == "nn300":
     filtered_articles = classifier.classify_by_count(
@@ -112,57 +98,73 @@ print len(filtered_articles)
 
 # semantic analysis
 print "SEMANTIC ANALYSIS"
+lsi_dim = 20
 
-if semantic_model == "lsi":
-    pre = preprocess.PreProcessing(lsi_language_dict[language])
-    lsi_model = lsi.Model()
+pre = preprocess.PreProcessing(lsi_language_dict[language])
+lsi_model = lsi.Model()
 
-    vecs = pre.stemm([a.body for a in filtered_articles])
-    lsi_model.compute(vecs, lsi_dim)
+vecs = pre.stemm([a.body for a in filtered_articles])
+lsi_model.compute(vecs, lsi_dim)
 
-    sim = lsi_model.similarity()
-elif semantic_model == "wv":
-    word_vector.Model(wv_language_dict[language])
+sim = lsi_model.similarity()
 
-    wv_model.load_data(filtered_articles)
-    vecs = wv_model.document_vectors()
-    sim = wv_model.similarity_matrix()
-else:
-    print "no valid semantic processing selected"
+# test three different dim reduction methods
+vectorizer = TfidfVectorizer(
+    sublinear_tf=True, min_df=1, stop_words='english', max_df=0.5)
+tfidf = vectorizer.fit_transform([a.body for a in filtered_articles])
+
+# similarities
+sim_tfidf_cos = cosine_similarity(tfidf)
+sim_tfidf_rbf = rbf_kernel(tfidf)
+sim_tfidf_sig = sigmoid_kernel(tfidf)
+
+nmf = NMF(n_components=20, random_state=1,
+          alpha=.1, l1_ratio=.5).fit_transform(tfidf)
+
+sim_nmf_cos = cosine_similarity(nmf)
+sim_nmf_rbf = rbf_kernel(nmf)
+sim_nmf_sig = sigmoid_kernel(nmf)
+
+# is like lsi
+svd = TruncatedSVD(n_components=20, random_state=1).fit_transform(tfidf)
+
+sim_svd_cos = cosine_similarity(svd)
+sim_svd_rbf = rbf_kernel(svd)
+sim_svd_sig = sigmoid_kernel(svd)
 
 # clustering
 print "CLUSTERING"
 
-if clustering_type == "custom":
-    if semantic_model == "lsi":
-        selection, threshold = selection_methods.on_average_clustering_test(
-            filtered_articles, size_bound, sim, params_lsi, test)
+# custom
+size_bound = [2, 18]
+params_lsi = [[0.001, 0.5, 0.001], [1, 0.01, 1, 15]]
+test = tests.Curate_Test("clusters").test
 
-        labels = clustering_methods.sim_based_threshold(sim, threshold)
+selection_custom, threshold = selection_methods.on_average_clustering_test(
+    filtered_articles, size_bound, sim, params_lsi, test)
 
-    if semantic_model == "wv":
-        selection, threshold = selection_methods.on_average_clustering_test(
-            filtered_articles, size_bound, sim, params_wv, test)
+labels_custom = clustering_methods.sim_based_threshold(sim, threshold)
 
-        labels = clustering_methods.sim_based_threshold(sim, threshold)
+selected_articles_custom = [
+    filtered_articles[i[0]] for i in selection_custom['articles']]
 
-    selected_articles = [
-        filtered_articles[i[0]] for i in selection['articles']]
-elif clustering_type == "affinity":
-    labels, center_indices = clustering_methods.affinity_propagation(sim)
+# affinity
+labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(
+    sim)
 
-    selected_articles = np.array(filtered_articles)[center_indices]
-elif clustering_type == "kmeans":
-    labels, center_indices = clustering_methods.k_means(vecs, n_clusters)
+selected_articles_affinity = np.array(filtered_articles)[
+    center_indices_affinity]
 
-    selected_articles = np.array(filtered_articles)[center_indices]
-else:
-    print "no valid clustering selected"
+# kmeans
+# labels_kmeans, center_indices_kmeans = clustering_methods.k_means(
+#     tfidf, 12)
 
-# select articles
+# selected_articles_kmeans = tfidf[center_indices_kmeans]
+
+# select articles analysis
 print "artilces count"
-print len(selected_articles)
+print len(selected_articles_custom)
 
 print "selected_articles"
-for a in selected_articles:
+for a in selected_articles_custom:
     print a
