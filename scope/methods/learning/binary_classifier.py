@@ -62,13 +62,13 @@ class binary_classifier(object):
         # Prepare data
         if len(train) <= len(positive):
             for i in range(0, len(train)):
-                X.append(self.pipeline(train[i].body).vector)
+                X.append(self.pipeline(train[i].article.body).vector)
                 y.append(0)
                 X.append(self.pipeline(positive[i]).vector)
                 y.append(1)
         elif len(train) > len(positive):
             for i in range(0, len(train)):
-                X.append(self.pipeline(train[i].body).vector)
+                X.append(self.pipeline(train[i].article.body).vector)
                 y.append(0)
             for i in range(0, len(positive)):
                 X.append(self.pipeline(positive[i]).vector)
