@@ -13,35 +13,29 @@
   color: black;
   border: 1px black solid;
   }
-
   .reasons {
-    opacity: 0.7;
-    width: 150px;
-    position: relative;
-    float: left;
-    border: solid 1.5px;
-    margin-left: 10px;
-
-    }
-
-  .btn-reasons {
-    width:90px;
-    text-align: center;
+  opacity: 0.7;
+  width: 150px;
+  position: relative;
+  float: left;
+  border: solid 1.5px;
+  margin-left: 10px;
   }
-
+  .btn-reasons {
+  width:90px;
+  text-align: center;
+  }
   .reason-label{
-    width: 90%;
-    margin-left: 5%;
+  width: 90%;
+  margin-left: 5%;
   }
   {% for option in options %}
     .{{option.name}}-border {
-      border-color: {{option.color}};
-    } 
-
+    border-color: {{option.color}};
+    }
     .{{option.name}}-class {
     background-color: {{option.color}};
     }
-
     {% if selection_made is False %}
       .btn-option.btn-{{option.name}}:hover {
       background-color: {{option.color}};
@@ -118,59 +112,58 @@
                   </label>
                   {% if option.rejection_reason.all.count > 0 %}
                     <div class="collapse reasons {{option.name}}-border" id="{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse">
-                  
+                      
                       {% for reason in option.rejection_reason.all %}
                         <label class="checkbox-inline btn btn-option btn-{{option.name}} reason-label" style="margin-left: 5%;" {% if query.selection_made %}disabled="disabled"{% endif %}>
-                          <input 
-                          type="checkbox" 
-                          name="{{option.name}}{{ forloop.parentloop.parentloop.counter }}{{reason.name}}" 
-                          class="{{option.name}}_reason"
-                          style="margin-top: 6px; margin-left:10px; opacity: 0;"
-                          >
-                          {{reason.human_readable_name|title}}
-                          </label>
-                          
-                        {% endfor %}
+                        <input
+                        type="checkbox"
+                        name="{{option.name}}{{ forloop.parentloop.parentloop.counter }}{{reason.name}}"
+                        class="{{option.name}}_reason"
+                        style="margin-top: 6px; margin-left:10px; opacity: 0;"
+                        >
+                        {{reason.human_readable_name|title}}
+                      </label>
+                      
+                    {% endfor %}
                   </div>
                   
-                  {% endif %}
-                  
-
-                  {% endfor %}
-                </div>
+                {% endif %}
                 
-              </div>
+              {% endfor %}
             </div>
-            </div>
-          {% endfor %}
-          {% if query.selection_made %}
-            <input class="btn btn-primary" type="button" value="Already selected" {% if query.selection_made %}disabled="disabled"{% endif %}>
-          {% else %}
-            <input class="btn btn-primary" type="submit" value="Create Newsletter" >
-          {% endif %}
-        </form>
+            
+          </div>
+        </div>
       </div>
-      {% for option in options %}
-        <div class="numberbox {{option.name}}-class" id="numberbox-{{option.name}}"></div>
-      {% endfor %}
-    </div>
-  {% endblock content %}
-  {% block scripts %}
-    <script type='text/javascript'>
-    {% if query.selection_made is False %}
-      function eval_checkboxes() {
-      {% for option in options %}
-        $('#numberbox-{{option.name}}').html(jQuery(".{{option.name}}-input:checked").length);
-        $('#numberbox-{{option.name}}').css("display","block");
-      {% endfor %}
-      }
-      jQuery(document).ready(addClickHandlers());
-      function addClickHandlers() {
-      $(document).on('change', 'input', function(event) {
-      eval_checkboxes()
-      }
-      );
-      }
+    {% endfor %}
+    {% if query.selection_made %}
+      <input class="btn btn-primary" type="button" value="Already selected" {% if query.selection_made %}disabled="disabled"{% endif %}>
+    {% else %}
+      <input class="btn btn-primary" type="submit" value="Create Newsletter" >
     {% endif %}
-    </script>
-  {% endblock scripts %}
+  </form>
+</div>
+{% for option in options %}
+  <div class="numberbox {{option.name}}-class" id="numberbox-{{option.name}}"></div>
+{% endfor %}
+</div>
+{% endblock content %}
+{% block scripts %}
+<script type='text/javascript'>
+{% if query.selection_made is False %}
+function eval_checkboxes() {
+{% for option in options %}
+  $('#numberbox-{{option.name}}').html(jQuery(".{{option.name}}-input:checked").length);
+  $('#numberbox-{{option.name}}').css("display","block");
+{% endfor %}
+}
+jQuery(document).ready(addClickHandlers());
+function addClickHandlers() {
+$(document).on('change', 'input', function(event) {
+eval_checkboxes()
+}
+);
+}
+{% endif %}
+</script>
+{% endblock scripts %}
