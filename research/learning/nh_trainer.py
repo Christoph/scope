@@ -46,7 +46,7 @@ def load_data(filename):
     pipeline = spacy.load("en")
 
     # Prepare for TF-IDF
-    texts = [pipeline(t.decode("utf-8")) for t in data["text"] if t.count("traditionalRegistration") < 1]
+    texts = [pipeline(t.decode("utf-8")) for t in data["text"]]
 
     word_vectors = []
     for doc in texts:
