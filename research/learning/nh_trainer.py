@@ -5,7 +5,6 @@ NH classifier script
 import numpy as np
 import pandas as pd
 import spacy
-from gensim import corpora, models
 
 import keras
 import tensorflow as tf
@@ -47,7 +46,7 @@ def load_data(filename):
     pipeline = spacy.load("en")
 
     # Prepare for TF-IDF
-    texts = [pipeline(t.decode("utf-8")) for t in data["text"]]
+    texts = [pipeline(t.decode("utf-8")) for t in data["text"] if t.count("traditionalRegistration") < 1]
 
     word_vectors = []
     for doc in texts:

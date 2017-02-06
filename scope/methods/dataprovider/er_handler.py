@@ -86,7 +86,7 @@ class EventRegistryHandler(object):
             q.clearRequestedResults()
 
             for article in articles["articles"]["results"]:
-                if article["title"] not in blacklist and len(article["body"].replace("\n", " ")) > text_min_length:
+                if article["title"] not in blacklist and len(article["body"].replace("\n", " ")) > text_min_length and article["body"].count("traditionalRegistration") < 1:
                     out.append({
                         "body": article["body"].replace("\n", " "), "title": article["title"],
                         "url": article["url"], "images": article["image"],
