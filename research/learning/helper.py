@@ -1,7 +1,3 @@
-'''
-Helper function for learning data aquisition.
-'''
-
 import numpy as np
 import pandas as pd
 
@@ -16,8 +12,8 @@ def save_model(computed_model, name):
     Save model
     '''
 
-    computed_model.save("curate/customers/"+name+"/"+name+"_model.h5")
-    computed_model.save_weights("curate/customers/"+name+"/"+name+"_weights.h5")
+    computed_model.save(name+"_model.h5")
+    computed_model.save_weights(name+"_weights.h5")
 
 def get_training_dataset(group_dict, size):
     pass
@@ -55,4 +51,4 @@ def get_er_data(keywords, timespan, number, blacklist):
 
     data = er.get_data_with_checks(timespan, number, blacklist)
 
-    return data
+return data
