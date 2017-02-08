@@ -22,8 +22,8 @@ CURRENT_NAME = 'scope'
 ADMINS = ('GRPHT', 'grphtcontact@gmail.com','admin@scope.ai')
 INSTALLED_APPS = ('django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'explore', 'scope','alert', 'captcha','curate', 'twitter_bootstrap', 'django.contrib.sites', 'widget_tweaks') 
   # 'djcelery', 'kombu.transport.django')
-import djcelery
-djcelery.setup_loader()
+#import djcelery
+#djcelery.setup_loader()
 
 BROKER_URL = get_env_variable('BROKER_URL') 
 CELERY_ACCEPT_CONTENT = ['pickle',

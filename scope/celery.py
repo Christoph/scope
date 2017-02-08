@@ -12,7 +12,7 @@ app = Celery('scope')#,broker='amqp://localhost')#http://localhost:15672')#amqp:
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
-app.config_from_object('django.conf:settings')
+app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks("INSTALLED_APPS")#
 
 # app.conf.update(

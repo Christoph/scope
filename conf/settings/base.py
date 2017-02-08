@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'djangobower',
     'mathfilters',
+    'django_celery_results',
     )
 
 
@@ -50,9 +51,8 @@ ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai', 'robot@scope.ai')
 
 SITE_ID = 1
 
-# djcelery.setup_loader()
-
-BROKER_URL = im.get_env_variable('BROKER_URL')
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BROKER_URL = im.get_env_variable('BROKER_URL')
 CELERY_ACCEPT_CONTENT = ['pickle',
                          'json',
                          'msgpack',
