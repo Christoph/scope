@@ -60,6 +60,7 @@ def interface(request,customer_key, date_stamp=None):
                     pass
                     
         try:
+            selection_made_task(customer_key, selected_articles)
             selection_made_task.delay(customer_key, selected_articles)
         except:
             pass

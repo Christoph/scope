@@ -22,3 +22,8 @@ def selection_made_task(customer_key, selected_articles):
 		message += selection['title'] + '\n' + selection['body'] + '\n' + selection['selection'] + '\n\n'
 	send_mail(subject=customer_key + " made selection." + customer_key,
               message=message, from_email="robot@scope.ai", recipient_list=['admin@scope.ai'])
+
+@shared_task
+def test_task(content =''):
+	send_mail(subject="Test " + content,
+                  message="", from_email="robot@scope.ai", recipient_list=['admin@scope.ai'])
