@@ -52,6 +52,8 @@ def interface(request,customer_key, date_stamp=None):
                                     else:
                                         reason.current_members.add(s)
                                         reason.save()
+                                        if reason.kind == "con":
+                                            s.bad_article = True
                             except:
                                 pass
                         s.selection_options.add(option)
@@ -65,6 +67,8 @@ def interface(request,customer_key, date_stamp=None):
         except:
             pass
         try:
+            print im.get_env_variable('DJANGO_SETTINGS_MODULE')
+            print config.getboolean('meta','direct_outlet')
             if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment":
                 send_newsletter_task.delay(customer_key)
         except:

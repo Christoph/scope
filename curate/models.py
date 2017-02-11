@@ -65,6 +65,7 @@ class Article_Curate_Query(models.Model):
     curate_query = models.ForeignKey(Curate_Query)
     selection_options = models.ManyToManyField(Curate_Customer_Selection, blank=True)
     agent = models.ForeignKey(Agent, null=True, blank=True)
+    bad_article = models.BooleanField(default=False)
     def __unicode__(self):              # __unicode__ on Python 2
         return self.article.title + ', ' + self.curate_query.time_stamp.isoformat() + ', ' + self.curate_query.curate_customer.customer.name
 

@@ -70,7 +70,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware')
 
-GOOGLE_ANALYTICS = {'google_analytics_id': 'UA-71839611-1'}
+GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-71839611-1'
 GOOGLE_ANALYTICS_DOMAIN = 'auto'
 
 ROOT_URLCONF = 'conf.urls'
