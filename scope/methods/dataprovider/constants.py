@@ -30,7 +30,8 @@ SUBSCRIBED_URLS = ["launch.us", "launch.co", "index.co", "azhar",
                    "getfeedback", "youtube.com", "forms/", "smashingmagazine",
                    "wikipedia.org"]
 
-URL_PATH_BLACKLIST = ["/unsupported-browser"]
+URL_PATH_BLACKLIST = ["/unsupported-browser",
+                      "/newsletters/"]
 
 TITLE_BLACKLIST = ["Bei Twitter anmelden",
                    "Inside is creating The Inside Daily Brief",
@@ -38,9 +39,8 @@ TITLE_BLACKLIST = ["Bei Twitter anmelden",
                    "Subscribe to read",
                    "Job Application Form",
                    "This Week In Startups",
-                   # "Nieman Journalism Lab",
-                   "Smashing Email Newsletter"
-                   ]
+                   "Fuego  Nieman Journalism Lab",
+                   "Smashing Email Newsletter"]
 
 URL_HOSTNAME_BLACKLIST = ["www.w3.org",
                           "www.facebook.com",
