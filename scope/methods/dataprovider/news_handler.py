@@ -21,15 +21,13 @@ class NewsSourceHandler(object):
                 a.parse()
             except XMLSyntaxError:
                 print "Parse error detected"
-                print a.url
+                # print a.url
             except ValueError:
                 print "Value error detected"
-                print a.url
-
-
+                # print a.url
 
             # Remove newline characters
-            a.text = a.text.replace("\n", "")
+            a.text = a.text.replace("\n", " ")
 
         print "Articles downloaded and parsed"
         return articles
@@ -39,7 +37,8 @@ class NewsSourceHandler(object):
 
         for a in articles:
             if Article.objects.filter(url=a.url).exists():
-                print "Url already exists: " + a.url
+                print "Url already exists"
+                # print a.url
             else:
                 out.append(a)
 
@@ -64,7 +63,8 @@ class NewsSourceHandler(object):
                         url_list[i],
                         language=newspaper_lang_dict[language]))
             except:
-                print "Error while  converting " + url_list[i]
+                # print "Error while  converting url"
+                # print url_list[i]
                 continue
 
         # out = self._download_articles(self._check_urls(articles))
@@ -95,7 +95,7 @@ class NewsSourceHandler(object):
                         "pubdate": article.publish_date})
                 else:
                     print "Article is too old"
-                    print article.publish_date
+                    # print article.publish_date
             else:
                 print "Article not correctly parsed."
 

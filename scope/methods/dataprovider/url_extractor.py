@@ -5,6 +5,7 @@ Url extraction class
 import re
 from urlparse import urlparse
 import urllib2
+from sets import Set
 from cookielib import CookieJar
 from scope.methods.dataprovider import constants
 
@@ -35,6 +36,7 @@ class Extractor(object):
 
     def get_urls_from_string(self, content):
         urls_list = []
+        blacklisted = []
 
         # list set to remove duplicates
         # possible alternative
@@ -52,8 +54,6 @@ class Extractor(object):
             try:
                 url = url.rstrip(')')
                 url = url.rstrip('>')
-                # req = urllib2.Request(url)
-                # res = urllib2.urlopen(req)
                 res = self.url_opener.open(url)
                 finalurl = res.geturl()
                 check_url = urlparse(finalurl)
@@ -68,6 +68,11 @@ class Extractor(object):
                     constants.URL_HOSTNAME_BLACKLIST):
                 urls_list.append(finalurl)
             else:
-                print check_url
+                blacklisted.append(finalurl)
+
+        print "good urls"
+        print len(urls_list)
+        print "blacklisted urls"
+        print len(blacklisted)
 
         return urls_list
