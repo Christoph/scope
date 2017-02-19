@@ -12,14 +12,18 @@ directory = "histories"
 if not os.path.exists(directory):
     os.makedirs(directory)
 
-T, C, F, Y = load_data("datasets/train_small.csv")
-WC, WF, WR = get_vectors(T, F, C)
+T, C, F, L, Y = load_data("datasets/train_small.csv")
+WC = get_vectors(C)
+WF = get_vectors(F)
+WT = get_vectors(T)
+WL = get_vectors(L)
 
 # NN
 datasets_wv = {
-    "wv_clean": V,
-    "wv_full_text": W,  # Vector averaging
-    "wv_text": X
+    "wv_clean": WC,  # Vector averaging
+    "wv_full_text": WF,
+    "wv_text": WT,
+    "wv_lem": WL
 }
 
 layers_wv = [200, 250, 300]
@@ -31,10 +35,10 @@ rand_parameters = {
        "gamma": sp_randfloat(1e-1, 1e-5),
        "kernel": ["linear", "poly", "rbf", "sigmoid"]}
 
-# out = compare_datasets_layers(single_layer_cv, datasets_wv, Y, layers_wv, 100)
+out = randsearch_svm(datasets_wv, Y, 20, 5, rand_parameters)
 
 for i, val in enumerate([50, 100, 200, 300]):
-    TC = get_tfidf(D, val, 0.90)
+    TC = get_tfidf(C, val, 0.90)
     TR = get_tfidf(T, val, 0.90)
     TF = get_tfidf(F, val, 0.90)
 
@@ -44,6 +48,4 @@ for i, val in enumerate([50, 100, 200, 300]):
         "tfidf_full": TF,
     }
 
-    # Computations
-    out = compare_datasets_layers(single_layer_cv, datasets_other, Y, layers_other, 100)
-    # out = randsearch_svm(datasets_other, Y, 20, 5, rand_parameters)
+    out = randsearch_svm(datasets_other, Y, 20, 5, rand_parameters)
