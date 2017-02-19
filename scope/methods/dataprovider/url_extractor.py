@@ -51,8 +51,6 @@ class Extractor(object):
             try:
                 url = url.rstrip(')')
                 url = url.rstrip('>')
-                # req = urllib2.Request(url)
-                # res = urllib2.urlopen(req)
                 res = self.url_opener.open(url)
                 finalurl = res.geturl()
                 check_url = urlparse(finalurl)
@@ -66,8 +64,6 @@ class Extractor(object):
                     check_url.hostname not in
                     constants.URL_HOSTNAME_BLACKLIST):
                 urls_list.append(finalurl)
-            else:
-                print check_url
 
         return urls_list
 
