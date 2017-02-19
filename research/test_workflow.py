@@ -19,16 +19,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import NMF, TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity, rbf_kernel, sigmoid_kernel
 
-# PARAMS
-
-# classifier
-
-
-
-# custom
-
-
-
 # initializations
 customer_key = "neuland_herzer"
 language = "eng"
@@ -110,7 +100,7 @@ sim = lsi_model.similarity()
 
 # test three different dim reduction methods
 vectorizer = TfidfVectorizer(
-    sublinear_tf=True, min_df=1, stop_words='english', max_df=0.5)
+    sublinear_tf=True, min_df=1, stop_words='english', max_df=0.9)
 tfidf = vectorizer.fit_transform([a.body for a in filtered_articles])
 
 # similarities
@@ -118,7 +108,7 @@ sim_tfidf_cos = cosine_similarity(tfidf)
 sim_tfidf_rbf = rbf_kernel(tfidf)
 sim_tfidf_sig = sigmoid_kernel(tfidf)
 
-nmf = NMF(n_components=20, random_state=1,
+nmf = NMF(n_components=100, random_state=1,
           alpha=.1, l1_ratio=.5).fit_transform(tfidf)
 
 sim_nmf_cos = cosine_similarity(nmf)
@@ -126,7 +116,7 @@ sim_nmf_rbf = rbf_kernel(nmf)
 sim_nmf_sig = sigmoid_kernel(nmf)
 
 # is like lsi
-svd = TruncatedSVD(n_components=20, random_state=1).fit_transform(tfidf)
+svd = TruncatedSVD(n_components=100, random_state=1).fit_transform(tfidf)
 
 sim_svd_cos = cosine_similarity(svd)
 sim_svd_rbf = rbf_kernel(svd)
@@ -134,6 +124,9 @@ sim_svd_sig = sigmoid_kernel(svd)
 
 # clustering
 print "CLUSTERING"
+print "test ER as validation field"
+
+used_sim = sim_nmf_cos
 
 # custom
 size_bound = [2, 18]
@@ -141,16 +134,15 @@ params_lsi = [[0.001, 0.5, 0.001], [1, 0.01, 1, 15]]
 test = tests.Curate_Test("clusters").test
 
 selection_custom, threshold = selection_methods.on_average_clustering_test(
-    filtered_articles, size_bound, sim, params_lsi, test)
+    filtered_articles, size_bound, used_sim, params_lsi, test)
 
-labels_custom = clustering_methods.sim_based_threshold(sim, threshold)
+labels_custom = clustering_methods.sim_based_threshold(used_sim, threshold)
 
 selected_articles_custom = [
     filtered_articles[i[0]] for i in selection_custom['articles']]
 
 # affinity
-labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(
-    sim)
+labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(used_sim)
 
 selected_articles_affinity = np.array(filtered_articles)[
     center_indices_affinity]
