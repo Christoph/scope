@@ -93,10 +93,10 @@ class NewsSourceHandler(object):
                         "url": article.url, "images": article.top_image,
                         "source": urlparse(article.url).netloc,
                         "pubdate": article.publish_date})
-                else:
-                    print "Article is too old"
-                    # print article.publish_date
-            else:
-                print "Article not correctly parsed."
+                # else:
+                #     print "Article is too old"
+                #     print article.publish_date
+            # else:
+            #     print "Article not correctly parsed."
 
         return out
