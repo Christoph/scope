@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'djangobower',
     'mathfilters',
+    'djcelery',
     )
 
 
@@ -50,9 +51,10 @@ ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai', 'robot@scope.ai')
 
 SITE_ID = 1
 
-# djcelery.setup_loader()
-
-BROKER_URL = im.get_env_variable('BROKER_URL')
+import djcelery
+djcelery.setup_loader()
+CELERY_RESULT_BACKEND = 'disabled://'
+CELERY_BROKER_URL = im.get_env_variable('BROKER_URL')
 CELERY_ACCEPT_CONTENT = ['pickle',
                          'json',
                          'msgpack',
@@ -69,6 +71,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware')
 
 GOOGLE_ANALYTICS = {'google_analytics_id': 'UA-71839611-1'}
+GOOGLE_ANALYTICS_DOMAIN = 'auto'
+
 ROOT_URLCONF = 'conf.urls'
 
 EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'

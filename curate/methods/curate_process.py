@@ -186,6 +186,10 @@ class Curate(object):
                 test_params = []
                 for i in self.config.options(current_test):
                     test_params.append(self.config.getfloat(current_test, i))
+                if current_test == "clusters":
+                    if len(filtered_articles) <= 2*self.config.getfloat(current_test, 'upper_cluster_bound'):
+                        size_bound[0] = 1            
+                        
                 params = [steps, test_params]
                 selection = sel.by_test(test, params, size_bound)
             if self.selection_method == "global_thresh":

@@ -136,7 +136,10 @@ class ImapHandler(object):
         mailbox.select(self.mail_box)
 
         # Get all mails from the last interval hours
-        yesterday = date.today() - timedelta(hours=self.mail_interval)
+        if date.today().strftime('%w') == "1":
+            yesterday = date.today() - timedelta(hours=self.mail_interval) - timedelta(days=2)
+        else:
+            yesterday = date.today() - timedelta(hours=self.mail_interval)
 
         # you could filter using the IMAP rules here (check
         # http://www.example-code.com/csharp/imap-search-critera.asp)

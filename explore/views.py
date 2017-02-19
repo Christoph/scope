@@ -10,7 +10,6 @@ from django.core.urlresolvers import reverse
 from django.db import connections
 from django.db.models import Count
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.templatetags.static import static
 from django.conf import settings
 
@@ -27,7 +26,7 @@ from alert.models import Alert, Send
 from conf.celery import app
 from random import randint
 
-from conf.tasks import cs_task, sample_brief, twitter_job
+from conf.tasks import cs_task, sample_brief
 
 
 def mobile(request):
