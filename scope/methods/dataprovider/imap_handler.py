@@ -75,7 +75,6 @@ class ImapHandler(object):
 
         articles = self.news.get_articles_from_list(all_urls, self.language)
 
-        print "Article filter"
         for article in articles:
             if article.title not in constants.EXCLUDE and not self._blacklist_comparison(constants.TITLE_BLACKLIST, article.title) and not self._blacklist_comparison(constants.TEXT_BLACKLIST, article.text) and len(article.text) > 0:
                 out.append({
@@ -105,8 +104,8 @@ class ImapHandler(object):
 
     def _blacklist_comparison(self, blacklist, text):
         for item in blacklist:
-            if text.find(item) > 0:
-                print "Blacklisted"
+            if text.find(item) >= 0:
+                # print "Blacklisted"
                 # print text
 
                 return True
