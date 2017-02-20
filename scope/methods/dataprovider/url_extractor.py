@@ -51,8 +51,14 @@ class Extractor(object):
         # Get real article urls
         for url in urls:
             try:
+                # Remove chars from regex
                 url = url.rstrip(')')
                 url = url.rstrip('>')
+
+                # Remove bad characters
+                url = url.replace("http//", "")
+
+                # Check url
                 res = self.url_opener.open(url)
                 finalurl = res.geturl()
                 check_url = urlparse(finalurl)
