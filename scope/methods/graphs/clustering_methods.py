@@ -107,15 +107,14 @@ def gauss_mix(vecs, components):
 
     return gmm.predict(vecs)
 
-def bayes_gauss_mix(vecs, weight_concentration_prior):
+def bayes_gauss_mix(vecs, components):
     '''
         vecs: document vectors
         weight_concentration_prior: number of components
 
         returns: labels
     '''
-    gmm = BayesianGaussianMixture(
-        weight_concentration_prior=weight_concentration_prior).fit(vecs)
+    gmm = BayesianGaussianMixture(n_components=components).fit(vecs)
 
     return gmm.predict(vecs)
 
