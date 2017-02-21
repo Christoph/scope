@@ -2,6 +2,7 @@ import django
 django.setup()
 
 import numpy as np
+from textblob import TextBlob
 
 import imaplib
 import email
@@ -266,7 +267,7 @@ sim = lsi_model.similarity()
 # test three different dim reduction methods
 vectorizer = TfidfVectorizer(
     sublinear_tf=True, stop_words='english', max_df=0.9)
-tfidf = vectorizer.fit_transform([a.body for a in filtered_articles])
+tfidf = vectorizer.fit_transform([" ".join(TextBlob(a.body).noun_phrases) for a in filtered_articles])
 
 # similarities
 svd = TruncatedSVD(n_components=10, random_state=1).fit_transform(tfidf)
@@ -287,22 +288,9 @@ test = tests.Curate_Test("clusters").test
 used_sim = sim_svd
 used_params = params_svd
 
-# custom classic
-selection_custom_classic, threshold_classic = selection_methods.on_average_clustering_test(
-    filtered_articles, size_bound, sim, params_custom, test)
-
-labels_custom_classic = clustering_methods.sim_based_threshold(used_sim, threshold)
-center_indices_custom_classic = [i[0] for i in selection_custom_classic['articles']]
-
-selected_articles_custom = [
-    filtered_articles[i] for i in center_indices_custom_classic]
-
-print "custom classic"
-print clustering_methods.internal_measure(svd, labels_custom_classic)
-
 # custom
 selection_custom, threshold = selection_methods.on_average_clustering_test(
-    filtered_articles, size_bound, used_sim, used_params, test)
+    filtered_articles, size_bound, sim, params_custom, test)
 
 labels_custom = clustering_methods.sim_based_threshold(used_sim, threshold)
 center_indices_custom = [i[0] for i in selection_custom['articles']]
@@ -329,10 +317,15 @@ print "gauss"
 print clustering_methods.internal_measure(svd, labels_gauss)
 
 # hierachical
-links_hc_ward, labels_hc_ward = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "maxclust", 12)
+links_hc_ward, labels_hc_ward = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "maxclust", 16)
 
-print "hc ward"
+print "hc maxclust"
 print clustering_methods.internal_measure(svd, labels_hc_ward)
+
+links_hc_ward_dist, labels_hc_ward_dist = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "distance", 0.40)
+
+print "hc distance"
+print clustering_methods.internal_measure(svd, labels_hc_ward_dist)
 
 links_ward = linkage(svd, "ward", "euclidean")
 links_cos = linkage(svd, "average", "cosine")
@@ -344,6 +337,8 @@ cos_tree = to_tree(links_cos)
 # tree.pre_order() gives original indicies
 # tree.dist gives distance of current index
 # tree.count gives leave nodes below current point
+
+max_clust = 12
 
 # Subtree
 sub = ward_tree.left.pre_order()
