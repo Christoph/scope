@@ -1,12 +1,19 @@
 from matplotlib import pyplot as plt
 from scipy.cluster.hierarchy import dendrogram
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 from numpy import sqrt, ceil
 from numpy import unique, min
 
+
 def _dim_reducer(X):
-    pca = PCA(n_components=2)
-    return pca.fit_transform(X)
+    # pca = PCA(n_components=2)
+    # out = pca.fit_transform(X)
+
+    tsne = TSNE()
+    out = tsne.fit_transform(X)
+
+    return out
 
 def _cluster_count(labels):
     elements, counts = unique(labels, return_counts=True)
