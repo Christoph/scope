@@ -255,9 +255,9 @@ class EventRegistryHandler(object):
             for article in articles["articles"]["results"]:
                 article["body"] = article["body"].replace("\n", " ")
 
-                if article["title"] not in blacklist and len(article["body"]) > text_min_length and article["body"].count("traditionalRegistration") < 1:
-                    
-                    blacklist.append(article["title"])
+                if article["title"].lower() not in blacklist and len(article["body"]) > text_min_length and article["body"].count("traditionalRegistration") < 1:
+
+                    blacklist.append(article["title"].lower())
                     out.append(article)
                 else:
                     print "blacklisted or bad: " + article["title"]
