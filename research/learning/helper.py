@@ -1,3 +1,6 @@
+import django
+django.setup()
+
 import numpy as np
 import pandas as pd
 
@@ -18,7 +21,7 @@ def save_model(computed_model, name):
 def get_training_dataset(group_dict, size):
     pass
 
-def get_labeld_er_data(keyword, timespan, number, label, blacklistDF):
+def get_labeld_er_data(keyword, timespan, number, label, blacklistDF, text_min_length=500):
     blacklist = blacklistDF.title.tolist()
 
     data = get_er_data(keyword, timespan, number, blacklist)
@@ -39,7 +42,7 @@ def get_labeld_er_data(keyword, timespan, number, label, blacklistDF):
 
     return clean
 
-def get_er_data(keywords, timespan, number, blacklist):
+def get_er_data(keywords, timespan, number, blacklist, text_min_length=500):
     agent = AgentEventRegistry(
         user="christoph.kralj@gmail.com",
         pwd="XzbiyLnpeh8MBtC{$4hv",
@@ -49,6 +52,6 @@ def get_er_data(keywords, timespan, number, blacklist):
 
     er = er_handler.EventRegistryHandler(agent)
 
-    data = er.get_data_with_checks(timespan, number, blacklist)
+    data = er.get_data_with_checks(timespan, number, blacklist, text_min_length)
 
-return data
+    return data
