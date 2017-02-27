@@ -2,6 +2,7 @@ import django
 django.setup()
 
 import numpy as np
+import pandas as pd
 
 from scope.models import Customer
 from curate.models import Curate_Query, Article_Curate_Query
@@ -40,36 +41,11 @@ classifier = binary_classifier.binary_classifier(
 # GET DATA
 print "GET DATA"
 
-customer = Customer.objects.get(
-    customer_key=customer_key)
-curate_customer = Curate_Customer.objects.get(
-    customer=customer)
-query = Curate_Query.objects.filter(
-    curate_customer=curate_customer).order_by("pk").reverse()[0]
-article_query_instances = Article_Curate_Query.objects.filter(
-    curate_query=query)
-for i in article_query_instances:
-    i.rank = 0
-    i.save()
-
-all_articles = [i.article for i in article_query_instances]
-
-bad_sources = curate_customer.bad_source.all()
-
-# check if duplicate titles exist and remove them
-titles = [a.title for a in all_articles]
-u, indices = np.unique(titles, return_index=True)
-all_articles = np.array(all_articles)[indices]
-all_articles = all_articles.tolist()
-
-for a in all_articles:
-    if a.source not in bad_sources:
-        db_articles.append(a)
+# load 100088 articles
+data = pd.read_csv("clustering_labeled.csv")
 
 print "articles:"
 print len(db_articles)
-
-words = sum([len(i.body) for i in db_articles])
 
 # CLASSIFY
 print "CLASSIFY"
