@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import json
 
+from nltk.metrics import edit_distance
+
 
 # load 100088 articles
 with open('er_data.json', 'r') as fp:
@@ -30,9 +32,15 @@ for i, item in enumerate(d for d in data):
 df = pd.DataFrame(data)
 
 df["title"] = df["title"].str.lower()
+df["body"] = df["body"].str.lower()
 df = df.drop_duplicates(subset=['title'], keep=False)
+df = df.drop_duplicates(subset=['body'], keep=False)
 
 df.to_csv("articles.csv", index=False, encoding="utf-8")
+
+'''
+Group the data by concepts
+'''
 
 selected_column = "concepts_5"
 
@@ -46,9 +54,40 @@ groups.loc[groups[selected_column] == "", "count"] = 0
 
 df = df.join(groups.set_index(selected_column), on=selected_column)
 
+# Select articles with certain properties
 clustering = df[df["count"]>5]
 clustering = clustering[clustering["count"] < 20]
-clustering = clustering[clustering[selected_column].str.len() > 40]
+clustering = clustering[clustering[selected_column].str.len() < 60]
 clustering = clustering.sort_values(by=selected_column)
 
 clustering.to_csv("clustering_labeled.csv", index=False, encoding="utf-8")
+
+'''
+Find a clusters with high inter cluster difference by using edit
+distance on the concepts.
+'''
+
+labels = np.array(clustering.concepts_5.tolist())
+testsets = []
+avg_diff = []
+clusters = 16
+
+for i in range(0, 50):
+    testsets.append(np.random.randint(len(labels), size=clusters))
+
+sim_matrix = np.zeros([clusters, clusters])
+vfunc = np.vectorize(edit_distance)
+
+for test in testsets:
+    for i in range(0, clusters):
+        row = vfunc(labels[test], labels[test[i]])
+        sim_matrix[i] = row
+
+    avg_diff.append(sim_matrix.mean())
+
+idx = np.array(avg_diff).argsort()[-1:]
+chosen = labels[testsets[idx]]
+
+small = clustering[clustering['concepts_5'].isin(chosen)]
+
+small.to_csv("clustering_small.csv", index=False, encoding="utf-8")
