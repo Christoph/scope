@@ -6,7 +6,43 @@ from keras.layers.embeddings import Embedding
 from keras.layers.normalization import BatchNormalization
 from keras.wrappers.scikit_learn import KerasClassifier
 
+from keras import backend as K
+from keras.engine.topology import Layer
+
 import numpy as np
+
+class Attention(Layer):
+    def __init__(self, **kwargs):
+        """
+        Attention operation for temporal data.
+        # Input shape
+            3D tensor with shape: `(samples, steps, features)`.
+        # Output shape
+            2D tensor with shape: `(samples, features)`.
+        :param kwargs:
+        """
+        self.supports_masking = False
+        self.init = initializations.get('glorot_uniform')
+        super(Attention, self).__init__(**kwargs)
+
+    def build(self, input_shape):
+        assert len(input_shape) == 3
+        self.W = self.init((input_shape[-1],), name='{}_W'.format(self.name))
+        self.b = K.ones((input_shape[1],), name='{}_b'.format(self.name))
+        self.trainable_weights = [self.W, self.b]
+
+        super(Attention, self).build(input_shape)
+
+    def call(self, x, mask=None):
+        eij = K.tanh(K.dot(x, self.W) + self.b)
+        ai = K.exp(eij)
+        weights = ai / K.sum(ai, axis=1).dimshuffle(0, 'x')
+        # weights = ai / K.sum(ai, axis=1).expand_dims(x, 1)
+        weighted_input = x * weights.dimshuffle(0, 1, 'x')
+        return weighted_input.sum(axis=1)
+
+    def get_output_shape_for(self, input_shape):
+        return input_shape[0], input_shape[-1]
 
 def lstm_model():
     # Embedding
