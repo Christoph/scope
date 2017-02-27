@@ -110,8 +110,8 @@ class binary_classifier(object):
                 print best
                 print count
 
-                if count == count_old or count == min_count:
-	                   found = True
+                if (count == count_old and count >= min_count) or count == min_count:
+	                found = True
                 else:
                     if count > min_count:
                         lo = best
