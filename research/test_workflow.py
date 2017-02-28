@@ -3,8 +3,9 @@ django.setup()
 
 import numpy as np
 import pandas as pd
+from textblob import TextBlob
 
-from scope.models import Customer
+from scope.models import Customer, Article, Source
 from curate.models import Curate_Query, Article_Curate_Query
 from curate.models import Curate_Customer
 
@@ -18,7 +19,13 @@ import curate.methods.tests as tests
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import NMF, TruncatedSVD
-from sklearn.metrics.pairwise import cosine_similarity, rbf_kernel, sigmoid_kernel
+from sklearn.metrics.pairwise import cosine_similarity, rbf_kernel
+
+from scipy.cluster.hierarchy import linkage
+from scipy.cluster.hierarchy import to_tree
+from scipy.spatial.distance import pdist, squareform
+
+from sklearn.cluster import AgglomerativeClustering
 
 # initializations
 customer_key = "neuland_herzer"
@@ -40,9 +47,29 @@ classifier = binary_classifier.binary_classifier(
 
 # GET DATA
 print "GET DATA"
+db_articles = []
+labels = []
 
-# load 100088 articles
-data = pd.read_csv("clustering_labeled.csv")
+data = pd.read_csv("clustering_small.csv", encoding="utf-8")
+
+# rename labels
+unique_labels = np.unique(data.label)
+for i in range(1, len(unique_labels)+1):
+    data.ix[data.label == unique_labels[i-1], "label"] = i
+
+for a in data.iterrows():
+    source = Source.objects.create(url=a[1]['url'][0:199], name=a[1]['url'][0:199])
+
+    art = Article.objects.create(
+        title=a[1]['title'],
+        url=a[1]['url'],
+        source=source,
+        body=a[1]['body'],
+        images=a[1]['image'],
+        pubdate=a[1]['date'])
+
+    db_articles.append(art)
+    labels.append(a[1]["label"])
 
 print "articles:"
 print len(db_articles)
@@ -76,46 +103,40 @@ sim = lsi_model.similarity()
 
 # test three different dim reduction methods
 vectorizer = TfidfVectorizer(
-    sublinear_tf=True, min_df=1, stop_words='english', max_df=0.9)
-tfidf = vectorizer.fit_transform([a.body for a in filtered_articles])
+    sublinear_tf=True, stop_words='english', max_df=0.9)
+tfidf = vectorizer.fit_transform([" ".join(TextBlob(a.body).noun_phrases) for a in filtered_articles])
 
 # similarities
-sim_tfidf_cos = cosine_similarity(tfidf)
-sim_tfidf_rbf = rbf_kernel(tfidf)
-sim_tfidf_sig = sigmoid_kernel(tfidf)
-
-nmf = NMF(n_components=100, random_state=1,
-          alpha=.1, l1_ratio=.5).fit_transform(tfidf)
-
-sim_nmf_cos = cosine_similarity(nmf)
-sim_nmf_rbf = rbf_kernel(nmf)
-sim_nmf_sig = sigmoid_kernel(nmf)
-
-# is like lsi
-svd = TruncatedSVD(n_components=100, random_state=1).fit_transform(tfidf)
-
-sim_svd_cos = cosine_similarity(svd)
-sim_svd_rbf = rbf_kernel(svd)
-sim_svd_sig = sigmoid_kernel(svd)
+svd = TruncatedSVD(n_components=10, random_state=1).fit_transform(tfidf)
+sim_svd = cosine_similarity(svd)
 
 # clustering
 print "CLUSTERING"
 print "test ER as validation field"
 
-used_sim = sim_nmf_cos
+# params
+params_custom = [[0.001, 0.45, 0.001], [1, 0.01, 1, 15]]
+params_svd = [[0.6, 0.9, 0.001], [1, 0.01, 1, 15]]
 
-# custom
+# used params
 size_bound = [2, 18]
-params_lsi = [[0.001, 0.5, 0.001], [1, 0.01, 1, 15]]
 test = tests.Curate_Test("clusters").test
 
+used_sim = sim_svd
+used_params = params_svd
+
+# custom
 selection_custom, threshold = selection_methods.on_average_clustering_test(
-    filtered_articles, size_bound, used_sim, params_lsi, test)
+    filtered_articles, size_bound, sim, params_custom, test)
 
 labels_custom = clustering_methods.sim_based_threshold(used_sim, threshold)
+center_indices_custom = [i[0] for i in selection_custom['articles']]
 
 selected_articles_custom = [
-    filtered_articles[i[0]] for i in selection_custom['articles']]
+    filtered_articles[i] for i in center_indices_custom]
+
+print "custom"
+print clustering_methods.internal_measure(svd, labels_custom)
 
 # affinity
 labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(used_sim)
@@ -123,16 +144,48 @@ labels_affinity, center_indices_affinity = clustering_methods.affinity_propagati
 selected_articles_affinity = np.array(filtered_articles)[
     center_indices_affinity]
 
-# kmeans
-# labels_kmeans, center_indices_kmeans = clustering_methods.k_means(
-#     tfidf, 12)
+print "affinity"
+print clustering_methods.internal_measure(svd, labels_affinity)
 
-# selected_articles_kmeans = tfidf[center_indices_kmeans]
+# gauss
+labels_gauss = clustering_methods.bayes_gauss_mix(svd, components=10)
 
-# select articles analysis
-print "artilces count"
-print len(selected_articles_custom)
+print "gauss"
+print clustering_methods.internal_measure(svd, labels_gauss)
 
-print "selected_articles"
-for a in selected_articles_custom:
-    print a
+# hierachical
+links_hc_ward, labels_hc_ward = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "maxclust", 16)
+
+print "hc maxclust"
+print clustering_methods.internal_measure(svd, labels_hc_ward)
+
+links_hc_ward_dist, labels_hc_ward_dist = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "distance", 0.40)
+
+print "hc distance"
+print clustering_methods.internal_measure(svd, labels_hc_ward_dist)
+
+links_ward = linkage(svd, "ward", "euclidean")
+links_cos = linkage(svd, "average", "cosine")
+
+# hc merge function
+ward_tree = to_tree(links_ward)
+cos_tree = to_tree(links_cos)
+
+# tree.pre_order() gives original indicies
+# tree.dist gives distance of current index
+# tree.count gives leave nodes below current point
+
+max_clust = 12
+
+# Subtree
+sub = ward_tree.left.pre_order()
+
+# All distances within the subtree
+distance_vector = pdist(svd[sub])
+
+# convert to squareform
+distance_matrix = squareform(distance_vector)
+
+# Get element with lowest mean distance
+center = np.mean(distance_matrix, axis=1).argmin()
+center_index = sub[center]
