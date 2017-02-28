@@ -26,6 +26,7 @@ from scipy.cluster.hierarchy import to_tree
 from scipy.spatial.distance import pdist, squareform
 
 from sklearn.cluster import AgglomerativeClustering
+from sklearn import metrics
 
 # initializations
 customer_key = "neuland_herzer"
@@ -137,34 +138,79 @@ center_indices_custom = [i[0] for i in selection_custom['articles']]
 selected_articles_custom = [
     filtered_articles[i] for i in center_indices_custom]
 
-print "custom"
-print clustering_methods.internal_measure(svd, labels_custom)
-
 # affinity
 labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(used_sim)
 
 selected_articles_affinity = np.array(filtered_articles)[
     center_indices_affinity]
 
-print "affinity"
-print clustering_methods.internal_measure(svd, labels_affinity)
-
 # gauss
 labels_gauss = clustering_methods.bayes_gauss_mix(svd, components=10)
-
-print "gauss"
-print clustering_methods.internal_measure(svd, labels_gauss)
 
 # hierachical
 links_hc_ward, labels_hc_ward = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "maxclust", 16)
 
-print "hc maxclust"
-print clustering_methods.internal_measure(svd, labels_hc_ward)
-
 links_hc_ward_dist, labels_hc_ward_dist = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "distance", 0.40)
 
-print "hc distance"
-print clustering_methods.internal_measure(svd, labels_hc_ward_dist)
+# EVALUATION
+
+print "For small n (> 1000) and number of clusters < 10 any measure is good."
+print "If thats not satisfied - use adjusted scores."
+
+print "Calinski-Harabaz Index: higher is better"
+print "Internal measure which doesnt uses ground truth labels and is higher for better defined clusters"
+print "hc distance: " + str(clustering_methods.internal_measure(svd, labels_hc_ward_dist))
+print "hc maxclust" + str(clustering_methods.internal_measure(svd, labels_hc_ward))
+print "gauss" + str(clustering_methods.internal_measure(svd, labels_gauss))
+print "affinity" + str(clustering_methods.internal_measure(svd, labels_affinity))
+print "custom" + str(clustering_methods.internal_measure(svd, labels_custom))
+
+
+print "Adjusted Rand Score: [-1, 1] and 0 means random"
+print "adjusted Rand index is a function that measures the similarity of the two assignments, ignoring permutations and with chance normalization"
+print "hc distance: " + str(metrics.adjusted_rand_score(labels, labels_hc_ward_dist))
+print "hc maxclust" + str(metrics.adjusted_rand_score(labels, labels_hc_ward))
+print "gauss" + str(metrics.adjusted_rand_score(labels, labels_gauss))
+print "affinity" + str(metrics.adjusted_rand_score(labels, labels_affinity))
+print "custom" + str(metrics.adjusted_rand_score(labels, labels_custom))
+
+
+print "MI: [0,1] and 1 is perfect match"
+print "Mutual Information is a function that measures the agreement of the two assignments, ignoring permutations"
+print "hc distance: " + str(metrics.mutual_info_score(labels, labels_hc_ward_dist))
+print "hc maxclust" + str(metrics.mutual_info_score(labels, labels_hc_ward))
+print "gauss" + str(metrics.mutual_info_score(labels, labels_gauss))
+print "affinity" + str(metrics.mutual_info_score(labels, labels_affinity))
+print "custom" + str(metrics.mutual_info_score(labels, labels_custom))
+
+
+print "Adjusted MI to account for chance: [0,1] and 1 is perfect match"
+print "hc distance: " + str(metrics.adjusted_mutual_info_score(labels, labels_hc_ward_dist))
+print "hc maxclust" + str(metrics.adjusted_mutual_info_score(labels, labels_hc_ward))
+print "gauss" + str(metrics.adjusted_mutual_info_score(labels, labels_gauss))
+print "affinity" + str(metrics.adjusted_mutual_info_score(labels, labels_affinity))
+print "custom" + str(metrics.adjusted_mutual_info_score(labels, labels_custom))
+
+
+print "V-Measure: [0,1] and 1 is perfect match"
+print "The V-measure is the harmonic mean between homogeneity and completeness"
+print "hc distance: " + str(metrics.v_measure_score(labels, labels_hc_ward_dist))
+print "hc maxclust" + str(metrics.v_measure_score(labels, labels_hc_ward))
+print "gauss" + str(metrics.v_measure_score(labels, labels_gauss))
+print "affinity" + str(metrics.v_measure_score(labels, labels_affinity))
+print "custom" + str(metrics.v_measure_score(labels, labels_custom))
+
+
+print "Fowlkes-Mallows scores: [0,1] and 1 means good correlation between clusters"
+print "The Fowlkes-Mallows index (FMI) is defined as the geometric mean between of the precision and recall."
+print "hc distance: " + str(metrics.fowlkes_mallows_score(labels, labels_hc_ward_dist))
+print "hc maxclust" + str(metrics.fowlkes_mallows_score(labels, labels_hc_ward ))
+print "gauss" + str(metrics.fowlkes_mallows_score(labels, labels_gauss))
+print "affinity" + str(metrics.fowlkes_mallows_score(labels, labels_affinity))
+print "custom" + str(metrics.fowlkes_mallows_score(labels, labels_custom))
+
+
+# HC TESTS
 
 links_ward = linkage(svd, "ward", "euclidean")
 links_cos = linkage(svd, "average", "cosine")
