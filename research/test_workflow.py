@@ -145,69 +145,84 @@ selected_articles_affinity = np.array(filtered_articles)[
     center_indices_affinity]
 
 # gauss
-labels_gauss = clustering_methods.bayes_gauss_mix(svd, components=10)
+labels_gauss = clustering_methods.bayes_gauss_mix(svd, components=20)
 
 # hierachical
 links_hc_ward, labels_hc_ward = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "maxclust", 16)
 
-links_hc_ward_dist, labels_hc_ward_dist = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "distance", 0.40)
+links_hc_ward_dist, labels_hc_ward_dist = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "distance", 0.50)
 
 # EVALUATION
 
 print "For small n (> 1000) and number of clusters < 10 any measure is good."
 print "If thats not satisfied - use adjusted scores."
 
+print ""
+print "Number of Clusters"
+print "ground truth: " + str(len(np.unique(labels)))
+print "hc distance: " + str(len(np.unique(labels_hc_ward_dist)))
+print "hc maxclust: " + str(len(np.unique(labels_hc_ward)))
+print "gauss: " + str(len(np.unique(labels_gauss)))
+print "affinity: " + str(len(np.unique(labels_affinity)))
+print "custom: " + str(len(np.unique(labels_custom)))
+
+
+print ""
 print "Calinski-Harabaz Index: higher is better"
 print "Internal measure which doesnt uses ground truth labels and is higher for better defined clusters"
 print "hc distance: " + str(clustering_methods.internal_measure(svd, labels_hc_ward_dist))
-print "hc maxclust" + str(clustering_methods.internal_measure(svd, labels_hc_ward))
-print "gauss" + str(clustering_methods.internal_measure(svd, labels_gauss))
-print "affinity" + str(clustering_methods.internal_measure(svd, labels_affinity))
-print "custom" + str(clustering_methods.internal_measure(svd, labels_custom))
+print "hc maxclust: " + str(clustering_methods.internal_measure(svd, labels_hc_ward))
+print "gauss: " + str(clustering_methods.internal_measure(svd, labels_gauss))
+print "affinity: " + str(clustering_methods.internal_measure(svd, labels_affinity))
+print "custom: " + str(clustering_methods.internal_measure(svd, labels_custom))
 
 
+print ""
 print "Adjusted Rand Score: [-1, 1] and 0 means random"
 print "adjusted Rand index is a function that measures the similarity of the two assignments, ignoring permutations and with chance normalization"
 print "hc distance: " + str(metrics.adjusted_rand_score(labels, labels_hc_ward_dist))
-print "hc maxclust" + str(metrics.adjusted_rand_score(labels, labels_hc_ward))
-print "gauss" + str(metrics.adjusted_rand_score(labels, labels_gauss))
-print "affinity" + str(metrics.adjusted_rand_score(labels, labels_affinity))
-print "custom" + str(metrics.adjusted_rand_score(labels, labels_custom))
+print "hc maxclust: " + str(metrics.adjusted_rand_score(labels, labels_hc_ward))
+print "gauss: " + str(metrics.adjusted_rand_score(labels, labels_gauss))
+print "affinity: " + str(metrics.adjusted_rand_score(labels, labels_affinity))
+print "custom: " + str(metrics.adjusted_rand_score(labels, labels_custom))
 
 
-print "MI: [0,1] and 1 is perfect match"
+print ""
+print "Nomalized MI: [0,1] and 1 is perfect match"
 print "Mutual Information is a function that measures the agreement of the two assignments, ignoring permutations"
-print "hc distance: " + str(metrics.mutual_info_score(labels, labels_hc_ward_dist))
-print "hc maxclust" + str(metrics.mutual_info_score(labels, labels_hc_ward))
-print "gauss" + str(metrics.mutual_info_score(labels, labels_gauss))
-print "affinity" + str(metrics.mutual_info_score(labels, labels_affinity))
-print "custom" + str(metrics.mutual_info_score(labels, labels_custom))
+print "hc distance: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_ward_dist))
+print "hc maxclust: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_ward))
+print "gauss: " + str(metrics.normalized_mutual_info_score(labels, labels_gauss))
+print "affinity: " + str(metrics.normalized_mutual_info_score(labels, labels_affinity))
+print "custom: " + str(metrics.normalized_mutual_info_score(labels, labels_custom))
 
 
+print ""
 print "Adjusted MI to account for chance: [0,1] and 1 is perfect match"
 print "hc distance: " + str(metrics.adjusted_mutual_info_score(labels, labels_hc_ward_dist))
-print "hc maxclust" + str(metrics.adjusted_mutual_info_score(labels, labels_hc_ward))
-print "gauss" + str(metrics.adjusted_mutual_info_score(labels, labels_gauss))
-print "affinity" + str(metrics.adjusted_mutual_info_score(labels, labels_affinity))
-print "custom" + str(metrics.adjusted_mutual_info_score(labels, labels_custom))
+print "hc maxclust: " + str(metrics.adjusted_mutual_info_score(labels, labels_hc_ward))
+print "gauss: " + str(metrics.adjusted_mutual_info_score(labels, labels_gauss))
+print "affinity: " + str(metrics.adjusted_mutual_info_score(labels, labels_affinity))
+print "custom: " + str(metrics.adjusted_mutual_info_score(labels, labels_custom))
 
 
+print ""
 print "V-Measure: [0,1] and 1 is perfect match"
 print "The V-measure is the harmonic mean between homogeneity and completeness"
 print "hc distance: " + str(metrics.v_measure_score(labels, labels_hc_ward_dist))
-print "hc maxclust" + str(metrics.v_measure_score(labels, labels_hc_ward))
-print "gauss" + str(metrics.v_measure_score(labels, labels_gauss))
-print "affinity" + str(metrics.v_measure_score(labels, labels_affinity))
-print "custom" + str(metrics.v_measure_score(labels, labels_custom))
+print "hc maxclust: " + str(metrics.v_measure_score(labels, labels_hc_ward))
+print "gauss: " + str(metrics.v_measure_score(labels, labels_gauss))
+print "affinity: " + str(metrics.v_measure_score(labels, labels_affinity))
+print "custom: " + str(metrics.v_measure_score(labels, labels_custom))
 
-
+print ""
 print "Fowlkes-Mallows scores: [0,1] and 1 means good correlation between clusters"
 print "The Fowlkes-Mallows index (FMI) is defined as the geometric mean between of the precision and recall."
 print "hc distance: " + str(metrics.fowlkes_mallows_score(labels, labels_hc_ward_dist))
-print "hc maxclust" + str(metrics.fowlkes_mallows_score(labels, labels_hc_ward ))
-print "gauss" + str(metrics.fowlkes_mallows_score(labels, labels_gauss))
-print "affinity" + str(metrics.fowlkes_mallows_score(labels, labels_affinity))
-print "custom" + str(metrics.fowlkes_mallows_score(labels, labels_custom))
+print "hc maxclust: " + str(metrics.fowlkes_mallows_score(labels, labels_hc_ward ))
+print "gauss: " + str(metrics.fowlkes_mallows_score(labels, labels_gauss))
+print "affinity: " + str(metrics.fowlkes_mallows_score(labels, labels_affinity))
+print "custom: " + str(metrics.fowlkes_mallows_score(labels, labels_custom))
 
 
 # HC TESTS
