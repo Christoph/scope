@@ -51,7 +51,7 @@ print "GET DATA"
 db_articles = []
 labels = []
 
-data = pd.read_csv("clustering_small.csv", encoding="utf-8")
+data = pd.read_csv("clustering_24.csv", encoding="utf-8")
 
 # rename labels
 unique_labels = np.unique(data.label)
