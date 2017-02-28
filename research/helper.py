@@ -1,6 +1,10 @@
+'''
+Get data ready for clustering tests
+'''
+
+import json
 import pandas as pd
 import numpy as np
-import json
 
 from nltk.metrics import edit_distance
 
@@ -55,7 +59,7 @@ groups.loc[groups[selected_column] == "", "count"] = 0
 df = df.join(groups.set_index(selected_column), on=selected_column)
 
 # Select articles with certain properties
-clustering = df[df["count"]>5]
+clustering = df[df["count"] > 5]
 clustering = clustering[clustering["count"] < 20]
 clustering = clustering[clustering[selected_column].str.len() < 60]
 clustering = clustering.sort_values(by=selected_column)
@@ -67,10 +71,12 @@ Find a clusters with high inter cluster difference by using edit
 distance on the concepts.
 '''
 
+clustering = pd.read_csv("clustering_labeled.csv", encoding="utf-8")
+
 labels = np.array(clustering.concepts_5.tolist())
 testsets = []
 avg_diff = []
-clusters = 16
+clusters = 24
 
 for i in range(0, 50):
     testsets.append(np.random.randint(len(labels), size=clusters))
@@ -90,4 +96,5 @@ chosen = labels[testsets[idx]]
 
 small = clustering[clustering['concepts_5'].isin(chosen)]
 
-small.to_csv("clustering_small.csv", index=False, encoding="utf-8")
+small.to_csv(
+    "clustering_" + str(clusters) + ".csv", index=False, encoding="utf-8")
