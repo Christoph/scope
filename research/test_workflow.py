@@ -71,6 +71,8 @@ for a in data.iterrows():
     db_articles.append(art)
     labels.append(a[1]["label"])
 
+labels = np.array(labels)
+
 print "articles:"
 print len(db_articles)
 
