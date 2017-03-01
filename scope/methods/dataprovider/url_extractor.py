@@ -46,14 +46,11 @@ class Extractor(object):
             (r'http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[:/?#\[\]@+\-\._~=]|[!$&\'()*+,;=]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'),
             content)))
 
-        print "Url check filter"
         # Get real article urls
         for url in urls:
             try:
                 url = url.rstrip(')')
                 url = url.rstrip('>')
-                # req = urllib2.Request(url)
-                # res = urllib2.urlopen(req)
                 res = self.url_opener.open(url)
                 finalurl = res.geturl()
                 check_url = urlparse(finalurl)
@@ -67,7 +64,12 @@ class Extractor(object):
                     check_url.hostname not in
                     constants.URL_HOSTNAME_BLACKLIST):
                 urls_list.append(finalurl)
-            else:
-                print check_url
 
         return urls_list
+
+    def _blacklist_comparison(self, blacklist, text):
+        for item in blacklist:
+            if text.find(item) >= 0:
+                return True
+            else:
+                return False
