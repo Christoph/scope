@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'(?P<customer_key>.*)/feed/latest$', Feed()),
     url(r'(?P<customer_key>.*)/feed/latest/(?P<selected_option>.*)$', Feed()),
     url(r'(?P<customer_key>.*)/feed/(?P<date>.*)$', Feed()),
+    url(r'(?P<customer_key>.*)/mail$', views.mail, name='mail'),
 
     # ...
 ]

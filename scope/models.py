@@ -45,6 +45,11 @@ class Source(models.Model):
     def __unicode__(self):
         return self.url
 
+class Newsletter(models.Model):
+    name = models.CharField(max_length = 200)
+    email = models.EmailField()
+    def __unicode__(self):              # __unicode__ on Python 2
+        return self.name       
 
 class AgentImap(models.Model):
     user = models.CharField(blank=True, max_length=100)

@@ -1,6 +1,7 @@
 import imaplib
 import email
-import quopri
+from email.utils import getaddresses
+from email.header import decode_header
 import urllib2
 from urlparse import urlparse
 from datetime import date, timedelta
@@ -9,6 +10,7 @@ from . import constants
 from . import url_extractor
 
 from scope.methods.dataprovider import news_handler
+from scope.models import Newsletter
 
 
 class ImapHandler(object):
@@ -147,46 +149,62 @@ class ImapHandler(object):
             None, '(SINCE "' + yesterday.strftime("%d-%b-%Y") + '")')
         items = items[0].split()  # getting the mails ids
 
-        all_urls = []
+        article_dict = []
 
         # Get the whole mail content
         for emailid in items:
-            try:
+            # try:
             # fetching the mail, "`(RFC822)`" means "get the whole stuff",
             # but you can ask for headers only, etc
-                resp, data = mailbox.fetch(emailid, "(RFC822)")
+            resp, data = mailbox.fetch(emailid, "(RFC822)")
 
-                email_body = data[0][1]  # getting the mail content
+            email_body = data[0][1]  # getting the mail content
 
-                # Convert to mail object
+            # Convert to mail object
+            mail = email.message_from_string(email_body)
 
-                mail = email.message_from_string(email_body)
-
-                # All mail text/plain contents
-                contents = self._get_content(mail)
-
-                # Add urls from each content
-                for content in contents:
-                    all_urls.extend(
-                        self.url_extractor.get_urls_from_string(content))
+            # extract information about newsletter and create db-object
+            try:
+                sender = getaddresses(mail.get_all('from', []))[0]
+                newsletter_mail = sender[1]
+                newsletter_name = decode_header(sender[0])[0][0]
             except:
-                pass
-        # Remove duplicates over different newsletters
-        all_urls = list(set(all_urls))
+                newsletter_mail = "Unknown"
+                newsletter_name = "Unknown"
 
-        articles = self.news.get_articles_from_list(all_urls, self.language)
+            print newsletter_name, newsletter_mail
+            newsletter, created = Newsletter.objects.get_or_create(
+                email=newsletter_mail, defaults={"name": newsletter_name.title()})
+            # All mail text/plain contents
+            contents = self._get_content(mail)
+
+            # Add urls from each content
+            for content in contents:
+                article_dict.append(
+                    [self.url_extractor.get_urls_from_string(content), newsletter])
+
+            # except:
+            #     pass
+        # Remove duplicates over different newsletters
+        #all_urls = list(set(all_urls))
+        # print article_dict
+
+        downloaded_article_dict = self.news.get_articles_from_list(
+            article_dict, self.language)
 
         print "Article filter"
-        for article in articles:
-            if article.title not in constants.EXCLUDE and not self._blacklist_comparison(constants.TITLE_BLACKLIST, article.title) and not self._blacklist_comparison(constants.TEXT_BLACKLIST, article.text) and len(article.text) > 0:
-                out.append({
-                    "body": article.text, "title": article.title,
-                    "url": article.url, "images": article.top_image,
-                    "source": urlparse(article.url).netloc,
-                    "pubdate": article.publish_date})
-            else:
-                print "Filtered"
-                print article.title
+        for articles, newsletter in downloaded_article_dict:
+            for article in articles:
+                if article.title not in constants.EXCLUDE and not self._blacklist_comparison(constants.TITLE_BLACKLIST, article.title) and not self._blacklist_comparison(constants.TEXT_BLACKLIST, article.text) and len(article.text) > 0:
+                    out.append({
+                        "body": article.text, "title": article.title,
+                        "url": article.url, "images": article.top_image,
+                        "source": urlparse(article.url).netloc,
+                        "pubdate": article.publish_date,
+                        "newsletter": newsletter})
+                else:
+                    print "Filtered"
+                    print article.title
 
         return out
 

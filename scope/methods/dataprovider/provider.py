@@ -63,8 +63,12 @@ class Provider(object):
                     defaults={"source": source, "body": a['body'],
                               "images": a['images'], "pubdate": a['pubdate']})
 
-                Article_Curate_Query.objects.create(
+                art_cur_que = Article_Curate_Query.objects.create(
                     article=art, curate_query=curate_query, agent=agent)
+
+                if a.has_key('newsletter'):
+                    art_cur_que.newsletter = a['newsletter']
+                    art_cur_que.save()
 
                 db_articles.append(art)
 
