@@ -1,7 +1,7 @@
 # from __future__ import unicode_literals
 
 from django.db import models
-from scope.models import Article, Customer, Agent, Source
+from scope.models import Article, Customer, Agent, Source, Newsletter
 
 # Create your models here.
 
@@ -51,6 +51,7 @@ class Curate_Query(models.Model):
     curate_customer = models.ForeignKey(Curate_Customer)
     time_stamp = models.DateField(auto_now_add=True)
     processed_words = models.CharField(max_length=200, blank=True)
+    articles_before_filtering = models.IntegerField(null=True, blank=True)
     clustering = models.CharField(max_length=200, blank=True)
     no_clusters = models.IntegerField(null=True, blank=True)
     selection_made = models.BooleanField(default=False)
@@ -65,6 +66,8 @@ class Article_Curate_Query(models.Model):
     curate_query = models.ForeignKey(Curate_Query)
     selection_options = models.ManyToManyField(Curate_Customer_Selection, blank=True)
     agent = models.ForeignKey(Agent, null=True, blank=True)
+    newsletter =  models.ForeignKey(Newsletter, null=True, blank=True)
+    bad_article = models.BooleanField(default=False)
     def __unicode__(self):              # __unicode__ on Python 2
         return self.article.title + ', ' + self.curate_query.time_stamp.isoformat() + ', ' + self.curate_query.curate_customer.customer.name
 

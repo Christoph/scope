@@ -35,7 +35,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import NMF, TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity, rbf_kernel
 
-from sklearn.cluster import AgglomerativeClustering
 
 # initializations
 customer_key = "neuland_herzer"
@@ -219,6 +218,13 @@ for a in out:
     except:
         print "Validation Error"
         continue
+
+
+print "LATE"
+for article in all_articles:
+    if article.title.find("Nieman")>=0:
+        print article.title
+        print article.url
 
 bad_sources = curate_customer.bad_source.all()
 

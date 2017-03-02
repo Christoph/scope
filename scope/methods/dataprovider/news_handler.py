@@ -44,31 +44,32 @@ class NewsSourceHandler(object):
 
         return out
 
-    def get_articles_from_list(self, url_list, language):
+    def get_articles_from_list(self, article_dict, language):
         ''' Download and parse articles from list.'''
-        articles = []
-
+        out = []
         newspaper_lang_dict = {
             'ger': 'de',
             'eng': 'en',
         }
 
         # Create newspaper article list
-        for i in range(0, len(url_list)):
-            try:
-                if language == "mix":
-                    articles.append(newspaper.Article(url_list[i]))
-                else:
-                    articles.append(newspaper.Article(
-                        url_list[i],
-                        language=newspaper_lang_dict[language]))
-            except:
-                # print "Error while  converting url"
-                # print url_list[i]
-                continue
+        for articles, agent in article_dict:
+            article_list = []
+            for i in range(0,len(articles)):
+                try:
+                    if language == "mix":
+                        article_list.append(newspaper.Article(articles[i]))
+                    else:
+                        article_list.append(newspaper.Article(
+                            articles[i],
+                            language=newspaper_lang_dict[language]))
+                except:
+                    print "Error while  converting " + articles[i]
+                    continue
+
+            out.append([self._download_articles(article_list), agent])
 
         # out = self._download_articles(self._check_urls(articles))
-        out = self._download_articles(articles)
 
         return out
 

@@ -52,6 +52,8 @@ def interface(request,customer_key, date_stamp=None):
                                     else:
                                         reason.current_members.add(s)
                                         reason.save()
+                                        if reason.kind == "con":
+                                            s.bad_article = True
                             except:
                                 pass
                         s.selection_options.add(option)
@@ -65,6 +67,8 @@ def interface(request,customer_key, date_stamp=None):
         except:
             pass
         try:
+            print im.get_env_variable('DJANGO_SETTINGS_MODULE')
+            print config.getboolean('meta','direct_outlet')
             if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment":
                 send_newsletter_task.delay(customer_key)
         except:
@@ -76,3 +80,31 @@ def interface(request,customer_key, date_stamp=None):
         stats[option] = len(stat)
     context = {"stats": stats, "suggestions": suggestions, "options": options, 'query': query, 'customer_key': customer_key}
     return render(request, 'curate/interface.html', context)
+
+def mail(request, customer_key):
+    customer = Customer.objects.get(customer_key=customer_key)
+    curate_customer = Curate_Customer.objects.get(customer=customer)
+    query = Curate_Query.objects.filter(
+        curate_customer=curate_customer).order_by("pk").last()
+    config = ConfigParser.RawConfigParser()
+    config.read('curate/customers/' + customer_key +
+                "/" + customer_key + '.cfg')
+
+    # recipients = config.get('outlet', 'recipients').split(',\n')
+    # template_no = config.getint('outlet', 'mail_template_no')
+
+    if config.get('outlet', 'options') == 'all':
+        selection_options = Curate_Customer_Selection.objects.filter(
+            curate_customer=curate_customer).filter(kind="sel").all()
+    else:
+        names = config.get('outlet', 'options').split(',')
+        selection_options = Curate_Customer_Selection.objects.filter(
+            curate_customer=curate_customer).filter(name__in=names).all()
+    articles = []
+    for option in selection_options:
+        articles.extend([i.article for i in Article_Curate_Query.objects.filter(curate_query=query).filter(
+            selection_options= option).order_by("rank").all()])
+    stats_dict = {'name': config.get('meta', 'name'), 'words': query.processed_words,
+                  'no_of_articles': query.articles_before_filtering}
+    context = {"articles": articles, "stats_dict": stats_dict}
+    return render(request, 'curate/mail_template.html', context)

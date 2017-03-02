@@ -113,6 +113,7 @@ class Curate(object):
         db_articles = [i.article for i in article_query_instances]
         words = sum([len(i.body) for i in db_articles])
         return db_articles, words
+        
 
     def _semantic_analysis(self, db_articles):
         if self.semantic_model == "lsi":
@@ -138,7 +139,8 @@ class Curate(object):
     def _check_articles(self, all_articles, db = False):
         print "Number of articles"
         print len(all_articles)
-
+        self.query.articles_before_filtering = len(all_articles)
+        self.query.save()
         out = []
         bad_sources = self.curate_customer.bad_source.all()
 
@@ -208,8 +210,8 @@ class Curate(object):
             self.query.save()
 
             for i in range(0, len(selected_articles)):
-                a = Article_Curate_Query.objects.get(
-                    article=selected_articles[i], curate_query=self.query)
+                a = Article_Curate_Query.objects.filter(
+                    article=selected_articles[i], curate_query=self.query)[0]
                 a.rank = i + 1
                 a.save()
         else:

@@ -26,5 +26,5 @@ static/twitter_bootstrap/
 *.bin
 *.json
 *.h5
-
+*.glue
 .cache/
