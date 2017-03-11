@@ -23,7 +23,7 @@ from homepage.forms import AlertEditForm,NameForm, AlertForm, RegistrationForm,C
 from explore.models import Sources, Query
 from alert.models import Alert, Send
 
-from conf.celery import app
+# from conf.celery import app
 from random import randint
 
 from conf.tasks import cs_task, sample_brief

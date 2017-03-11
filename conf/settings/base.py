@@ -17,6 +17,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 from .importer import ImportGlobal
 import os
 # import djcelery
+# djcelery.setup_loader()
 
 im = ImportGlobal()
 
