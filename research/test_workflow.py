@@ -12,7 +12,7 @@ from curate.models import Curate_Customer
 import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.lsi as lsi
 import scope.methods.semantics.word_vector as word_vector
-from scope.methods.learning import binary_classifier
+# from scope.methods.learning import binary_classifier
 from scope.methods.graphs import clustering_methods
 from scope.methods.graphs import selection_methods
 import curate.methods.tests as tests
@@ -43,13 +43,14 @@ lsi_language_dict = {
     'eng': 'english',
 }
 wv_model = word_vector.Model(wv_language_dict[language])
-classifier = binary_classifier.binary_classifier(
-    wv_model.pipeline, customer_key)
+# classifier = binary_classifier.binary_classifier(
+#     wv_model.pipeline, customer_key)
 
 # GET DATA
 print "GET DATA"
 db_articles = []
 labels = []
+
 
 data = pd.read_csv("clustering_24.csv", encoding="utf-8")
 
@@ -77,20 +78,22 @@ labels = np.array(labels)
 print "articles:"
 print len(db_articles)
 
+filtered_articles = db_articles
+
 # CLASSIFY
-print "CLASSIFY"
-min_count = 100
-classifier_type = "none"  # none, nn300
-
-if classifier_type == "nn300":
-    filtered_articles = classifier.classify_by_count(
-        db_articles, min_count)
-else:
-    print "no classifier selected"
-    filtered_articles = db_articles
-
-print "articles after classification"
-print len(filtered_articles)
+# print "CLASSIFY"
+# min_count = 100
+# classifier_type = "none"  # none, nn300
+#
+# if classifier_type == "nn300":
+#     filtered_articles = classifier.classify_by_count(
+#         db_articles, min_count)
+# else:
+#     print "no classifier selected"
+#     filtered_articles = db_articles
+#
+# print "articles after classification"
+# print len(filtered_articles)
 
 # semantic analysis
 print "SEMANTIC ANALYSIS"
@@ -107,7 +110,8 @@ sim = lsi_model.similarity()
 # test three different dim reduction methods
 vectorizer = TfidfVectorizer(
     sublinear_tf=True, stop_words='english', max_df=0.9)
-tfidf = vectorizer.fit_transform([" ".join(TextBlob(a.body).noun_phrases) for a in filtered_articles])
+tfidf = vectorizer.fit_transform(
+    [" ".join(TextBlob(a.body).noun_phrases) for a in filtered_articles])
 
 # similarities
 svd = TruncatedSVD(n_components=10, random_state=1).fit_transform(tfidf)
