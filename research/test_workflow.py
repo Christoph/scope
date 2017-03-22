@@ -52,7 +52,7 @@ db_articles = []
 labels = []
 
 
-data = pd.read_csv("clustering_24.csv", encoding="utf-8")
+data = pd.read_csv("clustering_16.csv", encoding="utf-8")
 
 # rename labels
 unique_labels = np.unique(data.label)
@@ -150,6 +150,8 @@ selected_articles_affinity = np.array(filtered_articles)[
 
 # gauss
 labels_gauss = clustering_methods.bayes_gauss_mix(svd, components=20)
+labels_gauss_classic = clustering_methods.gauss_mix(svd, components=16)
+proba_gauss = clustering_methods.gauss_proba(svd, components=20)
 
 # hierachical
 links_hc_ward, labels_hc_ward = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "maxclust", 16)
@@ -167,6 +169,7 @@ print "ground truth: " + str(len(np.unique(labels)))
 print "hc distance: " + str(len(np.unique(labels_hc_ward_dist)))
 print "hc maxclust: " + str(len(np.unique(labels_hc_ward)))
 print "gauss: " + str(len(np.unique(labels_gauss)))
+print "gauss_classic: " + str(len(np.unique(labels_gauss_classic)))
 print "affinity: " + str(len(np.unique(labels_affinity)))
 print "custom: " + str(len(np.unique(labels_custom)))
 
@@ -177,6 +180,7 @@ print "Internal measure which doesnt uses ground truth labels and is higher for 
 print "hc distance: " + str(clustering_methods.internal_measure(svd, labels_hc_ward_dist))
 print "hc maxclust: " + str(clustering_methods.internal_measure(svd, labels_hc_ward))
 print "gauss: " + str(clustering_methods.internal_measure(svd, labels_gauss))
+print "gauss_classic: " + str(clustering_methods.internal_measure(svd, labels_gauss_classic))
 print "affinity: " + str(clustering_methods.internal_measure(svd, labels_affinity))
 print "custom: " + str(clustering_methods.internal_measure(svd, labels_custom))
 
@@ -187,6 +191,7 @@ print "adjusted Rand index is a function that measures the similarity of the two
 print "hc distance: " + str(metrics.adjusted_rand_score(labels, labels_hc_ward_dist))
 print "hc maxclust: " + str(metrics.adjusted_rand_score(labels, labels_hc_ward))
 print "gauss: " + str(metrics.adjusted_rand_score(labels, labels_gauss))
+print "gauss_classic: " + str(metrics.adjusted_rand_score(labels, labels_gauss_classic))
 print "affinity: " + str(metrics.adjusted_rand_score(labels, labels_affinity))
 print "custom: " + str(metrics.adjusted_rand_score(labels, labels_custom))
 
@@ -197,6 +202,7 @@ print "Mutual Information is a function that measures the agreement of the two a
 print "hc distance: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_ward_dist))
 print "hc maxclust: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_ward))
 print "gauss: " + str(metrics.normalized_mutual_info_score(labels, labels_gauss))
+print "gauss_classic: " + str(metrics.normalized_mutual_info_score(labels, labels_gauss_classic))
 print "affinity: " + str(metrics.normalized_mutual_info_score(labels, labels_affinity))
 print "custom: " + str(metrics.normalized_mutual_info_score(labels, labels_custom))
 
@@ -206,6 +212,7 @@ print "Adjusted MI to account for chance: [0,1] and 1 is perfect match"
 print "hc distance: " + str(metrics.adjusted_mutual_info_score(labels, labels_hc_ward_dist))
 print "hc maxclust: " + str(metrics.adjusted_mutual_info_score(labels, labels_hc_ward))
 print "gauss: " + str(metrics.adjusted_mutual_info_score(labels, labels_gauss))
+print "gauss_classic: " + str(metrics.adjusted_mutual_info_score(labels, labels_gauss_classic))
 print "affinity: " + str(metrics.adjusted_mutual_info_score(labels, labels_affinity))
 print "custom: " + str(metrics.adjusted_mutual_info_score(labels, labels_custom))
 
@@ -216,6 +223,7 @@ print "The V-measure is the harmonic mean between homogeneity and completeness"
 print "hc distance: " + str(metrics.v_measure_score(labels, labels_hc_ward_dist))
 print "hc maxclust: " + str(metrics.v_measure_score(labels, labels_hc_ward))
 print "gauss: " + str(metrics.v_measure_score(labels, labels_gauss))
+print "gauss_classic: " + str(metrics.v_measure_score(labels, labels_gauss_classic))
 print "affinity: " + str(metrics.v_measure_score(labels, labels_affinity))
 print "custom: " + str(metrics.v_measure_score(labels, labels_custom))
 
@@ -225,6 +233,7 @@ print "The Fowlkes-Mallows index (FMI) is defined as the geometric mean between 
 print "hc distance: " + str(metrics.fowlkes_mallows_score(labels, labels_hc_ward_dist))
 print "hc maxclust: " + str(metrics.fowlkes_mallows_score(labels, labels_hc_ward ))
 print "gauss: " + str(metrics.fowlkes_mallows_score(labels, labels_gauss))
+print "gauss_classic: " + str(metrics.fowlkes_mallows_score(labels, labels_gauss_classic))
 print "affinity: " + str(metrics.fowlkes_mallows_score(labels, labels_affinity))
 print "custom: " + str(metrics.fowlkes_mallows_score(labels, labels_custom))
 
