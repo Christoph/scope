@@ -2,7 +2,7 @@ from sklearn.cluster import AffinityPropagation, DBSCAN
 from sklearn.cluster import KMeans
 
 from sklearn.mixture import GaussianMixture, BayesianGaussianMixture
-from sklearn.metrics import silhouette_score, calinski_harabaz_score
+from sklearn.metrics import silhouette_score
 
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.cluster.hierarchy import cophenet
@@ -13,15 +13,9 @@ from scipy.spatial.distance import pdist
 import numpy as np
 from collections import defaultdict
 
+
 # Subspace clustering due to curse of dimensionality?
 # Maybe PCS like method before clustering?
-
-
-def internal_measure(vecs, labels):
-    # score = silhouette_score(vecs, labels)
-    score = calinski_harabaz_score(vecs, labels)
-
-    return score
 
 
 def sim_based_threshold(sim, threshold):
@@ -96,6 +90,40 @@ def gauss_mix_test(vecs, params):
 
     return out
 
+def gauss_search(vecs, components):
+    '''
+        vecs: document vectors
+        components: Array with component numbers
+
+        returns: labels, probas
+    '''
+    best_score = 0
+    best_gmm = []
+
+    scores = []
+
+    for component in components:
+
+        gmm = GaussianMixture(n_components=component).fit(vecs)
+        score = gmm.bic(vecs)
+
+        scores.append({"comp": component, "score": score})
+
+    scores.sort(key=lambda x: x["score"], reverse=False)
+    top = scores[0:5]
+
+    for row in top:
+        gmm = GaussianMixture(n_components=row["comp"]).fit(vecs)
+        labels = gmm.predict(vecs)
+
+        score = silhouette_score(vecs, labels)
+
+        if score > best_score:
+            best_score = score
+            best_gmm = gmm
+
+    return best_gmm.predict(vecs), best_gmm.predict_proba(vecs)
+
 def gauss_mix(vecs, components):
     '''
         vecs: document vectors
@@ -107,16 +135,40 @@ def gauss_mix(vecs, components):
 
     return gmm.predict(vecs)
 
+def gauss_proba(vecs, components):
+    '''
+        vecs: document vectors
+        compnents: number of components
+
+        returns: labels
+    '''
+    gmm = GaussianMixture(n_components=components).fit(vecs)
+
+    return gmm.predict_proba(vecs)
+
+
 def bayes_gauss_mix(vecs, components):
     '''
         vecs: document vectors
-        weight_concentration_prior: number of components
+        components: number of components
 
         returns: labels
     '''
     gmm = BayesianGaussianMixture(n_components=components).fit(vecs)
 
     return gmm.predict(vecs)
+
+
+def bayes_gauss_proba(vecs, components):
+    '''
+        vecs: document vectors
+        components: number of components
+
+        returns: labels
+    '''
+    gmm = BayesianGaussianMixture(n_components=components).fit(vecs)
+
+    return gmm.predict_proba(vecs)
 
 # Centroid-based clustering
 # K-means makes the assumptions that all clusters are convex
