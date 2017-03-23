@@ -35,8 +35,8 @@ for i, item in enumerate(d for d in data):
 
 df = pd.DataFrame(data)
 
-df["title"] = df["title"].str.lower()
-df["body"] = df["body"].str.lower()
+df["title"] = df["title"]
+df["body"] = df["body"]
 df = df.drop_duplicates(subset=['title'], keep=False)
 df = df.drop_duplicates(subset=['body'], keep=False)
 
@@ -76,7 +76,7 @@ clustering = pd.read_csv("clustering_labeled.csv", encoding="utf-8")
 labels = np.array(clustering.concepts_5.tolist())
 testsets = []
 avg_diff = []
-clusters = 24
+clusters = 16
 
 for i in range(0, 50):
     testsets.append(np.random.randint(len(labels), size=clusters))
