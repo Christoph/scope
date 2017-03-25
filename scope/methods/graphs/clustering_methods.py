@@ -97,28 +97,38 @@ def gauss_search(vecs, components):
 
         returns: labels, probas
     '''
-    best_score = 0
+    best_score = np.Infinity
     best_gmm = []
 
     scores = []
 
+    # Go over all component numbers
     for component in components:
+        mean_score = np.zeros(5)
+        # Compute 5 times the BIC score and take the average
+        for idx in range(0, len(mean_score)):
+            gmm = GaussianMixture(n_components=component).fit(vecs)
 
-        gmm = GaussianMixture(n_components=component).fit(vecs)
-        score = gmm.bic(vecs)
+            score = gmm.bic(vecs)
+            mean_score[idx] = score
 
-        scores.append({"comp": component, "score": score})
+        scores.append({"comp": component, "score": mean_score.mean()})
 
+    # Select the top 5 components numbers
     scores.sort(key=lambda x: x["score"], reverse=False)
     top = scores[0:5]
 
+    # Compute the AIC for the top 5 and select the best model
     for row in top:
-        gmm = GaussianMixture(n_components=row["comp"]).fit(vecs)
-        labels = gmm.predict(vecs)
+        mean_score = np.zeros(5)
+        # Compute 5 times the AIC score and take the average
+        for idx in range(0, len(mean_score)):
+            gmm = GaussianMixture(n_components=row["comp"]).fit(vecs)
+            score = gmm.aic(vecs)
 
-        score = silhouette_score(vecs, labels)
+            mean_score[idx] = score
 
-        if score > best_score:
+        if mean_score.mean() < best_score:
             best_score = score
             best_gmm = gmm
 
