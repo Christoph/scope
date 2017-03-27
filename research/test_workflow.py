@@ -14,7 +14,7 @@ import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.lsi as lsi
 import scope.methods.semantics.word_vector as word_vector
 # from scope.methods.learning import binary_classifier
-from scope.methods.graphs import clustering_methods
+from research.clustering import clustering_methods
 from scope.methods.graphs import selection_methods
 import curate.methods.tests as tests
 
