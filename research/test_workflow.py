@@ -107,7 +107,7 @@ for doc in parsed:
     t_vp = []
     t_pp = []
     for word in doc:
-        if word.find("NP") >= 0:
+        if word.find("B-NP") >= 0 or word.find("I-NP") >= 0:
             t_np.append(re.sub("/.*", "", word))
         if word.find("VP") >= 0:
             t_vp.append(re.sub("/.*", "", word))
@@ -140,7 +140,7 @@ used = text_np
 
 # test three different dim reduction methods
 vectorizer = TfidfVectorizer(
-    sublinear_tf=True, stop_words='english', strip_accents="unicode", max_df=0.5, binary=False)
+    sublinear_tf=True, stop_words='english', strip_accents="unicode", binary=False)
 tfidf = vectorizer.fit_transform(used)
 
 print len(vectorizer.vocabulary_)
@@ -154,19 +154,61 @@ print "CLUSTERING"
 print "test ER as validation field"
 
 # affinity
+'''
+Very robust when changing input and embedding sizes!
+Provides central articles.
+
+Tends to create too much clusters
+'''
 labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(sim_svd)
 
 selected_articles_affinity = np.array(filtered_articles)[
     center_indices_affinity]
 
 # gauss
-labels_gauss, proba_gauss = clustering_methods.gauss_search(svd, range(10, 20))
+'''
+Gauss seems to use as much components as possible if enough iterations and so on are given. That means its hard to predict the number of clusters with gaussian mixture methods.
 
-labels_gauss_classic = clustering_methods.gauss_mix(svd, components=30)
-proba_gauss_classic = clustering_methods.gauss_proba(svd, components=16)
+Bayes Gauss seems to be the best choice from the gaussianmethods.
+The "grid-search" method seem to perform worse due to the fact that
+a Internal measure needs to be evaluated, and that measure doenst seem to work proberly. The search methods also thend to use the maximum number of components which reduces it to bayes with a good maximum.
+'''
+# BEST
+# text_np, emb dim 20, comp 20-30
+labels_gauss = clustering_methods.bayes_gauss_mix(svd, components=20)
 
 # hierachical
-links_hc_ward_dist, labels_hc_ward_dist = clustering_methods.hierarchical_clustering(svd, "ward", "euclidean", "distance", 0.8)
+'''
+Provide very good aproximations and any number of custers can be extracted from the linkage matrix.
+'''
+
+# good combinations
+
+# input:24, text_np, ndim=20, ward + euclidean, dist 0.75 = MI: 0.80, n = 25
+# input:16, text_np, ndim=20, ward + euclidean, dist 0.75 = MI: 0.77, n = 24
+
+# ndim=10, complete + cosine, dist 0.27 = MI 0.76, n=26
+
+# BEST HIERARCHICAL
+# text_np, embedding dim 20, complete + cosine, dist 0.6
+# input:24, text_np, ndim=20, complete + cosine, dist 0.6 = MI 0.85, n=22
+# input:16, text_np, ndim=20, complete + cosine, dist 0.6 = MI 0.92, n=21
+
+# ndim=50, complete + cosine, dist 1 = MI 0.83, n=26
+
+# ndim=10, complete + sqeuclidean, dist 0.05 = MI: 0.77, n=25
+# input:24, text_np, ndim=20, complete + sqeuclidean, dist 0.25 = MI: 0.78, n=25
+# ndim=50, complete + sqeuclidean, dist 1 = MI: 0.77, n=28
+
+# ndim = 10, weighted + euclidean, dist 0.2 = MI: 0.75, n=21
+# ndim = 20, weighted + euclidean, dist 0.4 = MI: 0.82, n=27
+# ndim = 50, weighted + euclidean, dist 1 = MI: 0.73, n=24
+
+links_hc_ward_dist, labels_hc_dist = clustering_methods.hierarchical_clustering(svd, "complete", "cosine", "distance", 0.6)
+
+links_hc_clust, labels_hc_clust = clustering_methods.hierarchical_clustering(svd, "complete", "cosine", "maxclust", 16)
+
+labels_dbscan = clustering_methods.db_search(sim_svd, svd, np.arange(0.5, 3, 0.1))
 
 # EVALUATION
 
@@ -176,25 +218,27 @@ print "If thats not satisfied - use adjusted scores."
 print ""
 print "Number of Clusters"
 print "ground truth: " + str(len(np.unique(labels)))
-print "hc distance: " + str(len(np.unique(labels_hc_ward_dist)))
+print "hc distance: " + str(len(np.unique(labels_hc_dist)))
+print "hc clust: " + str(len(np.unique(labels_hc_clust)))
 print "gauss: " + str(len(np.unique(labels_gauss)))
-print "gauss_classic: " + str(len(np.unique(labels_gauss_classic)))
+print "db_scan: " + str(len(np.unique(labels_dbscan)))
 print "affinity: " + str(len(np.unique(labels_affinity)))
 
 
-# print ""
-# print "silhouette_score: higher is better"
-# print "Internal measure which doesnt uses ground truth labels and is higher for better defined clusters"
-# print "hc distance: " + str(metrics.silhouette_score(svd, labels_hc_ward_dist))
-# print "gauss: " + str(metrics.silhouette_score(svd, labels_gauss))
-# print "gauss_classic: " + str(metrics.silhouette_score(svd, labels_gauss_classic))
-# print "affinity: " + str(metrics.silhouette_score(svd, labels_affinity))
+print ""
+print "silhouette_score: higher is better"
+print "Internal measure which doesnt uses ground truth labels and is higher for better defined clusters"
+print "hc distance: " + str(metrics.silhouette_score(svd, labels_hc_dist))
+print "hc clust: " + str(metrics.silhouette_score(svd, labels_hc_clust))
+print "gauss: " + str(metrics.silhouette_score(svd, labels_gauss))
+print "db_scan: " + str(metrics.silhouette_score(svd, labels_dbscan))
+print "affinity: " + str(metrics.silhouette_score(svd, labels_affinity))
 
 
 # print ""
 # print "Adjusted Rand Score: [-1, 1] and 0 means random"
 # print "adjusted Rand index is a function that measures the similarity of the two assignments, ignoring permutations and with chance normalization"
-# print "hc distance: " + str(metrics.adjusted_rand_score(labels, labels_hc_ward_dist))
+# print "hc distance: " + str(metrics.adjusted_rand_score(labels, labels_hc_dist))
 # print "gauss: " + str(metrics.adjusted_rand_score(labels, labels_gauss))
 # print "gauss_classic: " + str(metrics.adjusted_rand_score(labels, labels_gauss_classic))
 # print "affinity: " + str(metrics.adjusted_rand_score(labels, labels_affinity))
@@ -203,15 +247,16 @@ print "affinity: " + str(len(np.unique(labels_affinity)))
 print ""
 print "Nomalized MI: [0,1] and 1 is perfect match"
 print "Mutual Information is a function that measures the agreement of the two assignments, ignoring permutations"
-print "hc distance: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_ward_dist))
+print "hc distance: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_dist))
+print "hc clust: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_clust))
 print "gauss: " + str(metrics.normalized_mutual_info_score(labels, labels_gauss))
-print "gauss_classic: " + str(metrics.normalized_mutual_info_score(labels, labels_gauss_classic))
+print "db_scan: " + str(metrics.normalized_mutual_info_score(labels, labels_dbscan))
 print "affinity: " + str(metrics.normalized_mutual_info_score(labels, labels_affinity))
 
 
 # print ""
 # print "Adjusted MI to account for chance: [0,1] and 1 is perfect match"
-# print "hc distance: " + str(metrics.adjusted_mutual_info_score(labels, labels_hc_ward_dist))
+# print "hc distance: " + str(metrics.adjusted_mutual_info_score(labels, labels_hc_dist))
 # print "gauss: " + str(metrics.adjusted_mutual_info_score(labels, labels_gauss))
 # print "gauss_classic: " + str(metrics.adjusted_mutual_info_score(labels, labels_gauss_classic))
 # print "affinity: " + str(metrics.adjusted_mutual_info_score(labels, labels_affinity))
@@ -220,15 +265,15 @@ print "affinity: " + str(metrics.normalized_mutual_info_score(labels, labels_aff
 # print ""
 # print "V-Measure: [0,1] and 1 is perfect match"
 # print "The V-measure is the harmonic mean between homogeneity and completeness"
-# print "hc distance: " + str(metrics.v_measure_score(labels, labels_hc_ward_dist))
+# print "hc distance: " + str(metrics.v_measure_score(labels, labels_hc_dist))
 # print "gauss: " + str(metrics.v_measure_score(labels, labels_gauss))
 # print "gauss_classic: " + str(metrics.v_measure_score(labels, labels_gauss_classic))
 # print "affinity: " + str(metrics.v_measure_score(labels, labels_affinity))
 
-print ""
-print "Fowlkes-Mallows scores: [0,1] and 1 means good correlation between clusters"
-print "The Fowlkes-Mallows index (FMI) is defined as the geometric mean between of the precision and recall."
-print "hc distance: " + str(metrics.fowlkes_mallows_score(labels, labels_hc_ward_dist))
-print "gauss: " + str(metrics.fowlkes_mallows_score(labels, labels_gauss))
-print "gauss_classic: " + str(metrics.fowlkes_mallows_score(labels, labels_gauss_classic))
-print "affinity: " + str(metrics.fowlkes_mallows_score(labels, labels_affinity))
+# print ""
+# print "Fowlkes-Mallows scores: [0,1] and 1 means good correlation between clusters"
+# print "The Fowlkes-Mallows index (FMI) is defined as the geometric mean between of the precision and recall."
+# print "hc distance: " + str(metrics.fowlkes_mallows_score(labels, labels_hc_dist))
+# print "gauss: " + str(metrics.fowlkes_mallows_score(labels, labels_gauss))
+# print "gauss_classic: " + str(metrics.fowlkes_mallows_score(labels, labels_gauss_classic))
+# print "affinity: " + str(metrics.fowlkes_mallows_score(labels, labels_affinity))
