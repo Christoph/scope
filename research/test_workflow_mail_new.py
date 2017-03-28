@@ -119,20 +119,15 @@ print "CLUSTERING"
 
 # params
 params_custom = [[0.001, 0.45, 0.001], [1, 0.01, 1, 15]]
-params_svd = [[0.6, 0.9, 0.001], [1, 0.01, 1, 15]]
 
 # used params
 size_bound = [2, 18]
 test = tests.Curate_Test("clusters").test
 
-used_sim = sim_svd
-used_params = params_svd
-
 # custom
 selection_custom, threshold = selection_methods.on_average_clustering_test(
     filtered_articles, size_bound, sim, params_custom, test)
 
-labels_custom = clustering_methods.sim_based_threshold(used_sim, threshold)
 center_indices_custom = [i[0] for i in selection_custom['articles']]
 
 selected_articles_custom = [
@@ -145,37 +140,24 @@ selected_articles_affinity = np.array(filtered_articles)[
     center_indices_affinity]
 
 # gauss
-labels_gauss, probas_gauss = clustering_methods.gauss(vecs_svd, 20)
+labels_gauss, probas_gauss = clustering_methods.gauss(vecs_svd, 15)
+
+selected_articles_gauss = clustering_methods.get_central_articles(filtered_articles, vecs_svd, labels_gauss)
 
 # hierachical
+# Create linkage matrix
 linkage_matrix = clustering_methods.hc_create_linkage(vecs_svd)
 
+# Search optimal number of clusters
 labels_hc_dist = clustering_methods.hc_cluster_by_distance(linkage_matrix, 0.6)
+
+# Optimize clusters based on the maximum number of clusters allowed
 labels_hc_clust = clustering_methods.hc_cluster_by_maxclust(linkage_matrix, 12)
 
-# Extract
-links_ward = linkage(vecs_svd, "ward", "euclidean")
-links_cos = linkage(vecs_svd, "complete", "cosine")
+selected_articles_hc = clustering_methods.get_central_articles(filtered_articles, vecs_svd, labels_hc_clust)
 
-# hc merge function
-ward_tree = to_tree(links_ward)
-cos_tree = to_tree(links_cos)
-
+# hc tree functions
+# tree = to_tree(linkage_matrix)
 # tree.pre_order() gives original indicies
 # tree.dist gives distance of current index
 # tree.count gives leave nodes below current point
-
-max_clust = 12
-
-# Subtree
-sub = ward_tree.left.pre_order()
-
-# All distances within the subtree
-distance_vector = pdist(svd[sub])
-
-# convert to squareform
-distance_matrix = squareform(distance_vector)
-
-# Get element with lowest mean distance
-center = np.mean(distance_matrix, axis=1).argmin()
-center_index = sub[center]
