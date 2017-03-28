@@ -6,6 +6,7 @@ from sklearn.cluster import AffinityPropagation
 from sklearn.mixture import BayesianGaussianMixture
 
 import scipy.cluster.hierarchy as hierarchical_clustering
+from scipy.spatial.distance import pdist, squareform
 
 import numpy as np
 
@@ -58,7 +59,7 @@ def affinity_propagation(sim):
     return aff.labels_, aff.cluster_centers_indices_
 
 
-def gauss_mix(vecs, max_components):
+def gauss(vecs, max_components):
     '''
         vecs: document vectors
         max_components: maximum number of components
@@ -124,3 +125,39 @@ def hc_cluster_by_maxclust(linkage_matrix, n_clusters):
         linkage_matrix, n_clusters, criterion="maxclust")
 
     return labels
+
+
+def get_central_articles(articles, vecs, labels, get_full_clusters=False):
+    '''
+        Returns central articles based on the minimum cosine distance.
+
+        articles: List of article objects.
+        vecs: Embedding vectors for articles.
+        labels: Computed labels for articles.
+        get_full_clusters: If True returns in addition the clusters around the centers
+
+        returns center_articles, center_cluster
+    '''
+
+    cluster_labels = np.unique(labels)
+    center_articles = []
+    center_clusters = []
+
+    for l in cluster_labels:
+        mask = labels == l
+
+        cluster = np.array(articles)[mask]
+        distance_vector = pdist(vecs[mask], metric='cosine')
+
+        # convert to squareform
+        distance_matrix = squareform(distance_vector)
+
+        center_index = np.mean(distance_matrix, axis=1).argmin()
+
+        center_articles.append(cluster[center_index])
+        center_clusters.append([cluster[center_index], cluster])
+
+    if get_full_clusters:
+        return center_articles, center_clusters
+    else:
+        return center_articles
