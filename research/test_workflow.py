@@ -10,6 +10,12 @@ from scope.models import Customer, Article, Source
 from curate.models import Curate_Query, Article_Curate_Query
 from curate.models import Curate_Customer
 
+from scope.methods.semantics import stopwords
+import scope.methods.semantics.preprocess as preprocess
+import scope.methods.semantics.lsi as lsi
+from scope.methods.graphs import selection_methods
+import curate.methods.tests as tests
+
 import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.lsi as lsi
 import scope.methods.semantics.word_vector as word_vector
@@ -30,6 +36,7 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn import metrics
 
 import spacy
+import nltk
 
 nlp = spacy.load("en")
 
@@ -92,6 +99,16 @@ filtered_articles = db_articles
 # semantic analysis
 print "SEMANTIC ANALYSIS"
 
+lsi_dim = 20
+
+pre = preprocess.PreProcessing(lsi_language_dict[language])
+lsi_model = lsi.Model()
+
+vecs = pre.stemm([a.body for a in filtered_articles])
+lsi_model.compute(vecs, lsi_dim)
+
+sim_old = lsi_model.similarity()
+
 texts = [TextBlob(a.body) for a in filtered_articles]
 
 tags = [TextBlob(a.body).tags for a in filtered_articles]
@@ -138,6 +155,11 @@ for doc in docs:
 # # Replace number
 # replaced = [re.sub("[+-.,]?[0-9]+", "NUMBER", t) for t in replaced]
 
+params_custom = [[0.001, 0.45, 0.001], [1, 0.01, 1, 15]]
+
+size_bound = [2, 18]
+test = tests.Curate_Test("clusters").test
+
 # Possible texts for futher use
 text = [a.body for a in filtered_articles]
 
@@ -148,18 +170,29 @@ used = text_nnvb
 
 # test three different dim reduction methods
 vectorizer = TfidfVectorizer(
-    sublinear_tf=True, stop_words='english', strip_accents="unicode", binary=False)
+    sublinear_tf=True, stop_words=stopwords.EN, strip_accents="unicode", binary=False)
 tfidf = vectorizer.fit_transform(used)
 
 print len(vectorizer.vocabulary_)
 
 # similarities
-svd = TruncatedSVD(n_components=20, random_state=1).fit_transform(tfidf)
+svd = TruncatedSVD(n_components=18, random_state=1).fit_transform(tfidf)
 sim_svd = cosine_similarity(svd)
+# sim_svd = 1.0 - rbf_kernel(svd)
+
 
 # clustering
 print "CLUSTERING"
 print "test ER as validation field"
+
+# custom
+selection_custom, threshold = selection_methods.on_average_clustering_test(
+    filtered_articles, size_bound, sim_old, params_custom, test)
+
+labels_custom = clustering_methods.sim_based_threshold(sim_old, threshold)
+center_indices_custom = [i[0] for i in selection_custom['articles']]
+
+selected_articles_custom = [filtered_articles[i] for i in center_indices_custom]
 
 # affinity
 '''
@@ -226,16 +259,18 @@ print "If thats not satisfied - use adjusted scores."
 print ""
 print "Number of Clusters"
 print "ground truth: " + str(len(np.unique(labels)))
+print "custom: " + str(len(np.unique(labels_custom)))
 print "hc distance: " + str(len(np.unique(labels_hc_dist)))
 print "hc clust: " + str(len(np.unique(labels_hc_clust)))
 print "gauss: " + str(len(np.unique(labels_gauss)))
-print "db_scan: " + str(len(np.unique(labels_dbscan)))
+print "db scan: " + str(len(np.unique(labels_dbscan)))
 print "affinity: " + str(len(np.unique(labels_affinity)))
 
 
 print ""
 print "silhouette_score: higher is better"
 print "Internal measure which doesnt uses ground truth labels and is higher for better defined clusters"
+print "custom: " + str(metrics.silhouette_score(svd, labels_custom))
 print "hc distance: " + str(metrics.silhouette_score(svd, labels_hc_dist))
 print "hc clust: " + str(metrics.silhouette_score(svd, labels_hc_clust))
 print "gauss: " + str(metrics.silhouette_score(svd, labels_gauss))
@@ -255,6 +290,7 @@ print "affinity: " + str(metrics.silhouette_score(svd, labels_affinity))
 print ""
 print "Nomalized MI: [0,1] and 1 is perfect match"
 print "Mutual Information is a function that measures the agreement of the two assignments, ignoring permutations"
+print "custom: " + str(metrics.normalized_mutual_info_score(labels, labels_custom))
 print "hc distance: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_dist))
 print "hc clust: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_clust))
 print "gauss: " + str(metrics.normalized_mutual_info_score(labels, labels_gauss))
