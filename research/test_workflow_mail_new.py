@@ -154,7 +154,7 @@ labels_hc_dist = clustering_methods.hc_cluster_by_distance(linkage_matrix, 0.6)
 # Optimize clusters based on the maximum number of clusters allowed
 labels_hc_clust = clustering_methods.hc_cluster_by_maxclust(linkage_matrix, 12)
 
-selected_articles_hc = clustering_methods.get_central_articles(filtered_articles, vecs_svd, labels_hc_clust)
+selected_articles_hc, cluster_articles_hc = clustering_methods.get_central_articles(filtered_articles, vecs_svd, labels_hc_clust, True)
 
 # hc tree functions
 # tree = to_tree(linkage_matrix)
