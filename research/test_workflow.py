@@ -29,7 +29,9 @@ from scipy.spatial.distance import pdist, squareform
 from sklearn.cluster import AgglomerativeClustering
 from sklearn import metrics
 
-from gensim.models import Word2Vec
+import spacy
+
+nlp = spacy.load("en")
 
 reload(clustering_methods)
 
@@ -59,7 +61,7 @@ db_articles = []
 labels = []
 
 
-data = pd.read_csv("clustering_24.csv", encoding="utf-8")
+data = pd.read_csv("clustering_16.csv", encoding="utf-8")
 
 # rename labels
 unique_labels = np.unique(data.label)
@@ -94,28 +96,35 @@ texts = [TextBlob(a.body) for a in filtered_articles]
 
 tags = [TextBlob(a.body).tags for a in filtered_articles]
 
-nnp = [[t[0] for t in doc if t[1] in ["NNP", "NNPS"]] for doc in tags]
-
 parsed = [TextBlob(a.body).parse().split(" ") for a in filtered_articles]
 
 text_np = []
-text_vp = []
-text_pp = []
 
 for doc in parsed:
     t_np = []
-    t_vp = []
-    t_pp = []
+
     for word in doc:
         if word.find("B-NP") >= 0 or word.find("I-NP") >= 0:
             t_np.append(re.sub("/.*", "", word))
-        if word.find("VP") >= 0:
-            t_vp.append(re.sub("/.*", "", word))
-        if word.find("PNP") >= 0:
-            t_pp.append(re.sub("/.*", "", word))
+
     text_np.append(" ".join(t_np))
-    text_vp.append(" ".join(t_vp))
-    text_pp.append(" ".join(t_pp))
+
+
+docs = [nlp(a.body) for a in filtered_articles]
+
+text_nnvb = []
+
+for doc in docs:
+    temp = []
+
+    for sent in doc.sents:
+        for t in sent:
+            if t.tag_.find("NN") >= 0 or t.dep_.find("comp") >= 0:
+            # This version performs also very good
+            # if t.tag_.find("NN") >= 0:
+                temp.append(t.lemma_)
+
+    text_nnvb.append(" ".join(temp))
 
 # # Replace dollar
 # replaced = [re.sub("[\$][0-9]\d*(\.\d+)?(?![\d.])( \willion)", "CURRENCY", t.body) for t in filtered_articles]
@@ -130,13 +139,12 @@ for doc in parsed:
 # replaced = [re.sub("[+-.,]?[0-9]+", "NUMBER", t) for t in replaced]
 
 # Possible texts for futher use
-text_nnp = [" ".join(t) for t in nnp]
 text = [a.body for a in filtered_articles]
 
 noun_chunks = [" ".join(a.noun_phrases) for a in texts]
 
 # Used text for further steps
-used = text_np
+used = text_nnvb
 
 # test three different dim reduction methods
 vectorizer = TfidfVectorizer(
