@@ -30,6 +30,7 @@ class ImapHandler(object):
 
     def get_data_new(self):
         out = []
+        filtered = []
 
         # Connect to Mailbox
         mailbox = imaplib.IMAP4_SSL(self.mail_link)
@@ -124,6 +125,7 @@ class ImapHandler(object):
             if text.find(item) >= 0:
                 # print "Blacklisted"
                 # print text
+
                 return True
             else:
                 return False

@@ -21,15 +21,13 @@ class NewsSourceHandler(object):
                 a.parse()
             except XMLSyntaxError:
                 print "Parse error detected"
-                print a.url
+                # print a.url
             except ValueError:
                 print "Value error detected"
-                print a.url
-
-
+                # print a.url
 
             # Remove newline characters
-            a.text = a.text.replace("\n", "")
+            a.text = a.text.replace("\n", " ")
 
         print "Articles downloaded and parsed"
         return articles
@@ -39,7 +37,8 @@ class NewsSourceHandler(object):
 
         for a in articles:
             if Article.objects.filter(url=a.url).exists():
-                print "Url already exists: " + a.url
+                print "Url already exists"
+                # print a.url
             else:
                 out.append(a)
 
@@ -69,6 +68,7 @@ class NewsSourceHandler(object):
                     continue
 
             out.append([self._download_articles(article_list), agent])
+
         # out = self._download_articles(self._check_urls(articles))
 
         return out
@@ -94,10 +94,10 @@ class NewsSourceHandler(object):
                         "url": article.url, "images": article.top_image,
                         "source": urlparse(article.url).netloc,
                         "pubdate": article.publish_date})
-                else:
-                    print "Article is too old"
-                    print article.publish_date
-            else:
-                print "Article not correctly parsed."
+                # else:
+                #     print "Article is too old"
+                #     print article.publish_date
+            # else:
+            #     print "Article not correctly parsed."
 
         return out

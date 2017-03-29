@@ -1,0 +1,30 @@
+dataset: "clustering_16.csv"
+
+vectorizer: sublinear_tf=True, stop_words='english', max_df=0.9
+tfidf: [" ".join(TextBlob(a.body).noun_phrases) for a in filtered_articles]
+embedding: TruncatedSVD(n_components=10, random_state=1).fit_transform(tfidf)
+
+hc distance: svd, "ward", "euclidean", "distance", 0.5
+gauss (gauss search): svd, range(10, 20)
+gauss_classic: svd, components=24
+
+Number of Clusters
+ground truth: 16
+hc distance: 20
+gauss: 13
+gauss_classic: 24
+affinity: 14
+
+Nomalized MI: [0,1] and 1 is perfect match
+Mutual Information is a function that measures the agreement of the two assignments, ignoring permutations
+hc distance: 0.75031760253
+gauss: 0.726965591892
+gauss_classic: 0.764818898745
+affinity: 0.773354358575
+
+Fowlkes-Mallows scores: [0,1] and 1 means good correlation between clusters
+The Fowlkes-Mallows index (FMI) is defined as the geometric mean between of the precision and recall.
+hc distance: 0.444098323114
+gauss: 0.494020149376
+gauss_classic: 0.484947182673
+affinity: 0.566346177537

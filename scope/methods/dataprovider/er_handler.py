@@ -6,9 +6,12 @@ from datetime import datetime, timedelta
 from eventregistry import EventRegistry, QueryArticles, ArticleInfoFlags
 from eventregistry import RequestArticlesInfo, ReturnInfo
 
+import json
+
 
 class EventRegistryHandler(object):
     """docstring for ImapHandler."""
+
     def __init__(self, agent):
         self.user = agent.user.encode("utf-8")
         self.pwd = agent.pwd.encode("utf-8")
@@ -54,8 +57,7 @@ class EventRegistryHandler(object):
         # Get the total number ob pages
         q.addRequestedResult(RequestArticlesInfo(
             count=200,
-            sortBy="date"
-            ))
+            sortBy="date"))
 
         articles = er.execQuery(q)
 
@@ -71,22 +73,22 @@ class EventRegistryHandler(object):
         print 200 * pages
 
         # Get all articles
-        for i in xrange(1, pages+1):
+        for i in xrange(1, pages + 1):
             q.addRequestedResult(RequestArticlesInfo(
-                page=i,
-                count=200,
-                sortBy="date",
-                returnInfo=ReturnInfo(
+                page = i,
+                count = 200,
+                sortBy = "date",
+                returnInfo = ReturnInfo(
                     articleInfo=ArticleInfoFlags(
                         bodyLen=-1,
                         image=True))
                 ))
 
-            articles = er.execQuery(q)
+            articles=er.execQuery(q)
             q.clearRequestedResults()
 
             for article in articles["articles"]["results"]:
-                if article["title"] not in blacklist and len(article["body"].replace("\n", " ")) > text_min_length:
+                if article["title"] not in blacklist and len(article["body"].replace("\n", " ")) > text_min_length and article["body"].count("traditionalRegistration") < 1:
                     out.append({
                         "body": article["body"].replace("\n", " "), "title": article["title"],
                         "url": article["url"], "images": article["image"],
@@ -99,13 +101,92 @@ class EventRegistryHandler(object):
             print len(out)
 
             if len(out) > number:
-                out = out[0:number]
+                out=out[0:number]
 
                 return out
 
         return out
 
     def get_data(self, timespan, number):
+        '''
+        Get data with the agent configuration.
+
+        timespan[int]: How many days into the past
+        number[int]: Number of articles to retrieve. Defaults to all
+        '''
+
+        out=[]
+        pages=0
+
+        er=EventRegistry()
+        er.login(self.user, self.pwd)
+
+        # Create query using language
+        q=QueryArticles(lang = self.lang)
+
+        # Set search params
+        q.setDateLimit(
+            datetime.today() - timedelta(days=timespan), datetime.today())
+
+        if len(self.concepts) > 1:
+            for con in self.concepts:
+                print con
+                q.addConcept(er.getConceptUri(con))
+
+        if len(self.locations) > 0:
+            print self.locations
+            for loc in self.locations:
+                q.addLocation(er.getLocationUri(loc))
+
+        # Get the total number ob pages
+        q.addRequestedResult(RequestArticlesInfo(
+            count = 200,
+            sortBy = "date"
+            ))
+
+        articles=er.execQuery(q)
+
+        try:
+            pages=articles["articles"]["pages"]
+        except KeyError:
+            print "Key Error"
+            print articles
+
+        q.clearRequestedResults()
+
+        print "Rough article count"
+        print 200 * pages
+
+        # Get all articles
+        for i in xrange(1, pages + 1):
+            q.addRequestedResult(RequestArticlesInfo(
+                page = i,
+                count = 200,
+                sortBy = "date",
+                returnInfo = ReturnInfo(
+                    articleInfo=ArticleInfoFlags(
+                        bodyLen=-1,
+                        image=True))
+                ))
+
+            articles=er.execQuery(q)
+            q.clearRequestedResults()
+
+            for article in articles["articles"]["results"]:
+                out.append({
+                    "body": article["body"].replace("\n", ""), "title": article["title"],
+                    "url": article["url"], "images": article["image"],
+                    "source": article["source"]["uri"],
+                    "source_name": article["source"]["title"]})
+
+            if len(out) > number:
+                out=out[0:number]
+
+                return out
+
+        return out
+
+    def get_data_to_json(self, timespan, number, blacklist, text_min_length):
         '''
         Get data with the agent configuration.
 
@@ -126,7 +207,7 @@ class EventRegistryHandler(object):
         q.setDateLimit(
             datetime.today() - timedelta(days=timespan), datetime.today())
 
-        if len(self.concepts) > 1:
+        if len(self.concepts) > 0:
             for con in self.concepts:
                 print con
                 q.addConcept(er.getConceptUri(con))
@@ -139,8 +220,7 @@ class EventRegistryHandler(object):
         # Get the total number ob pages
         q.addRequestedResult(RequestArticlesInfo(
             count=200,
-            sortBy="date"
-            ))
+            sortBy="date"))
 
         articles = er.execQuery(q)
 
@@ -156,30 +236,40 @@ class EventRegistryHandler(object):
         print 200 * pages
 
         # Get all articles
-        for i in xrange(1, pages+1):
+        for i in xrange(1, pages + 1):
             q.addRequestedResult(RequestArticlesInfo(
-                page=i,
-                count=200,
-                sortBy="date",
-                returnInfo=ReturnInfo(
+                page = i,
+                count = 200,
+                sortBy = "date",
+                returnInfo = ReturnInfo(
                     articleInfo=ArticleInfoFlags(
                         bodyLen=-1,
+                        concepts=True,
+                        socialScore=True,
                         image=True))
                 ))
 
-            articles = er.execQuery(q)
+            articles=er.execQuery(q)
             q.clearRequestedResults()
 
             for article in articles["articles"]["results"]:
-                out.append({
-                    "body": article["body"].replace("\n", ""), "title": article["title"],
-                    "url": article["url"], "images": article["image"],
-                    "source": article["source"]["uri"],
-                    "source_name": article["source"]["title"]})
+                article["body"] = article["body"].replace("\n", " ")
+
+                if article["title"].lower() not in blacklist and len(article["body"]) > text_min_length and article["body"].count("traditionalRegistration") < 1:
+
+                    blacklist.append(article["title"].lower())
+                    out.append(article)
+                else:
+                    print "blacklisted or bad: " + article["title"]
 
             if len(out) > number:
-                out = out[0:number]
+
+                with open('er_data.json', 'w') as fp:
+                    json.dump(out, fp)
 
                 return out
+
+        with open('er_data.json', 'w') as fp:
+            json.dump(out, fp)
 
         return out
