@@ -19,6 +19,7 @@ import curate.methods.tests as tests
 import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.lsi as lsi
 import scope.methods.semantics.word_vector as word_vector
+from scope.methods.semantics import embedding
 # from scope.methods.learning import binary_classifier
 from research.clustering import clustering_methods
 from scope.methods.graphs import selection_methods
@@ -41,6 +42,7 @@ import nltk
 nlp = spacy.load("en")
 
 reload(clustering_methods)
+reload(embedding)
 
 # initializations
 customer_key = "neuland_herzer"
@@ -130,9 +132,11 @@ for doc in parsed:
 docs = [nlp(a.body) for a in filtered_articles]
 
 text_nnvb = []
+text_lemma = []
 
 for doc in docs:
     temp = []
+    lemma = []
 
     for sent in doc.sents:
         for t in sent:
@@ -140,20 +144,22 @@ for doc in docs:
             # This version performs also very good
             # if t.tag_.find("NN") >= 0:
                 temp.append(t.lemma_)
+            lemma.append(t.lemma_)
 
     text_nnvb.append(" ".join(temp))
+    text_lemma.append(" ".join(lemma))
 
-# # Replace dollar
-# replaced = [re.sub("[\$][0-9]\d*(\.\d+)?(?![\d.])( \willion)", "CURRENCY", t.body) for t in filtered_articles]
-#
-# # Replace euro/pounds
-# replaced = [re.sub("[0-9]\d*(\.\d+)?(?![\d.])( \willion)* [euros|pounds]+", "CURRENCY", t) for t in replaced]
-#
-# # Replace dates
-# replaced = [re.sub("\s[12][0-9]{3}\\b", " DATE", t) for t in replaced]
-#
-# # Replace number
-# replaced = [re.sub("[+-.,]?[0-9]+", "NUMBER", t) for t in replaced]
+# Replace dollar
+replaced = [re.sub("[\$][0-9]\d*(\.\d+)?(?![\d.])( \willion)", "CURRENCY", t) for t in text_lemma]
+
+# Replace euro/pounds
+replaced = [re.sub("[0-9]\d*(\.\d+)?(?![\d.])( \willion)* [euros|pounds]+", "CURRENCY", t) for t in replaced]
+
+# Replace dates
+replaced = [re.sub("\s[12][0-9]{3}\\b", " DATE", t) for t in replaced]
+
+# Replace number
+replaced = [re.sub("[+-.,]?[0-9]+", " NUMBER ", t) for t in replaced]
 
 params_custom = [[0.001, 0.45, 0.001], [1, 0.01, 1, 15]]
 
@@ -180,6 +186,13 @@ svd = TruncatedSVD(n_components=18, random_state=1).fit_transform(tfidf)
 sim_svd = cosine_similarity(svd)
 # sim_svd = 1.0 - rbf_kernel(svd)
 
+hal, vocab = embedding.HAL(replaced)
+hal_svd = TruncatedSVD(n_components=50, random_state=1).fit_transform(hal)
+sim_hal = cosine_similarity(hal_svd)
+
+for k, v in vocab.iteritems():
+    if v in np.where(sim_hal[2014] > 0.95)[0]:
+        print k
 
 # clustering
 print "CLUSTERING"
