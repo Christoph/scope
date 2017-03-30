@@ -2,7 +2,7 @@
 
 import spacy
 import numpy as np
-import pandas as pd
+from textblob import TextBlob
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
@@ -13,48 +13,53 @@ from scipy.sparse import csr_matrix, hstack
 from scope.methods.semantics import stopwords
 
 
-def HAL(text):
-    window_size = 5
+def HAL(docs, window_size=5):
+    '''
+        Creating HAL space out of the text documents.
 
-    toks = np.array(text.split(" "))
+        docs = document list
+        window_size: window size
+
+        returns: HAL embedding
+    '''
 
     col = []
     data = []
     row = []
+
     vocabulary = {}
-    counter = {}
 
-    for ind in range(0, len(toks)):
-        row_index = vocabulary.setdefault(toks[ind], len(vocabulary))
+    for text in docs:
+        blob = TextBlob(text)
 
-        # looking backwards
-        for i in range(-window_size + ind, ind):
-            if i >= 0:
-                term = toks[i]
-                value = 1
+        toks = blob.words
 
-                index = vocabulary.setdefault(term, len(vocabulary))
+        for ind in range(0, len(toks)):
+            row_index = vocabulary.setdefault(toks[ind], len(vocabulary))
 
-                col.append(row_index)
-                row.append(index)
-                data.append(value)
+            # looking backwards
+            for i in range(-window_size + ind, ind):
+                if i >= 0:
+                    term = toks[i]
+                    value = i - ind + window_size + 1
 
-        # looking forward
-        for i in range(ind+1, ind+window_size+1):
-            if i < len(toks):
-                term = toks[i]
-                value = 1
+                    index = vocabulary.setdefault(term, len(vocabulary))
 
-                index = vocabulary.setdefault(term, len(vocabulary))
+                    col.append(row_index)
+                    row.append(index)
+                    data.append(value)
 
-                if (index, row_index) in counter:
-                    counter[(index, row_index)] = counter[(index, row_index)] + 1
-                else:
-                    counter.setdefault((index, row_index), 1)
+            # looking forward
+            for i in range(ind+1, ind+window_size+1):
+                if i < len(toks):
+                    term = toks[i]
+                    value = abs(i - window_size - ind - 1)
 
-                row.append(row_index)
-                col.append(index)
-                data.append(value)
+                    index = vocabulary.setdefault(term, len(vocabulary))
+
+                    row.append(row_index)
+                    col.append(index)
+                    data.append(value)
 
     # Create sparse matrices
     csr_forward = csr_matrix((data, (row, col)), shape=(len(vocabulary), len(vocabulary)), dtype=float)
@@ -69,7 +74,7 @@ def HAL(text):
     max_value = 1/hal.max()
     hal = hal.multiply(max_value)
 
-    return hal
+    return hal, vocabulary
 
 
 
