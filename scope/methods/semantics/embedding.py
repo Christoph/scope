@@ -1,11 +1,77 @@
 ''' Class which converts raw text into embeddings. '''
 
 import spacy
+import numpy as np
+import pandas as pd
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
 
+from scipy.sparse import csr_matrix, hstack
+
 from scope.methods.semantics import stopwords
+
+
+def HAL(text):
+    window_size = 5
+
+    toks = np.array(text.split(" "))
+
+    col = []
+    data = []
+    row = []
+    vocabulary = {}
+    counter = {}
+
+    for ind in range(0, len(toks)):
+        row_index = vocabulary.setdefault(toks[ind], len(vocabulary))
+
+        # looking backwards
+        for i in range(-window_size + ind, ind):
+            if i >= 0:
+                term = toks[i]
+                value = 1
+
+                index = vocabulary.setdefault(term, len(vocabulary))
+
+                col.append(row_index)
+                row.append(index)
+                data.append(value)
+
+        # looking forward
+        for i in range(ind+1, ind+window_size+1):
+            if i < len(toks):
+                term = toks[i]
+                value = 1
+
+                index = vocabulary.setdefault(term, len(vocabulary))
+
+                if (index, row_index) in counter:
+                    counter[(index, row_index)] = counter[(index, row_index)] + 1
+                else:
+                    counter.setdefault((index, row_index), 1)
+
+                row.append(row_index)
+                col.append(index)
+                data.append(value)
+
+    # Create sparse matrices
+    csr_forward = csr_matrix((data, (row, col)), shape=(len(vocabulary), len(vocabulary)), dtype=float)
+    csr_backward = csr_forward.transpose()
+
+    hal = hstack((csr_backward, csr_forward))
+
+    # Divide by 2 to normalize stacking after stacking
+    hal = hal.multiply(0.5)
+
+    # Normalize to [0,1]
+    max_value = 1/hal.max()
+    hal = hal.multiply(max_value)
+
+    return hal
+
+
 
 
 class Embedding():
