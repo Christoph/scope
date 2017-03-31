@@ -193,11 +193,13 @@ sim_svd = cosine_similarity(svd)
 # sim_svd = 1.0 - rbf_kernel(svd)
 
 hal, vocab = embedding.HAL(replaced)
-hal_svd = TruncatedSVD(n_components=50, random_state=1).fit_transform(hal)
+hal_context, vocab_context = embedding.HAL_context(replaced, ["bank", "money"], 7)
+
+hal_svd = TruncatedSVD(n_components=18, random_state=1).fit_transform(hal)
 sim_hal = cosine_similarity(hal_svd)
 
 for k, v in vocab.iteritems():
-    if v in np.where(sim_hal[2014] > 0.95)[0]:
+    if v in np.where(sim_hal[vocab["money"]] > 0.95)[0]:
         print k
 
 # clustering
