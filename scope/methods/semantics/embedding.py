@@ -32,9 +32,11 @@ def HAL(docs, window_size=5):
     for text in docs:
         blob = TextBlob(text)
 
+        # Tokenize the text
         toks = blob.words
 
         for ind in range(0, len(toks)):
+            # Add focus word to vocab
             row_index = vocabulary.setdefault(toks[ind], len(vocabulary))
 
             # looking backwards
@@ -65,6 +67,7 @@ def HAL(docs, window_size=5):
     csr_forward = csr_matrix((data, (row, col)), shape=(len(vocabulary), len(vocabulary)), dtype=float)
     csr_backward = csr_forward.transpose()
 
+    # Stack backward and forward matrices
     hal = hstack((csr_backward, csr_forward))
 
     # Divide by 2 to normalize stacking after stacking
@@ -77,6 +80,148 @@ def HAL(docs, window_size=5):
     return hal, vocabulary
 
 
+def HAL_context(docs, contexts, window_size=5):
+    '''
+        Creating contextual HAL space out of the text documents.
+
+        docs: document list
+        contexts: Consider only docs containing words from the contexts list
+        window_size: window size
+
+        returns: HAL embedding
+    '''
+
+    col = []
+    data = []
+    row = []
+
+    vocabulary = {}
+
+    for text in docs:
+        blob = TextBlob(text)
+
+        # Tokenize the text
+        toks = blob.words
+
+        # Get indicies for all words in the contexts list
+        indicies = [i for i, j in enumerate(toks) if j in contexts]
+
+        # Get surroundings of all context words
+        for ind in indicies:
+            # Add focus word to vocab
+            row_index = vocabulary.setdefault(toks[ind], len(vocabulary))
+
+            # looking backwards
+            for i in range(-window_size + ind, ind):
+                if i >= 0:
+                    term = toks[i]
+                    value = i - ind + window_size + 1
+
+                    index = vocabulary.setdefault(term, len(vocabulary))
+
+                    col.append(row_index)
+                    row.append(index)
+                    data.append(value)
+
+            # looking forward
+            for i in range(ind+1, ind+window_size+1):
+                if i < len(toks):
+                    term = toks[i]
+                    value = abs(i - window_size - ind - 1)
+
+                    index = vocabulary.setdefault(term, len(vocabulary))
+
+                    row.append(row_index)
+                    col.append(index)
+                    data.append(value)
+
+    # Create sparse matrices
+    csr_forward = csr_matrix((data, (row, col)), shape=(len(vocabulary), len(vocabulary)), dtype=float)
+    csr_backward = csr_forward.transpose()
+
+    # Stack backward and forward matrices
+    hal = hstack((csr_backward, csr_forward))
+
+    # Divide by 2 to normalize stacking after stacking
+    hal = hal.multiply(0.5)
+
+    # Normalize to [0,1]
+    max_value = 1/hal.max()
+    hal = hal.multiply(max_value)
+
+    return hal, vocabulary
+
+
+def HAL_context_grammar(docs, contexts, window_size=5):
+    '''
+        Creating contextual HAL space out of the text documents using POS tags.
+
+        docs: document list
+        contexts: Consider only docs containing words from the contexts list
+        window_size: window size
+
+        returns: HAL embedding
+    '''
+
+    col = []
+    data = []
+    row = []
+
+    vocabulary = {}
+
+    for text in docs:
+        blob = TextBlob(text)
+
+        # Tokenize the text
+        toks = blob.words
+
+        # Get indicies for all words in the contexts list
+        indicies = [i for i, j in enumerate(toks) if j in contexts]
+
+        # Get surroundings of all context words
+        for ind in indicies:
+            # Add focus word to vocab
+            row_index = vocabulary.setdefault(toks[ind], len(vocabulary))
+
+            # looking backwards
+            for i in range(-window_size + ind, ind):
+                if i >= 0:
+                    term = toks[i]
+                    value = i - ind + window_size + 1
+
+                    index = vocabulary.setdefault(term, len(vocabulary))
+
+                    col.append(row_index)
+                    row.append(index)
+                    data.append(value)
+
+            # looking forward
+            for i in range(ind+1, ind+window_size+1):
+                if i < len(toks):
+                    term = toks[i]
+                    value = abs(i - window_size - ind - 1)
+
+                    index = vocabulary.setdefault(term, len(vocabulary))
+
+                    row.append(row_index)
+                    col.append(index)
+                    data.append(value)
+
+    # Create sparse matrices
+    csr_forward = csr_matrix((data, (row, col)), shape=(len(vocabulary), len(vocabulary)), dtype=float)
+    csr_backward = csr_forward.transpose()
+
+    # Stack backward and forward matrices
+    hal = hstack((csr_backward, csr_forward))
+
+    # Divide by 2 to normalize stacking after stacking
+    hal = hal.multiply(0.5)
+
+    # Normalize to [0,1]
+    max_value = 1/hal.max()
+    hal = hal.multiply(max_value)
+
+    return hal, vocabulary
 
 
 class Embedding():
