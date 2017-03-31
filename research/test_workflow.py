@@ -150,16 +150,22 @@ for doc in docs:
     text_lemma.append(" ".join(lemma))
 
 # Replace dollar
-replaced = [re.sub("[\$][0-9]\d*(\.\d+)?(?![\d.])( \willion)", "CURRENCY", t) for t in text_lemma]
+replaced = [re.sub("[\$]?[0-9]\d*(\.\d+)?(?![\d.])( \willion)", "-CURRENCY-", t) for t in text_lemma]
 
 # Replace euro/pounds
-replaced = [re.sub("[0-9]\d*(\.\d+)?(?![\d.])( \willion)* [euros|pounds]+", "CURRENCY", t) for t in replaced]
+replaced = [re.sub("[0-9]\d*(\.\d+)?(?![\d.])( \willion)? (euros|pounds)+", "-CURRENCY-", t) for t in replaced]
 
 # Replace dates
-replaced = [re.sub("\s[12][0-9]{3}\\b", " DATE", t) for t in replaced]
+replaced = [re.sub("\s[12][0-9]{3}\\b", " -DATE-", t) for t in replaced]
 
 # Replace number
-replaced = [re.sub("[+-.,]?[0-9]+", " NUMBER ", t) for t in replaced]
+replaced = [re.sub("[+-.,]?[0-9.,]{2,}", " -NUMBER-", t) for t in replaced]
+
+# Replace url
+replaced = [re.sub('http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[:/?#\[\]@+\-\._~=]|[!$&\'()*+,;=]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', " -URL-", t) for t in replaced]
+
+replaced = [re.sub("[a-z]*\.[a-z]{2,3}", " -URL-", t) for t in replaced]
+
 
 params_custom = [[0.001, 0.45, 0.001], [1, 0.01, 1, 15]]
 
