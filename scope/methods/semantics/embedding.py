@@ -1,7 +1,5 @@
 ''' Class which converts raw text into embeddings. '''
 
-import spacy
-import numpy as np
 from textblob import TextBlob
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -152,7 +150,7 @@ def HAL_context(docs, contexts, window_size=5):
     return hal, vocabulary
 
 
-def HAL_context_grammar(docs, contexts, window_size=5):
+def HAL_context_grammar(texts, contexts, nlp, window_size=5):
     '''
         Creating contextual HAL space out of the text documents using POS tags.
 
@@ -163,20 +161,40 @@ def HAL_context_grammar(docs, contexts, window_size=5):
         returns: HAL embedding
     '''
 
+    grammer_neighbors = []
+
     col = []
     data = []
     row = []
 
     vocabulary = {}
 
-    for text in docs:
-        blob = TextBlob(text)
+    docs = [nlp(a) for a in texts]
 
-        # Tokenize the text
-        toks = blob.words
+    for doc in docs:
+        toks = []
+
+        # Get important words around the contexts
+        for t in doc:
+            if t.text.lower() in contexts:
+                toks.extend([tok.text for tok in doc if tok.tag_.find("NN") >= 0])
+                # toks.extend([tok.lemma_ for tok in t.subtree if tok.tag_.find("NN") >= 0])
+                toks.extend([tok.text for tok in t.subtree if tok.dep_ in ["acomp", "ccomp", "pcomp", "xcomp", "csubj", "csubjpass", "dobj", "nsubj", "nsubjpass", "pobj"]])
+
+                # toks.extend([tok.lemma_ for tok in t.ancestors if tok.tag_.find("NN") >= 0 or tok.dep_.find("comp") >= 0])
+                toks.extend([tok.text for tok in t.ancestors if tok.dep_ in ["acomp", "ccomp", "pcomp", "xcomp", "csubj", "csubjpass", "dobj", "nsubj", "nsubjpass", "pobj"]])
+
+        temp = []
+
+        # Keep word order
+        for t in doc:
+            if t.text in toks and not t.tag_ == "SP":
+                temp.append(t.lemma_)
+
+        grammer_neighbors.append(temp)
 
         # Get indicies for all words in the contexts list
-        indicies = [i for i, j in enumerate(toks) if j in contexts]
+        indicies = [i for i, j in enumerate(temp) if j in contexts]
 
         # Get surroundings of all context words
         for ind in indicies:
@@ -221,7 +239,7 @@ def HAL_context_grammar(docs, contexts, window_size=5):
     max_value = 1/hal.max()
     hal = hal.multiply(max_value)
 
-    return hal, vocabulary
+    return hal, vocabulary, grammer_neighbors
 
 
 class Embedding():
