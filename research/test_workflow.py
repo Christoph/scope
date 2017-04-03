@@ -28,6 +28,7 @@ import curate.methods.tests as tests
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import NMF, TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity, rbf_kernel
+from sklearn.preprocessing import MinMaxScaler
 
 from scipy.cluster.hierarchy import linkage
 from scipy.cluster.hierarchy import to_tree
@@ -131,12 +132,16 @@ for doc in parsed:
 
 docs = [nlp(a.body) for a in filtered_articles]
 
+dep_labels = ["acomp", "ccomp", "pcomp", "xcomp", "csubj", "csubjpass", "dobj", "nsubj", "nsubjpass", "pobj"]
+
 text_nnvb = []
 text_lemma = []
+text_checked = []
 
 for doc in docs:
     temp = []
     lemma = []
+    lemma_checked = []
 
     for sent in doc.sents:
         for t in sent:
@@ -144,10 +149,22 @@ for doc in docs:
             # This version performs also very good
             # if t.tag_.find("NN") >= 0:
                 temp.append(t.lemma_)
+
+            if t.like_email:
+                lemma_checked.append("-EMAIL-")
+            elif t.like_num:
+                lemma_checked.append("-NUMBER-")
+            elif t.like_url:
+                lemma_checked.append("-URL-")
+            else:
+                lemma_checked.append(t.lemma_)
+
             lemma.append(t.lemma_)
 
     text_nnvb.append(" ".join(temp))
     text_lemma.append(" ".join(lemma))
+    text_checked.append(" ".join(lemma_checked))
+
 
 # Replace dollar
 replaced = [re.sub("[\$]?[0-9]\d*(\.\d+)?(?![\d.])( \willion)", "-CURRENCY-", t) for t in text_lemma]
@@ -165,7 +182,6 @@ replaced = [re.sub("[+-.,]?[0-9.,]{2,}", " -NUMBER-", t) for t in replaced]
 replaced = [re.sub('http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[:/?#\[\]@+\-\._~=]|[!$&\'()*+,;=]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', " -URL-", t) for t in replaced]
 
 replaced = [re.sub("[a-z]*\.[a-z]{2,3}", " -URL-", t) for t in replaced]
-
 
 params_custom = [[0.001, 0.45, 0.001], [1, 0.01, 1, 15]]
 
@@ -190,17 +206,56 @@ print len(vectorizer.vocabulary_)
 # similarities
 svd = TruncatedSVD(n_components=18, random_state=1).fit_transform(tfidf)
 sim_svd = cosine_similarity(svd)
-# sim_svd = 1.0 - rbf_kernel(svd)
+
+# Word2Vec
+wv = []
+
+docs = [nlp(a) for a in used]
+for doc in docs:
+    temp = []
+
+    for t in doc:
+        temp.append(t.vector)
+
+    wv.append(np.array(temp).mean(axis=0))
+
+sim_wv = cosine_similarity(wv)
+
+used_vecs = svd
+used_sim = sim_svd
+
+
+contexts = ["ambassador"]
 
 hal, vocab = embedding.HAL(replaced)
-hal_context, vocab_context = embedding.HAL_context(replaced, ["bank", "money"], 7)
+hal_context, vocab_context = embedding.HAL_context(replaced, contexts, 6)
 
-hal_svd = TruncatedSVD(n_components=18, random_state=1).fit_transform(hal)
+hal_grammar, vocab_grammar, context_grammar = embedding.HAL_context_grammar([a.body for a in filtered_articles], contexts, nlp)
+
+hal_svd = TruncatedSVD(n_components=18, random_state=1).fit_transform(hal_context)
 sim_hal = cosine_similarity(hal_svd)
 
-for k, v in vocab.iteritems():
-    if v in np.where(sim_hal[vocab["money"]] > 0.95)[0]:
+for k, v in vocab_grammar.iteritems():
+    if v in np.where(sim_hal[vocab_grammar[contexts[0]]] > 0.99)[0]:
         print k
+
+hal_context = TruncatedSVD(n_components=18, random_state=1).fit_transform(hal_grammar)
+sim_context = cosine_similarity(hal_context)
+
+# Get context row
+context_row = sim_context[vocab_grammar[contexts[0]]].copy()
+
+# Remove self similarity and rescale
+min_max_scaler = MinMaxScaler()
+
+context_row[context_row == 1] = context_row.min() - 0.001
+rescaled = min_max_scaler.fit_transform(context_row.reshape(-1, 1))
+
+context_similarities = pd.DataFrame(
+    {'word': vocab_grammar.keys(),
+     'similarity': rescaled.flatten()
+     })
+context_similarities = context_similarities.sort_values("similarity", ascending=False)
 
 # clustering
 print "CLUSTERING"
@@ -222,7 +277,7 @@ Provides central articles.
 
 Tends to create too much clusters
 '''
-labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(sim_svd)
+labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(used_sim)
 
 selected_articles_affinity = np.array(filtered_articles)[
     center_indices_affinity]
@@ -237,7 +292,7 @@ a Internal measure needs to be evaluated, and that measure doenst seem to work p
 '''
 # BEST
 # text_np, emb dim 20, comp 20-30
-labels_gauss = clustering_methods.bayes_gauss_mix(svd, components=20)
+labels_gauss = clustering_methods.bayes_gauss_mix(used_vecs, components=20)
 
 # hierachical
 '''
@@ -266,11 +321,11 @@ Provide very good aproximations and any number of custers can be extracted from 
 # ndim = 20, weighted + euclidean, dist 0.4 = MI: 0.82, n=27
 # ndim = 50, weighted + euclidean, dist 1 = MI: 0.73, n=24
 
-links_hc_ward_dist, labels_hc_dist = clustering_methods.hierarchical_clustering(svd, "complete", "cosine", "distance", 0.6)
+links_hc_ward_dist, labels_hc_dist = clustering_methods.hierarchical_clustering(used_vecs, "complete", "cosine", "distance", 0.6)
 
-links_hc_clust, labels_hc_clust = clustering_methods.hierarchical_clustering(svd, "complete", "cosine", "maxclust", 16)
+links_hc_clust, labels_hc_clust = clustering_methods.hierarchical_clustering(used_vecs, "ward", "euclidean", "maxclust", 16)
 
-labels_dbscan = clustering_methods.db_search(sim_svd, svd, np.arange(0.5, 3, 0.1))
+# labels_dbscan = clustering_methods.db_search(used_sim, used_vecs, np.arange(0.5, 3, 0.1))
 
 # EVALUATION
 
@@ -284,19 +339,19 @@ print "custom: " + str(len(np.unique(labels_custom)))
 print "hc distance: " + str(len(np.unique(labels_hc_dist)))
 print "hc clust: " + str(len(np.unique(labels_hc_clust)))
 print "gauss: " + str(len(np.unique(labels_gauss)))
-print "db scan: " + str(len(np.unique(labels_dbscan)))
+# print "db scan: " + str(len(np.unique(labels_dbscan)))
 print "affinity: " + str(len(np.unique(labels_affinity)))
 
 
 print ""
 print "silhouette_score: higher is better"
 print "Internal measure which doesnt uses ground truth labels and is higher for better defined clusters"
-print "custom: " + str(metrics.silhouette_score(svd, labels_custom))
-print "hc distance: " + str(metrics.silhouette_score(svd, labels_hc_dist))
-print "hc clust: " + str(metrics.silhouette_score(svd, labels_hc_clust))
-print "gauss: " + str(metrics.silhouette_score(svd, labels_gauss))
-print "db_scan: " + str(metrics.silhouette_score(svd, labels_dbscan))
-print "affinity: " + str(metrics.silhouette_score(svd, labels_affinity))
+print "custom: " + str(metrics.silhouette_score(used_vecs, labels_custom))
+print "hc distance: " + str(metrics.silhouette_score(used_vecs, labels_hc_dist))
+print "hc clust: " + str(metrics.silhouette_score(used_vecs, labels_hc_clust))
+print "gauss: " + str(metrics.silhouette_score(used_vecs, labels_gauss))
+# print "db_scan: " + str(metrics.silhouette_score(used_vecs, labels_dbscan))
+print "affinity: " + str(metrics.silhouette_score(used_vecs, labels_affinity))
 
 
 # print ""
@@ -315,7 +370,7 @@ print "custom: " + str(metrics.normalized_mutual_info_score(labels, labels_custo
 print "hc distance: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_dist))
 print "hc clust: " + str(metrics.normalized_mutual_info_score(labels, labels_hc_clust))
 print "gauss: " + str(metrics.normalized_mutual_info_score(labels, labels_gauss))
-print "db_scan: " + str(metrics.normalized_mutual_info_score(labels, labels_dbscan))
+# print "db_scan: " + str(metrics.normalized_mutual_info_score(labels, labels_dbscan))
 print "affinity: " + str(metrics.normalized_mutual_info_score(labels, labels_affinity))
 
 
