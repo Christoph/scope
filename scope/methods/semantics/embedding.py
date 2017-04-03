@@ -172,32 +172,32 @@ def HAL_context_grammar(texts, contexts, nlp, window_size=5):
     docs = [nlp(a) for a in texts]
 
     for doc in docs:
-        toks = []
+        temp = []
 
         # Get important words around the contexts
         for t in doc:
             if t.text.lower() in contexts:
-                toks.extend([tok.text for tok in doc if tok.tag_.find("NN") >= 0])
-                # toks.extend([tok.lemma_ for tok in t.subtree if tok.tag_.find("NN") >= 0])
-                toks.extend([tok.text for tok in t.subtree if tok.dep_ in ["acomp", "ccomp", "pcomp", "xcomp", "csubj", "csubjpass", "dobj", "nsubj", "nsubjpass", "pobj"]])
+                temp.extend([tok.text for tok in doc if tok.tag_.find("NN") >= 0])
+                # temp.extend([tok.lemma_ for tok in t.subtree if tok.tag_.find("NN") >= 0])
+                temp.extend([tok.text for tok in t.subtree if tok.dep_ in ["acomp", "ccomp", "pcomp", "xcomp", "csubj", "csubjpass", "dobj", "nsubj", "nsubjpass", "pobj"]])
 
-                # toks.extend([tok.lemma_ for tok in t.ancestors if tok.tag_.find("NN") >= 0 or tok.dep_.find("comp") >= 0])
-                toks.extend([tok.text for tok in t.ancestors if tok.dep_ in ["acomp", "ccomp", "pcomp", "xcomp", "csubj", "csubjpass", "dobj", "nsubj", "nsubjpass", "pobj"]])
+                # temp.extend([tok.lemma_ for tok in t.ancestors if tok.tag_.find("NN") >= 0 or tok.dep_.find("comp") >= 0])
+                temp.extend([tok.text for tok in t.ancestors if tok.dep_ in ["acomp", "ccomp", "pcomp", "xcomp", "csubj", "csubjpass", "dobj", "nsubj", "nsubjpass", "pobj"]])
 
-        temp = []
+        toks = []
 
         # Keep word order
         for t in doc:
-            if t.text in toks and not t.tag_ == "SP":
-                temp.append(t.lemma_)
+            if t.text in temp and not t.tag_ == "SP":
+                toks.append(t.lemma_)
 
-        grammer_neighbors.append(temp)
+        grammer_neighbors.append(toks)
 
         # Get indicies for all words in the contexts list
-        indicies = [i for i, j in enumerate(temp) if j in contexts]
+        # indicies = [i for i, j in enumerate(temp) if j in contexts]
 
         # Get surroundings of all context words
-        for ind in indicies:
+        for ind in range(0, len(toks)):
             # Add focus word to vocab
             row_index = vocabulary.setdefault(toks[ind], len(vocabulary))
 
@@ -230,10 +230,12 @@ def HAL_context_grammar(texts, contexts, nlp, window_size=5):
     csr_backward = csr_forward.transpose()
 
     # Stack backward and forward matrices
-    hal = hstack((csr_backward, csr_forward))
+    # hal = hstack((csr_backward, csr_forward))
 
     # Divide by 2 to normalize stacking after stacking
-    hal = hal.multiply(0.5)
+    # hal = hal.multiply(0.5)
+
+    hal = csr_forward + csr_backward
 
     # Normalize to [0,1]
     max_value = 1/hal.max()
