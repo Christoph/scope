@@ -28,3 +28,41 @@ hc distance: 0.444098323114
 gauss: 0.494020149376
 gauss_classic: 0.484947182673
 affinity: 0.566346177537
+
+
+dataset: "clustering_16.csv"
+
+vectorizer: sublinear_tf=True, stop_words='stopwords.EN', strip_accents="unicode"
+tfidf: text_nnvb
+embedding: TruncatedSVD(n_components=18, random_state=1).fit_transform(tfidf)
+
+hc distance: "complete", "cosine", "distance", 0.6
+gauss (bayes): components: 20
+affinity: -
+
+Number of Clusters
+ground truth: 16
+custom: 29
+hc distance: 18
+hc clust: 16
+gauss: 20
+db scan: 16
+affinity: 35
+
+silhouette_score: higher is better
+Internal measure which doesnt uses ground truth labels and is higher for better defined clusters
+custom: 0.383785281971
+hc distance: 0.59421839356
+hc clust: 0.525950448469
+gauss: 0.639988970008
+db_scan: 0.584287617405
+affinity: 0.455435982896
+
+Nomalized MI: [0,1] and 1 is perfect match
+Mutual Information is a function that measures the agreement of the two assignments, ignoring permutations
+custom: 0.918790627026
+hc distance: 0.941208048814
+hc clust: 0.932999003388
+gauss: 0.884412634378
+db_scan: 0.881068598053
+affinity: 0.860405537384
