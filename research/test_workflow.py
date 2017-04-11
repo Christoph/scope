@@ -136,6 +136,9 @@ docs = [nlp(a.body) for a in filtered_articles]
 dep_labels = ["acomp", "ccomp", "pcomp", "xcomp", "csubj",
               "csubjpass", "dobj", "nsubj", "nsubjpass", "pobj"]
 
+used_deps = ["acomp", "ccomp", "pcomp", "xcomp", "relcl", "conj"]
+used_tags = ["NN", "NNS", "NNP", "NNPS"]
+
 text_nnvb = []
 text_lemma = []
 text_checked = []
@@ -147,9 +150,9 @@ for doc in docs:
 
     for sent in doc.sents:
         for t in sent:
-            if t.tag_.find("NN") >= 0 or t.dep_.find("comp") >= 0:
-                # This version performs also very good
-                # if t.tag_.find("NN") >= 0:
+            # if t.tag_ in used_tags or t.dep_ in used_deps:
+            # if t.tag_.find("NN") >= 0 or t.dep_.find("comp") >= 0:
+            if t.tag_.find("NN") >= 0:
                 temp.append(t.lemma_)
 
             if t.like_email:
@@ -230,58 +233,37 @@ used_vecs = svd
 used_sim = sim_svd
 
 
-contexts = ["ambassador"]
+contexts = ["opel"]
 
 hal, vocab = embedding.HAL(replaced)
-hal_context, vocab_context = embedding.HAL_context(replaced, contexts, 6)
 
-# hal_grammar, vocab_grammar, context_grammar = embedding.HAL_context_grammar(
-    # [a.body for a in filtered_articles], contexts, nlp)
+hal_grammar, vocab_grammar, context_grammar = embedding.HAL_context_grammar(
+    [a.body for a in filtered_articles], contexts, nlp)
 
-text = [u"Multiple groups are interested in purchasing the Miami Marlins, according to team president David Samson, who confirmed owner Jeffrey Loria is being considered for nomination as U.S. ambassador to France."]
-hal_grammar, vocab_grammar, context_grammar = embedding.HAL_context_grammar(text, ["ambassador"], nlp)
-
-hal_svd = TruncatedSVD(
-    n_components=18, random_state=1).fit_transform(hal_context)
-sim_hal = cosine_similarity(hal_svd)
-
-# Use SVD in case of too many dimensions TODO: Check which cutoff is good
+# SVD doesnt work with the pandas output
 if hal_grammar.shape[0] > 1000:
     svd_grammar = TruncatedSVD(
-        n_components=18, random_state=1).fit_transform(hal_grammar)
+        n_components=100, random_state=1).fit_transform(hal_grammar)
 else:
     svd_grammar = hal_grammar
 
 sim_grammar = cosine_similarity(svd_grammar)
 
 # Get context row
-context_row = sim_context[vocab_grammar[contexts[0]]].copy()
-context_row_context = sim_context[vocab_grammar[contexts[0]]].copy()
+context_row = sim_grammar[vocab_grammar[contexts[0]]].copy()
 
 # Remove self similarity and rescale
 min_max_scaler = MinMaxScaler()
-min_max_scaler_context = MinMaxScaler()
 
-context_row[context_row == 1] = context_row.min() - 0.001
+context_row[context_row >= 1.] = context_row.min() - 0.001
 rescaled_grammar = min_max_scaler.fit_transform(context_row.reshape(-1, 1))
-context_row_context[context_row_context == 1] = context_row_context.min() - 0.001
-rescaled_context = min_max_scaler.fit_transform(context_row_context.reshape(-1, 1))
-
-# Extract noun chunks and or NEs before everything to make the list nicer
 
 # Get similarity list
 grammar_similarities = pd.DataFrame(
-    {'word': vocab_grammar.keys(),
+    {'word': sorted(vocab_grammar, key=vocab_grammar.get),
      'similarity': rescaled_grammar.flatten()
      })
 grammar_similarities = grammar_similarities.sort_values(
-    "similarity", ascending=False)
-
-context_similarities = pd.DataFrame(
-    {'word': vocab_context.keys(),
-     'similarity': rescaled_context.flatten()
-     })
-context_similarities = context_similarities.sort_values(
     "similarity", ascending=False)
 
 # clustering
