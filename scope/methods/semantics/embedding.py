@@ -122,7 +122,12 @@ def HAL_context_grammar(texts, contexts, nlp, window_size=5):
             if any(sent.text.lower().find(x) >= 0 for x in contexts):
                 for tok in sent:
                     if tok.tag_ in used_tags or tok.dep_ in used_deps:
-                        toks.append(tok.lemma_)
+                        if tok.like_email:
+                            toks.append("-EMAIL-")
+                        elif tok.like_num:
+                            toks.append("-NUMBER-")
+                        else:
+                            toks.append(tok.lemma_)
 
         # Fix noun_chunks and entities
         text = " ".join(toks)
