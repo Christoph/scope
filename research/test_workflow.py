@@ -19,7 +19,6 @@ import curate.methods.tests as tests
 import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.lsi as lsi
 import scope.methods.semantics.word_vector as word_vector
-from scope.methods.semantics import embedding
 # from scope.methods.learning import binary_classifier
 from research.clustering import clustering_methods
 from scope.methods.graphs import selection_methods
@@ -43,7 +42,6 @@ import nltk
 nlp = spacy.load("en")
 
 reload(clustering_methods)
-reload(embedding)
 
 # initializations
 customer_key = "neuland_herzer"
@@ -133,12 +131,6 @@ for doc in parsed:
 
 docs = [nlp(a.body) for a in filtered_articles]
 
-dep_labels = ["acomp", "ccomp", "pcomp", "xcomp", "csubj",
-              "csubjpass", "dobj", "nsubj", "nsubjpass", "pobj"]
-
-used_deps = ["acomp", "ccomp", "pcomp", "xcomp", "relcl", "conj"]
-used_tags = ["NN", "NNS", "NNP", "NNPS"]
-
 text_nnvb = []
 text_lemma = []
 text_checked = []
@@ -204,7 +196,6 @@ noun_chunks = [" ".join(a.noun_phrases) for a in texts]
 # Used text for further steps
 used = text_nnvb
 
-# test three different dim reduction methods
 vectorizer = TfidfVectorizer(
     sublinear_tf=True, stop_words=stopwords.EN, strip_accents="unicode", binary=False)
 tfidf = vectorizer.fit_transform(used)
@@ -231,40 +222,6 @@ sim_wv = cosine_similarity(wv)
 
 used_vecs = svd
 used_sim = sim_svd
-
-
-contexts = ["opel"]
-
-hal, vocab = embedding.HAL(replaced)
-
-hal_grammar, vocab_grammar, context_grammar = embedding.HAL_context_grammar(
-    [a.body for a in filtered_articles], contexts, nlp)
-
-# SVD doesnt work with the pandas output
-if hal_grammar.shape[0] > 1000:
-    svd_grammar = TruncatedSVD(
-        n_components=100, random_state=1).fit_transform(hal_grammar)
-else:
-    svd_grammar = hal_grammar
-
-sim_grammar = cosine_similarity(svd_grammar)
-
-# Get context row
-context_row = sim_grammar[vocab_grammar[contexts[0]]].copy()
-
-# Remove self similarity and rescale
-min_max_scaler = MinMaxScaler()
-
-context_row[context_row >= 1.] = context_row.min() - 0.001
-rescaled_grammar = min_max_scaler.fit_transform(context_row.reshape(-1, 1))
-
-# Get similarity list
-grammar_similarities = pd.DataFrame(
-    {'word': sorted(vocab_grammar, key=vocab_grammar.get),
-     'similarity': rescaled_grammar.flatten()
-     })
-grammar_similarities = grammar_similarities.sort_values(
-    "similarity", ascending=False)
 
 # clustering
 print "CLUSTERING"
