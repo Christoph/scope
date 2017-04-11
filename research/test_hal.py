@@ -147,11 +147,12 @@ hal_grammar, vocab_grammar, context_grammar = hal_embedding.HAL_context_grammar(
     [a.body for a in filtered_articles], contexts, nlp)
 
 # SVD doesnt work with the pandas output
-if hal_grammar.shape[0] > 1000:
-    svd_grammar = TruncatedSVD(
-        n_components=100, random_state=1).fit_transform(hal_grammar)
-else:
-    svd_grammar = hal_grammar
+# if hal_grammar.shape[0] > 1000:
+#     svd_grammar = TruncatedSVD(
+#         n_components=100, random_state=1).fit_transform(hal_grammar)
+# else:
+    # svd_grammar = hal_grammar
+svd_grammar = hal_grammar
 
 sim_grammar = cosine_similarity(svd_grammar)
 
