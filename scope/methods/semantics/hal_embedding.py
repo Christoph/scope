@@ -244,9 +244,7 @@ class Embedding():
 
             for sent in doc.sents:
                 for t in sent:
-                    # This version performs also very good
-                    # if t.tag_.find("NN") >= 0:
-                    if t.tag_.find("NN") >= 0 or t.dep_.find("comp") >= 0:
+                    if t.tag_.find("NN") >= 0:
                         temp.append(t.lemma_)
 
             clean.append(" ".join(temp))
