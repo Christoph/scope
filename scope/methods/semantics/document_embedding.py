@@ -5,6 +5,7 @@ import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
+from nltk.corpus import stopwords
 
 from scope.methods.semantics import stopwords
 
@@ -23,6 +24,8 @@ class Embedding():
 
         if lang == "en":
             self.stopwords = stopwords.EN
+        elif lang == "de":
+                self.stopwords = stopwords.words('german')
         else:
             raise Exception("Language not known.")
 
