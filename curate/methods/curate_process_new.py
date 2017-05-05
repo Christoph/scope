@@ -3,6 +3,8 @@ import ConfigParser
 from datetime import date, timedelta
 
 from scope.methods.semantics import embedding
+from scope.methods.graphs import clustering_methods
+
 import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.word_vector as word_vector
 import scope.methods.semantics.lsi as lsi
@@ -156,7 +158,7 @@ class Curate(object):
         out = []
         bad_sources = self.curate_customer.bad_source.all()
 
-        if db == False:
+        if db is False:
             # the selection-made filter here is because the
             # oarticle_curate_objects fo these aticles have already been
             # created at this point
