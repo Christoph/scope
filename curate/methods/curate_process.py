@@ -136,6 +136,7 @@ class Curate(object):
 
             self.wv_model.load_data(db_articles)
             sim = self.wv_model.similarity_matrix()
+            vecs = self.wv_model.document_vectors()
 
         if self.semantic_model == "grammar_svd":
             language_dict = {
@@ -148,7 +149,7 @@ class Curate(object):
             vecs = data_model.get_embedding_vectors()
             sim = data_model.get_similarity_matrix()
 
-        return sim
+        return sim, vecs
 
     def _check_articles(self, all_articles, db=False):
         print "Number of articles"
@@ -189,7 +190,7 @@ class Curate(object):
             filtered_articles = db_articles
 
         if len(filtered_articles) > 0:
-            sim = self._semantic_analysis(filtered_articles)
+            sim, vecs = self._semantic_analysis(filtered_articles)
 
             sel = selector.Selection(filtered_articles, sim)
             size_bound = [self.config.getint('general', 'lower_bound'),
@@ -223,20 +224,20 @@ class Curate(object):
 
             if self.selection_method == "affinity":
                 labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(
-                    sim_svd)
+                    sim)
 
                 selected_articles = np.array(filtered_articles)[
                     center_indices_affinity]
 
             if self.selection_method == "gauss":
                 labels_gauss, probas_gauss = clustering_methods.gauss(
-                    vecs_svd, 15)
+                    vecs, 15)
 
                 selected_articles = clustering_methods.get_central_articles(
-                    filtered_articles, vecs_svd, labels_gauss)
+                    filtered_articles, vecs, labels_gauss)
 
             if self.selection_method == "hierarchical_clust":
-                linkage_matrix = clustering_methods.hc_create_linkage(vecs_svd)
+                linkage_matrix = clustering_methods.hc_create_linkage(vecs)
 
                 # Optimize clusters based on the maximum number of clusters
                 # allowed
@@ -244,17 +245,17 @@ class Curate(object):
                     linkage_matrix, 12)
 
                 selected_articles = clustering_methods.get_central_articles(
-                    filtered_articles, vecs_svd, labels_hc_clust)
+                    filtered_articles, vecs, labels_hc_clust)
 
             if self.selection_method == "hierarchical_dist":
-                linkage_matrix = clustering_methods.hc_create_linkage(vecs_svd)
+                linkage_matrix = clustering_methods.hc_create_linkage(vecs)
 
                 # Search optimal number of clusters
                 labels_hc_dist = clustering_methods.hc_cluster_by_distance(
                     linkage_matrix, 0.6)
 
                 selected_articles = clustering_methods.get_central_articles(
-                    filtered_articles, vecs_svd, labels_hc_clust)
+                    filtered_articles, vecs, labels_hc_clust)
 
             # previous_articles = Article_Curate_Query.objects.filter(
             #     curate_query__curate_customer=self.curate_customer).filter(rank__gt=0)
