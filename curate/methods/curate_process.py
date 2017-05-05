@@ -2,6 +2,9 @@ import sys
 import ConfigParser
 from datetime import date, timedelta
 
+from scope.methods.semantics import embedding
+from scope.methods.graphs import clustering_methods
+
 import scope.methods.semantics.preprocess as preprocess
 import scope.methods.semantics.word_vector as word_vector
 import scope.methods.semantics.lsi as lsi
@@ -53,7 +56,6 @@ class Curate(object):
         # update classifier
         self._update_classifier()
 
-
         # filtered_articles = self.classifier.classify(db_articles)
         filtered_articles = self.classifier.classify_by_count(
             db_articles, self.config.getint('classifier', 'min_count'))
@@ -62,7 +64,7 @@ class Curate(object):
         # self.classifier.classify_labels(db_articles, True)
 
         print "Number of articles after classification"
-        print len(filtered_articles)        
+        print len(filtered_articles)
         for article in filtered_articles:
             print article.title
 
@@ -72,7 +74,7 @@ class Curate(object):
         # positive articles
         time_since_last_training = date.today() - timedelta(
             days=self.config.getint('classifier', 'training_interval'))
-        queries = Curate_Query.objects.filter(curate_customer= self.curate_customer).filter(
+        queries = Curate_Query.objects.filter(curate_customer=self.curate_customer).filter(
             time_stamp__gt=time_since_last_training).filter(
                 selection_made=True)
         relevant_articles = Article_Curate_Query.objects.filter(
@@ -83,7 +85,8 @@ class Curate(object):
             if article_instance.selection_options.filter(kind="sel").exists():
                 pos.append(article_instance.article)
 
-        content_reasons = Curate_Rejection_Reasons.objects.filter(selection__curate_customer = self.curate_customer).filter(kind="con")
+        content_reasons = Curate_Rejection_Reasons.objects.filter(
+            selection__curate_customer=self.curate_customer).filter(kind="con")
         for reason in content_reasons:
             neg.extend(reason.current_members.all())
             reason.current_members.clear()
@@ -113,7 +116,6 @@ class Curate(object):
         db_articles = [i.article for i in article_query_instances]
         words = sum([len(i.body) for i in db_articles])
         return db_articles, words
-        
 
     def _semantic_analysis(self, db_articles):
         if self.semantic_model == "lsi":
@@ -129,14 +131,26 @@ class Curate(object):
             lsi_model.compute(vecs, lsi_dim)
 
             sim = lsi_model.similarity()
+
         if self.semantic_model == "wv":
 
             self.wv_model.load_data(db_articles)
             sim = self.wv_model.similarity_matrix()
 
+        if self.semantic_model == "grammar_svd":
+            language_dict = {
+                'ger': 'de',
+                'eng': 'en',
+            }
+            data_model = embedding.Embedding(
+                language_dict[self.language], "grammar_svd", filtered_articles)
+
+            vecs = data_model.get_embedding_vectors()
+            sim = data_model.get_similarity_matrix()
+
         return sim
 
-    def _check_articles(self, all_articles, db = False):
+    def _check_articles(self, all_articles, db=False):
         print "Number of articles"
         print len(all_articles)
         self.query.articles_before_filtering = len(all_articles)
@@ -144,8 +158,10 @@ class Curate(object):
         out = []
         bad_sources = self.curate_customer.bad_source.all()
 
-        if db == False:
-            # the selection-made filter here is because the oarticle_curate_objects fo these aticles have already been created at this point
+        if db is False:
+            # the selection-made filter here is because the
+            # oarticle_curate_objects fo these aticles have already been
+            # created at this point
             queries = Curate_Query.objects.filter(
                 curate_customer=self.curate_customer).filter(
                     selection_made=True)
@@ -156,7 +172,7 @@ class Curate(object):
             for a in all_articles:
                 if a.source not in bad_sources and a not in relevant_articles:
                     out.append(a)
-        else: 
+        else:
             for a in all_articles:
                 if a.source not in bad_sources:
                     out.append(a)
@@ -189,19 +205,61 @@ class Curate(object):
                 for i in self.config.options(current_test):
                     test_params.append(self.config.getfloat(current_test, i))
                 if current_test == "clusters":
-                    if len(filtered_articles) <= 2*self.config.getfloat(current_test, 'upper_cluster_bound'):
-                        size_bound[0] = 1            
-                        
+                    if len(filtered_articles) <= 2 * self.config.getfloat(current_test, 'upper_cluster_bound'):
+                        size_bound[0] = 1
+
                 params = [steps, test_params]
                 selection = sel.by_test(test, params, size_bound)
+
+                selected_articles = [filtered_articles[i[0]]
+                                     for i in selection['articles']]
+
             if self.selection_method == "global_thresh":
                 threshold = self.config.getfloat('global_thresh', 'threshold')
                 selection = sel.global_thresh(self.test, threshold, size_bound)
 
+                selected_articles = [filtered_articles[i[0]]
+                                     for i in selection['articles']]
+
+            if self.selection_method == "affinity":
+                labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(
+                    sim_svd)
+
+                selected_articles = np.array(filtered_articles)[
+                    center_indices_affinity]
+
+            if self.selection_method == "gauss":
+                labels_gauss, probas_gauss = clustering_methods.gauss(
+                    vecs_svd, 15)
+
+                selected_articles = clustering_methods.get_central_articles(
+                    filtered_articles, vecs_svd, labels_gauss)
+
+            if self.selection_method == "hierarchical_clust":
+                linkage_matrix = clustering_methods.hc_create_linkage(vecs_svd)
+
+                # Optimize clusters based on the maximum number of clusters
+                # allowed
+                labels_hc_clust = clustering_methods.hc_cluster_by_maxclust(
+                    linkage_matrix, 12)
+
+                selected_articles = clustering_methods.get_central_articles(
+                    filtered_articles, vecs_svd, labels_hc_clust)
+
+            if self.selection_method == "hierarchical_dist":
+                linkage_matrix = clustering_methods.hc_create_linkage(vecs_svd)
+
+                # Search optimal number of clusters
+                labels_hc_dist = clustering_methods.hc_cluster_by_distance(
+                    linkage_matrix, 0.6)
+
+                selected_articles = clustering_methods.get_central_articles(
+                    filtered_articles, vecs_svd, labels_hc_clust)
+
             # previous_articles = Article_Curate_Query.objects.filter(
             #     curate_query__curate_customer=self.curate_customer).filter(rank__gt=0)
-            selected_articles = [filtered_articles[i[0]]
-                                 for i in selection['articles']]
+            # selected_articles = [filtered_articles[i[0]]
+            #                      for i in selection['articles']]
 
             self.query.processed_words = words
             self.query.no_clusters = selection[
@@ -220,7 +278,7 @@ class Curate(object):
 
     def from_db(self):
         db_articles, words = self._retrieve_from_db()
-        db_articles = self._check_articles(db_articles, db= True)
+        db_articles = self._check_articles(db_articles, db=True)
         selected_articles = self._process(db_articles, words)
 
         return selected_articles
