@@ -62,6 +62,7 @@ class Curate_Query(models.Model):
 
 class Article_Curate_Query(models.Model):
     rank = models.IntegerField(null=True, blank=True)
+    cluster_label = models.IntegerField(null=True, blank=True)
     article = models.ForeignKey(Article)
     curate_query = models.ForeignKey(Curate_Query)
     selection_options = models.ManyToManyField(Curate_Customer_Selection, blank=True)

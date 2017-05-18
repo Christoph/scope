@@ -2,7 +2,7 @@ import django
 django.setup()
 
 import numpy as np
-from textblob import TextBlob
+# from textblob import TextBlob
 
 import imaplib
 import email
