@@ -4,6 +4,7 @@ import ConfigParser
 
 from conf.settings.importer import ImportGlobal
 from curate.tasks import send_newsletter_task, selection_made_task
+from scope.methods.semantics.keywords import keywords_from_articles
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
 from scope.models import Customer, UserProfile
 
@@ -106,5 +107,11 @@ def mail(request, customer_key):
             selection_options= option).order_by("rank").all()])
     stats_dict = {'name': config.get('meta', 'name'), 'words': query.processed_words,
                   'no_of_articles': query.articles_before_filtering}
-    context = {"articles": articles, "stats_dict": stats_dict}
+    
+    lang = config.get(
+            'general', 'language')
+    ma = max(3,len(articles))
+    keywords = keywords_from_articles(articles[0:ma],lang)
+
+    context = {"articles": articles, "stats_dict": stats_dict, "keywords": ";".join(keywords)}
     return render(request, 'curate/mail_template.html', context)

@@ -65,6 +65,7 @@ class Article_Curate_Query(models.Model):
     cluster_label = models.IntegerField(null=True, blank=True)
     article = models.ForeignKey(Article)
     curate_query = models.ForeignKey(Curate_Query)
+    #keywords = models.CharField(max_length=50)
     selection_options = models.ManyToManyField(Curate_Customer_Selection, blank=True)
     agent = models.ForeignKey(Agent, null=True, blank=True)
     newsletter =  models.ForeignKey(Newsletter, null=True, blank=True)

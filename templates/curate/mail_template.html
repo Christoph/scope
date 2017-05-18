@@ -237,10 +237,10 @@
 											
 											<p align="center" class="lead">
 												{% if stats_dict.name %}
-													Hi {{stats_dict.name}}
+													Hi {{stats_dict.name}},
 												{% else %}
-													Hi
-												{% endif %}, this is your newsletter for today.
+													Hi,
+												{% endif %} this is your newsletter for today.
 												{% if stats_dict.words %}
 													For this edition, we processed a total of {{stats_dict.words}} words
 													{% if stats_dict.no_of_articles %}
