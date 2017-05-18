@@ -1,17 +1,15 @@
 ''' Class which converts raw text into embeddings. '''
 
 import spacy
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
-from nltk.corpus import stopwords
-from scope.methods.semantics import stopwords as stopw
+
+from scope.methods.semantics import stopwords
 
 
 class Embedding():
     """Create word embeddings."""
-
     def __init__(self, lang, model, articles):
         '''
             lang: Spacy language string (en, de, ...)
@@ -22,9 +20,7 @@ class Embedding():
         self.sim = []
 
         if lang == "en":
-            self.stopwords = stopw.EN
-        elif lang == "de":
-            self.stopwords = stopwords.words('german')
+            self.stopwords = stopwords.EN
         else:
             raise Exception("Language not known.")
 
@@ -65,7 +61,9 @@ class Embedding():
 
             for sent in doc.sents:
                 for t in sent:
-                    if t.tag_.find("NN") >= 0:
+                    # This version performs also very good
+                    # if t.tag_.find("NN") >= 0:
+                    if t.tag_.find("NN") >= 0 or t.dep_.find("comp") >= 0:
                         temp.append(t.lemma_)
 
             clean.append(" ".join(temp))

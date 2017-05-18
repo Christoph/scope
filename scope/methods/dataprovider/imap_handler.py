@@ -91,6 +91,7 @@ class ImapHandler(object):
         downloaded_article_dict = self.news.get_articles_from_list(
             article_dict, self.language)
 
+
         print "Article filter"
         for articles, newsletter in downloaded_article_dict:
             for article in articles:
@@ -102,8 +103,9 @@ class ImapHandler(object):
                         "pubdate": article.publish_date,
                         "newsletter": newsletter})
                 else:
-                    print "Filtered"
+                    print "Filtered by blacklists"
                     print article.title
+
 
         return out
 

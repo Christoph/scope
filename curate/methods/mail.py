@@ -1,6 +1,7 @@
 import ConfigParser
 from django.core.mail import send_mail
 from scope.methods.auxiliary.auxiliaryfunctions import truncate_words_and_prod_sentence
+from scope.methods.semantics.keywords import keywords_from_articles
 from django.template.loader import render_to_string
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
 from scope.models import Customer
@@ -35,8 +36,12 @@ def send_newsletter(customer_key):
 	stats_dict = {'words': query.processed_words,
 				  'no_of_articles': query.articles_before_filtering}
 
+	lang = config.get('general', 'language')
+	ma = max(3,len(articles))
+	keywords = keywords_from_articles(articles[0:ma],lang)
+
 	send_mail(
-		subject="Scope Newsletter for today",
+		subject="Scope Today: " + ",".join(keywords),
 		message=mail_template(stats_dict, articles, query,
 							  template_no, html=False),
 		from_email='robot@scope.ai',
