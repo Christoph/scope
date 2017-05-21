@@ -52,3 +52,9 @@ class Curate_Object_Tests(TestCase):
 		article.save
 		self.assertIs(len(cur.filter_bad_sources([article])), 0)
 	
+
+	def test_cluster_labels_are_stored_correctly(self):
+		pass
+
+	def test_the_right_number_of_clusters_are_produced(self):
+		pass

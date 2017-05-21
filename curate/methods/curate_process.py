@@ -263,15 +263,15 @@ class Curate(object):
                 labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(
                     sim)
 
-                selected_articles = np.array(filtered_articles)[
+                selected_articles, = np.array(filtered_articles)[
                     center_indices_affinity]
 
             if self.selection_method == "gauss":
                 labels_gauss, probas_gauss = clustering_methods.gauss(
                     vecs, 15)
 
-                selected_articles = clustering_methods.get_central_articles(
-                    filtered_articles, vecs, labels_gauss)
+                selected_articles, labels = clustering_methods.get_central_articles(
+                    filtered_articles, vecs, labels_gauss, get_full_clusters=True)
 
             if self.selection_method == "hierarchical_clust":
                 linkage_matrix = clustering_methods.hc_create_linkage(vecs)
@@ -281,8 +281,8 @@ class Curate(object):
                 labels_hc_clust = clustering_methods.hc_cluster_by_maxclust(
                     linkage_matrix, 12)
 
-                selected_articles = clustering_methods.get_central_articles(
-                    filtered_articles, vecs, labels_hc_clust)
+                selected_articles, labels = clustering_methods.get_central_articles(
+                    filtered_articles, vecs, labels_hc_clust, get_full_clusters=True)
 
             if self.selection_method == "hierarchical_dist":
                 linkage_matrix = clustering_methods.hc_create_linkage(vecs)
@@ -291,9 +291,12 @@ class Curate(object):
                 labels_hc_dist = clustering_methods.hc_cluster_by_distance(
                     linkage_matrix, 0.6)
 
-                selected_articles = clustering_methods.get_central_articles(
-                    filtered_articles, vecs, labels_hc_clust)
+                selected_articles, labels = clustering_methods.get_central_articles(
+                    filtered_articles, vecs, labels_hc_clust, get_full_clusters=True)
 
+            for article_curate_instance, label  in labels:
+                article_curate_instance.cluster_label = label
+                article_curate_instance.save()
             # previous_articles = Article_Curate_Query.objects.filter(
             #     curate_query__curate_customer=self.curate_customer).filter(rank__gt=0)
             # selected_articles = [filtered_articles[i[0]]

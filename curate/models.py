@@ -73,3 +73,10 @@ class Article_Curate_Query(models.Model):
     def __unicode__(self):              # __unicode__ on Python 2
         return self.article.title + ', ' + self.curate_query.time_stamp.isoformat() + ', ' + self.curate_query.curate_customer.customer.name
 
+class Curate_Query_Cluster(models.Model):
+    center = models.ForeignKey(Article_Curate_Query)
+    cluster_articles = models.ManyToManyField(Article_Curate_Query, blank=True)
+
+
+
+
