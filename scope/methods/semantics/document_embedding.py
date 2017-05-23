@@ -42,11 +42,11 @@ class Embedding():
             return: Embedding vectors
         '''
 
-        clean_text = self._gammar_based_preprocessing(articles)
+        clean_text = self._grammar_based_preprocessing(articles)
 
         self._create_svd_embedding(clean_text)
 
-    def _gammar_based_preprocessing(self, articles):
+    def _grammar_based_preprocessing(self, articles):
         '''
             Grammar based text extraction using spacy.
 

@@ -15,7 +15,7 @@ import curate.methods.seman_tests as tests
 from scope.methods.learning import binary_classifier
 
 from scope.models import Customer
-from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Rejection_Reasons
+from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Rejection_Reasons, Curate_Query_Cluster
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -39,6 +39,7 @@ class Curate(object):
             customer=self.customer)
         self.language = self.config.get(
             'general', 'language')
+
 
     def _classifier(self, db_articles):
         filtered_articles = []
@@ -85,27 +86,33 @@ class Curate(object):
         if len(neg) > 0:
             self.classifier.update_model(neg, pos)
 
-    def _retrieve_from_sources(self):
-        self.query = Curate_Query.objects.create(
+
+    def _create_query_instance(self, db=False):
+        if db == False:
+            self.query = Curate_Query.objects.create(
             curate_customer=self.curate_customer)
+        else:
+            self.query = Curate_Query.objects.filter(
+            curate_customer=self.curate_customer).order_by("pk").reverse()[0]
+
+    def _retrieve_from_sources(self):
         # Get the articles as dict
         db_articles = self.provider.collect_from_agents(
             self.curate_customer, self.query, self.language)
-        words = sum([len(i.body) for i in db_articles])
-
-        return db_articles, words
+        self.query.processed_words = sum([len(i.body) for i in db_articles])
+        self.query.save()
+        return db_articles
 
     def _retrieve_from_db(self):
-        self.query = Curate_Query.objects.filter(
-            curate_customer=self.curate_customer).order_by("pk").reverse()[0]
         article_query_instances = Article_Curate_Query.objects.filter(
             curate_query=self.query)
         for i in article_query_instances:
             i.rank = 0
             i.save()
         db_articles = [i.article for i in article_query_instances]
-        words = sum([len(i.body) for i in db_articles])
-        return db_articles, words
+        self.query.processed_words = sum([len(i.body) for i in db_articles])
+        self.query.save()
+        return db_articles
 
     def _semantic_analysis(self, db_articles):
         wv_language_dict = {
@@ -201,6 +208,18 @@ class Curate(object):
 
         return outgoing_articles
 
+    def remove_duplicate_articles_for_processing(self, incoming_articles):
+        outgoing_articles = []
+        title_list = list(set([article.title for article in incoming_articles]))
+        for title in title_list:
+            article_to_append = [article for article in incoming_articles if article.title == title]
+            outgoing_articles.extend(article_to_append)
+
+        return outgoing_articles
+
+    def remove_duplicate_links_to_same_article_from_same_newsletter(self, incoming_articles):
+        pass
+
     def _filter_articles(self, all_articles, db=False):
         print "Number of articles"
         print len(all_articles)
@@ -211,12 +230,43 @@ class Curate(object):
 
         return after_bad_articles
 
-    def _process(self, db_articles, words):
+    def _produce_cluster_dict(self, labels):
+        articles_dict = {}
+        #produce a dictionary of the clusters
+        for center, cluster in labels:
+            center_instance = Article_Curate_Query.objects.filter(
+                    article=center, curate_query=self.query)[0]
+            all_article_curate_instances = []
+            for article in cluster:
+                article_curate_instances = Article_Curate_Query.objects.filter(
+                    article__title=article.title, curate_query=self.query)
+                #later you would here want to remove duplicates from newsletters. But for now don't do this because we want to check performance
+                # article_curate_instances = self.remove_duplicate_links_to_same_article_from_same_newsletter(article_curate_instances)
+                all_article_curate_instances.extend(article_curate_instances)
+            articles_dict[center_instance] = all_article_curate_instances
+        return articles_dict
+
+    def produce_and_save_clusters(self,labels):
+        articles_dict = self._produce_cluster_dict(labels)
+        counter = 1
+        for key in articles_dict:
+            cluster = Curate_Query_Cluster(rank=counter, center=key)
+            cluster.save()
+            for instance in articles_dict[key]:
+                cluster.cluster_articles.add(instance)
+            cluster.save()
+            counter += 1
+        self.query.no_clusters = counter
+        self.query.save()
+
+    def _process(self, db_articles):
 
         if self.config.getint('classifier', 'pre_pipeline'):
             filtered_articles = self._classifier(db_articles)
         else:
             filtered_articles = db_articles
+
+        filtered_articles = self.remove_duplicate_articles_for_processing(filtered_articles)
 
         if len(filtered_articles) > 0:
             sim, vecs = self._semantic_analysis(filtered_articles)
@@ -244,9 +294,9 @@ class Curate(object):
                 selected_articles = [filtered_articles[i[0]]
                                      for i in selection['articles']]
 
-                self.query.no_clusters = selection[
-                'no_clusters']
-                self.query.clustering = selection['clustering']
+                # self.query.no_clusters = selection[
+                # 'no_clusters']
+                # self.query.clustering = selection['clustering']
 
             if self.selection_method == "global_thresh":
                 threshold = self.config.getfloat('global_thresh', 'threshold')
@@ -255,9 +305,9 @@ class Curate(object):
                 selected_articles = [filtered_articles[i[0]]
                                      for i in selection['articles']]
 
-                self.query.no_clusters = selection[
-                'no_clusters']
-                self.query.clustering = selection['clustering']
+                # self.query.no_clusters = selection[
+                # 'no_clusters']
+                # self.query.clustering = selection['clustering']
 
             if self.selection_method == "affinity":
                 labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(
@@ -292,38 +342,39 @@ class Curate(object):
                     linkage_matrix, 0.6)
 
                 selected_articles, labels = clustering_methods.get_central_articles(
-                    filtered_articles, vecs, labels_hc_clust, get_full_clusters=True)
+                    filtered_articles, vecs, labels_hc_dist, get_full_clusters=True)
 
-            for article_curate_instance, label  in labels:
-                article_curate_instance.cluster_label = label
-                article_curate_instance.save()
+
             # previous_articles = Article_Curate_Query.objects.filter(
             #     curate_query__curate_customer=self.curate_customer).filter(rank__gt=0)
             # selected_articles = [filtered_articles[i[0]]
             #                      for i in selection['articles']]
 
-            self.query.processed_words = words
-            self.query.save()
 
-            for i in range(0, len(selected_articles)):
-                a = Article_Curate_Query.objects.filter(
-                    article=selected_articles[i], curate_query=self.query)[0]
-                a.rank = i + 1
-                a.save()
+        #you can generate the dict at this point actually. 
+            self.produce_and_save_clusters(labels)
+
+            # for i in range(0, len(selected_articles)):
+            #     a = Article_Curate_Query.objects.filter(
+            #         article=selected_articles[i], curate_query=self.query)[0]
+            #     a.rank = i + 1
+            #     a.save()
         else:
             selected_articles = []
         return selected_articles
 
     def from_db(self):
-        db_articles, words = self._retrieve_from_db()
+        self._create_query_instance(db=True)
+        db_articles = self._retrieve_from_db()
         db_articles = self._filter_articles(db_articles, db=True)
-        selected_articles = self._process(db_articles, words)
+        selected_articles = self._process(db_articles)
 
         return selected_articles
 
     def from_sources(self):
-        db_articles, words = self._retrieve_from_sources()
+        self._create_query_instance(db=False)
+        db_articles = self._retrieve_from_sources()
         db_articles = self._filter_articles(db_articles)
-        selected_articles = self._process(db_articles, words)
+        selected_articles = self._process(db_articles)
 
         return selected_articles
