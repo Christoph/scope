@@ -144,12 +144,15 @@ class Summarizer():
 
         return chunks
 
-    def get_keywords_from_clusters(self, clusters):
+    def get_keywords(self, clusters):
         keywords = []
 
         for clust in clusters:
             chunks = self._keyword_preprocessing(clust[1])
 
-            keywords.append(stats.mode(chunks).mode[0])
+            if chunks:
+                keywords.append(stats.mode(chunks).mode[0])
+            else:
+                keywords.append("")
 
         return keywords

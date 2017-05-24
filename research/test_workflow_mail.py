@@ -98,10 +98,10 @@ selected_articles, cluster_articles = clustering_methods.get_clustering(filtered
 
 print("KEYWORDS & SUMMARY/REPRESENTATIVE")
 
-represtentative_model = summarizer.Summarizer("en")
+representative_model = summarizer.Summarizer("en")
 
-words = represtentative_model.get_keywords_from_clusters(cluster_articles)
-rep = represtentative_model.text_rank(cluster_articles, max_size=100)
+words = representative_model.get_keywords(cluster_articles)
+rep = representative_model.text_rank(cluster_articles, max_size=100)
 
 print("RESULTS")
 out = []
