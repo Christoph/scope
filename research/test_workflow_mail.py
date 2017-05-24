@@ -94,7 +94,7 @@ sim_svd = data_model.get_similarity_matrix()
 # clustering
 print("CLUSTERING")
 
-selected_articles, cluster_articles = clustering_methods.get_clustering(filtered_articles, sim_svd, vecs_svd, 18)
+selected_articles, cluster_articles = clustering_methods.get_clustering(filtered_articles, sim_svd, vecs_svd, 16)
 
 print("KEYWORDS & SUMMARY/REPRESENTATIVE")
 
