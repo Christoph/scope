@@ -11,6 +11,41 @@ from scipy.spatial.distance import pdist, squareform
 import numpy as np
 
 
+def get_clustering(articles, sim, vecs, n_clusters):
+    '''
+        Returns selected articles and clusters.
+    '''
+
+    linkage_matrix = hc_create_linkage(vecs)
+    labels_affinity, center_indices_affinity = affinity_propagation(sim)
+    labels_hc = hc_cluster_by_distance(linkage_matrix, 0.6)
+    labels_gauss, probas_gauss = gauss(vecs, int(n_clusters*1.3))
+
+    if len(np.unique(labels_affinity)) <= n_clusters:
+        selected_articles = np.array(articles)[
+            center_indices_affinity]
+        cluster_articles = get_clusters(
+            articles, vecs, selected_articles, labels_affinity)
+    elif len(np.unique(labels_hc)) <= n_clusters:
+        selected_articles = get_central_articles(
+            articles, vecs, labels_hc)
+        cluster_articles = get_clusters(
+            articles, vecs, selected_articles, labels_hc)
+    elif len(np.unique(labels_gauss)) <= n_clusters:
+        selected_articles = get_central_articles(
+            articles, vecs, labels_gauss)
+        cluster_articles = get_clusters(
+            articles, vecs, selected_articles, labels_gauss)
+    else:
+        labels_hc_clust = hc_cluster_by_maxclust(linkage_matrix, n_clusters)
+        selected_articles = get_central_articles(
+            articles, vecs, labels_hc_clust)
+        cluster_articles = get_clusters(
+            articles, vecs, selected_articles, labels_hc_clust)
+
+    return selected_articles, cluster_articles
+
+
 def sim_based_threshold(sim, threshold):
     '''
         Custom clustering method.

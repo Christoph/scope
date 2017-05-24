@@ -94,38 +94,7 @@ sim_svd = data_model.get_similarity_matrix()
 # clustering
 print("CLUSTERING")
 
-n_clusters = 18
-
-linkage_matrix = clustering_methods.hc_create_linkage(vecs_svd)
-labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(sim_svd)
-labels_hc = clustering_methods.hc_cluster_by_distance(linkage_matrix, 0.6)
-labels_gauss, probas_gauss = clustering_methods.gauss(vecs_svd, int(n_clusters*1.3))
-
-if len(np.unique(labels_affinity)) <= n_clusters:
-    print "affinity"
-    selected_articles = np.array(filtered_articles)[
-        center_indices_affinity]
-    cluster_articles = clustering_methods.get_clusters(
-        filtered_articles, vecs_svd, selected_articles, labels_affinity)
-elif len(np.unique(labels_hc)) <= n_clusters:
-    print "hc"
-    selected_articles = clustering_methods.get_central_articles(
-        filtered_articles, vecs_svd, labels_hc)
-    cluster_articles = clustering_methods.get_clusters(
-        filtered_articles, vecs_svd, selected_articles, labels_hc)
-elif len(np.unique(labels_gauss)) <= n_clusters:
-    print "gauss"
-    selected_articles = clustering_methods.get_central_articles(
-        filtered_articles, vecs_svd, labels_gauss)
-    cluster_articles = clustering_methods.get_clusters(
-        filtered_articles, vecs_svd, selected_articles, labels_gauss)
-else:
-    print "fallback"
-    labels_hc_clust = clustering_methods.hc_cluster_by_maxclust(linkage_matrix, n_clusters)
-    selected_articles = clustering_methods.get_central_articles(
-        filtered_articles, vecs_svd, labels_hc_clust)
-    cluster_articles = clustering_methods.get_clusters(
-        filtered_articles, vecs_svd, selected_articles, labels_hc_clust)
+selected_articles, cluster_articles = clustering_methods.get_clustering(filtered_articles, sim_svd, vecs_svd, 18)
 
 print("KEYWORDS & SUMMARY/REPRESENTATIVE")
 
