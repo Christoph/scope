@@ -127,21 +127,37 @@ def hc_cluster_by_maxclust(linkage_matrix, n_clusters):
     return labels
 
 
-def get_central_articles(articles, vecs, labels, get_full_clusters=False):
+def get_clusters(articles, vecs, center_articles, labels):
+    cluster_labels = np.unique(labels)
+    clusters = []
+
+    for l in cluster_labels:
+        mask = labels == l
+        cluster = np.array(articles)[mask]
+        center = ""
+
+        for c in center_articles:
+            if c in cluster:
+                center = c
+
+        clusters.append([center, cluster])
+
+    return clusters
+
+
+def get_central_articles(articles, vecs, labels):
     '''
         Returns central articles based on the minimum cosine distance.
 
         articles: List of article objects.
         vecs: Embedding vectors for articles.
         labels: Computed labels for articles.
-        get_full_clusters: If True returns in addition the clusters around the centers
 
-        returns center_articles, center_cluster
+        returns center_articles
     '''
 
     cluster_labels = np.unique(labels)
     center_articles = []
-    center_clusters = []
 
     for l in cluster_labels:
         mask = labels == l
@@ -155,9 +171,5 @@ def get_central_articles(articles, vecs, labels, get_full_clusters=False):
         center_index = np.mean(distance_matrix, axis=1).argmin()
 
         center_articles.append(cluster[center_index])
-        center_clusters.append([cluster[center_index], cluster])
 
-    if get_full_clusters:
-        return center_articles, center_clusters
-    else:
         return center_articles
