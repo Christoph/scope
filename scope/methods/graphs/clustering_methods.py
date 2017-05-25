@@ -11,6 +11,41 @@ from scipy.spatial.distance import pdist, squareform
 import numpy as np
 
 
+def get_clustering(articles, sim, vecs, n_clusters):
+    '''
+        Returns selected articles and clusters.
+    '''
+
+    linkage_matrix = hc_create_linkage(vecs)
+    labels_affinity, center_indices_affinity = affinity_propagation(sim)
+    labels_hc = hc_cluster_by_distance(linkage_matrix, 0.6)
+    labels_gauss, probas_gauss = gauss(vecs, int(n_clusters*1.3))
+
+    if len(np.unique(labels_affinity)) <= n_clusters:
+        selected_articles = np.array(articles)[
+            center_indices_affinity]
+        cluster_articles = get_clusters(
+            articles, vecs, selected_articles, labels_affinity)
+    elif len(np.unique(labels_hc)) <= n_clusters:
+        selected_articles = get_central_articles(
+            articles, vecs, labels_hc)
+        cluster_articles = get_clusters(
+            articles, vecs, selected_articles, labels_hc)
+    elif len(np.unique(labels_gauss)) <= n_clusters:
+        selected_articles = get_central_articles(
+            articles, vecs, labels_gauss)
+        cluster_articles = get_clusters(
+            articles, vecs, selected_articles, labels_gauss)
+    else:
+        labels_hc_clust = hc_cluster_by_maxclust(linkage_matrix, n_clusters)
+        selected_articles = get_central_articles(
+            articles, vecs, labels_hc_clust)
+        cluster_articles = get_clusters(
+            articles, vecs, selected_articles, labels_hc_clust)
+
+    return selected_articles, cluster_articles
+
+
 def sim_based_threshold(sim, threshold):
     '''
         Custom clustering method.
@@ -127,21 +162,37 @@ def hc_cluster_by_maxclust(linkage_matrix, n_clusters):
     return labels
 
 
-def get_central_articles(articles, vecs, labels, get_full_clusters=False):
+def get_clusters(articles, vecs, center_articles, labels):
+    cluster_labels = np.unique(labels)
+    clusters = []
+
+    for l in cluster_labels:
+        mask = labels == l
+        cluster = np.array(articles)[mask]
+        center = ""
+
+        for c in center_articles:
+            if c in cluster:
+                center = c
+
+        clusters.append([center, cluster])
+
+    return clusters
+
+
+def get_central_articles(articles, vecs, labels):
     '''
         Returns central articles based on the minimum cosine distance.
 
         articles: List of article objects.
         vecs: Embedding vectors for articles.
         labels: Computed labels for articles.
-        get_full_clusters: If True returns in addition the clusters around the centers
 
-        returns center_articles, center_cluster
+        returns center_articles
     '''
 
     cluster_labels = np.unique(labels)
     center_articles = []
-    center_clusters = []
 
     for l in cluster_labels:
         mask = labels == l
@@ -155,9 +206,5 @@ def get_central_articles(articles, vecs, labels, get_full_clusters=False):
         center_index = np.mean(distance_matrix, axis=1).argmin()
 
         center_articles.append(cluster[center_index])
-        center_clusters.append([cluster[center_index], cluster])
 
-    if get_full_clusters:
-        return center_articles, center_clusters
-    else:
         return center_articles
