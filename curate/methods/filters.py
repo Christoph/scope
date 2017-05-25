@@ -32,7 +32,7 @@ def filter_bad_sources(curate_customer, incoming_articles,db=False):
     print len(outgoing_articles)
     return outgoing_articles
 
-def filter_bad_articles(curate_customer, self, incoming_articles):
+def filter_bad_articles(curate_customer, incoming_articles):
     bad_articles = Article_Curate_Query.objects.filter(
         curate_query__curate_customer=curate_customer).filter(bad_article=True)
 

@@ -11,15 +11,11 @@ import newspaper
 from scope.models import Article
 
 class ScopeNewspaperArticle(newspaper.Article):
-    """docstring for ScopeNewspaperArticle"""
-    # def __init__(self, url, title=u'', source_url=u'', config=None, **kwargs):
-    #     newspaper.Article.__init__(self, url, title=u'', source_url=u'', config=None, **kwargs)
+
     def __eq__(self, other):
-        return self.url==other.url\
-               and self.title==other.title
+        return self.title==other.title
     def __hash__(self):
-        return hash(('title', self.title,
-                     'url', self.url))
+        return hash(('title', self.title))
 
 class NewsSourceHandler(object):
     """NewsPaperHandler."""
@@ -42,17 +38,17 @@ class NewsSourceHandler(object):
         print "Articles downloaded and parsed"
         return articles
 
-    def _check_urls(self, articles):
-        out = []
+    # def _check_urls(self, articles):
+    #     out = []
 
-        for a in articles:
-            if Article.objects.filter(url=a.url).exists():
-                print "Url already exists"
-                # print a.url
-            else:
-                out.append(a)
+    #     for a in articles:
+    #         if Article.objects.filter(url=a.url).exists():
+    #             print "Url already exists"
+    #             # print a.url
+    #         else:
+    #             out.append(a)
 
-        return out
+    #     return out
 
     def get_articles_from_list(self, article_dict, language):
         ''' Download and parse articles from list.'''
@@ -110,4 +106,15 @@ class NewsSourceHandler(object):
             # else:
             #     print "Article not correctly parsed."
 
+        return out
+
+    def produce_output_dict(self, article_dict):
+        out = []
+        for articles, newsletter in article_dict:
+            out.extend([{
+                        "body": article.text, "title": article.title,
+                        "url": article.url, "images": article.top_image,
+                        "source": urlparse(article.url).netloc,
+                        "pubdate": article.publish_date,
+                        "newsletter": newsletter} for article in articles])
         return out

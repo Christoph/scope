@@ -14,7 +14,7 @@ import scope.methods.dataprovider.provider as provider
 import curate.methods.seman_tests as tests
 from scope.methods.learning import binary_classifier
 from curate.methods.filters import filter_bad_articles, filter_bad_sources
-from scope.methods.filters import remove_duplicate_articles_for_processing
+# from scope.methods.filters import remove_duplicate_articles_for_processing
 
 from scope.models import Customer
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Rejection_Reasons, Curate_Query_Cluster
@@ -95,14 +95,21 @@ class Curate(object):
             curate_customer=self.curate_customer)
         else:
             self.query = Curate_Query.objects.filter(
-            curate_customer=self.curate_customer).order_by("pk").reverse()[0]
+            curate_customer=self.curate_customer).order_by("pk").last()
 
     def _retrieve_from_sources(self):
         # Get the articles as dict
         db_articles = self.provider.collect_from_agents(
             self.curate_customer, self.query, self.language)
+
+        print "Number of distinct articles retrieved"
+        print len(db_articles)
+        
         self.query.processed_words = sum([len(i.body) for i in db_articles])
+        self.query.articles_before_filtering = len(db_articles)
         self.query.save()
+
+
         return db_articles
 
     def _retrieve_from_db(self):
@@ -112,7 +119,11 @@ class Curate(object):
             i.rank = 0
             i.save()
         db_articles = [i.article for i in article_query_instances]
+        print "Number of distinct articles retrieved"
+        print len(db_articles)
+        
         self.query.processed_words = sum([len(i.body) for i in db_articles])
+        self.query.articles_before_filtering = len(db_articles)
         self.query.save()
         return db_articles
 
@@ -164,10 +175,6 @@ class Curate(object):
         return sim, vecs
 
     def _filter_articles(self, all_articles, db=False):
-        print "Number of articles"
-        print len(all_articles)
-        self.query.articles_before_filtering = len(all_articles)
-        self.query.save()
         after_bad_sources = filter_bad_sources(self.curate_customer, all_articles, db=False)
         after_bad_articles = filter_bad_articles(self.curate_customer, after_bad_sources)
 
@@ -178,13 +185,13 @@ class Curate(object):
         #produce a dictionary of the clusters
         for center, cluster in labels:
             center_instance = Article_Curate_Query.objects.filter(
-                    article=center, curate_query=self.query)[0]
+                    article=center, curate_query=self.query).first()
             all_article_curate_instances = []
             for article in cluster:
                 article_curate_instances = Article_Curate_Query.objects.filter(
                     article__title=article.title, curate_query=self.query)
                 all_article_curate_instances.extend(article_curate_instances)
-            articles_dict[center_instance] = all_article_curate_instances
+            articles_dict[center_instance] = list(set(all_article_curate_instances))
         return articles_dict
 
     def produce_and_save_clusters(self,labels):
@@ -207,7 +214,7 @@ class Curate(object):
         else:
             filtered_articles = db_articles
 
-        filtered_articles = remove_duplicate_articles_for_processing(filtered_articles)
+        # filtered_articles = remove_duplicate_articles_for_processing(filtered_articles)
 
         if len(filtered_articles) > 0:
             sim, vecs = self._semantic_analysis(filtered_articles)

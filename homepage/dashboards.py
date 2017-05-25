@@ -31,7 +31,7 @@ class IncomingArticlesWeekdayWidget(widgets.LineChart):
 		return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 	def series(self):
-		query = Curate_Query.objects.all().order_by('-processed_words')
+		query = Curate_Query.objects.filter(curate_customer=self.curate_customer).order_by('-processed_words')
 		l = []
 		for i in range(2, 7):
 			if query.filter(time_stamp__week_day=i).aggregate(avg=Avg('articles_before_filtering'))['avg'] != None:
@@ -269,8 +269,93 @@ class QueryChartWidget(widgets.SingleBarChart):
 	values_list = ('rank', 'count')
 
 
+class ClusterandNewsletterWidget(widgets.BarChart):
+	#display the distribution of cluster sizes 
+	title = "By Newsletter"
+
+	class Chartist:
+		options = {
+		'stackBars': True,
+		# 'seriesBarDistance': 10,
+			'fullWidth': True,
+			'fullHeight': True,
+		}
+
+	def get_queryset(self):
+		query = get_query(self.request, "commerzbank_germany")
+		queryset = Curate_Query_Cluster.objects.filter(
+				center__curate_query=query).order_by('pk').annotate(count=Count('cluster_articles')).order_by('rank')
+		return queryset
+
+	def legend(self):
+		query = get_query(self.request, "commerzbank_germany")
+		newsletters = Newsletter.objects.filter(article_curate_query__curate_query=query).distinct()
+		return [decode_header(newsletter.name)[0][0] for newsletter in newsletters]
+
+	def labels(self):
+		return [str(cluster.rank) for cluster in self.get_queryset()]
+
+	def series(self):
+		query = get_query(self.request, "commerzbank_germany")
+		newsletters = Newsletter.objects.filter(article_curate_query__curate_query=query).distinct()
+		ser = []
+		for newsletter in newsletters:
+			series_for_newsletter = []
+			for cluster in self.get_queryset():
+				series_for_newsletter.append(cluster.cluster_articles.all().filter(newsletter=newsletter).count())
+			if sum(series_for_newsletter) >0:
+				ser.append(series_for_newsletter)
+		return ser		
+
+
+class ClusterandSourcesWidget(widgets.BarChart):
+	#display the distribution of cluster sizes 
+	title = "By Source"
+
+	class Chartist:
+		options = {
+		'stackBars': True,
+		# 'seriesBarDistance': 10,
+			'fullWidth': True,
+			'fullHeight': True,
+		}
+
+	def get_queryset(self):
+		query = get_query(self.request, "commerzbank_germany")
+		queryset = Curate_Query_Cluster.objects.filter(
+				center__curate_query=query).order_by('pk').annotate(count=Count('cluster_articles')).order_by('rank')
+		return queryset
+
+	def legend(self):
+		query = get_query(self.request, "commerzbank_germany")
+		sources = Source.objects.filter(article__article_curate_query__curate_query=query).distinct()
+		return [decode_header(source.name)[0][0] for source in sources]
+
+	def labels(self):
+		return [str(cluster.rank) for cluster in self.get_queryset()]
+
+	def series(self):
+		query = get_query(self.request, "commerzbank_germany")
+		sources = Source.objects.filter(article__article_curate_query__curate_query=query).distinct()
+		ser = []
+		for source in sources:
+			series_for_source = []
+			for cluster in self.get_queryset():
+				series_for_source.append(cluster.cluster_articles.all().filter(article__source=source).count())
+			if sum(series_for_source) >0:
+				ser.append(series_for_source)
+		return ser	
+	# def get_no_of_newsletters(self,obj):
+
+	# 	return obj.center.rank
+
+	# limit_to = 15
+	# values_list = ('rank', 'count')
+
+
+
 class ClustersWidget(widgets.ItemList):
-	title = "Overview over the clusters in this query"
+	title = "Clusters Details "
 	def get_queryset(self):
 		query = get_query(self.request, "commerzbank_germany")
 		queryset = Curate_Query_Cluster.objects.filter(
@@ -315,7 +400,7 @@ class ClustersWidget(widgets.ItemList):
 class Curate_Query_Dashboard(Dashboard):
 	title = "Single Edition Overview"
 	widgets = (
-		(ClustersWidget, QueryChartWidget),
+		(ClustersWidget, QueryChartWidget, ClusterandNewsletterWidget, ClusterandSourcesWidget),
 		(SingleQueryWidget,MovetoOtherClustersWidget),
 		(SelectedArticlesQueryWidget,BadArticlesQueryWidget),
 	)

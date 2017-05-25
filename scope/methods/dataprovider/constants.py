@@ -13,9 +13,10 @@ EXCLUDE = set(('',
 URL_EXCLUDE = set(('kinja.com', 'inFranken.de'))
 
 TEXT_BLACKLIST = [
-    "If you are not redirected automatically, please click the Unsubscribe button below.",
+    "If you are not redirected automatically",
     "Add a location to your TweetsWhen you tweet with a location, Twitter stores that location.",
-    "diesen Tweet zu deiner Website hinzu, indem Du den untenstehenden Code"
+    "diesen Tweet zu deiner Website hinzu, indem Du den untenstehenden Code",
+    "THIS MEANS YOU WON'T BE IN THE LOOP ABOUT OUR CRAZY DEALS AND LOW FARES!"
 ]
 
 SUBSCRIBED_URLS = ["launch.us", "launch.co", "index.co", "azhar",
@@ -40,7 +41,8 @@ TITLE_BLACKLIST = ["Bei Twitter anmelden",
                    "Job Application Form",
                    "This Week In Startups",
                    "Fuego  Nieman Journalism Lab",
-                   "Smashing Email Newsletter"]
+                   "Smashing Email Newsletter",
+                   "Free PDF Employment Download"]
 
 URL_HOSTNAME_BLACKLIST = ["www.w3.org",
                           "www.facebook.com",

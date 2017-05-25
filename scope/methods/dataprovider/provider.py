@@ -66,16 +66,24 @@ class Provider(object):
                     defaults={"source": source, "body": a['body'],
                               "images": a['images'], "pubdate": a['pubdate']})
 
-                if
-                art_cur_que = Article_Curate_Query.objects.create(
-                    article=art, curate_query=curate_query, agent=agent)
+                art_cur_que, art_cur_created = Article_Curate_Query.objects.get_or_create(
+                    article=art, curate_query=curate_query, agent=agent, newsletter=a['newsletter'])
 
-                if a.has_key('newsletter'):
-                    art_cur_que.newsletter = a['newsletter']
-                    art_cur_que.save()
+                # if a.has_key('newsletter'):
+                #     art_cur_que.newsletter = a['newsletter']
+                #     art_cur_que.save()
 
-                db_articles.append(art)
+                # This is another instance to try and get rid of overcounting
+                # articles from the same agent/newsletter. Note that this does
+                # not have the problem of list(set(db_articles)) below
+                if art_cur_created:
+                    db_articles.append(art)
 
+            # one could also call list(set(db_articles)) here but this would
+            # mean that we do not take into account the fact that the same
+            # article has been posted by two independent agents/newsletters,
+            # which however *should* double the weight that is given to this
+            # article
             except ValidationError:
                 print "Validation Error"
                 continue

@@ -1,5 +1,7 @@
-from scope.dataprovider.blacklist import Blacklist
+from scope.methods.dataprovider.blacklist import Blacklist
 
+
+#this one is not actually in use at the moment
 def remove_duplicate_articles_for_processing(self, incoming_articles):
     outgoing_articles = []
     title_list = list(set([article.title for article in incoming_articles]))
@@ -17,7 +19,7 @@ def blacklist_filter(article_dict):
 		out.append([blacklist.filter(articles),newsletter])
 	return out
 
-def remove_duplicate_articles_from_same_newsletter(self, article_dict): 
+def remove_duplicate_articles_from_same_newsletter(article_dict): 
 	print "Removing duplicates per newsletter"
 	#this only works because of the redefined __eq__ and __hash__ methods of the SCopeNewsArticle class
 	out = [[list(set(articles)),newsletter] for articles, newsletter in article_dict]

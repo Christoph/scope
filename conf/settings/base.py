@@ -135,6 +135,7 @@ CONTROLCENTER_DASHBOARDS = (
     'homepage.dashboards.Curate_Query_Dashboard',
     'homepage.dashboards.Curate_History_Dashboard',
 )
+CONTROLCENTER_CHARTIST_COLORS = 'material'
 
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/profile'
