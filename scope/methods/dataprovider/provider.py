@@ -57,12 +57,16 @@ class Provider(object):
                     url=a['source'],
                     defaults={"name": tldextract.extract(a['source']).domain.title()})
 
+                # make sure that for every newsletter no duplicates are let
+                # through, while allowing duplicate articles when they derive
+                # from different newsletters
                 art, created = Article.objects.get_or_create(
                     title=a['title'],
                     url=a['url'],
                     defaults={"source": source, "body": a['body'],
                               "images": a['images'], "pubdate": a['pubdate']})
 
+                if
                 art_cur_que = Article_Curate_Query.objects.create(
                     article=art, curate_query=curate_query, agent=agent)
 

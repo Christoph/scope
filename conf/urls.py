@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from controlcenter.views import controlcenter
 # from django.shortcuts import render
 # from django.contrib.auth import views as auth_views
 
@@ -22,6 +23,8 @@ urlpatterns = [
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^captcha/', include('captcha.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/dashboard/', include(controlcenter.urls)),
+    # url(r'^admin/dashboard/(?P<query_pk>\d+)/', include(controlcenter.urls)),
     url(r'^curate/', include('curate.urls',namespace="curate")),
     url(r'^explore/', include('explore.urls',namespace="explore")),
     url(r'^', include('homepage.urls', namespace='homepage')),

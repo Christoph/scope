@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'djangobower',
     'mathfilters',
     'djcelery',
+    'controlcenter',
     )
 
 
@@ -128,6 +129,11 @@ BOWER_INSTALLED_APPS = (
     "d3#3",
     "lodash",
     "font-awesome",
+)
+
+CONTROLCENTER_DASHBOARDS = (
+    'homepage.dashboards.Curate_Query_Dashboard',
+    'homepage.dashboards.Curate_History_Dashboard',
 )
 
 STATIC_URL = '/static/'

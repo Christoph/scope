@@ -23,6 +23,7 @@
     <link href="{% static 'homepage/css/sticky-footer-navbar.css' %}" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,600&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="{% static 'homepage/css/graphstyle.css' %}"> {% block head %}{% endblock %}
+{% block extrahead %}{% endblock %}
 </head>
 
 <body>
@@ -165,7 +166,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p class="text-muted"><small>&copy; Copyright 2015-2017, <a href="https://beingbutlumps.wordpress.com">Paul Bo&euml;s</a> 
+            <p class="text-muted"><small>&copy; Copyright 2015-2017, <a href="https://beingbutlumps.wordpress.com">Paul Boes</a> 
             <!-- <a href="{% url 'homepage:contact' %}">Contact</a>  <a href="{% url 'homepage:disclaimer' %}" rel="designer">Disclaimer/License</a> -->
             </small></p>
         </div>

@@ -59,6 +59,12 @@ class Curate_Query(models.Model):
     def __unicode__(self):              # __unicode__ on Python 2
         return self.time_stamp.isoformat() + ', ' + self.curate_customer.customer.name
 
+    def selected_articles(self):
+        return self.article_curate_query_set.filter(selection_options__kind__contains = "sel")
+
+    def bad_articles(self):
+        return self.article_curate_query_set.filter(selection_options__kind__contains = "mis")
+
 
 class Article_Curate_Query(models.Model):
     rank = models.IntegerField(null=True, blank=True)

@@ -558,3 +558,14 @@ tbody >tr:nth-child(odd) {
 .navbar-nav {
   margin:none;
 }
+
+/*Dashboard stuff*/
+
+
+.ct-octave>svg {
+  margin-top : 0px;
+  margin-bottom: 0px;
+}
+
+
+
