@@ -13,6 +13,8 @@ import scope.methods.graphs.selector as selector
 import scope.methods.dataprovider.provider as provider
 import curate.methods.seman_tests as tests
 from scope.methods.learning import binary_classifier
+from curate.methods.filters import filter_bad_articles, filter_bad_sources
+from scope.methods.filters import remove_duplicate_articles_for_processing
 
 from scope.models import Customer
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Rejection_Reasons, Curate_Query_Cluster
@@ -161,72 +163,13 @@ class Curate(object):
 
         return sim, vecs
 
-    def filter_bad_sources(self, incoming_articles,db=False):
-        bad_sources = self.curate_customer.bad_source.all()
-        outgoing_articles =[]
-        if db is False:
-            # the selection-made filter here is because the
-            # oarticle_curate_objects fo these aticles have already been
-            # created at this point
-            queries = Curate_Query.objects.filter(
-                curate_customer=self.curate_customer).filter(
-                    selection_made=True)
-
-            relevant_article_titles = [i.article.title for i in Article_Curate_Query.objects.filter(
-                curate_query__in=queries)]
-
-            for a in incoming_articles:
-                if a.source not in bad_sources and a.title not in relevant_article_titles:
-                    outgoing_articles.append(a)
-                else:
-                    print "Filtered because bad source"
-                    print a.title, a.source
-        else:
-            for a in incoming_articles:
-                if a.source not in bad_sources:
-                    outgoing_articles.append(a)
-                else:
-                    print "Filtered because bad source"
-                    print a.title, a.source
-
-        print "Number of articles after filtering"
-        print len(outgoing_articles)
-        return outgoing_articles
-
-    def filter_bad_articles(self, incoming_articles):
-        bad_articles = Article_Curate_Query.objects.filter(
-            curate_query__curate_customer=self.curate_customer).filter(bad_article=True)
-
-        outgoing_articles = []
-        for a in incoming_articles:
-            ma = min(len(a.title), 30)
-            if not any([[(a.title[0:ma] in bad.article.title) or (a.url == bad.article.url)] for bad in bad_articles]):
-                outgoing_articles.append(a)
-            else: 
-                print "Filtered because marked as bad article"
-                print a.title
-
-        return outgoing_articles
-
-    def remove_duplicate_articles_for_processing(self, incoming_articles):
-        outgoing_articles = []
-        title_list = list(set([article.title for article in incoming_articles]))
-        for title in title_list:
-            article_to_append = [article for article in incoming_articles if article.title == title]
-            outgoing_articles.extend(article_to_append)
-
-        return outgoing_articles
-
-    def remove_duplicate_links_to_same_article_from_same_newsletter(self, incoming_articles):
-        pass
-
     def _filter_articles(self, all_articles, db=False):
         print "Number of articles"
         print len(all_articles)
         self.query.articles_before_filtering = len(all_articles)
         self.query.save()
-        after_bad_sources = self.filter_bad_sources(all_articles, db=False)
-        after_bad_articles = self.filter_bad_articles(after_bad_sources)
+        after_bad_sources = filter_bad_sources(self.curate_customer, all_articles, db=False)
+        after_bad_articles = filter_bad_articles(self.curate_customer, after_bad_sources)
 
         return after_bad_articles
 
@@ -240,8 +183,6 @@ class Curate(object):
             for article in cluster:
                 article_curate_instances = Article_Curate_Query.objects.filter(
                     article__title=article.title, curate_query=self.query)
-                #later you would here want to remove duplicates from newsletters. But for now don't do this because we want to check performance
-                # article_curate_instances = self.remove_duplicate_links_to_same_article_from_same_newsletter(article_curate_instances)
                 all_article_curate_instances.extend(article_curate_instances)
             articles_dict[center_instance] = all_article_curate_instances
         return articles_dict
@@ -266,7 +207,7 @@ class Curate(object):
         else:
             filtered_articles = db_articles
 
-        filtered_articles = self.remove_duplicate_articles_for_processing(filtered_articles)
+        filtered_articles = remove_duplicate_articles_for_processing(filtered_articles)
 
         if len(filtered_articles) > 0:
             sim, vecs = self._semantic_analysis(filtered_articles)

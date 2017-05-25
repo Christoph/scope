@@ -10,6 +10,16 @@ import newspaper
 
 from scope.models import Article
 
+class ScopeNewspaperArticle(newspaper.Article):
+    """docstring for ScopeNewspaperArticle"""
+    # def __init__(self, url, title=u'', source_url=u'', config=None, **kwargs):
+    #     newspaper.Article.__init__(self, url, title=u'', source_url=u'', config=None, **kwargs)
+    def __eq__(self, other):
+        return self.url==other.url\
+               and self.title==other.title
+    def __hash__(self):
+        return hash(('title', self.title,
+                     'url', self.url))
 
 class NewsSourceHandler(object):
     """NewsPaperHandler."""
@@ -58,9 +68,9 @@ class NewsSourceHandler(object):
             for i in range(0,len(articles)):
                 try:
                     if language == "mix":
-                        article_list.append(newspaper.Article(articles[i]))
+                        article_list.append(ScopeNewspaperArticle(articles[i]))
                     else:
-                        article_list.append(newspaper.Article(
+                        article_list.append(ScopeNewspaperArticle(
                             articles[i],
                             language=newspaper_lang_dict[language]))
                 except:

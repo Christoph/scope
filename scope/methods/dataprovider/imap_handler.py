@@ -2,16 +2,14 @@ import imaplib
 import email
 from email.utils import getaddresses
 from email.header import decode_header
-import urllib2
 from urlparse import urlparse
 from datetime import date, timedelta
 from newspaper import Article
-from . import constants
 from . import url_extractor
 
+from scope.methods.filters import blacklist_filter, remove_duplicate_articles_from_same_newsletter
 from scope.methods.dataprovider import news_handler
 from scope.models import Newsletter
-
 
 class ImapHandler(object):
 	"""docstring for ImapHandler."""
@@ -85,41 +83,18 @@ class ImapHandler(object):
 
 		downloaded_article_dict = self.news.get_articles_from_list(
 			article_dict, self.language)
-
-		filtered_article_dict = self._remove_duplicate_articles_from_same_newsletter(downloaded_article_dict)
-
-		out = self._filter_by_blacklist(filtered_article_dict)
-		return out
-
-	def _filter_by_blacklist(self, article_dict):
-		print "Now filtering by blacklists"
+		filtered_article_dict = remove_duplicate_articles_from_same_newsletter(downloaded_article_dict)
+		blacklist_filtered = blacklist_filter(filtered_article_dict)
 		out = []
-		for articles, newsletter in article_dict:
-			for article in articles:
-				if article.title not in constants.EXCLUDE and not self._blacklist_comparison(constants.TITLE_BLACKLIST, article.title) and not self._blacklist_comparison(constants.TEXT_BLACKLIST, article.text) and len(article.text) > 0:
-					out.append({
+		for articles, newsletter in blacklist_filtered:
+			out.append([{
 						"body": article.text, "title": article.title,
 						"url": article.url, "images": article.top_image,
 						"source": urlparse(article.url).netloc,
 						"pubdate": article.publish_date,
-						"newsletter": newsletter})
-				else:
-					print "Filtered by blacklists"
-					print article.title
+						"newsletter": newsletter} for article in articles])
+
 		return out
-
-	def _remove_duplicate_articles_from_same_newsletter(self, article_dict): 
-		print "Removing duplicates per newsletter"
-		out = []
-		for articles, newsletter in article_dict:
-			article_list = []
-			for article in articles:
-				if not any([[(article.title in a.title) or (article.url == a.url)] for a in article_list]):
-					article_list.append(a)
-			out.append([article_list,newsletter])
-		return out
-
-
 			
 	def _get_content(self, mail):
 		contents = []
@@ -133,15 +108,6 @@ class ImapHandler(object):
 
 		return contents
 
-	def _blacklist_comparison(self, blacklist, text):
-		for item in blacklist:
-			if text.find(item) >= 0:
-				# print "Blacklisted"
-				# print text
-
-				return True
-			else:
-				return False
 
 	def _get_decoding(self, contents, part):
 		# Get content type
