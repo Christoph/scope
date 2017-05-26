@@ -104,7 +104,7 @@ class Curate(object):
 
         print "Number of distinct articles retrieved"
         print len(db_articles)
-        
+
         self.query.processed_words = sum([len(i.body) for i in db_articles])
         self.query.articles_before_filtering = len(db_articles)
         self.query.save()
@@ -121,7 +121,7 @@ class Curate(object):
         db_articles = [i.article for i in article_query_instances]
         print "Number of distinct articles retrieved"
         print len(db_articles)
-        
+
         self.query.processed_words = sum([len(i.body) for i in db_articles])
         self.query.articles_before_filtering = len(db_articles)
         self.query.save()
@@ -138,8 +138,6 @@ class Curate(object):
         if self.config.getint('classifier', 'pre_pipeline'):
             self.classifier = binary_classifier.binary_classifier(
                 self.wv_model.pipeline, self.customer.customer_key)
-
-
 
         if self.semantic_model == "lsi":
             lsi_language_dict = {
@@ -219,88 +217,42 @@ class Curate(object):
         if len(filtered_articles) > 0:
             sim, vecs = self._semantic_analysis(filtered_articles)
 
-            sel = selector.Selection(filtered_articles, sim)
-            size_bound = [self.config.getint('general', 'lower_bound'),
-                          self.config.getint('general', 'upper_bound')]
-            if self.selection_method == "by_test":
-                steps = [self.config.getfloat(self.semantic_model, 'lower_step'),
-                         self.config.getfloat(
-                             self.semantic_model, 'upper_step'),
-                         self.config.getfloat(self.semantic_model, 'step_size')]
-                current_test = self.config.get('by_test', 'test')
-                test = tests.Curate_Test(current_test).test
-                test_params = []
-                for i in self.config.options(current_test):
-                    test_params.append(self.config.getfloat(current_test, i))
-                if current_test == "clusters":
-                    if len(filtered_articles) <= 2 * self.config.getfloat(current_test, 'upper_cluster_bound'):
-                        size_bound[0] = 1
+            # sel = selector.Selection(filtered_articles, sim)
+            # size_bound = [self.config.getint('general', 'lower_bound'),
+            #               self.config.getint('general', 'upper_bound')]
+            # if self.selection_method == "by_test":
+            #     steps = [self.config.getfloat(self.semantic_model, 'lower_step'),
+            #              self.config.getfloat(
+            #                  self.semantic_model, 'upper_step'),
+            #              self.config.getfloat(self.semantic_model, 'step_size')]
+            #     current_test = self.config.get('by_test', 'test')
+            #     test = tests.Curate_Test(current_test).test
+            #     test_params = []
+            #     for i in self.config.options(current_test):
+            #         test_params.append(self.config.getfloat(current_test, i))
+            #     if current_test == "clusters":
+            #         if len(filtered_articles) <= 2 * self.config.getfloat(current_test, 'upper_cluster_bound'):
+            #             size_bound[0] = 1
+            #
+            #     params = [steps, test_params]
+            #     selection = sel.by_test(test, params, size_bound)
+            #
+            #     selected_articles = [filtered_articles[i[0]]
+            #                          for i in selection['articles']]
 
-                params = [steps, test_params]
-                selection = sel.by_test(test, params, size_bound)
+            # self.query.no_clusters = selection[
+            # 'no_clusters']
+            # self.query.clustering = selection['clustering']
 
-                selected_articles = [filtered_articles[i[0]]
-                                     for i in selection['articles']]
-
-                # self.query.no_clusters = selection[
-                # 'no_clusters']
-                # self.query.clustering = selection['clustering']
-
-            if self.selection_method == "global_thresh":
-                threshold = self.config.getfloat('global_thresh', 'threshold')
-                selection = sel.global_thresh(self.test, threshold, size_bound)
-
-                selected_articles = [filtered_articles[i[0]]
-                                     for i in selection['articles']]
-
-                # self.query.no_clusters = selection[
-                # 'no_clusters']
-                # self.query.clustering = selection['clustering']
-
-            if self.selection_method == "affinity":
-                labels_affinity, center_indices_affinity = clustering_methods.affinity_propagation(
-                    sim)
-
-                selected_articles, = np.array(filtered_articles)[
-                    center_indices_affinity]
-
-            if self.selection_method == "gauss":
-                labels_gauss, probas_gauss = clustering_methods.gauss(
-                    vecs, 15)
-
-                selected_articles, labels = clustering_methods.get_central_articles(
-                    filtered_articles, vecs, labels_gauss, get_full_clusters=True)
-
-            if self.selection_method == "hierarchical_clust":
-                linkage_matrix = clustering_methods.hc_create_linkage(vecs)
-
-                # Optimize clusters based on the maximum number of clusters
-                # allowed
-                labels_hc_clust = clustering_methods.hc_cluster_by_maxclust(
-                    linkage_matrix, 12)
-
-                selected_articles, labels = clustering_methods.get_central_articles(
-                    filtered_articles, vecs, labels_hc_clust, get_full_clusters=True)
-
-            if self.selection_method == "hierarchical_dist":
-                linkage_matrix = clustering_methods.hc_create_linkage(vecs)
-
-                # Search optimal number of clusters
-                labels_hc_dist = clustering_methods.hc_cluster_by_distance(
-                    linkage_matrix, 0.6)
-
-                selected_articles, labels = clustering_methods.get_central_articles(
-                    filtered_articles, vecs, labels_hc_dist, get_full_clusters=True)
-
+            selected_articles, cluster_articles = clustering_methods.get_clustering(filtered_articles, sim, vecs, self.config.getint('general', 'upper_bound'))
 
             # previous_articles = Article_Curate_Query.objects.filter(
             #     curate_query__curate_customer=self.curate_customer).filter(rank__gt=0)
             # selected_articles = [filtered_articles[i[0]]
             #                      for i in selection['articles']]
 
-
-        #you can generate the dict at this point actually. 
-            self.produce_and_save_clusters(labels)
+            # you can generate the dict at this point actually.
+            self.produce_and_save_clusters(cluster_articles)
 
             # for i in range(0, len(selected_articles)):
             #     a = Article_Curate_Query.objects.filter(

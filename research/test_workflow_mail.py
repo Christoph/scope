@@ -58,10 +58,7 @@ for a in mails:
 
     db_articles.append(art)
 
-filtered_articles = []
-for a in db_articles:
-    if detect(a.body) == language_dict[language]:
-        filtered_articles.append(a)
+filtered_articles = db_articles
 
 print(len(filtered_articles))
 

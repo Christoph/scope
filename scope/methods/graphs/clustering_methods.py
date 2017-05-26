@@ -171,8 +171,8 @@ def get_clusters(articles, vecs, center_articles, labels):
         cluster = np.array(articles)[mask]
         center = ""
 
-        for c in center_articles:
-            if c in cluster:
+        for c in cluster:
+            if c in center_articles:
                 center = c
 
         clusters.append([center, cluster])
@@ -207,4 +207,4 @@ def get_central_articles(articles, vecs, labels):
 
         center_articles.append(cluster[center_index])
 
-        return center_articles
+    return center_articles

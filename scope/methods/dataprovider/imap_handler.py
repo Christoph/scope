@@ -1,5 +1,6 @@
 import imaplib
 import email
+from langdetect import detect
 from email.utils import getaddresses
 from email.header import decode_header
 from urlparse import urlparse
@@ -48,9 +49,21 @@ class ImapHandler(object):
             downloaded_article_dict)
         blacklist_filtered = blacklist_filter(filtered_article_dict)
         out = self.news.produce_output_dict(blacklist_filtered)
-        return out
 
+        language_filtered = []
+        lang_dict = {
+            'ger': 'de',
+            'eng': 'en',
+        }
 
+        for a in out:
+            if detect(a['body']) == lang_dict[self.language]:
+                language_filtered.append(a)
+            else:
+                print "Wrong Language"
+                print a["title"]
+
+        return language_filtered
 
     def _connect(self):
         # Connect to Mailbox
