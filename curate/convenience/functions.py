@@ -19,27 +19,23 @@ def create_customer_from_config_file(customer_key):
 	language = config.get('general', 'language')
 
 	agentimap, created = AgentImap.objects.get_or_create(user=user, pwd=pwd, imap=imap, mailbox=mailbox, interval=interval)
-	agentimap.save()
+	if created:
+		agentimap.save()
 
 	# Create Customer
 	customer, created = Customer.objects.get_or_create(name=customer_key,  customer_key=customer_key)
-	customer.save()
+	if created:
+		customer.save()
 
 	# Create Curate Customer
 	curate_customer, created = Curate_Customer.objects.get_or_create(customer=customer, expires=date.today())
-	curate_customer.save()
+	if created:
+		curate_customer.save()
 
 	# Create curate_query
 	query, created = Curate_Query.objects.get_or_create(curate_customer=curate_customer)
-	query.save()
-
-	# # Create customer agent object - NOT WORKING
-	# agent, created = Agent.objects.get_or_create(
-	#     product_customer_object=curate_customer,
-	#     agent_object=agentimap
-	# )
-	#
-	# agent.save()
+	if created:
+		query.save()
 
 	return customer, curate_customer, query, agentimap, language
 
