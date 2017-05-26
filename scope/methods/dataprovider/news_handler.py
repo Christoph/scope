@@ -3,8 +3,8 @@ Handels newspaper crawling
 '''
 
 from datetime import datetime, timedelta
-from urlparse import urlparse
-from lxml.etree import XMLSyntaxError
+from urllib.parse import urlparse
+from lxml import etree
 
 import newspaper
 
@@ -25,17 +25,20 @@ class NewsSourceHandler(object):
             try:
                 a.download()
                 a.parse()
-            except XMLSyntaxError:
-                print "Parse error detected"
+            except etree.XMLSyntaxError:
+                print("Parse error detected")
                 # print a.url
             except ValueError:
-                print "Value error detected"
+                print("Value error detected")
+                # print a.url
+            except etree.ArticleException:
+                print("Value error detected")
                 # print a.url
 
             # Remove newline characters
             a.text = a.text.replace("\n", " ")
 
-        print "Articles downloaded and parsed"
+        print("Articles downloaded and parsed")
         return articles
 
     # def _check_urls(self, articles):
@@ -70,7 +73,7 @@ class NewsSourceHandler(object):
                             articles[i],
                             language=newspaper_lang_dict[language]))
                 except:
-                    print "Error while  converting " + articles[i]
+                    print("Error while  converting " + articles[i])
                     continue
 
             out.append([self._download_articles(article_list), agent])
@@ -89,7 +92,7 @@ class NewsSourceHandler(object):
         try:
             articles = self._download_articles(source.articles)
         except XMLSyntaxError:
-            print "Error during download"
+            print("Error during download")
 
         for article in articles:
             if len(article.text) > 0 and len(article.title) > 0 and article.publish_date is not None:

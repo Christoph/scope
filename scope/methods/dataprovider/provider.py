@@ -23,21 +23,21 @@ class Provider(object):
             product_customer_id=curate_customer.id)
 
         for con in connector:
-            print "============= New Agent ==============="
+            print("============= New Agent ===============")
             if isinstance(con.agent_object, AgentImap):
-                print "imap"
+                print("imap")
                 imap = imap_handler.ImapHandler(con.agent_object, language)
 
                 db_articles.extend(self._save_articles(
                     imap.get_data_new(), curate_query, con))
             if isinstance(con.agent_object, AgentEventRegistry):
-                print "er"
+                print("er")
                 er = er_handler.EventRegistry(con.agent_object)
 
                 db_articles.extend(self._save_articles(
                     er.get_data(), curate_query, con))
             if isinstance(con.agent_object, AgentNewspaper):
-                print "newspaper"
+                print("newspaper")
                 news = news_handler.NewsSourceHandler()
 
                 db_articles.extend(self._save_articles(
@@ -85,7 +85,7 @@ class Provider(object):
             # which however *should* double the weight that is given to this
             # article
             except ValidationError:
-                print "Validation Error"
+                print("Validation Error")
                 continue
 
         return db_articles

@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from celery import shared_task, current_task
 from celery.exceptions import Reject
@@ -7,7 +7,7 @@ from time import sleep, mktime
 import sys
 from django.templatetags.static import static
 
-import Queue
+import queue
 import threading
 import time
 import networkx as nx
@@ -17,7 +17,7 @@ from newspaper import Article
 import untangle
 import sys
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import re
 import math
 import gensim
@@ -42,10 +42,10 @@ class myThread (threading.Thread):
 		self.q = q
 		#self.counter = counter
 	def run(self):
-		print "Starting " + self.name
+		print("Starting " + self.name)
 		process_data(self.name, self.q)
 		
-		print "Exiting " + self.name
+		print("Exiting " + self.name)
 
 
 
@@ -57,11 +57,11 @@ def process_data(threadName, q):
 			queueLock.release()
 			data.download()
 			data.parse()
-			print " %s processing" % (threadName)
+			print(" %s processing" % (threadName))
 		else:
 			queueLock.release()
 
-			print " %s release" % (threadName)
+			print(" %s release" % (threadName))
 		time.sleep(1)
 
 
@@ -70,16 +70,16 @@ exitFlag = 0
 
 @shared_task
 def test_task(email):
-	print email 
+	print(email) 
 
 @shared_task
 def twitter_job(twitt_input):
 	#from celery import shared_task, current_task
 	#import json
 	inputdict = {"inputt": twitt_input}
-	print inputdict
+	print(inputdict)
 	#sys.argv = [settings.STATIC_BREV + static('last24h/tweet.py'), inputt]
-	execfile(settings.STATIC_ROOT + 'last24h/tweet.py',inputdict)
+	exec(compile(open(settings.STATIC_ROOT + 'last24h/tweet.py').read(), settings.STATIC_ROOT + 'last24h/tweet.py', 'exec'),inputdict)
 
 @shared_task
 def brief_rene(email,strin,select):
@@ -97,7 +97,7 @@ def brief_rene(email,strin,select):
 #	try:
 	#sys.argv = [email]
 	sys.argv = [settings.STATIC_BREV + static('last24h/create_brief_rene.py'), strin, email,select]
-	execfile(settings.STATIC_ROOT + 'last24h/create_brief_rene.py')
+	exec(compile(open(settings.STATIC_ROOT + 'last24h/create_brief_rene.py').read(), settings.STATIC_ROOT + 'last24h/create_brief_rene.py', 'exec'))
 
 
 @shared_task
@@ -115,7 +115,7 @@ def sample_brief(email):
 	#from django.conf import settings
 	#try:
 	#sys.argv = [email]
-	execfile(settings.STATIC_ROOT + 'last24h/create_brief.py')
+	exec(compile(open(settings.STATIC_ROOT + 'last24h/create_brief.py').read(), settings.STATIC_ROOT + 'last24h/create_brief.py', 'exec'))
 	#except:
 	#	raise Exception()
 
@@ -135,7 +135,7 @@ def cs_task(feeds,strin,alert):
 		current_task.update_state(state='PREPARE',
 			meta={'current': 10, 'articles':0, 'words':0})
 	
-	execfile(settings.STATIC_ROOT + 'last24h/customsearch.py')#settings.STATIC_BREV + static('last24h/cs2.py'))
+	exec(compile(open(settings.STATIC_ROOT + 'last24h/customsearch.py').read(), settings.STATIC_ROOT + 'last24h/customsearch.py', 'exec'))#settings.STATIC_BREV + static('last24h/cs2.py'))
 	#except:
 	#	raise Exception()
 			

@@ -7,13 +7,13 @@ import string
 import feedparser
 import newspaper
 from newspaper import Article
-import Queue
+import queue
 import threading
 import time
 import untangle
 import sys
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import math
 # from django.core.mail import send_mail
 from time import mktime
@@ -22,10 +22,10 @@ from datetime import datetime
 # from django.conf import 'last24h/static/rt numpy
 import scipy
 import email, imaplib, os,sys
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import datetime
 from datetime import date,timedelta, datetime
-from urlparse import urlparse
+from urllib.parse import urlparse
 from eventregistry import *
 import nltk.classify.util
 from nltk.classify import NaiveBayesClassifier
@@ -159,7 +159,7 @@ for i in range(0, len(results)):
 
 
 for i in ug.nodes():
-	print (ug.node[i]['title'],ug.node[i]['sent'])
+	print((ug.node[i]['title'],ug.node[i]['sent']))
 
 orignumber = len(ug)
 
@@ -170,7 +170,7 @@ best_thresh = 0.
 best_score = 0
 
 
-for s in [x/1000. for x in xrange(0,500)]:
+for s in [x/1000. for x in range(0,500)]:
 
 	ug.remove_edges_from(ug.edges())
 
@@ -192,14 +192,14 @@ for s in [x/1000. for x in xrange(0,500)]:
 		best_score = score_new
 		best_thresh = s
 
-		print s
-		print len(graphs)
-		print score_new
-		print best_thresh
+		print(s)
+		print(len(graphs))
+		print(score_new)
+		print(best_thresh)
 
  
 dispersion = str((1.-2*best_thresh)*100)[:-2] + '%'
-print best_thresh
+print(best_thresh)
 ug.remove_edges_from(ug.edges())
 for i in range( 0, len( corpus_tfidf ) ): 
 	sim = index2[ lsi_model2[ corp [ i ] ] ]
@@ -211,16 +211,16 @@ graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
 test = [x for x in graphs if 10> len(x) >= 4]
 exclude = [x.nodes() for x in graphs if x not in test]
 for graph in test:
-	print "\n CLUSTER: \n"
+	print("\n CLUSTER: \n")
 	for no in graph:
 		try: 
-			print ug.node[no]['title'], ug.node[no]['source'], no
+			print(ug.node[no]['title'], ug.node[no]['source'], no)
 		except:
 			pass
-print "\n AND \n"
+print("\n AND \n")
 for no in list(set().union(*exclude)):
 	try: 
-		print ug.node[no]['title'], ug.node[no]['source'], no
+		print(ug.node[no]['title'], ug.node[no]['source'], no)
 	except:
 		pass
 
@@ -366,7 +366,7 @@ for a in graphx:
 			ug.node[a]['deg'] = b
 			ug.node[a]['deg_pos'] = float(count_degree)/len(comp)*360   
 			count_degree += 1
-		ordering = sorted(closeness.items(), key = lambda close:close[1],reverse=True)
+		ordering = sorted(list(closeness.items()), key = lambda close:close[1],reverse=True)
 		susvec = ordering[0][0]
 		cnode = ug.node[susvec]
 		cnode['suggest'] = count_comp

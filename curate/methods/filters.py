@@ -18,18 +18,18 @@ def filter_bad_sources(curate_customer, incoming_articles,db=False):
             if a.source not in bad_sources and a.title not in relevant_article_titles:
                 outgoing_articles.append(a)
             else:
-                print "Filtered because bad source"
-                print a.title, a.source
+                print("Filtered because bad source")
+                print(a.title, a.source)
     else:
         for a in incoming_articles:
             if a.source not in bad_sources:
                 outgoing_articles.append(a)
             else:
-                print "Filtered because bad source"
-                print a.title, a.source
+                print("Filtered because bad source")
+                print(a.title, a.source)
 
-    print "Number of articles after filtering"
-    print len(outgoing_articles)
+    print("Number of articles after filtering")
+    print(len(outgoing_articles))
     return outgoing_articles
 
 def filter_bad_articles(curate_customer, incoming_articles):
@@ -42,7 +42,7 @@ def filter_bad_articles(curate_customer, incoming_articles):
         if not any([[(a.title[0:ma] in bad.article.title) or (a.url == bad.article.url)] for bad in bad_articles]):
             outgoing_articles.append(a)
         else: 
-            print "Filtered because marked as bad article"
-            print a.title
+            print("Filtered because marked as bad article")
+            print(a.title)
 
     return outgoing_articles

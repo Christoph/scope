@@ -8,13 +8,13 @@ import string
 import feedparser
 import newspaper
 from newspaper import Article
-import Queue
+import queue
 import threading
 import time
 import untangle
 import sys
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import math
 # from django.core.mail import send_mail
 from time import mktime
@@ -26,10 +26,10 @@ import email
 import imaplib
 import os
 import sys
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import datetime
 from datetime import date, timedelta, datetime
-from urlparse import urlparse
+from urllib.parse import urlparse
 from eventregistry import *
 import nltk.classify.util
 from nltk.classify import NaiveBayesClassifier
@@ -95,7 +95,7 @@ lsi_model.compute(term_vecs, 90)
 
 # classifier = NaiveBayesClassifier.train(trainfeats)
 
-print "NLP Finished"
+print("NLP Finished")
 # Begin Graph visualisation
 
 # Initialize all graph nodes
@@ -354,7 +354,7 @@ for a in graphx:
             ug.node[a]['deg'] = b
             ug.node[a]['deg_pos'] = float(count_degree) / len(comp) * 360
             count_degree += 1
-        ordering = sorted(closeness.items(),
+        ordering = sorted(list(closeness.items()),
                           key=lambda close: close[1], reverse=True)
         susvec = ordering[0][0]
         cnode = ug.node[susvec]

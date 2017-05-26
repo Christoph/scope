@@ -46,8 +46,8 @@ def search_task_term(request):
     #job = customsearch.delay()
         user_id = request.POST.get('user_id')
         query = request.POST.get('query_text')
-        print request.POST
-        print user_id
+        print(request.POST)
+        print(user_id)
         topics = query.split(',')
         for i in range(0, len(topics)):
             topics[i] = topics[i].strip(' ').lower().replace(" ","_")
@@ -75,7 +75,7 @@ def search_task_term(request):
             else:
                 q = Query(query = query, time = datetime.now(), string = strin, url = reverse('csr',args=[strin]))
                 q.save()
-            print strin
+            print(strin)
             job = cs_task.delay(feeds,strin,0)
             data = '{"job":"' + str(job.id) + '","strin": "' + str(strin) + '"}'
             json_data = json.dumps(data)
@@ -180,7 +180,7 @@ def update_state(request):
             job_id = request.GET['task_id']
             job = app.AsyncResult(job_id)
                     #request.session['task_id'] = job.id
-            print job.state
+            print(job.state)
             if job.state == 'PREPARE':
                 data = str(job.result['current']) + ' Initializing'
             elif job.state == 'DOWNLOAD':
@@ -211,7 +211,7 @@ def alert(request):
 
     if request.method == 'POST':
         if 'set' in request.POST:
-            print request.POST
+            print(request.POST)
             form = AlertForm(request.POST)
             if form.is_valid():
                 if (len(form.cleaned_data['query']) != 0) and (len(form.cleaned_data['sources']) != 0):

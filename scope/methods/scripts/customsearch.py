@@ -88,7 +88,7 @@ if len(articles) != 0:
 	articlenumber = len(articles)
 else:
 	articlenumber = 1
-print len(articles)
+print(len(articles))
 size = len(articles)
 upper = min(600, size)
 
@@ -151,7 +151,7 @@ exitFlag = 1
 # Wait for all threads to complete
 for t in threads:
 	t.join()
-print "Exiting Main Thread"
+print("Exiting Main Thread")
 #Putting together
 
 
@@ -505,7 +505,7 @@ for a in graphx:
 			ug.node[a]['deg'] = b
 			ug.node[a]['deg_pos'] = float(count_degree)/len(comp)*360   
 			count_degree += 1
-		ordering = sorted(closeness.items(), key = lambda close:close[1],reverse=True)
+		ordering = sorted(list(closeness.items()), key = lambda close:close[1],reverse=True)
 		susvec = ordering[0][0]
 		cnode = ug.node[susvec]
 		cnode['suggest'] = count_comp

@@ -67,7 +67,7 @@ def sim_based_threshold(sim, threshold):
                 graph[i].append(j)
 
     # Resolve adjacency list
-    for key in graph.keys():
+    for key in list(graph.keys()):
         group = graph[key]
         if labels[key-1] != 0:
             label = labels[key-1]

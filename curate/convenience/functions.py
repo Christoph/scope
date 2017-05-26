@@ -1,6 +1,6 @@
 from curate.models import Curate_Customer, Curate_Query, Article_Curate_Query
 from scope.models import Customer, Agent, AgentImap
-import ConfigParser
+import configparser
 import csv
 from django.utils.encoding import smart_str
 from datetime import date
@@ -8,7 +8,7 @@ from datetime import date
 
 def create_customer_from_config_file(customer_key):
 	# Create imap agent
-	config = ConfigParser.RawConfigParser()
+	config = configparser.RawConfigParser()
 
 	config.read('curate/customers/' + customer_key + "/" + customer_key + '.cfg')
 	user = config.get('imap', 'user')
@@ -58,9 +58,9 @@ def export_csv(queryset):
     writer = csv.writer(file, csv.excel)
     # produce titles
     writer.writerow([
-        smart_str(u"ID"),
-        smart_str(u"Title"),
-        smart_str(u"Description"),
+        smart_str("ID"),
+        smart_str("Title"),
+        smart_str("Description"),
     ])
     # write datat
     for obj in queryset:

@@ -42,13 +42,13 @@ def register(request,):
         # check whether it's valid:
         if form.is_valid():
             if request.POST['password1'] == request.POST['password2']:
-                print request.POST['username']
+                print(request.POST['username'])
 
                 if form.isValidUsername(request.POST['username']):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
-                    print
+                    print()
                     new_data = request.POST.copy()
                     new_user = form.save(new_data)
 
@@ -81,7 +81,7 @@ def register(request,):
                     send_mail('new user registration',
                           email_body2,'grphtcontact@gmail.com',
                          ['grphtcontact@gmail.com'])
-                    print 'render created'
+                    print('render created')
                     state="Great! Only one step to go. We've sent you an email with a confirmation link. Please confirm and you're set to go."
                     return render(request,'homepage/register.html', {'new':False,'state':state, })
                 else:
@@ -122,7 +122,7 @@ def disclaimer(request):
 @login_required(login_url='/login')
 def profile_edit(request):
     if request.method == 'POST':
-        print request.POST
+        print(request.POST)
         user = User.objects.get(id=request.user.id)
         user.first_name = request.POST['first']
         user.last_name = request.POST['last']
@@ -143,13 +143,13 @@ def profile_edit(request):
 @login_required(login_url='/login')
 def alert_edit(request):
     if request.method == 'POST':
-        print request.POST
+        print(request.POST)
         q = Alert.objects.get(no=request.POST['no'])
         q.query = request.POST['query']
         #freq_dict = {"10400":'4 hours',"31200":'12 hours',"62400":'24 hours',"172800":'2 days',"345600":'4 days',"604800":'1 week'}
-        print int(request.POST['frequency'])
+        print(int(request.POST['frequency']))
         q.frequency = int(request.POST['frequency'])
-        print "here"
+        print("here")
         q.save()
         try: q.save()
         except:

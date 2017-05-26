@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand
 from django.core.urlresolvers import reverse
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import threading
-import Queue
+import queue
 import os
 import datetime
 import sys
@@ -38,9 +38,9 @@ class myThread (threading.Thread):
         self.name = name
         self.q = q
     def run(self):
-        print "Starting " + self.name
+        print("Starting " + self.name)
         process_data(self.name, self.q)
-        print "Exiting " + self.name
+        print("Exiting " + self.name)
 
 def process_data(threadName, q):
     while not exitFlag:
@@ -51,10 +51,10 @@ def process_data(threadName, q):
             data.download()
             data.parse()
             data.nlp()
-            print " %s processing" % (threadName)
+            print(" %s processing" % (threadName))
         else:
             queueLock.release()
-            print " %s release" % (threadName)
+            print(" %s release" % (threadName))
         time.sleep(1)
 
 

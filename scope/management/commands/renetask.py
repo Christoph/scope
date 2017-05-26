@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand
 from django.core.urlresolvers import reverse
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import threading
-import Queue
+import queue
 import os
 import datetime
 import sys
@@ -37,9 +37,9 @@ class myThread (threading.Thread):
         self.name = name
         self.q = q
     def run(self):
-        print "Starting " + self.name
+        print("Starting " + self.name)
         process_data(self.name, self.q)
-        print "Exiting " + self.name
+        print("Exiting " + self.name)
 
 def process_data(threadName, q):
     while not exitFlag:
@@ -50,10 +50,10 @@ def process_data(threadName, q):
             data.download()
             data.parse()
             #data.nlp()
-            print " %s processing" % (threadName)
+            print(" %s processing" % (threadName))
         else:
             queueLock.release()
-            print " %s release" % (threadName)
+            print(" %s release" % (threadName))
         time.sleep(1)
 
 
@@ -68,15 +68,15 @@ class Command(BaseCommand):
     def handle(self,*args,**options):
         delivery_t = datetime.datetime.now().replace(second = 0, microsecond = 0, minute = 0) + datetime.timedelta(hours = 1)
         strin = delivery_t.isoformat()[:13] + "&feeds=none&term=rene_likes_tech"
-        print options['n1']
-        print options['n2']
+        print(options['n1'])
+        print(options['n2'])
         n1 = options['n1'][0]
         n2 = options['n2'][0]
 
         # sys.argv = [settings.STATIC_BREV + static('last24h/rene.py'), strin,n1,n2]
         # execfile(settings.STATIC_ROOT + 'last24h/rene.py')
         sys.argv = ['curate/customers/create_newsletter_nh.py', strin, n1, n2]
-        execfile('curate/customers/create_newsletter_nh.py')
+        exec(compile(open('curate/customers/create_newsletter_nh.py').read(), 'curate/customers/create_newsletter_nh.py', 'exec'))
         address = "Rene"
 
         strin = strin

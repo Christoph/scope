@@ -26,7 +26,7 @@ else:
 for j in range(1,len(list)+1):
 	i = list[j-1]
 		# <!-- Main -->
-	content = content + '<tr border-bottom="1px solid #aec7e8"> <td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;"> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="font-family:Times New Roman, sans-serif; font-size:16px;"><b>' + unicode(j) + '. ' + '<a style="color: #2b2b2b; text-decoration:none;" href="' + unicode(i['url'])+ '"><font color="#2b2b2b">' + unicode(i['title']) + '.</font></a> <br/><br/><font color="#2b2b2b" "text-decoration=none"> ' + unicode(i['source']) + '</font></b><br/><br/></td> </tr> <tr> <td style="font-family:Times New Roman, sans-serif; font-size:16px">' + unicode(i['summary']) + '.</td> </tr> <tr> <td> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="font-family:Times New Roman, sans-serif;" width="260" valign="top">' + unicode(i['keywords']) + '</td> <td style="font-size: 0; line-height: 0;" width="20">&nbsp;</td> <td width="260" valign="top"></td> </tr> </table> </td> </tr> </table><br/><br/><hr align="center" width="80%" style="color:#aec7e8;border-color: #aec7e8;border:2px solid;"></td> </tr>'
+	content = content + '<tr border-bottom="1px solid #aec7e8"> <td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;"> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="font-family:Times New Roman, sans-serif; font-size:16px;"><b>' + str(j) + '. ' + '<a style="color: #2b2b2b; text-decoration:none;" href="' + str(i['url'])+ '"><font color="#2b2b2b">' + str(i['title']) + '.</font></a> <br/><br/><font color="#2b2b2b" "text-decoration=none"> ' + str(i['source']) + '</font></b><br/><br/></td> </tr> <tr> <td style="font-family:Times New Roman, sans-serif; font-size:16px">' + str(i['summary']) + '.</td> </tr> <tr> <td> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="font-family:Times New Roman, sans-serif;" width="260" valign="top">' + str(i['keywords']) + '</td> <td style="font-size: 0; line-height: 0;" width="20">&nbsp;</td> <td width="260" valign="top"></td> </tr> </table> </td> </tr> </table><br/><br/><hr align="center" width="80%" style="color:#aec7e8;border-color: #aec7e8;border:2px solid;"></td> </tr>'
 
 # else:
 # 	for i in list:
@@ -35,6 +35,6 @@ for j in range(1,len(list)+1):
 
 # <!-- Footer -->
 content = content + '<tr> <td bgcolor="#aec7e8" style="padding: 30px 30px 30px 30px;"> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="font-family:Times New Roman, sans-serif;" width="75%"> &copy; Graphite, 2016 <br/></td> <td> <td align="right"> <table border="0" cellpadding="0" cellspacing="0"> <tr> <td></td> <td style="font-size: 0; line-height: 0;" width="20">&nbsp;</td> <td></td> </tr> </table> </td> </td> </tr> </table> </td> </tr> </table> </body> </html> '
-print 'done'
+print('done')
 
 send_mail('NewsButler general brief - ' + date.today().strftime("%a %d/%m %y"),'Sorry, this service works only for html-compatible mail clients','grphtcontact@gmail.com',[email],connection=None, html_message=content)
