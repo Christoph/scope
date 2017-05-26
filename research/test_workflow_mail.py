@@ -1,47 +1,33 @@
 import django
 django.setup()
 
-import numpy as np
-from textblob import TextBlob
-
 from tldextract import tldextract
+from langdetect import detect
 
-from curate.models import Curate_Query
-from curate.models import Curate_Customer
-from scope.models import Customer
 from scope.models import AgentImap, Agent, Source, Article
 from scope.methods.semantics import document_embedding
 from scope.methods.semantics import summarizer
 from scope.methods.dataprovider import imap_handler
 
-import scope.methods.semantics.preprocess as preprocess
-import scope.methods.semantics.lsi as lsi
 from scope.methods.graphs import clustering_methods
+from curate.convenience import functions as helper
 
 
 # initializations
-customer_key = "neuland_herzer"
-language = "eng"
+customer_key = "commerzbank_germany"
 
-threshold = 0.0
-wv_language_dict = {
+target_clusters = 16
+summary_max_len = 100
+
+language_dict = {
     'ger': 'de',
     'eng': 'en',
-}
-lsi_language_dict = {
-    'ger': 'german',
-    'eng': 'english',
 }
 
 # GET DATA
 print("GET DATA")
 
-customer = Customer.objects.get(
-    customer_key=customer_key)
-curate_customer = Curate_Customer.objects.get(
-    customer=customer)
-query = query = Curate_Query.objects.create(
-    curate_customer=curate_customer)
+customer, curate_customer, query, agentimap, language = helper.create_customer_from_config_file(customer_key)
 
 # From mail
 db_articles = []
@@ -72,38 +58,33 @@ for a in mails:
 
     db_articles.append(art)
 
-filtered_articles = db_articles
+filtered_articles = []
+for a in db_articles:
+    if detect(a.body) == language_dict[language]:
+        filtered_articles.append(a)
+
 print(len(filtered_articles))
 
 # semantic analysis
 print("SEMANTIC ANALYSIS")
-lsi_dim = 20
-
-pre = preprocess.PreProcessing(lsi_language_dict[language])
-lsi_model = lsi.Model()
-
-vecs = pre.stemm([a.body for a in filtered_articles])
-lsi_model.compute(vecs, lsi_dim)
-
-sim = lsi_model.similarity()
 
 # Create embedding model
-data_model = document_embedding.Embedding("en", "grammar_svd", filtered_articles)
+data_model = document_embedding.Embedding(language_dict[language], "grammar_svd", filtered_articles)
 
-vecs_svd = data_model.get_embedding_vectors()
-sim_svd = data_model.get_similarity_matrix()
+vecs = data_model.get_embedding_vectors()
+sim = data_model.get_similarity_matrix()
 
 # clustering
 print("CLUSTERING")
 
-selected_articles, cluster_articles = clustering_methods.get_clustering(filtered_articles, sim_svd, vecs_svd, 16)
+selected_articles, cluster_articles = clustering_methods.get_clustering(filtered_articles, sim, vecs, target_clusters)
 
 print("KEYWORDS & SUMMARY/REPRESENTATIVE")
 
-representative_model = summarizer.Summarizer("en")
+representative_model = summarizer.Summarizer(language_dict[language])
 
 words = representative_model.get_keywords(cluster_articles)
-rep = representative_model.text_rank(cluster_articles, max_size=100)
+rep = representative_model.text_rank(cluster_articles, max_size=summary_max_len)
 
 print("RESULTS")
 out = []

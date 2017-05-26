@@ -23,8 +23,10 @@ class Embedding():
 
         if lang == "en":
             self.stopwords = stopw.EN
+            self.tags = ["NN", "NNS", "NNP", "NNPS"]
         elif lang == "de":
             self.stopwords = stopwords.words('german')
+            self.tags = ["NE", "NN", "NNE"]
         else:
             raise Exception("Language not known.")
 
@@ -65,7 +67,7 @@ class Embedding():
 
             for sent in doc.sents:
                 for t in sent:
-                    if t.tag_.find("NN") >= 0:
+                    if t.tag_ in self.tags:
                         temp.append(t.lemma_)
 
             clean.append(" ".join(temp))
