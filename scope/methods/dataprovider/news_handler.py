@@ -8,14 +8,15 @@ from lxml import etree
 
 import newspaper
 
-from scope.models import Article
 
 class ScopeNewspaperArticle(newspaper.Article):
 
     def __eq__(self, other):
-        return self.title==other.title
+        return self.title == other.title
+
     def __hash__(self):
         return hash(('title', self.title))
+
 
 class NewsSourceHandler(object):
     """NewsPaperHandler."""
@@ -31,8 +32,8 @@ class NewsSourceHandler(object):
             except ValueError:
                 print("Value error detected")
                 # print a.url
-            except etree.ArticleException:
-                print("Value error detected")
+            except:
+                print("Unknown error detected")
                 # print a.url
 
             # Remove newline characters
