@@ -91,7 +91,7 @@ class NewsSourceHandler(object):
 
         try:
             articles = self._download_articles(source.articles)
-        except XMLSyntaxError:
+        except etree.XMLSyntaxError:
             print("Error during download")
 
         for article in articles:

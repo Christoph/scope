@@ -67,11 +67,11 @@ class Provider(object):
                               "images": a['images'], "pubdate": a['pubdate']})
 
                 art_cur_que, art_cur_created = Article_Curate_Query.objects.get_or_create(
-                    article=art, curate_query=curate_query, agent=agent, newsletter=a['newsletter'])
+                    article=art, curate_query=curate_query, agent=agent)
 
-                # if a.has_key('newsletter'):
-                #     art_cur_que.newsletter = a['newsletter']
-                #     art_cur_que.save()
+                if a.has_key('newsletter'):
+                    art_cur_que.newsletter = a['newsletter']
+                    art_cur_que.save()
 
                 # This is another instance to try and get rid of overcounting
                 # articles from the same agent/newsletter. Note that this does
