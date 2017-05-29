@@ -11,39 +11,49 @@ from scipy.spatial.distance import pdist, squareform
 import numpy as np
 
 
-def get_clustering(articles, sim, vecs, n_clusters):
+def get_clustering(articles, sim, vecs, max_clusters, min_clusters):
     '''
         Returns selected articles and clusters.
     '''
 
     linkage_matrix = hc_create_linkage(vecs)
     labels_affinity, center_indices_affinity = affinity_propagation(sim)
+    len_aff = len(np.unique(labels_affinity))
     labels_hc = hc_cluster_by_distance(linkage_matrix, 0.6)
-    labels_gauss, probas_gauss = gauss(vecs, int(n_clusters*1.3))
+    len_hc = len(np.unique(labels_hc))
+    labels_gauss, probas_gauss = gauss(vecs, int(max_clusters*1.3))
+    len_gauss = len(np.unique(labels_gauss))
 
-    if len(np.unique(labels_affinity)) <= n_clusters:
+    if len_aff <= max_clusters and len_aff >= min_clusters:
         selected_articles = np.array(articles)[
             center_indices_affinity]
         cluster_articles = get_clusters(
             articles, vecs, selected_articles, labels_affinity)
-    elif len(np.unique(labels_hc)) <= n_clusters:
-        selected_articles = get_central_articles(
+    elif len_hc <= max_clusters and len_hc >= min_clusters:
+        selected_articles = compute_central_articles(
             articles, vecs, labels_hc)
         cluster_articles = get_clusters(
             articles, vecs, selected_articles, labels_hc)
-    elif len(np.unique(labels_gauss)) <= n_clusters:
-        selected_articles = get_central_articles(
+    elif len_gauss <= max_clusters and len_gauss >= min_clusters:
+        selected_articles = compute_central_articles(
             articles, vecs, labels_gauss)
         cluster_articles = get_clusters(
             articles, vecs, selected_articles, labels_gauss)
     else:
-        labels_hc_clust = hc_cluster_by_maxclust(linkage_matrix, n_clusters)
-        selected_articles = get_central_articles(
+        labels_hc_clust = hc_cluster_by_maxclust(linkage_matrix, max_clusters)
+        selected_articles = compute_central_articles(
             articles, vecs, labels_hc_clust)
         cluster_articles = get_clusters(
             articles, vecs, selected_articles, labels_hc_clust)
 
-    return selected_articles, cluster_articles
+    return cluster_articles
+
+
+def get_central_articles(cluster_articles, n_center):
+    if len(cluster_articles) <= n_center:
+        return [a[0] for a in cluster_articles]
+
+    return [a[0] for a in cluster_articles[:n_center]]
 
 
 def sim_based_threshold(sim, threshold):
@@ -177,10 +187,12 @@ def get_clusters(articles, vecs, center_articles, labels):
 
         clusters.append([center, cluster])
 
+    clusters.sort(key=lambda x: len(x[1]), reverse=True)
+
     return clusters
 
 
-def get_central_articles(articles, vecs, labels):
+def compute_central_articles(articles, vecs, labels):
     '''
         Returns central articles based on the minimum cosine distance.
 

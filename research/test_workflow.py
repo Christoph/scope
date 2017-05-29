@@ -2,7 +2,6 @@ import django
 django.setup()
 
 from tldextract import tldextract
-from langdetect import detect
 
 from scope.models import AgentImap, Agent, Source, Article
 from scope.methods.semantics import document_embedding
@@ -16,7 +15,9 @@ from curate.convenience import functions as helper
 # initializations
 customer_key = "commerzbank_germany"
 
-target_clusters = 16
+max_clusters = 24
+min_clusters = 6
+n_centers = 5
 summary_max_len = 100
 
 language_dict = {
@@ -74,7 +75,9 @@ sim = data_model.get_similarity_matrix()
 # clustering
 print("CLUSTERING")
 
-selected_articles, cluster_articles = clustering_methods.get_clustering(filtered_articles, sim, vecs, target_clusters)
+cluster_articles = clustering_methods.get_clustering(filtered_articles, sim, vecs, max_clusters, min_clusters)
+
+central_articles = clustering_methods.get_central_articles(cluster_articles, n_centers)
 
 print("KEYWORDS & SUMMARY/REPRESENTATIVE")
 

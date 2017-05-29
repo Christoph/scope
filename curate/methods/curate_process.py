@@ -120,8 +120,12 @@ class Curate(object):
         if filtered_articles:
             sim, vecs = self._semantic_analysis(filtered_articles)
 
-            selected_articles, cluster_articles = clustering_methods.get_clustering(
-                filtered_articles, sim, vecs, self.config.getint('general', 'upper_bound'))
+            cluster_articles = clustering_methods.get_clustering(
+                filtered_articles, sim, vecs, self.config.getint('general', 'upper_bound'), self.config.getint('general', 'lower_bound'))
+
+            selected_articles = clustering_methods.get_central_articles(cluster_articles, 5)
+
+            print([a.title for a in selected_articles])
 
             # you can generate the dict at this point actually.
             self.produce_and_save_clusters(cluster_articles)
