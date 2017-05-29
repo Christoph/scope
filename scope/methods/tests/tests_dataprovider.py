@@ -25,8 +25,8 @@ class ImapHandler_Tests(TestCase):
 		l = testutils.create_article_dict(10, 20)
 		l = [l[0],l[1],l[0]]
 		out = ih._merge_mails_from_same_newsletter(l)
-		self.assertEquals(len(out),2)
-		self.assertEquals(list(set(out[0][0])),out[0][0])
+		self.assertEqual(len(out),2)
+		self.assertEqual(list(set(out[0][0])),out[0][0])
 		self.assertIsInstance(out,list)
 		self.assertIsInstance(out[0][1], Newsletter)
 
@@ -37,7 +37,7 @@ class NewsHandler_Tests(TestCase):
 		out = news.produce_output_dict(l)
 		self.assertIsInstance(out,list)
 		self.assertIsInstance(out[0],dict)
-		self.assertTrue(out[0].has_key('body'))
+		self.assertTrue('body' in out[0])
 
 class Blacklist_Tests(TestCase):
 	def test_blacklist_object_(self):
@@ -51,5 +51,5 @@ class Blacklist_Tests(TestCase):
 			item.parse()
 		blacklist = Blacklist()
 		out = blacklist.filter(l)
-		self.assertEquals(len(out),1)
+		self.assertEqual(len(out),1)
 		

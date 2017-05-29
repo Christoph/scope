@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans

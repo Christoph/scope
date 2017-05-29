@@ -1,13 +1,10 @@
 
-import csv, sys
+import csv
 from datetime import date, timedelta
 import string
 
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
 from scope.models import Customer
-
-reload(sys)
-sys.setdefaultencoding('utf8')
 
 #exporting to csv
 def write_csv(article_list, filename):
@@ -66,4 +63,3 @@ def truncate_words_and_prod_sentence(s, thresh):
     final = string.join([split[k] for k in range(0,i)], " ")
     final = string.join(final.split('.')[:-1], ".") + '.'
     return final
-

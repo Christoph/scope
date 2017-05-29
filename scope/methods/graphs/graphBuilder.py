@@ -66,7 +66,7 @@ class Graph(object):
         score_new = 0
         best_thresh = 0.
         best_score = 0
-        for s in [x * t[0][2] for x in xrange(int(t[0][0] / t[0][2]), int(t[0][1] / t[0][2]))]:
+        for s in [x * t[0][2] for x in range(int(t[0][0] / t[0][2]), int(t[0][1] / t[0][2]))]:
             self.addEdges_global_thresh(s, sim)
             structure = self.central_articles(size_bound)
             score_new = test(structure, t[1])
@@ -96,7 +96,7 @@ class Graph(object):
                 logger.debug(self.graph.node[node]['title'])
             logger.debug('and')
             closeness = nx.closeness_centrality(cluster[2], distance=True)
-            closeness_ordered = sorted(closeness.items(),
+            closeness_ordered = sorted(list(closeness.items()),
                                        key=lambda close: close[1], reverse=True)
 
             central_article = closeness_ordered[0][0]

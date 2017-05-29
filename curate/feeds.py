@@ -23,9 +23,9 @@ class ExtendedRSSFeed(Rss201rev2Feed):
     def add_item_elements(self, handler, item):
         super(ExtendedRSSFeed, self).add_item_elements(handler, item)
         if 'media:content' in item:
-            handler.addQuickElement(u"media:content", item['media:content'])
+            handler.addQuickElement("media:content", item['media:content'])
         if 'source' in item:
-            handler.addQuickElement(u"source", item['source'])
+            handler.addQuickElement("source", item['source'])
 
         # 'content_encoded' is added to the item below, in item_extra_kwargs()
         # It's populated in item_your_custom_field(). Here we're creating
@@ -61,7 +61,7 @@ class Feed(Feed):
             query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").last()
         else:
             date_parsed = datetime.strptime(obj[2],'%d%m%Y').date()
-            print date_parsed
+            print(date_parsed)
             query = Curate_Query.objects.filter(curate_customer=curate_customer).filter(time_stamp=date_parsed).order_by("pk").last()
         if obj[1] == "sel":
             select_options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).filter(kind="sel").all()

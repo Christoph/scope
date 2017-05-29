@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
-import ConfigParser
+import configparser
 
 from conf.settings.importer import ImportGlobal
 from curate.tasks import send_newsletter_task, selection_made_task
@@ -29,7 +29,7 @@ def interface(request,customer_key, date_stamp=None):
     suggestions = Article_Curate_Query.objects.filter(curate_query=query).filter(rank__gt = 0).order_by("rank")
     options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).order_by("pk")
     if request.method == 'POST':
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.read('curate/customers/' + customer_key +
                          "/" + customer_key + '.cfg')
         query.selection_made = True
@@ -45,7 +45,7 @@ def interface(request,customer_key, date_stamp=None):
                         for reason in option.rejection_reason.all():
                             try:
                                 yy = request.POST[option.name + str(i) + reason.name]
-                                print yy
+                                print(yy)
                                 if  yy == "on":
                                     if reason.kind == "sou":
                                         curate_customer.bad_source.add(s.article.source)
@@ -68,8 +68,8 @@ def interface(request,customer_key, date_stamp=None):
         except:
             pass
         try:
-            print im.get_env_variable('DJANGO_SETTINGS_MODULE')
-            print config.getboolean('meta','direct_outlet')
+            print(im.get_env_variable('DJANGO_SETTINGS_MODULE'))
+            print(config.getboolean('meta','direct_outlet'))
             if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment":
                 send_newsletter_task.delay(customer_key)
         except:
@@ -87,7 +87,7 @@ def mail(request, customer_key):
     curate_customer = Curate_Customer.objects.get(customer=customer)
     query = Curate_Query.objects.filter(
         curate_customer=curate_customer).order_by("pk").last()
-    config = ConfigParser.RawConfigParser()
+    config = configparser.RawConfigParser()
     config.read('curate/customers/' + customer_key +
                 "/" + customer_key + '.cfg')
 

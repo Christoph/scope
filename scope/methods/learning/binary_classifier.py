@@ -52,9 +52,9 @@ class binary_classifier(object):
         Update the model with new input.
         '''
 
-        print "update"
-        print train
-        print positive
+        print("update")
+        print(train)
+        print(positive)
 
         X = []
         y = []
@@ -82,7 +82,7 @@ class binary_classifier(object):
         self.model.save_weights(
             "curate/customers/"+self.name+"/"+self.name+"_weights.h5")
 
-        print self.name + " model updated."
+        print(self.name + " model updated.")
 
     def classify_by_count(self, db_articles, min_count):
         '''
@@ -93,7 +93,7 @@ class binary_classifier(object):
         best = 0.0
 
         if len(db_articles) <= min_count:
-            print "not enough articles"
+            print("not enough articles")
         else:
             lo = 0.0
             hi = 1.0
@@ -107,8 +107,8 @@ class binary_classifier(object):
                 count_old = count
                 count = self._get_count(db_articles, best)
 
-                print best
-                print count
+                print(best)
+                print(count)
 
                 if (count == count_old and count >= min_count) or count == min_count:
 	                found = True
@@ -118,8 +118,8 @@ class binary_classifier(object):
                     else:
                         hi = best
 
-        print "Used threshold"
-        print best
+        print("Used threshold")
+        print(best)
 
         # Classify articles
         for article in db_articles:

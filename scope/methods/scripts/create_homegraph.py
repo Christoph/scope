@@ -32,7 +32,7 @@ non_keywords = set(('World news','Europe','Africa','USA','Technology','Approved'
 articles_info = return_articles(feeds,non_keywords)
 
 articles = [k[0] for k in articles_info]
-print len(articles)
+print(len(articles))
 upper = min(600, len(articles))
 
 for a in articles:
@@ -369,7 +369,7 @@ for a in graphx:
 			ug.node[a]['deg'] = b
 			ug.node[a]['deg_pos'] = float(count_degree)/len(comp)*360	
 			count_degree += 1
-		susvec = sorted(closeness.items(), key = lambda close:close[1],reverse=True)[0][0]   
+		susvec = sorted(list(closeness.items()), key = lambda close:close[1],reverse=True)[0][0]   
 		ug.node[susvec]['suggest'] = count_comp
 
 				#add the nodes for the arc

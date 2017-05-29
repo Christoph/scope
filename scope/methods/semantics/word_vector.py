@@ -6,7 +6,7 @@ import nltk
 class Model(object):
     """docstring for Model."""
     def __init__(self, lang):
-        print lang
+        print(lang)
         if(lang == "de"):
             self.stop_words = nltk.corpus.stopwords.words('german')
 

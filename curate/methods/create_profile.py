@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from scope.models import Customer, Agent, AgentImap, UserProfile
 from curate.models import Curate_Customer, Curate_Customer_Selection
 import datetime
-import ConfigParser
+import configparser
 
 
 def create(name, email, selection_dict={}, imap_dict={"host": "gmail"}):
@@ -11,7 +11,7 @@ def create(name, email, selection_dict={}, imap_dict={"host": "gmail"}):
 
     # Create IMAP object
     #
-    print pwd
+    print(pwd)
     if imap_dict['host'] == 'gmail':
         imap, created = AgentImap.objects.get_or_create(
             user=proc_name + '@gmail.com',
@@ -61,7 +61,7 @@ def create(name, email, selection_dict={}, imap_dict={"host": "gmail"}):
             curate_customer=curate_customer, name=s.name, type=s.type, color=s.color)
         # selection.save()
 
-    config = ConfigParser.RawConfigParser()
+    config = configparser.RawConfigParser()
     try:
         config.read('curate/customers/' + proc_name + '.cfg')
 

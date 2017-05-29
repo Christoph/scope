@@ -8,7 +8,7 @@ import nltk
 import re
 import string
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from networkx.readwrite import json_graph
 import sys
 reload(sys)
@@ -66,7 +66,7 @@ graphs_old = []
 # print "First Round"
 # print str(len(ug)) + " old graph"
 
-for s in [x*0.0025 for x in xrange(0,200)]:
+for s in [x*0.0025 for x in range(0,200)]:
 
 
 #while score_new >= score_old:#len(graphs) not in [5,6] and any(len(x) <4 for x in graphs):
@@ -94,7 +94,7 @@ for s in [x*0.0025 for x in xrange(0,200)]:
         #print best_thresh
 
 
-print best_thresh
+print(best_thresh)
 ug.remove_edges_from(ug.edges())
 for i in range( 0, len( corpus_tfidf ) ):
     sim = index2[ lsi_model2[ corp [ i ] ] ]
@@ -106,20 +106,20 @@ for i in range( 0, len( corpus_tfidf ) ):
 graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
 test = [x for x in graphs if len(x) >= 3]
 for graph in test:
-    print "\n CLUSTER: \n"
+    print("\n CLUSTER: \n")
     for no in graph:
         try:
-            print ug.node[no]['title'], ug.node[no]['source'], no
+            print(ug.node[no]['title'], ug.node[no]['source'], no)
         except:
             pass
-print "\n AND \n"
+print("\n AND \n")
 for no in list(set().union(*exclude)):
     try:
-        print ug.node[no]['title'], ug.node[no]['source'], no
+        print(ug.node[no]['title'], ug.node[no]['source'], no)
     except:
         pass
 
-print "\n SECOND ROUND \n"
+print("\n SECOND ROUND \n")
 
 
 for i in range(1,len(graphs)):
@@ -151,7 +151,7 @@ best_score = 0#[0,0]
 
 
 
-for s in [x*0.001 for x in xrange(0,500)]:
+for s in [x*0.001 for x in range(0,500)]:
 
 
 #while score_new >= score_old:#len(graphs) not in [5,6] and any(len(x) <4 for x in graphs):
@@ -191,7 +191,7 @@ for s in [x*0.001 for x in xrange(0,500)]:
         #     except:
         #         pass
 
-print best_thresh
+print(best_thresh)
 ug.remove_edges_from(ug.edges())
 for i in range( 0, len( corpus_tfidf ) ):
     sim = index[ lsi_model[ corp [ i ] ] ]
@@ -203,15 +203,15 @@ for i in range( 0, len( corpus_tfidf ) ):
 graphs = sorted(nx.connected_component_subgraphs(ug),key=len,reverse=True)
 test = [x for x in graphs if 20 >= len(x) >= 3]
 for graph in test:
-    print "\n CLUSTER: \n"
+    print("\n CLUSTER: \n")
     for no in graph:
         try:
-            print ug.node[no]['title'], ug.node[no]['source'], no
+            print(ug.node[no]['title'], ug.node[no]['source'], no)
         except:
             pass
-print "\n AND \n"
+print("\n AND \n")
 for no in list(set().union(*exclude)):
     try:
-        print ug.node[no]['title'], ug.node[no]['source'], no
+        print(ug.node[no]['title'], ug.node[no]['source'], no)
     except:
         pass

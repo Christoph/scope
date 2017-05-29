@@ -1,8 +1,9 @@
 import imaplib
 import email
+from langdetect import detect
 from email.utils import getaddresses
 from email.header import decode_header
-from urlparse import urlparse
+from urllib.parse import urlparse
 from datetime import date, timedelta
 from newspaper import Article
 from . import url_extractor
@@ -17,10 +18,10 @@ class ImapHandler(object):
 
     def __init__(self, agent, language):
         self.url_extractor = url_extractor.Extractor()
-        self.mail_user = agent.user.encode("utf-8")
-        self.mail_pwd = agent.pwd.encode("utf-8")
-        self.mail_link = agent.imap.encode("utf-8")
-        self.mail_box = agent.mailbox.encode("utf-8")
+        self.mail_user = agent.user
+        self.mail_pwd = agent.pwd
+        self.mail_link = agent.imap
+        self.mail_box = agent.mailbox
         self.mail_interval = agent.interval
         self.language = language
 
@@ -43,20 +44,33 @@ class ImapHandler(object):
 
         downloaded_article_dict = self.news.get_articles_from_list(
             url_dict, self.language)
-        #in case the same urls pointed to the same article (in sense of its title)
+        # in case the same urls pointed to the same article (in sense of its title)
         filtered_article_dict = remove_duplicate_articles_from_same_newsletter(
             downloaded_article_dict)
         blacklist_filtered = blacklist_filter(filtered_article_dict)
         out = self.news.produce_output_dict(blacklist_filtered)
-        return out
 
+        language_filtered = []
+        lang_dict = {
+            'ger': 'de',
+            'eng': 'en',
+        }
 
+        for a in out:
+            if detect(a['body']) == lang_dict[self.language]:
+                language_filtered.append(a)
+            else:
+                print("Wrong Language")
+                print(a["title"])
+
+        return language_filtered
 
     def _connect(self):
         # Connect to Mailbox
         self.mailbox = imaplib.IMAP4_SSL(self.mail_link)
+
         self.mailbox.login(self.mail_user, self.mail_pwd)
-        self.mailbox.select(self.mail_box)
+        self.mailbox.select("\""+self.mail_box+"\"")
 
         # Get all mails from the last interval hours
         if date.today().strftime('%w') == "1":
@@ -77,7 +91,7 @@ class ImapHandler(object):
         email_body = data[0][1]  # getting the mail content
 
         # Convert to mail object
-        mail = email.message_from_string(email_body)
+        mail = email.message_from_string(email_body.decode("utf-8"))
         # All mail text/plain contents
         contents = self._get_content(mail)
 
@@ -118,7 +132,7 @@ class ImapHandler(object):
             newsletter_mail = "Unknown"
             newsletter_name = "Unknown"
 
-        print newsletter_name, newsletter_mail
+        print(newsletter_name, newsletter_mail)
         newsletter, created = Newsletter.objects.get_or_create(
             email=newsletter_mail, defaults={"name": newsletter_name.title()})
         return newsletter, created
@@ -145,13 +159,13 @@ class ImapHandler(object):
         # Check if its text/plain and not text/html or multipart
         if ctype == 'text/plain':
             if cenc == 'quoted-printable':
-                print "is MIME encoded"
+                print("is MIME encoded")
                 # If MIME encoded - decode and add
-                contents.append(part.get_payload(decode=True))
+                contents.append(part.get_payload(decode=True).decode("utf-8"))
             elif cenc == 'base64':
-                print "is base64 encoded"
-                contents.append(part.get_payload(decode=True))
+                print("is base64 encoded")
+                contents.append(part.get_payload(decode=True).decode("utf-8"))
             else:
-                print "is not MIME encoded"
+                print("is not MIME encoded")
                 # Else - add without decoding
                 contents.append(part.get_payload())

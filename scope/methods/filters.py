@@ -12,7 +12,7 @@ def remove_duplicate_articles_for_processing(self, incoming_articles):
     return outgoing_articles
 
 def blacklist_filter(article_dict):
-	print "Now filtering by blacklists"
+	print("Now filtering by blacklists")
 	blacklist = Blacklist()
 	out = []
 	for articles, newsletter in article_dict:
@@ -20,7 +20,7 @@ def blacklist_filter(article_dict):
 	return out
 
 def remove_duplicate_articles_from_same_newsletter(article_dict): 
-	print "Removing duplicates per newsletter"
+	print("Removing duplicates per newsletter")
 	#this only works because of the redefined __eq__ and __hash__ methods of the SCopeNewsArticle class
 	out = [[list(set(articles)),newsletter] for articles, newsletter in article_dict]
 	# for articles, newsletter in article_dict:

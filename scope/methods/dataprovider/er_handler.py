@@ -46,11 +46,11 @@ class EventRegistryHandler(object):
 
         if len(self.concepts) > 1:
             for con in self.concepts:
-                print con
+                print(con)
                 q.addConcept(er.getConceptUri(con))
 
         if len(self.locations) > 0:
-            print self.locations
+            print(self.locations)
             for loc in self.locations:
                 q.addLocation(er.getLocationUri(loc))
 
@@ -64,16 +64,16 @@ class EventRegistryHandler(object):
         try:
             pages = articles["articles"]["pages"]
         except KeyError:
-            print "Key Error"
-            print articles
+            print("Key Error")
+            print(articles)
 
         q.clearRequestedResults()
 
-        print "Rough article count"
-        print 200 * pages
+        print("Rough article count")
+        print(200 * pages)
 
         # Get all articles
-        for i in xrange(1, pages + 1):
+        for i in range(1, pages + 1):
             q.addRequestedResult(RequestArticlesInfo(
                 page = i,
                 count = 200,
@@ -95,10 +95,10 @@ class EventRegistryHandler(object):
                         "source": article["source"]["uri"],
                         "source_name": article["source"]["title"]})
                 else:
-                    print "blacklisted or bad: " + article["title"]
+                    print("blacklisted or bad: " + article["title"])
 
-            print "Good articles"
-            print len(out)
+            print("Good articles")
+            print(len(out))
 
             if len(out) > number:
                 out=out[0:number]
@@ -130,11 +130,11 @@ class EventRegistryHandler(object):
 
         if len(self.concepts) > 1:
             for con in self.concepts:
-                print con
+                print(con)
                 q.addConcept(er.getConceptUri(con))
 
         if len(self.locations) > 0:
-            print self.locations
+            print(self.locations)
             for loc in self.locations:
                 q.addLocation(er.getLocationUri(loc))
 
@@ -149,16 +149,16 @@ class EventRegistryHandler(object):
         try:
             pages=articles["articles"]["pages"]
         except KeyError:
-            print "Key Error"
-            print articles
+            print("Key Error")
+            print(articles)
 
         q.clearRequestedResults()
 
-        print "Rough article count"
-        print 200 * pages
+        print("Rough article count")
+        print(200 * pages)
 
         # Get all articles
-        for i in xrange(1, pages + 1):
+        for i in range(1, pages + 1):
             q.addRequestedResult(RequestArticlesInfo(
                 page = i,
                 count = 200,
@@ -209,11 +209,11 @@ class EventRegistryHandler(object):
 
         if len(self.concepts) > 0:
             for con in self.concepts:
-                print con
+                print(con)
                 q.addConcept(er.getConceptUri(con))
 
         if len(self.locations) > 0:
-            print self.locations
+            print(self.locations)
             for loc in self.locations:
                 q.addLocation(er.getLocationUri(loc))
 
@@ -227,16 +227,16 @@ class EventRegistryHandler(object):
         try:
             pages = articles["articles"]["pages"]
         except KeyError:
-            print "Key Error"
-            print articles
+            print("Key Error")
+            print(articles)
 
         q.clearRequestedResults()
 
-        print "Rough article count"
-        print 200 * pages
+        print("Rough article count")
+        print(200 * pages)
 
         # Get all articles
-        for i in xrange(1, pages + 1):
+        for i in range(1, pages + 1):
             q.addRequestedResult(RequestArticlesInfo(
                 page = i,
                 count = 200,
@@ -260,7 +260,7 @@ class EventRegistryHandler(object):
                     blacklist.append(article["title"].lower())
                     out.append(article)
                 else:
-                    print "blacklisted or bad: " + article["title"]
+                    print("blacklisted or bad: " + article["title"])
 
             if len(out) > number:
 

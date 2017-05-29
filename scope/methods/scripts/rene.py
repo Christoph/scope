@@ -1,14 +1,14 @@
 import email
 import imaplib
 import sys
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from datetime import date, timedelta
-from urlparse import urlparse
+from urllib.parse import urlparse
 from networkx.readwrite import json_graph
 
 global exitFlag, workQueue, queueLock, articlenumber
 
-print strin
+print(strin)
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -41,7 +41,7 @@ resp, items = m.search(
 # at this step we want to download all the relevant mails since the last
 # newsletter. There should be filters for this.
 items = items[0].split()  # getting the mails id
-print items
+print(items)
 
 subscribed_urls = ["launch.us", "launch.co", "index.co", "azhar", "getrevue.co","morningreader.com", "producthunt.com", "betalist", "crunchable", "mailchimp.com", "facebook.com", "twitter.com", "launchticker", "play.google.com", "www.technologyreview.com/newsletters",
                    "launchevents.typeform.com", "ev.inside.com", "itunes.apple.com", "https://www.technologyreview.com/?utm_source", "typeform", "producthunt.us3.list-manage.com", "getfeedback", "youtube.com", "forms/", "smashingmagazine", "wikipedia.org"]
@@ -67,11 +67,11 @@ for emailid in items:
     senders = '<br/>'.join(list(set(senders_list)))
     for url in urls:
         try:
-            req = urllib2.Request(url)
-            res = urllib2.urlopen(req)
+            req = urllib.request.Request(url)
+            res = urllib.request.urlopen(req)
             finalurl = res.geturl()
             check_url = urlparse(finalurl)
-            print finalurl
+            print(finalurl)
         except:
             continue
         # somehow just using all(x not in finalurl for x in subscribed_urls)
@@ -139,7 +139,7 @@ exitFlag = 1
 # Wait for all threads to complete
 for t in threads:
     t.join()
-print "Exiting Main Thread"
+print("Exiting Main Thread")
 
 # Putting together
 
@@ -286,8 +286,8 @@ best_score = 0
 # number of clusters in it
 
 orignumber = len(ug)
-print "First Round"
-print str(len(ug)) + " old graph"
+print("First Round")
+print(str(len(ug)) + " old graph")
 
 # for s in [x/1000. for x in xrange(0,500)]:
 
@@ -384,7 +384,7 @@ index2.save(settings.STATIC_ROOT + 'rene/rene_data/l24h2.index')
 best_thresh = 0.
 best_score = 0  # [0,0]
 
-for s in [x / 1000. for x in xrange(0, 500)]:
+for s in [x / 1000. for x in range(0, 500)]:
 
     # while score_new >= score_old:#len(graphs) not in [5,6] and any(len(x) <4
     # for x in graphs):
@@ -415,21 +415,21 @@ for s in [x / 1000. for x in xrange(0, 500)]:
 
         # print thresh
         #thresh += 0.001
-        print s
-        print len(graphs)
+        print(s)
+        print(len(graphs))
         # for i in graphs:
         #     for ii in i:
         #         print ug.node[ii]['title']
         #     print "and"
         # print test2
-        print score_new
-        print best_thresh
+        print(score_new)
+        print(best_thresh)
         # if thresh >= 0.5:
         #     break
 
 
 dispersion = str((1. - 2 * best_thresh) * 100)[:-2] + '%'
-print best_thresh
+print(best_thresh)
 ug.remove_edges_from(ug.edges())
 for i in range(0, len(corpus_tfidf)):
     sim = index2[lsi_model2[corp[i]]]
@@ -441,18 +441,18 @@ graphs = sorted(nx.connected_component_subgraphs(ug), key=len, reverse=True)
 test = [x for x in graphs if 20 > len(x) >= 3]
 exclude = [x.nodes() for x in graphs if x not in test]
 for graph in test:
-    print "\n CLUSTER: \n"
+    print("\n CLUSTER: \n")
     for no in graph:
         try:
-            print ug.node[no]['title'], ug.node[no]['source'], no
+            print(ug.node[no]['title'], ug.node[no]['source'], no)
         except:
             pass
-print "\n AND \n"
+print("\n AND \n")
 
 
 for no in list(set().union(*exclude)):
     try:
-        print ug.node[no]['title'], ug.node[no]['source'], no
+        print(ug.node[no]['title'], ug.node[no]['source'], no)
     except:
         pass
 size = len(corp)
@@ -514,7 +514,7 @@ for a in graphx:
             ug.node[a]['deg'] = b
             ug.node[a]['deg_pos'] = float(count_degree) / len(comp) * 360
             count_degree += 1
-        ordering = sorted(closeness.items(),
+        ordering = sorted(list(closeness.items()),
                           key=lambda close: close[1], reverse=True)
         susvec = ordering[0][0]
         cnode = ug.node[susvec]

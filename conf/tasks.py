@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from celery import shared_task, current_task
 from django.conf import settings
@@ -6,7 +6,7 @@ from django.templatetags.static import static
 
 @shared_task
 def test_task(email):
-	print email 
+	print(email) 
 
 @shared_task
 def brief_rene(email,strin,select):
@@ -24,7 +24,7 @@ def brief_rene(email,strin,select):
 #	try:
 	#sys.argv = [email]
 	sys.argv = [settings.STATIC_BREV + static('last24h/create_brief_rene.py'), strin, email,select]
-	execfile(settings.STATIC_ROOT + 'last24h/create_brief_rene.py')
+	exec(compile(open(settings.STATIC_ROOT + 'last24h/create_brief_rene.py').read(), settings.STATIC_ROOT + 'last24h/create_brief_rene.py', 'exec'))
 
 
 @shared_task
@@ -42,7 +42,7 @@ def sample_brief(email):
 	#from django.conf import settings
 	#try:
 	#sys.argv = [email]
-	execfile(settings.STATIC_ROOT + 'last24h/create_brief.py')
+	exec(compile(open(settings.STATIC_ROOT + 'last24h/create_brief.py').read(), settings.STATIC_ROOT + 'last24h/create_brief.py', 'exec'))
 	#except:
 	#	raise Exception()
 
@@ -62,7 +62,7 @@ def cs_task(feeds,strin,alert):
 		current_task.update_state(state='PREPARE',
 			meta={'current': 10, 'articles':0, 'words':0})
 	
-	execfile(settings.STATIC_ROOT + 'last24h/customsearch.py')#settings.STATIC_BREV + static('last24h/cs2.py'))
+	exec(compile(open(settings.STATIC_ROOT + 'last24h/customsearch.py').read(), settings.STATIC_ROOT + 'last24h/customsearch.py', 'exec'))#settings.STATIC_BREV + static('last24h/cs2.py'))
 	#except:
 	#	raise Exception()
 			

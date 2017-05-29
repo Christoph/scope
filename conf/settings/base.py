@@ -116,6 +116,7 @@ STATICFILES_FINDERS = (
 STATICFILES_DIRS = [
     # os.path.join(BASE_DIR, "static"),
     os.path.join(BASE_DIR, "data"),
+    os.path.join(BASE_DIR, "controlcenter/static"),
     # os.path.join(BASE_DIR, "../components/bower_components")
 
 ]

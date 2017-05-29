@@ -1,4 +1,4 @@
-import ConfigParser
+import configparser
 
 from curate.models import Article_Curate_Query, Curate_Customer, Curate_Query
 from scope.models import Customer, Article, Newsletter, AgentImap
@@ -9,7 +9,7 @@ from datetime import date
 from random import randint
 
 def create_agent_and_language(customer_key):
-	config = ConfigParser.RawConfigParser()
+	config = configparser.RawConfigParser()
 	config.read('curate/customers/' + customer_key +
 					 "/" + customer_key + '.cfg')
 	user = config.get('imap', 'user')
@@ -52,7 +52,7 @@ def create_test_customer(customer_key):
 	return customer, curate_customer, query
 
 def create_labels(cluster_size, articles):
-	pre_labels = zip(*[iter(articles)] * cluster_size)
+	pre_labels = list(zip(*[iter(articles)] * cluster_size))
 	out = []
 	for i in pre_labels:
 		i = list(i)

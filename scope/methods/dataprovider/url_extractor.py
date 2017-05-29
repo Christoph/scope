@@ -3,10 +3,9 @@ Url extraction class
 '''
 
 import re
-from urlparse import urlparse
-import urllib2
-from sets import Set
-from cookielib import CookieJar
+from urllib.parse import urlparse
+import urllib.request, urllib.error, urllib.parse
+from http.cookiejar import CookieJar
 from scope.methods.dataprovider import constants
 
 
@@ -16,8 +15,8 @@ class Extractor(object):
     def __init__(self):
         self.cj = CookieJar()
         # Some pages need cookie support.
-        self.url_opener = urllib2.build_opener(
-            urllib2.HTTPCookieProcessor(self.cj))
+        self.url_opener = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(self.cj))
         # User-Agent let the call look like a browser call.
 
         headers = [
@@ -65,7 +64,7 @@ class Extractor(object):
 
             # TODO: Shoudnt catch all exceptions
             except:
-                print "error while checking url: " + url
+                print("error while checking url: " + url)
                 continue
 
             if (check_url.path not in constants.URL_PATH_BLACKLIST and
@@ -75,10 +74,10 @@ class Extractor(object):
             else:
                 blacklisted.append(finalurl)
 
-        print "good urls"
-        print len(urls_list)
-        print "blacklisted urls"
-        print len(blacklisted)
+        print("good urls")
+        print(len(urls_list))
+        print("blacklisted urls")
+        print(len(blacklisted))
 
         return urls_list
 

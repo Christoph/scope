@@ -29,7 +29,7 @@ def on_average_clustering_test(
     score_new = 0
     best_thresh = 0.
     best_score = 0
-    for s in [x * params[0][2] for x in xrange(
+    for s in [x * params[0][2] for x in range(
             int(params[0][0] / params[0][2]),
             int(params[0][1] / params[0][2]))]:
         graph.remove_edges_from(graph.edges())
@@ -39,7 +39,7 @@ def on_average_clustering_test(
                 if dist < s:
                     graph.add_edge(i, j, {'weight': dist})
         structure = _selection(graph, size_bound)
-        print structure
+        print(structure)
         score_new = test(structure, params[1])
         if score_new > best_score:
             best_score = score_new
@@ -71,7 +71,7 @@ def _selection(graph, size_bound):
         graph.nodes()), 'clustering': clustering, 'articles': []}
     for cluster in cluster_list:
         closeness = nx.closeness_centrality(cluster[2], distance=True)
-        closeness_ordered = sorted(closeness.items(),
+        closeness_ordered = sorted(list(closeness.items()),
                                    key=lambda close: close[1], reverse=True)
 
         central_article = closeness_ordered[0][0]

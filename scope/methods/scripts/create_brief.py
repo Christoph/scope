@@ -4,7 +4,7 @@ import nltk
 import re
 import string
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from networkx.readwrite import json_graph
 from django.core.mail import send_mail
 from last24h.models import Suggest
@@ -27,7 +27,7 @@ list = sorted([[ug.node[i]['suggest'],ug.node[i]] for i in ug.nodes() if (0 < ug
 	# <!-- Main -->
 for i in list:
 		# <!-- Main -->
-		content = content + '<tr border-bottom="1px solid #aec7e8"> <td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;"> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="font-family:Times New Roman, sans-serif; font-size:16px;"><b>' + unicode(i[0]) + '. ' + '<a style="color: #2b2b2b; text-decoration:none;" href="' + unicode(i[1]['url'])+ '"><font color="#2b2b2b">' + unicode(i[1]['title']) + '.</font></a> <br/><br/><font color="#2b2b2b" "text-decoration=none"> ' + unicode(i[1]['source']) + '</font></b><br/><br/></td> </tr> <tr> <td style="font-family:Times New Roman, sans-serif; font-size:16px">' + unicode(i[1]['summary']) + '.</td> </tr> <tr> <td> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="font-family:Times New Roman, sans-serif;" width="260" valign="top">' + unicode(i[1]['keywords']) + '</td> <td style="font-size: 0; line-height: 0;" width="20">&nbsp;</td> <td width="260" valign="top"></td> </tr> </table> </td> </tr> </table><br/><br/><hr align="center" width="80%" style="color:#aec7e8;border-color: #aec7e8;border:2px solid;"></td> </tr>'
+		content = content + '<tr border-bottom="1px solid #aec7e8"> <td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;"> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="font-family:Times New Roman, sans-serif; font-size:16px;"><b>' + str(i[0]) + '. ' + '<a style="color: #2b2b2b; text-decoration:none;" href="' + str(i[1]['url'])+ '"><font color="#2b2b2b">' + str(i[1]['title']) + '.</font></a> <br/><br/><font color="#2b2b2b" "text-decoration=none"> ' + str(i[1]['source']) + '</font></b><br/><br/></td> </tr> <tr> <td style="font-family:Times New Roman, sans-serif; font-size:16px">' + str(i[1]['summary']) + '.</td> </tr> <tr> <td> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="font-family:Times New Roman, sans-serif;" width="260" valign="top">' + str(i[1]['keywords']) + '</td> <td style="font-size: 0; line-height: 0;" width="20">&nbsp;</td> <td width="260" valign="top"></td> </tr> </table> </td> </tr> </table><br/><br/><hr align="center" width="80%" style="color:#aec7e8;border-color: #aec7e8;border:2px solid;"></td> </tr>'
 
 # else:
 # 	for i in list:
@@ -36,6 +36,6 @@ for i in list:
 
 # <!-- Footer -->
 content = content + '<tr> <td bgcolor="#aec7e8" style="padding: 30px 30px 30px 30px;"> <table border="0" cellpadding="0" cellspacing="0" width="100%"> <tr> <td style="font-family:Times New Roman, sans-serif;" width="75%"> &copy; Graphite, 2016 <br/></td> <td> <td align="right"> <table border="0" cellpadding="0" cellspacing="0"> <tr> <td></td> <td style="font-size: 0; line-height: 0;" width="20">&nbsp;</td> <td></td> </tr> </table> </td> </td> </tr> </table> </td> </tr> </table> </body> </html> '
-print 'done'
+print('done')
 
 send_mail('NewsButler general brief - ' + date.today().strftime("%a %d/%m %y"),'Sorry, this service works only for html-compatible mail clients','grphtcontact@gmail.com',[email],connection=None, html_message=content)

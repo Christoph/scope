@@ -12,8 +12,8 @@ class Blacklist(object):
 			if self._title_check(article.title) and self._text_check(article.text) and self._url_check(article.url):
 				out.append(article)
 			else:
-				print "Filtered by blacklists"
-				print article.title
+				print("Filtered by blacklists")
+				print(article.title)
 		return out
 
 	def _title_check(self, title):

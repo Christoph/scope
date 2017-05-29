@@ -7,6 +7,7 @@ from django.db.models import Avg, Count, Case, When
 from math import *
 from email.header import decode_header
 from django.core.urlresolvers import reverse
+import base64
 
 
 def get_query(request, customer_key):
@@ -365,7 +366,6 @@ class ClustersWidget(widgets.ItemList):
 	def get_central_title(self, obj):
 		return obj.center.article.title
 	get_central_title.short_description = "Central article"
-
 	def get_central_source(self, obj):
 		return obj.center.article.source.name
 	get_central_source.short_description = "Source of central article"
@@ -379,9 +379,17 @@ class ClustersWidget(widgets.ItemList):
 			'article__title', 'article__source__name', 'newsletter__name')
 		s = ''
 		for item in info:
+			decoded_name = decode_header(item['newsletter__name'])[0][0]
+			if isinstance(decoded_name, bytes):
+				newsletter_name = decoded_name.decode('utf-8')
+			elif isinstance(decoded_name, str):
+				newsletter_name = decoded_name
+			else: 
+				newsletter_name = "N/A"
+			#base64.b64decode(decode_header(item['newsletter__name'])[0][0])
 				# s.append([item['article__title'],item['article__source__name']])
 			s = s + '<strong>Title</strong>: ' + item['article__title'] + ', <strong>Source</strong>: ' + item[
-				'article__source__name'] + ', <strong>Newsletter</strong>: ' + decode_header(item['newsletter__name'])[0][0] + '<br/>'
+			'article__source__name'] + ', <strong>Newsletter</strong>: ' + newsletter_name + '<br/>'
 		return s
 	get_cluster_articles.allow_tags = True
 	get_cluster_articles.short_description = "Cluster Articles"
