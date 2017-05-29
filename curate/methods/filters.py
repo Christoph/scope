@@ -39,7 +39,7 @@ def filter_bad_articles(curate_customer, incoming_articles):
     outgoing_articles = []
     for a in incoming_articles:
         ma = min(len(a.title), 30)
-        if not any([[(a.title[0:ma] in bad.article.title) or (a.url == bad.article.url)] for bad in bad_articles]):
+        if not any([(a.title[0:ma] in bad.article.title) or (a.url == bad.article.url)for bad in bad_articles]):
             outgoing_articles.append(a)
         else: 
             print("Filtered because marked as bad article")
