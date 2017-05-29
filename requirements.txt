@@ -22,7 +22,6 @@ Django==1.10rc1
 django-admin-tools==0.7.2
 django-bower==5.2.0
 django-celery==3.2.1
-django-controlcenter==0.2.3
 django-fields==0.3.0
 django-mathfilters==0.4.0
 django-pkgconf==0.2.1
