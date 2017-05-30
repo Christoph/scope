@@ -1,5 +1,5 @@
 from curate.models import Curate_Customer, Curate_Query, Article_Curate_Query
-from scope.models import Customer, Agent, AgentImap
+from scope.models import Customer, AgentImap
 import configparser
 import csv
 from django.utils.encoding import smart_str
@@ -19,23 +19,17 @@ def create_customer_from_config_file(customer_key):
 	language = config.get('general', 'language')
 
 	agentimap, created = AgentImap.objects.get_or_create(user=user, pwd=pwd, imap=imap, mailbox=mailbox, interval=interval)
-	if created:
-		agentimap.save()
 
 	# Create Customer
-	customer, created = Customer.objects.get_or_create(name=customer_key,  customer_key=customer_key)
-	if created:
-		customer.save()
+	name = config.get('meta', 'name')
+	email = config.get('meta', 'email')
+	customer, created = Customer.objects.get_or_create(name=name,  customer_key=customer_key, email=email)
 
 	# Create Curate Customer
 	curate_customer, created = Curate_Customer.objects.get_or_create(customer=customer, expires=date.today())
-	if created:
-		curate_customer.save()
 
 	# Create curate_query
 	query, created = Curate_Query.objects.get_or_create(curate_customer=curate_customer)
-	if created:
-		query.save()
 
 	return customer, curate_customer, query, agentimap, language
 
