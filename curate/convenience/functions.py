@@ -1,5 +1,5 @@
 from curate.models import Curate_Customer, Curate_Query, Article_Curate_Query
-from scope.models import Customer, AgentImap
+from scope.models import Customer, AgentImap, Agent
 import configparser
 import csv
 from django.utils.encoding import smart_str
@@ -7,31 +7,45 @@ from datetime import date
 
 
 def create_customer_from_config_file(customer_key):
-	# Create imap agent
-	config = configparser.RawConfigParser()
+    # Create imap agent
+    config = configparser.RawConfigParser()
 
-	config.read('curate/customers/' + customer_key + "/" + customer_key + '.cfg')
-	user = config.get('imap', 'user')
-	pwd = config.get('imap', 'pwd')
-	imap = config.get('imap', 'imap')
-	mailbox = config.get('imap', 'mailbox')
-	interval = config.get('imap', 'interval')
-	language = config.get('general', 'language')
+    config.read('curate/customers/' + customer_key +
+                "/" + customer_key + '.cfg')
+    user = config.get('imap', 'user')
+    pwd = config.get('imap', 'pwd')
+    imap = config.get('imap', 'imap')
+    mailbox = config.get('imap', 'mailbox')
+    interval = config.get('imap', 'interval')
+    language = config.get('general', 'language')
 
-	agentimap, created = AgentImap.objects.get_or_create(user=user, pwd=pwd, imap=imap, mailbox=mailbox, interval=interval)
+    agentimap, created = AgentImap.objects.get_or_create(
+        user=user, pwd=pwd, imap=imap, mailbox=mailbox, interval=interval)
 
-	# Create Customer
-	name = config.get('meta', 'name')
-	email = config.get('meta', 'email')
-	customer, created = Customer.objects.get_or_create(name=name,  customer_key=customer_key, email=email)
+    # Create Customer
+    name = config.get('meta', 'name')
+    email = config.get('meta', 'email')
+    customer, created = Customer.objects.get_or_create(
+        name=name, customer_key=customer_key, email=email)
 
-	# Create Curate Customer
-	curate_customer, created = Curate_Customer.objects.get_or_create(customer=customer, expires=date.today())
+    # Create Curate Customer
+    curate_customer, created_customer = Curate_Customer.objects.get_or_create(
+        customer=customer, expires=date.today())
 
-	# Create curate_query
-	query, created = Curate_Query.objects.get_or_create(curate_customer=curate_customer)
+    # Create curate_query
+    query, created = Curate_Query.objects.get_or_create(
+        curate_customer=curate_customer)
 
-	return customer, curate_customer, query, agentimap, language
+    # Create Source for the Curate_Customer
+    agent = Agent(
+        product_customer_object=curate_customer,
+        agent_object=agentimap
+    )
+
+    if created_customer:
+    	agent.save()
+
+    return customer, curate_customer, query, agentimap, language
 
 
 def retrieve_objects(customer_key, range=None):
