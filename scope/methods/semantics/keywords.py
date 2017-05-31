@@ -4,14 +4,14 @@ from nltk.corpus import stopwords
 from scope.methods.semantics import stopwords as stopw
 
 def keywords_from_articles(list, lang):
-	if lang == "eng":
+	if lang == "en":
 		stop_words = stopw.EN
-	elif lang == "ger":
+	elif lang == "de":
 		stop_words = stopwords.words('german')
 
 	punc = re.compile( '[%s]' % re.escape( string.punctuation ) )
 	keywords = []
-	for item in list:	
+	for item in list:
 		all_words = []
 		for word in punc.sub('',).split(" "):
 			if word not in stop_words:
