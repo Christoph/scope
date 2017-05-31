@@ -71,7 +71,7 @@ class Curate(object):
     def _semantic_analysis(self, db_articles):
         if self.semantic_model == "grammar_svd":
             data_model = document_embedding.Embedding(
-                self.language, "grammar_svd", db_articles)
+                self.language, self.nlp, "grammar_svd", db_articles)
 
             vecs = data_model.get_embedding_vectors()
             sim = data_model.get_similarity_matrix()

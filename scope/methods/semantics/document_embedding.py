@@ -12,7 +12,7 @@ from scope.methods.semantics import stopwords as stopw
 class Embedding():
     """Create word embeddings."""
 
-    def __init__(self, lang, model, articles):
+    def __init__(self, lang, nlp, model, articles):
         '''
             lang: Spacy language string (en, de, ...)
         '''
@@ -20,6 +20,7 @@ class Embedding():
         self.lang = lang
         self.vecs = []
         self.sim = []
+        self.nlp = nlp
 
         if lang == "en":
             self.stopwords = stopw.EN
@@ -55,10 +56,8 @@ class Embedding():
             articles: list of article objects
         '''
 
-        nlp = spacy.load(self.lang)
-
         # Convert text to spacy object
-        docs = [nlp(a.body) for a in articles]
+        docs = [self.nlp(a.body) for a in articles]
 
         clean = []
 
