@@ -1,4 +1,5 @@
 import configparser
+import spacy
 
 from scope.methods.semantics import document_embedding
 from scope.methods.graphs import clustering_methods
@@ -28,6 +29,7 @@ class Curate(object):
             customer=self.customer)
         self.language = self.config.get(
             'general', 'language')
+        self.nlp = spacy.load(self.language)
 
     def _create_query_instance(self, db=False):
         if db is False:
@@ -68,12 +70,8 @@ class Curate(object):
 
     def _semantic_analysis(self, db_articles):
         if self.semantic_model == "grammar_svd":
-            language_dict = {
-                'ger': 'de',
-                'eng': 'en',
-            }
             data_model = document_embedding.Embedding(
-                language_dict[self.language], "grammar_svd", db_articles)
+                self.language, "grammar_svd", db_articles)
 
             vecs = data_model.get_embedding_vectors()
             sim = data_model.get_similarity_matrix()
