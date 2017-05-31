@@ -2,8 +2,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
-from nltk.corpus import stopwords
-from scope.methods.semantics import stopwords as stopw
+from scope.methods.semantics import preprocess
 
 
 class Embedding():
@@ -18,22 +17,16 @@ class Embedding():
         self.vecs = []
         self.sim = []
         self.nlp = nlp
-
-        if lang == "en":
-            self.stopwords = stopw.EN
-            self.tags = ["NN", "NNS", "NNP", "NNPS"]
-        elif lang == "de":
-            self.stopwords = stopwords.words('german')
-            self.tags = ["NE", "NN", "NNE"]
-        else:
-            raise Exception("Language not known.")
+        self.preprocessor = preprocess.PreProcessing(
+            lang=self.lang,
+            nlp=self.nlp)
 
         if model == "grammar_svd":
-            self._create_grammer_svd_embeddings(articles)
+            self._create_svd_embeddings(articles)
         else:
             raise Exception("Model not known.")
 
-    def _create_grammer_svd_embeddings(self, articles):
+    def _create_svd_embeddings(self, articles):
         '''
             Creates an SVD embedding.
 
@@ -42,33 +35,9 @@ class Embedding():
             return: Embedding vectors
         '''
 
-        clean_text = self._grammar_based_preprocessing(articles)
+        clean_text = self.preprocessor.noun_based_preprocessing(articles)
 
         self._create_svd_embedding(clean_text)
-
-    def _grammar_based_preprocessing(self, articles):
-        '''
-            Grammar based text extraction using spacy.
-
-            articles: list of article objects
-        '''
-
-        # Convert text to spacy object
-        docs = [self.nlp(a.body) for a in articles]
-
-        clean = []
-
-        for doc in docs:
-            temp = []
-
-            for sent in doc.sents:
-                for t in sent:
-                    if t.tag_ in self.tags:
-                        temp.append(t.lemma_)
-
-            clean.append(" ".join(temp))
-
-        return clean
 
     def _create_svd_embedding(self, clean_text):
         vectorizer = TfidfVectorizer(
