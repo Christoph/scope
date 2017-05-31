@@ -1,60 +1,42 @@
-import re
-import nltk
-import string
+from nltk.corpus import stopwords
+from scope.methods.semantics import stopwords as stopw
 
 
 class PreProcessing():
     """docstring for PreProcessing."""
 
-    def __init__(self, lang):
-        if(lang == "german"):
-            self.stop_words = nltk.corpus.stopwords.words('german')
-            self.stemmer = nltk.stem.snowball.GermanStemmer()
+    def __init__(self, lang, nlp):
+        self.nlp = nlp
 
-        if(lang == "english"):
-            self.stop_words = nltk.corpus.stopwords.words('english')
-            self.stemmer = nltk.stem.porter.PorterStemmer()
+        if lang == "en":
+            self.stopwords = stopw.EN
+            self.noun_tags = ["NN", "NNS", "NNP", "NNPS"]
+        elif lang == "de":
+            self.stopwords = stopwords.words('german')
+            self.noun_tags = ["NE", "NN", "NNE"]
+        else:
+            raise Exception("Language not known.")
 
-        self.punc = re.compile('[%s]' % re.escape(string.punctuation))
+    def noun_based_preprocessing(self, articles):
+        '''
+            Grammar based text extraction using spacy.
 
-    def stemm(self, docs):
-        # Remove punctuation, lower case everything and tokenize the docs
-        term_vec = self._tokenize(docs)
+            articles: list of article objects
+        '''
 
-        # Remove stop words from term vectors
-        term_vec = self._removeStopwords(term_vec)
+        # Convert text to spacy object
+        docs = [self.nlp(a.body) for a in articles]
 
-        # Stemming of all words using the porter stemmer
-        term_vec = self._stemming(term_vec)
+        clean = []
 
-        return term_vec
+        for doc in docs:
+            temp = []
 
-    def _tokenize(self, doc):
-        term_vec = []
+            for sent in doc.sents:
+                for t in sent:
+                    if t.tag_ in self.noun_tags:
+                        temp.append(t.lemma_)
 
-        for d in doc:
-            d = d.lower()
-            # This might join two words if there is no additional space
-            # TODO: Possible problem
-            d = self.punc.sub('', d)
-            term_vec.append(nltk.word_tokenize(d))
+            clean.append(" ".join(temp))
 
-        return term_vec
-
-    def _removeStopwords(self, term_vec):
-        for i in range(0, len(term_vec)):
-            term_list = []
-
-            for term in term_vec[i]:
-                if term not in self.stop_words:
-                    term_list.append(term)
-
-            term_vec[i] = term_list
-
-        return term_vec
-
-    def _stemming(self, term_vec):
-        for i in range(0, len(term_vec)):
-            for j in range(0, len(term_vec[i])):
-                term_vec[i][j] = self.stemmer.stem(term_vec[i][j])
-        return term_vec
+        return clean
