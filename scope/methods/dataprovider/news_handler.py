@@ -54,25 +54,16 @@ class NewsSourceHandler(object):
 
     #     return out
 
-    def get_articles_from_list(self, article_dict, language):
+    def get_articles_from_list(self, article_dict):
         ''' Download and parse articles from list.'''
         out = []
-        newspaper_lang_dict = {
-            'ger': 'de',
-            'eng': 'en',
-        }
 
         # Create newspaper article list
         for articles, agent in article_dict:
             article_list = []
-            for i in range(0,len(articles)):
+            for i in range(0, len(articles)):
                 try:
-                    if language == "mix":
-                        article_list.append(ScopeNewspaperArticle(articles[i]))
-                    else:
-                        article_list.append(ScopeNewspaperArticle(
-                            articles[i],
-                            language=newspaper_lang_dict[language]))
+                    article_list.append(ScopeNewspaperArticle(articles[i]))
                 except:
                     print("Error while  converting " + articles[i])
                     continue
