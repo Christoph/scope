@@ -52,6 +52,15 @@ class Provider(object):
     def _save_articles(self, articles, curate_query, agent):
         db_articles = []
 
+        print("Filter duplicates before _save_articles")
+        print("Initial size")
+        print(len(articles))
+
+        articles = list(set(articles))
+
+        print("Filtered size")
+        print(len(articles))
+
         # Save the articles into the database
         for a in articles:
             try:
@@ -79,8 +88,8 @@ class Provider(object):
                 # This is another instance to try and get rid of overcounting
                 # articles from the same agent/newsletter. Note that this does
                 # not have the problem of list(set(db_articles)) below
-                if art_cur_created:
-                    db_articles.append(art)
+                # if art_cur_created:
+                db_articles.append(art)
 
             # one could also call list(set(db_articles)) here but this would
             # mean that we do not take into account the fact that the same
