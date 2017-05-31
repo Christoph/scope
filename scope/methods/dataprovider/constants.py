@@ -38,11 +38,15 @@ TITLE_BLACKLIST = ["Bei Twitter anmelden",
                    "Inside is creating The Inside Daily Brief",
                    "diesen Tweet zu Deiner Webseite hinzu, indem Du den untenstehenden Code",
                    "Subscribe to read",
+                   "Newsletter-Abmeldung",
+                   "Newsletterverwaltung",
                    "Job Application Form",
                    "This Week In Startups",
                    "Fuego  Nieman Journalism Lab",
                    "Smashing Email Newsletter",
-                   "Free PDF Employment Download"]
+                   "Free PDF Employment Download",
+                   "Impressum",
+                   "Info & Impressum"]
 
 URL_HOSTNAME_BLACKLIST = ["www.w3.org",
                           "www.facebook.com",
