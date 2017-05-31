@@ -1,63 +1,46 @@
 import django
 django.setup()
 
-from tldextract import tldextract
+import spacy
 
-from scope.models import AgentImap, Agent, Source, Article
 from scope.methods.semantics import document_embedding
 from scope.methods.semantics import summarizer
-from scope.methods.dataprovider import imap_handler
+from scope.methods.dataprovider import provider
 
 from scope.methods.graphs import clustering_methods
 from curate.convenience import functions as helper
 
 
 # initializations
-customer_key = "commerzbank_germany"
+customer_key = "test_customer"
 
 max_clusters = 24
 min_clusters = 6
 n_centers = 5
 summary_max_len = 100
 
-language_dict = {
-    'ger': 'de',
-    'eng': 'en',
-}
 
 # GET DATA
 print("GET DATA")
 
 customer, curate_customer, query, agentimap, language = helper.create_customer_from_config_file(customer_key)
 
+# agent = Agent(
+#     product_customer_object=curate_customer,
+#     agent_object=agentimap
+# )
+# agent.save()
+
+print("Loading Spacy")
+nlp = spacy.load(language)
+print("Spacy Loaded")
+
 # From mail
-db_articles = []
-mails = []
+fetcher = provider.Provider(nlp)
 
 # Get all sources connected to the curate_customer
-connector = Agent.objects.filter(
-    product_customer_id=curate_customer.id)
-
-for con in connector:
-    print("============= New Agent ===============")
-    if isinstance(con.agent_object, AgentImap):
-        print("imap")
-        imap = imap_handler.ImapHandler(con.agent_object, language)
-
-        mails = imap.get_data_new()
-
-for a in mails:
-    source, created = Source.objects.get_or_create(
-        url=a['source'],
-        defaults={"name": tldextract.extract(a['source']).domain.title()})
-
-    art, created = Article.objects.get_or_create(
-        title=a['title'],
-        url=a['url'],
-        defaults={"source": source, "body": a['body'],
-                  "images": a['images'], "pubdate": a['pubdate']})
-
-    db_articles.append(art)
+db_articles = fetcher.collect_from_agents(
+    curate_customer, query, language)
 
 filtered_articles = db_articles
 
@@ -67,7 +50,7 @@ print((len(filtered_articles)))
 print("SEMANTIC ANALYSIS")
 
 # Create embedding model
-data_model = document_embedding.Embedding(language_dict[language], "grammar_svd", filtered_articles)
+data_model = document_embedding.Embedding(language, nlp, "grammar_svd", filtered_articles)
 
 vecs = data_model.get_embedding_vectors()
 sim = data_model.get_similarity_matrix()
@@ -81,7 +64,7 @@ central_articles = clustering_methods.get_central_articles(cluster_articles, n_c
 
 print("KEYWORDS & SUMMARY/REPRESENTATIVE")
 
-representative_model = summarizer.Summarizer(language_dict[language])
+representative_model = summarizer.Summarizer(language, nlp)
 
 words = representative_model.get_keywords(cluster_articles)
 rep = representative_model.text_rank(cluster_articles, max_size=summary_max_len)
