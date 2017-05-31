@@ -3,6 +3,8 @@ django.setup()
 
 import spacy
 
+from scope.models import Agent
+
 from scope.methods.semantics import document_embedding
 from scope.methods.semantics import summarizer
 from scope.methods.dataprovider import provider
