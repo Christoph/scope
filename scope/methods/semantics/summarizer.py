@@ -8,12 +8,11 @@ import networkx as nx
 class Summarizer():
     """docstring for Summarizer."""
 
-    def __init__(self, lang, nlp):
+    def __init__(self, nlp):
         '''
-            lang: Spacy language string (en, de, ...)
+            nlp: Spacy instance
         '''
 
-        self.lang = lang
         self.nlp = nlp
 
     def text_rank(self, cluster_articles, max_size):
