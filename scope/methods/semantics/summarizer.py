@@ -1,5 +1,3 @@
-import spacy
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy import stats
@@ -10,13 +8,13 @@ import networkx as nx
 class Summarizer():
     """docstring for Summarizer."""
 
-    def __init__(self, lang):
+    def __init__(self, lang, nlp):
         '''
             lang: Spacy language string (en, de, ...)
         '''
 
         self.lang = lang
-        self.nlp = spacy.load(self.lang)
+        self.nlp = nlp
 
     def text_rank(self, cluster_articles, max_size):
         summaries = []
