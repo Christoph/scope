@@ -42,7 +42,7 @@ class PreProcessing():
         return clean
 
     def prepare_sentences(self, cluster):
-        docs = [self.nlp(a.body) for a in cluster[1]]
+        docs = [self.nlp(a.body) for a in cluster]
 
         sents = []
         original_sents = []
