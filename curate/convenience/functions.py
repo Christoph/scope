@@ -33,8 +33,10 @@ def create_customer_from_config_file(customer_key):
         customer=customer, expires=date.today())
 
     # Create curate_query
-    query, created = Curate_Query.objects.get_or_create(
+    query = Curate_Query(
         curate_customer=curate_customer)
+
+    query.save()
 
     # Create Source for the Curate_Customer
     # agent = Agent(
