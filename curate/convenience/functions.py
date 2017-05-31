@@ -37,13 +37,10 @@ def create_customer_from_config_file(customer_key):
         curate_customer=curate_customer)
 
     # Create Source for the Curate_Customer
-    agent = Agent(
-        product_customer_object=curate_customer,
-        agent_object=agentimap
-    )
-
-    if created_customer:
-    	agent.save()
+    # agent = Agent(
+    #     product_customer_object=curate_customer,
+    #     agent_object=agentimap
+    # )
 
     return customer, curate_customer, query, agentimap, language
 
