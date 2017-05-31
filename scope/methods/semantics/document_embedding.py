@@ -40,8 +40,7 @@ class Embedding():
         self._create_svd_embedding(clean_text)
 
     def _create_svd_embedding(self, clean_text):
-        vectorizer = TfidfVectorizer(
-            sublinear_tf=True, stop_words=self.stopwords, strip_accents="unicode")
+        vectorizer = TfidfVectorizer(sublinear_tf=True)
         tfidf = vectorizer.fit_transform(clean_text)
 
         # similarities
