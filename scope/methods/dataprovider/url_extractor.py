@@ -40,11 +40,11 @@ class Extractor(object):
         blacklisted = []
         bad_urls = []
 
-        urls = re.findall(
-            (r'http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[:/?#\[\]@+\-\._~=]|[!$&\'()*+,;=]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'),
-            content)
+        # urls = re.findall(
+        #     (r'http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[:/?#\[\]@+\-\._~=]|[!$&\'()*+,;=]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'),
+        #     content)
 
-        # urls = []
+        urls = []
         text = self.nlp(content)
 
         for t in text:
