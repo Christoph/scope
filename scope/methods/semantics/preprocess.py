@@ -40,3 +40,75 @@ class PreProcessing():
             clean.append(" ".join(temp))
 
         return clean
+
+    def prepare_sentences(self, cluster):
+        docs = [self.nlp(a.body) for a in cluster[1]]
+
+        sents = []
+        original_sents = []
+        for doc in docs:
+            for sent in doc.sents:
+                temp = []
+
+                for t in sent:
+                    if t.tag_.find("NN") >= 0:
+                        temp.append(t.lemma_)
+
+                sents.append(" ".join(temp))
+                original_sents.append(sent.text)
+
+        return sents, original_sents
+
+    def keyword_preprocessing(self, articles):
+        '''
+            Grammar based text extraction from titles.
+
+            articles: List of article objects
+        '''
+        favored_entities = ["PERSON", "FACILITY", "ORG", "GPE"]
+
+        # Convert text to spacy object
+        docs = [self.nlp(a.title) for a in articles]
+
+        chunks = []
+
+        for doc in docs:
+            found = False
+
+            '''
+            Iterate over all noun chunks
+            Check if there are favored noun entities
+            Check if the chunk contains any noun entities
+            Check for any entity
+            Check for any noun
+            '''
+
+            for c in doc.noun_chunks:
+                for t in c.subtree:
+                    if t.ent_type_ in favored_entities and t.tag_.find("NN") >= 0:
+                        chunks.append(c.text)
+                        found = True
+                        break
+
+            if not found:
+                for c in doc.noun_chunks:
+                    for t in c.subtree:
+                        if t.ent_type_ and t.tag_.find("NN") >= 0:
+                            chunks.append(c.text)
+                            found = True
+                            break
+
+            # Search for all entities
+            if not found:
+                for c in doc.ents:
+                    chunks.append(c.text)
+                    found = True
+
+            # Last resort - get all nouns
+            if not found:
+                for c in doc.noun_chunks:
+                    for t in c.subtree:
+                        if t.tag_.find("NN") >= 0:
+                            chunks.append(c.text)
+
+        return chunks

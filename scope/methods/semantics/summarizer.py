@@ -2,28 +2,32 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy import stats
 
+from scope.methods.semantics import preprocess
+
 import networkx as nx
 
 
 class Summarizer():
     """docstring for Summarizer."""
 
-    def __init__(self, nlp):
+    def __init__(self, lang, nlp):
         '''
             nlp: Spacy instance
         '''
 
         self.nlp = nlp
+        self.preprocessor = preprocess.PreProcessing(
+            lang=lang,
+            nlp=self.nlp)
 
     def text_rank(self, cluster_articles, max_size):
         summaries = []
 
         for clust in cluster_articles:
-            vectorizer = TfidfVectorizer(sublinear_tf=True, strip_accents="unicode")
-            docs = [self.nlp(a.body) for a in clust[1]]
+            vectorizer = TfidfVectorizer(sublinear_tf=True)
             summary = ""
 
-            sents, original_sents = self._prepare_sentences(docs)
+            sents, original_sents = self.preprocessor.prepare_sentences(clust[1])
 
             # Normalize
             normalized_matrix = vectorizer.fit_transform(sents)
@@ -83,69 +87,11 @@ class Summarizer():
     def _jaccard_dist(self, a, b):
         return (len(a.union(b)) - len(a.intersection(b)))/len(a.union(b))
 
-    def _prepare_sentences(self, docs):
-        sents = []
-        original_sents = []
-        for doc in docs:
-            for sent in doc.sents:
-                temp = []
-
-                for t in sent:
-                    if t.tag_.find("NN") >= 0:
-                        temp.append(t.lemma_)
-
-                sents.append(" ".join(temp))
-                original_sents.append(sent.text)
-
-        return sents, original_sents
-
-    def _keyword_preprocessing(self, articles):
-        '''
-            Grammar based text extraction from titles.
-
-            articles: List of article objects
-        '''
-
-        # Convert text to spacy object
-        docs = [self.nlp(a.title) for a in articles]
-
-        chunks = []
-
-        for doc in docs:
-            found = False
-
-            '''
-            Iterate over all noun chunks
-            Check if the chunk contains an entity which is a noun
-            If yes add it and skip further extraction steps
-            '''
-            for c in doc.noun_chunks:
-                for t in c.subtree:
-                    if t.ent_type_ and t.tag_.find("NN") >= 0:
-                        chunks.append(c.text)
-                        found = True
-                        break
-
-            # Search for all entities
-            if not found:
-                for c in doc.ents:
-                    chunks.append(c.text)
-                    found = True
-
-            # Last resort - get all nouns
-            if not found:
-                for c in doc.noun_chunks:
-                    for t in c.subtree:
-                        if t.tag_.find("NN") >= 0:
-                            chunks.append(c.text)
-
-        return chunks
-
     def get_keywords(self, clusters):
         keywords = []
 
         for clust in clusters:
-            chunks = self._keyword_preprocessing(clust[1])
+            chunks = self.preprocessor.keyword_preprocessing(clust[1])
 
             if chunks:
                 keywords.append(stats.mode(chunks).mode[0])
