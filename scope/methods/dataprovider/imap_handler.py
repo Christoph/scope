@@ -47,7 +47,7 @@ class ImapHandler(object):
         url_dict = self._merge_mails_from_same_newsletter(url_dict)
 
         downloaded_article_dict = self.news.get_articles_from_list(
-            url_dict, self.language)
+            url_dict)
 
         # in case the same urls pointed to the same article (in sense of its
         # title)
@@ -57,13 +57,9 @@ class ImapHandler(object):
         out = self.news.produce_output_dict(blacklist_filtered)
 
         language_filtered = []
-        lang_dict = {
-            'ger': 'de',
-            'eng': 'en',
-        }
 
         for a in out:
-            if detect(a['body']) == lang_dict[self.language]:
+            if detect(a['body']) == self.language:
                 language_filtered.append(a)
             else:
                 print("Wrong Language")
