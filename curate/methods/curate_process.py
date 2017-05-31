@@ -12,7 +12,7 @@ from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, C
 
 
 class Curate(object):
-    """docstring for Graph."""
+    """Curate process class."""
 
     def __init__(self, customer_key):
         self.config = configparser.RawConfigParser()
