@@ -49,14 +49,19 @@ class Provider(object):
 
         return db_articles
 
-    def _save_articles(self, articles, curate_query, agent):
+    def _save_articles(self, raw_articles, curate_query, agent):
         db_articles = []
 
-        print("Filter duplicates before _save_articles")
+        print("Filter duplicates before _save_articles based on the title")
         print("Initial size")
-        print(len(articles))
+        print(len(raw_articles))
 
-        articles = list(set(articles))
+        articles = []
+        titles = []
+        for a in raw_articles:
+            if a['title'] not in titles:
+                titles.append(a['title'])
+                articles.append(a)
 
         print("Filtered size")
         print(len(articles))
