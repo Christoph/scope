@@ -45,33 +45,23 @@ class Extractor(object):
             content)
 
         # urls = []
-        # text = self.nlp(content)
-        #
-        # for t in text:
-        #     if t.like_url and not t.like_email:
-        #         urls.append(t.text)
+        text = self.nlp(content)
+
+        for t in text:
+            if t.like_url and not t.like_email:
+                urls.append(t.text)
 
         # Get real article urls
         for url in list(set(urls)):
             try:
                 if url not in bad_urls:
-                    # # Remove chars from regex
-                    # url = url.rstrip(')')
-                    # url = url.rstrip('>')
-                    #
-                    # # Remove bad characters
-                    # url = url.replace("http//", "")
-
                     # Check url
                     res = self.url_opener.open(url)
                     finalurl = res.geturl()
                     check_url = urlparse(finalurl)
-                else:
-                    print("bad url")
 
             # TODO: Shoudnt catch all exceptions
             except:
-                print("error while checking url: " + url)
                 bad_urls.append(url)
                 continue
 
@@ -81,6 +71,9 @@ class Extractor(object):
                 urls_list.append(finalurl)
             else:
                 blacklisted.append(finalurl)
+
+        # Show all bad urls
+        print(bad_urls)
 
         return urls_list
 
