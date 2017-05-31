@@ -31,11 +31,15 @@ class ImapHandler(object):
         items = self._connect()
         url_dict = []
         # Get the whole mail content
+
         for emailid in items:
             url_dict.append(self._fetch_urls_from_mail(emailid))
             # try:
             # fetching the mail, "`(RFC822)`" means "get the whole stuff",
             # but you can ask for headers only, etc
+
+        print("Total amount of good urls")
+        print(sum([len(a[0]) for a in url_dict]))
 
         # at this point it may be that we had several mails from the same
         # newsletter. In this step we merge the corresponding items so that in
@@ -44,7 +48,9 @@ class ImapHandler(object):
 
         downloaded_article_dict = self.news.get_articles_from_list(
             url_dict, self.language)
-        # in case the same urls pointed to the same article (in sense of its title)
+
+        # in case the same urls pointed to the same article (in sense of its
+        # title)
         filtered_article_dict = remove_duplicate_articles_from_same_newsletter(
             downloaded_article_dict)
         blacklist_filtered = blacklist_filter(filtered_article_dict)
@@ -63,6 +69,9 @@ class ImapHandler(object):
                 print("Wrong Language")
                 print(a["title"])
 
+        print("Good articles")
+        print(len(language_filtered))
+
         return language_filtered
 
     def _connect(self):
@@ -70,7 +79,7 @@ class ImapHandler(object):
         self.mailbox = imaplib.IMAP4_SSL(self.mail_link)
 
         self.mailbox.login(self.mail_user, self.mail_pwd)
-        self.mailbox.select("\""+self.mail_box+"\"")
+        self.mailbox.select("\"" + self.mail_box + "\"")
 
         # Get all mails from the last interval hours
         if date.today().strftime('%w') == "1":
@@ -86,44 +95,49 @@ class ImapHandler(object):
         return items
 
     def _fetch_urls_from_mail(self, emailid):
-        resp, data = self.mailbox.fetch(emailid, "(RFC822)")
-
-        email_body = data[0][1]  # getting the mail content
-
-        # Convert to mail object
-        mail = email.message_from_string(email_body.decode("utf-8"))
-        # All mail text/plain contents
-        contents = self._get_content(mail)
-
         out_urls = []
-        # Add urls from each content
-        for content in contents:
-            all_urls = self.url_extractor.get_urls_from_string(content)
-            # remove exact duplicate from urls
-            out_urls.extend(all_urls)
+        newsletter = "Unknown"
 
-        newsletter, created = self._extract_newsletter(mail)
+        try:
+            resp, data = self.mailbox.fetch(emailid, "(RFC822)")
+
+            email_body = data[0][1]  # getting the mail content
+
+            # Convert to mail object
+            mail = email.message_from_string(email_body.decode("utf-8"))
+            # All mail text/plain contents
+            contents = self._get_content(mail)
+
+
+            # Add urls from each content
+            for content in contents:
+                all_urls = self.url_extractor.get_urls_from_string(content)
+                # remove exact duplicate from urls
+                out_urls.extend(all_urls)
+
+            newsletter, created = self._extract_newsletter(mail)
+        except imaplib.socket.error:
+            print("Socket Error")
 
         return [list(set(out_urls)), newsletter]
 
     def _merge_mails_from_same_newsletter(self, url_dict):
-    	newsletters = [newsletter for urls, newsletter in url_dict]
-    	#single newsletters
-    	newsletters = list(set(newsletters))
-    	new_url_dict = []
-    	for newsletter in newsletters:
-    		interim = []
-    		for urls, nl in url_dict:
-    			if newsletter == nl:
-    				interim.extend(urls)
+        newsletters = [newsletter for urls, newsletter in url_dict]
+        # single newsletters
+        newsletters = list(set(newsletters))
+        new_url_dict = []
+        for newsletter in newsletters:
+            interim = []
+            for urls, nl in url_dict:
+                if newsletter == nl:
+                    interim.extend(urls)
 
-    		new_url_dict.append([list(set(interim)), newsletter])
+            new_url_dict.append([list(set(interim)), newsletter])
 
-    	return new_url_dict
-
+        return new_url_dict
 
     def _extract_newsletter(self, mail):
-       	# extract information about newsletter and create db-object
+        # extract information about newsletter and create db-object
         try:
             sender = getaddresses(mail.get_all('from', []))[0]
             newsletter_mail = sender[1]
@@ -136,7 +150,6 @@ class ImapHandler(object):
         newsletter, created = Newsletter.objects.get_or_create(
             email=newsletter_mail, defaults={"name": newsletter_name.title()})
         return newsletter, created
-
 
     def _get_content(self, mail):
         contents = []
