@@ -15,6 +15,9 @@ from . import imap_handler, er_handler, news_handler
 class Provider(object):
     """docstring for crawler."""
 
+    def __init__(self, nlp):
+        self.nlp = nlp
+
     def collect_from_agents(self, curate_customer, curate_query, language):
         db_articles = []
 
@@ -26,7 +29,7 @@ class Provider(object):
             print("============= New Agent ===============")
             if isinstance(con.agent_object, AgentImap):
                 print("imap")
-                imap = imap_handler.ImapHandler(con.agent_object, language)
+                imap = imap_handler.ImapHandler(con.agent_object, language, self.nlp)
 
                 db_articles.extend(self._save_articles(
                     imap.get_data_new(), curate_query, con))

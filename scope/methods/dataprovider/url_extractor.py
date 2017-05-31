@@ -3,6 +3,7 @@ Url extraction class
 '''
 
 import re
+import spacy
 from urllib.parse import urlparse
 import urllib.request, urllib.error, urllib.parse
 from http.cookiejar import CookieJar
@@ -12,7 +13,8 @@ from scope.methods.dataprovider import constants
 class Extractor(object):
     """Helper methods for the data provider module."""
 
-    def __init__(self):
+    def __init__(self, nlp):
+        self.nlp = nlp
         self.cj = CookieJar()
         # Some pages need cookie support.
         self.url_opener = urllib.request.build_opener(
@@ -36,35 +38,41 @@ class Extractor(object):
     def get_urls_from_string(self, content):
         urls_list = []
         blacklisted = []
+        bad_urls = []
 
-        # list set to remove duplicates
-        # possible alternative
-        # http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[:/?#\[\]@+\-\._~=]|[!$&\'()*+,;=]|(?:%[0-9a-fA-F][0-9a-fA-F]))+
-        # old one
-        # r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|'
-        # '(?:%[0-9a-fA-F][0-9a-fA-F]))+')
-        urls = set(list(re.findall(
+        urls = re.findall(
             (r'http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[:/?#\[\]@+\-\._~=]|[!$&\'()*+,;=]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'),
-            content)))
+            content)
+
+        # urls = []
+        # text = self.nlp(content)
+        #
+        # for t in text:
+        #     if t.like_url and not t.like_email:
+        #         urls.append(t.text)
 
         # Get real article urls
-        for url in urls:
+        for url in list(set(urls)):
             try:
-                # Remove chars from regex
-                url = url.rstrip(')')
-                url = url.rstrip('>')
+                if url not in bad_urls:
+                    # # Remove chars from regex
+                    # url = url.rstrip(')')
+                    # url = url.rstrip('>')
+                    #
+                    # # Remove bad characters
+                    # url = url.replace("http//", "")
 
-                # Remove bad characters
-                url = url.replace("http//", "")
-
-                # Check url
-                res = self.url_opener.open(url)
-                finalurl = res.geturl()
-                check_url = urlparse(finalurl)
+                    # Check url
+                    res = self.url_opener.open(url)
+                    finalurl = res.geturl()
+                    check_url = urlparse(finalurl)
+                else:
+                    print("bad url")
 
             # TODO: Shoudnt catch all exceptions
             except:
                 print("error while checking url: " + url)
+                bad_urls.append(url)
                 continue
 
             if (check_url.path not in constants.URL_PATH_BLACKLIST and
@@ -73,11 +81,6 @@ class Extractor(object):
                 urls_list.append(finalurl)
             else:
                 blacklisted.append(finalurl)
-
-        print("good urls")
-        print(len(urls_list))
-        print("blacklisted urls")
-        print(len(blacklisted))
 
         return urls_list
 

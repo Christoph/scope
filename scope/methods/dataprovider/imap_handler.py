@@ -16,8 +16,8 @@ from scope.models import Newsletter
 class ImapHandler(object):
     """docstring for ImapHandler."""
 
-    def __init__(self, agent, language):
-        self.url_extractor = url_extractor.Extractor()
+    def __init__(self, agent, language, nlp):
+        self.url_extractor = url_extractor.Extractor(nlp)
         self.mail_user = agent.user
         self.mail_pwd = agent.pwd
         self.mail_link = agent.imap

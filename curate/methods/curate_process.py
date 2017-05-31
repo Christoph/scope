@@ -18,7 +18,6 @@ class Curate(object):
         self.config = configparser.RawConfigParser()
         self.config.read('curate/customers/' + customer_key +
                          "/" + customer_key + '.cfg')
-        self.provider = provider.Provider()
         self.semantic_model = self.config.get(
             'general', 'current_semantic_model')
         self.selection_method = self.config.get(
@@ -30,6 +29,7 @@ class Curate(object):
         self.language = self.config.get(
             'general', 'language')
         self.nlp = spacy.load(self.language)
+        self.provider = provider.Provider(self.nlp)
 
     def _create_query_instance(self, db=False):
         if db is False:
