@@ -20,6 +20,7 @@ class Provider(object):
 
     def collect_from_agents(self, curate_customer, curate_query, language):
         db_articles = []
+        newspaper_articles = []
 
         # Get all sources connected to the curate_customer
         connector = Agent.objects.filter(
@@ -31,21 +32,22 @@ class Provider(object):
                 print("imap")
                 imap = imap_handler.ImapHandler(con.agent_object, language, self.nlp)
 
-                db_articles.extend(self._save_articles(
-                    imap.get_data_new(), curate_query, con))
+                newspaper_articles.append((imap.get_data_new(), con))
             if isinstance(con.agent_object, AgentEventRegistry):
                 print("er")
                 er = er_handler.EventRegistry(con.agent_object)
 
-                db_articles.extend(self._save_articles(
-                    er.get_data(), curate_query, con))
+                newspaper_articles.append((er.get_data(), con))
             if isinstance(con.agent_object, AgentNewspaper):
                 print("newspaper")
                 news = news_handler.NewsSourceHandler()
 
-                db_articles.extend(self._save_articles(
-                    news.get_articles_from_source(
-                        con.agent_object.url, 24), curate_query, con))
+                newspaper_articles.append((news.get_articles_from_source(
+                    con.agent_object.url, 24), con))
+
+        for articles, con in newspaper_articles:
+            db_articles.extend(self._save_articles(
+                articles, curate_query, con))
 
         return db_articles
 
