@@ -65,7 +65,6 @@ class PreProcessing():
 
             articles: List of article objects
         '''
-        favored_entities = ["PERSON", "FACILITY", "ORG", "GPE"]
 
         # Convert text to spacy object
         docs = [self.nlp(a.title) for a in articles]
@@ -77,7 +76,6 @@ class PreProcessing():
 
             '''
             Iterate over all noun chunks
-            Check if there are favored noun entities
             Check if the chunk contains any noun entities
             Check for any entity
             Check for any noun
@@ -85,18 +83,10 @@ class PreProcessing():
 
             for c in doc.noun_chunks:
                 for t in c.subtree:
-                    if t.ent_type_ in favored_entities and t.tag_.find("NN") >= 0:
+                    if t.ent_type_ and t.tag_.find("NN") >= 0:
                         chunks.append(c.text)
                         found = True
                         break
-
-            if not found:
-                for c in doc.noun_chunks:
-                    for t in c.subtree:
-                        if t.ent_type_ and t.tag_.find("NN") >= 0:
-                            chunks.append(c.text)
-                            found = True
-                            break
 
             # Search for all entities
             if not found:
