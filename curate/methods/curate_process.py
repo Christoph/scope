@@ -20,8 +20,6 @@ class Curate(object):
                          "/" + customer_key + '.cfg')
         self.semantic_model = self.config.get(
             'general', 'current_semantic_model')
-        self.selection_method = self.config.get(
-            'general', 'current_selection_method')
         self.customer = Customer.objects.get(
             customer_key=customer_key)
         self.curate_customer = Curate_Customer.objects.get(
@@ -121,7 +119,7 @@ class Curate(object):
             cluster_articles = clustering_methods.get_clustering(
                 filtered_articles, sim, vecs, self.config.getint('general', 'upper_bound'), self.config.getint('general', 'lower_bound'))
 
-            selected_articles = clustering_methods.get_central_articles(cluster_articles, 5)
+            selected_articles = clustering_methods.get_central_articles(cluster_articles, self.config.getint('general', 'output_articles'))
 
             print([a.title for a in selected_articles])
 
