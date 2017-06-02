@@ -25,21 +25,25 @@ def get_clustering(articles, sim, vecs, max_clusters, min_clusters):
     len_gauss = len(np.unique(labels_gauss))
 
     if len_aff <= max_clusters and len_aff >= min_clusters:
+        print("Affinity Propagation is used.")
         selected_articles = np.array(articles)[
             center_indices_affinity]
         cluster_articles = get_clusters(
             articles, vecs, selected_articles, labels_affinity)
     elif len_hc <= max_clusters and len_hc >= min_clusters:
+        print("HC with distance measure is used.")
         selected_articles = compute_central_articles(
             articles, vecs, labels_hc)
         cluster_articles = get_clusters(
             articles, vecs, selected_articles, labels_hc)
     elif len_gauss <= max_clusters and len_gauss >= min_clusters:
+        print("Gaussian Clustering is used.")
         selected_articles = compute_central_articles(
             articles, vecs, labels_gauss)
         cluster_articles = get_clusters(
             articles, vecs, selected_articles, labels_gauss)
     else:
+        print("Fallback to HC with max cluster size is used.")
         labels_hc_clust = hc_cluster_by_maxclust(linkage_matrix, max_clusters)
         selected_articles = compute_central_articles(
             articles, vecs, labels_hc_clust)
