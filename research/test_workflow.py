@@ -12,6 +12,8 @@ from scope.methods.dataprovider import provider
 from scope.methods.graphs import clustering_methods
 from curate.convenience import functions as helper
 
+from importlib import reload
+
 
 # initializations
 customer_key = "test_customer"
@@ -69,13 +71,13 @@ print("KEYWORDS & SUMMARY/REPRESENTATIVE")
 representative_model = summarizer.Summarizer(language, nlp)
 
 words = representative_model.get_keywords(cluster_articles)
-rep = representative_model.text_rank(cluster_articles, max_size=summary_max_len)
+# rep = representative_model.text_rank(cluster_articles, max_size=summary_max_len)
 
 print("RESULTS")
 out = []
 for i in range(0, len(cluster_articles)):
     out.append({
         "central_title": cluster_articles[i][0].title,
-        "keywords": words[i],
-        "representative": rep[i]
+        "keywords": words[i]
+        # "representative": rep[i]
         })

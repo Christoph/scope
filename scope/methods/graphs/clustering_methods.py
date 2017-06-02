@@ -51,9 +51,9 @@ def get_clustering(articles, sim, vecs, max_clusters, min_clusters):
 
 def get_central_articles(cluster_articles, n_center):
     if len(cluster_articles) <= n_center:
-        return [a[0] for a in cluster_articles]
+        return sorted(cluster_articles, key=lambda c: len(cluster_articles[c]), reverse=True)
 
-    return [a[0] for a in cluster_articles[:n_center]]
+    return sorted(cluster_articles, key=lambda c: len(cluster_articles[c]), reverse=True)[:n_center]
 
 
 def sim_based_threshold(sim, threshold):
