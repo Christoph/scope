@@ -84,10 +84,10 @@ class Curate(object):
 
         return after_bad_articles
 
-    def _produce_cluster_dict(self, labels):
+    def _produce_cluster_dict(self, article_clusters):
         articles_dict = {}
         # produce a dictionary of the clusters
-        for center, cluster in labels:
+        for center, cluster in article_clusters.items():
             center_instance = Article_Curate_Query.objects.filter(
                 article=center, curate_query=self.query).first()
             all_article_curate_instances = []
@@ -98,8 +98,8 @@ class Curate(object):
             articles_dict[center_instance] = list(set(all_article_curate_instances))
         return articles_dict
 
-    def produce_and_save_clusters(self, labels):
-        articles_dict = self._produce_cluster_dict(labels)
+    def produce_and_save_clusters(self, article_clusters):
+        articles_dict = self._produce_cluster_dict(article_clusters)
         counter = 1
         for key in articles_dict:
             cluster = Curate_Query_Cluster(rank=counter, center=key)
