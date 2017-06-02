@@ -1,7 +1,9 @@
 from django.test import TestCase
 from scope.methods.dataprovider.news_handler import ScopeNewspaperArticle
 from scope.methods.dataprovider.blacklist import Blacklist
-from scope.methods.dataprovider import imap_handler, er_handler, news_handler
+from scope.methods.dataprovider import imap_handler, er_handler, news_handler, url_extractor
+
+import spacy
 
 from scope.models import Newsletter
 from scope.methods.dataprovider.news_handler import NewsSourceHandler
@@ -16,6 +18,33 @@ class Provider_Object_Tests(TestCase):
 
 	# def test_save_articles_with_imap_not_redundant(self):
 	# 	agent = Agent
+
+class Extractor_Tests(TestCase):
+	def test_extraction(self):
+			nlp = spacy.load("de")
+			extractor = url_extractor.Extractor(nlp)
+
+			urls = (
+			    "http://hyperallergic.com/343745/"
+			    "the-passionate-art-of-lgbtq-prisoners-in-the-us/"
+			    " "
+			    "http://www.androidheadlines.com/2016/12/"
+			    "verizon-carry-blackberry-mercury-bbb100-us.html"
+			    " "
+			    "http://www.usnews.com/news/business/articles/2016-12-27/"
+			    "troubled-italian-bank-says-capital-hole-bigger-than-expected"
+			    " "
+			    "http://www.androidheadlines.com/2016/12/"
+			    "verizon-carry-blackberry-mercury-bbb100-us.html"
+			    " "
+			    "http://www.usnews.com/news/stem-solutions/articles/"
+			    "2016-11-28/wi-fi-microscopes-help-corpus-christi-students-with-science"
+			    " "
+			    "https://twitter.com/SteveMartinToGo/status/813826846722760705"
+			    " "
+			    )
+
+			self.assertEqual(len(extractor.get_urls_from_string(urls)), 5)
 
 class ImapHandler_Tests(TestCase):
 	def test_merge_mails_from_same_newsletter(self):
@@ -52,4 +81,3 @@ class Blacklist_Tests(TestCase):
 		blacklist = Blacklist()
 		out = blacklist.filter(l)
 		self.assertEqual(len(out),1)
-		
