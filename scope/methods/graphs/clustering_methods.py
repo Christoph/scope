@@ -13,7 +13,7 @@ import numpy as np
 
 def get_clustering(articles, sim, vecs, max_clusters, min_clusters):
     '''
-        Returns selected articles and clusters.
+        Returns clusters.
     '''
 
     linkage_matrix = hc_create_linkage(vecs)
@@ -126,7 +126,11 @@ def hc_create_linkage(vecs):
     '''
 
     # Compute linkage
-    linkage_matrix = hierarchical_clustering.linkage(vecs, "complete", "cosine")
+    try:
+        linkage_matrix = hierarchical_clustering.linkage(vecs, "complete", "cosine")
+    except ValueError:
+        print("Error using complete linkage -> Fallback to ward distance.")
+        linkage_matrix = hierarchical_clustering.linkage(vecs)
 
     return linkage_matrix
 
@@ -185,11 +189,11 @@ def get_clusters(articles, vecs, center_articles, labels):
             if c in center_articles:
                 center = c
 
-        clusters.append([center, cluster])
+        clusters.append((center, cluster))
 
-    clusters.sort(key=lambda x: len(x[1]), reverse=True)
+    # clusters.sort(key=lambda x: len(x[1]), reverse=True)
 
-    return clusters
+    return dict(clusters)
 
 
 def compute_central_articles(articles, vecs, labels):
