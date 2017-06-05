@@ -20,30 +20,6 @@ class PreProcessing():
         else:
             raise Exception("Language not known.")
 
-    def noun_based_preprocessing(self, articles):
-        '''
-            Grammar based text extraction using spacy.
-
-            articles: list of article objects
-        '''
-
-        # Convert text to spacy object
-        docs = [self.nlp(a.body) for a in articles]
-
-        clean = []
-
-        for doc in docs:
-            temp = []
-
-            for sent in doc.sents:
-                for t in sent:
-                    if t.tag_ in self.noun_tags:
-                        temp.append(t.lemma_)
-
-            clean.append(" ".join(temp))
-
-        return clean
-
     def prepare_sentences(self, cluster):
         docs = [self.nlp(a.body) for a in cluster]
 
@@ -62,7 +38,7 @@ class PreProcessing():
 
         return sents, original_sents
 
-    def lemmatize_text(self, articles):
+    def noun_based_preprocessing(self, articles):
         docs = [self.nlp(a.body) for a in articles]
         clean = []
 
@@ -93,7 +69,7 @@ class PreProcessing():
         '''
 
         # Convert text to spacy object
-        docs = [self.nlp(a.title.replace("-", " ").replace(":", " ")) for a in articles]
+        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s]", " ", a.title))) for a in articles]
 
         chunks = []
 
