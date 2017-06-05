@@ -71,6 +71,7 @@ class PreProcessing():
         # Convert text to spacy object
         docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s]", " ", a.body))) for a in articles]
 
+        lemmas = []
         chunks = []
         clean = []
 
@@ -88,6 +89,11 @@ class PreProcessing():
                 for t in c.subtree:
                     if t.ent_type_ and t.tag_ in self.noun_tags:
                         chunks.append(c.text.strip())
+                        temp = []
+                        for T in c.subtree:
+                            if T.tag_ in self.noun_tags:
+                                temp.append(c.lemma_)
+                        lemmas.append(" ".join(temp))
                         found = True
                         break
 
@@ -95,6 +101,11 @@ class PreProcessing():
             if not found:
                 for c in doc.ents:
                     chunks.append(c.text.strip())
+                    temp = []
+                    for T in c.subtree:
+                        if T.tag_ in self.noun_tags:
+                            temp.append(c.lemma_)
+                    lemmas.append(" ".join(temp))
                     found = True
 
             # Last resort - get all nouns
@@ -103,6 +114,11 @@ class PreProcessing():
                     for t in c.subtree:
                         if t.tag_ in self.noun_tags:
                             chunks.append(c.text.strip())
+                            temp = []
+                            for T in c.subtree:
+                                if T.tag_ in self.noun_tags:
+                                    temp.append(c.lemma_)
+                            lemmas.append(" ".join(temp))
                             break
 
         # Specific workaround for german chunks which start always with
@@ -116,4 +132,7 @@ class PreProcessing():
 
             clean.append(" ".join(orig))
 
-        return clean
+        if len(clean) != len(lemmas):
+            raise AttributeError("Sizes not equal!")
+
+        return clean, lemmas
