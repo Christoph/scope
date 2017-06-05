@@ -19,10 +19,13 @@ def get_clustering(articles, sim, vecs, max_clusters, min_clusters):
     linkage_matrix = hc_create_linkage(vecs)
     labels_affinity, center_indices_affinity = affinity_propagation(sim)
     len_aff = len(np.unique(labels_affinity))
+    print("Affinity clusters: "+str(len_aff))
     labels_hc = hc_cluster_by_distance(linkage_matrix, 0.6)
     len_hc = len(np.unique(labels_hc))
+    print("HC clusters: "+str(len_hc))
     labels_gauss, probas_gauss = gauss(vecs, int(max_clusters*1.3))
     len_gauss = len(np.unique(labels_gauss))
+    print("Gauss clusters: "+str(len_gauss))
 
     if len_aff <= max_clusters and len_aff >= min_clusters:
         selected_articles = np.array(articles)[
