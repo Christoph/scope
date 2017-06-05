@@ -18,7 +18,7 @@ from importlib import reload
 # initializations
 customer_key = "test_customer"
 
-max_clusters = 24
+max_clusters = 35
 min_clusters = 6
 n_centers = 5
 summary_max_len = 100
