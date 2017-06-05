@@ -35,7 +35,7 @@ class Embedding():
             return: Embedding vectors
         '''
 
-        clean_text = self.preprocessor.noun_based_preprocessing(articles)
+        clean_text = self.preprocessor.lemmatize_text(articles)
 
         self._create_svd_embedding(clean_text)
 
