@@ -16,10 +16,10 @@ def get_clustering(articles, sim, vecs, max_clusters, min_clusters):
         Returns clusters.
     '''
 
-    linkage_matrix = hc_create_linkage(vecs)
     labels_affinity, center_indices_affinity = affinity_propagation(sim)
     len_aff = len(np.unique(labels_affinity))
     print("Affinity clusters: "+str(len_aff))
+    linkage_matrix = hc_create_linkage(vecs)
     labels_hc = hc_cluster_by_distance(linkage_matrix, 0.6)
     len_hc = len(np.unique(labels_hc))
     print("HC clusters: "+str(len_hc))
