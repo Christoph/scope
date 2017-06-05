@@ -72,6 +72,7 @@ class PreProcessing():
         docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s]", " ", a.body))) for a in articles]
 
         chunks = []
+        clean = []
 
         for doc in docs:
             found = False
@@ -104,4 +105,15 @@ class PreProcessing():
                             chunks.append(c.text.strip())
                             break
 
-        return chunks
+        # Specific workaround for german chunks which start always with
+        # a stopword
+        for c in chunks:
+            temp = c.lower().split(" ")
+            orig = c.split(" ")
+
+            if temp[0] in self.stopwords:
+                orig.pop(0)
+
+            clean.append(" ".join(orig))
+
+        return clean
