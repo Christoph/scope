@@ -51,7 +51,7 @@ class PreProcessing():
                 temp = []
 
                 for t in sent:
-                    if t.tag_.find("NN") >= 0:
+                    if t.tag_ in self.noun_tags:
                         temp.append(t.lemma_)
 
                 sents.append(" ".join(temp))
@@ -67,7 +67,7 @@ class PreProcessing():
         '''
 
         # Convert text to spacy object
-        docs = [self.nlp(a.title) for a in articles]
+        docs = [self.nlp(a.title.replace("-", " ").replace(":", " ")) for a in articles]
 
         chunks = []
 
@@ -83,7 +83,7 @@ class PreProcessing():
 
             for c in doc.noun_chunks:
                 for t in c.subtree:
-                    if t.ent_type_ and t.tag_.find("NN") >= 0:
+                    if t.ent_type_ and t.tag_ in self.noun_tags:
                         chunks.append(c.text)
                         found = True
                         break
@@ -98,7 +98,8 @@ class PreProcessing():
             if not found:
                 for c in doc.noun_chunks:
                     for t in c.subtree:
-                        if t.tag_.find("NN") >= 0:
+                        if t.tag_ in self.noun_tags:
                             chunks.append(c.text)
+                            break
 
         return chunks
