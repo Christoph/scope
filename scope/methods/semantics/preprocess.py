@@ -1,3 +1,4 @@
+import re
 from nltk.corpus import stopwords
 from scope.methods.semantics import stopwords as stopw
 
@@ -11,9 +12,11 @@ class PreProcessing():
         if lang == "en":
             self.stopwords = stopw.EN
             self.noun_tags = ["NN", "NNS", "NNP", "NNPS"]
+            self.key_deps = ["acomp", "ccomp", "pcomp", "xcomp", "relcl", "conj"]
         elif lang == "de":
             self.stopwords = stopwords.words('german')
             self.noun_tags = ["NE", "NN", "NNE"]
+            self.key_deps = ["nk", "sb", "cc", "cp", "cj"]
         else:
             raise Exception("Language not known.")
 
@@ -58,6 +61,29 @@ class PreProcessing():
                 original_sents.append(sent.text)
 
         return sents, original_sents
+
+    def lemmatize_text(self, articles):
+        docs = [self.nlp(a.body) for a in articles]
+        clean = []
+
+        for doc in docs:
+            temp = []
+
+            for sent in doc.sents:
+                for t in sent:
+                    if re.findall(r"\b[12][0-9]{3}\b", t.text):
+                        temp.append("-DATE-")
+                    elif t.like_email:
+                        temp.append("-EMAIL-")
+                    elif t.like_url:
+                        temp.append("-URL-")
+                    elif t.like_num:
+                        temp.append("-NUMBER-")
+                    elif t.tag_ in self.noun_tags:
+                        temp.append(t.lemma_)
+
+            clean.append(" ".join(temp))
+        return clean
 
     def keyword_preprocessing(self, articles):
         '''
