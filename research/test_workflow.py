@@ -70,8 +70,7 @@ print("KEYWORDS & SUMMARY/REPRESENTATIVE")
 
 representative_model = summarizer.Summarizer(language, nlp)
 
-words = representative_model.get_keywords(cluster_articles)
-# rep = representative_model.text_rank(cluster_articles, max_size=summary_max_len)
+words = representative_model.get_keywords(cluster_articles, 3)
 
 print("RESULTS")
 out = []
@@ -79,5 +78,4 @@ for i in range(0, len(cluster_articles)):
     out.append({
         "central_title": cluster_articles[i][0].title,
         "keywords": words[i]
-        # "representative": rep[i]
         })
