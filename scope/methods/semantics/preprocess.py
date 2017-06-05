@@ -69,7 +69,7 @@ class PreProcessing():
         '''
 
         # Convert text to spacy object
-        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s]", " ", a.title))) for a in articles]
+        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s]", " ", a.body))) for a in articles]
 
         chunks = []
 
@@ -86,14 +86,14 @@ class PreProcessing():
             for c in doc.noun_chunks:
                 for t in c.subtree:
                     if t.ent_type_ and t.tag_ in self.noun_tags:
-                        chunks.append(c.text)
+                        chunks.append(c.text.strip())
                         found = True
                         break
 
             # Search for all entities
             if not found:
                 for c in doc.ents:
-                    chunks.append(c.text)
+                    chunks.append(c.text.strip())
                     found = True
 
             # Last resort - get all nouns
@@ -101,7 +101,7 @@ class PreProcessing():
                 for c in doc.noun_chunks:
                     for t in c.subtree:
                         if t.tag_ in self.noun_tags:
-                            chunks.append(c.text)
+                            chunks.append(c.text.strip())
                             break
 
         return chunks
