@@ -108,12 +108,18 @@ class Summarizer():
         keywords = []
 
         for center, clust in clusters.items():
-            vectorizer = TfidfVectorizer(sublinear_tf=True)
+            # vectorizer = TfidfVectorizer(sublinear_tf=True)
 
             chunks, lemmas = self.preprocessor.keyword_preprocessing(clust)
 
             # Normalize
-            normalized_matrix = vectorizer.fit_transform(lemmas)
+            # normalized_matrix = vectorizer.fit_transform(lemmas)
+
+            docs = [self.nlp(t) for t in chunks]
+            normalized_matrix = []
+
+            for doc in docs:
+                normalized_matrix.append(doc.vector)
 
             # Similarity Graph
             sim = cosine_similarity(normalized_matrix)
