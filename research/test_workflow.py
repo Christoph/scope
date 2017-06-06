@@ -76,6 +76,6 @@ print("RESULTS")
 out = []
 for i in range(0, len(cluster_articles)):
     out.append({
-        "central_title": cluster_articles[i][0].title,
-        "keywords": words[i]
+        "central_title": list(cluster_articles.keys())[i].title,
+        "keywords": words[list(cluster_articles.keys())[i]]
         })
