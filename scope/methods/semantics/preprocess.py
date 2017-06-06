@@ -61,7 +61,7 @@ class PreProcessing():
             clean.append(" ".join(temp))
         return clean
 
-    def keyword_preprocessing(self, articles):
+    def keyword_preprocessing(self, articles, max_chunk_length=5):
         '''
             Grammar based text extraction from titles.
 
@@ -69,7 +69,7 @@ class PreProcessing():
         '''
 
         # Convert text to spacy object
-        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s]", " ", a.body))) for a in articles]
+        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s\.,!?]", " ", a.body))) for a in articles]
 
         lemmas = []
         chunks = []
@@ -88,6 +88,20 @@ class PreProcessing():
             for c in doc.noun_chunks:
                 for t in c.subtree:
                     if t.ent_type_ and t.tag_ in self.noun_tags:
+                        if len(c.text.split(" ")) <= max_chunk_length:
+                            chunks.append(c.text.strip())
+                            temp = []
+                            for T in c.subtree:
+                                if T.tag_ in self.noun_tags:
+                                    temp.append(c.lemma_)
+                            lemmas.append(" ".join(temp))
+                            found = True
+                            break
+
+            # Search for all entities
+            if not found:
+                for c in doc.ents:
+                    if len(c.text.split(" ")) <= max_chunk_length:
                         chunks.append(c.text.strip())
                         temp = []
                         for T in c.subtree:
@@ -95,31 +109,20 @@ class PreProcessing():
                                 temp.append(c.lemma_)
                         lemmas.append(" ".join(temp))
                         found = True
-                        break
-
-            # Search for all entities
-            if not found:
-                for c in doc.ents:
-                    chunks.append(c.text.strip())
-                    temp = []
-                    for T in c.subtree:
-                        if T.tag_ in self.noun_tags:
-                            temp.append(c.lemma_)
-                    lemmas.append(" ".join(temp))
-                    found = True
 
             # Last resort - get all nouns
             if not found:
                 for c in doc.noun_chunks:
-                    for t in c.subtree:
-                        if t.tag_ in self.noun_tags:
-                            chunks.append(c.text.strip())
-                            temp = []
-                            for T in c.subtree:
-                                if T.tag_ in self.noun_tags:
-                                    temp.append(c.lemma_)
-                            lemmas.append(" ".join(temp))
-                            break
+                    if len(c.text.split(" ")) <= max_chunk_length:
+                        for t in c.subtree:
+                            if t.tag_ in self.noun_tags:
+                                chunks.append(c.text.strip())
+                                temp = []
+                                for T in c.subtree:
+                                    if T.tag_ in self.noun_tags:
+                                        temp.append(c.lemma_)
+                                lemmas.append(" ".join(temp))
+                                break
 
         # Specific workaround for german chunks which start always with
         # a stopword
