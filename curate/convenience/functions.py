@@ -30,7 +30,7 @@ def create_customer_from_config_file(customer_key):
 
     # Create Curate Customer
     curate_customer, created_customer = Curate_Customer.objects.get_or_create(
-        customer=customer, expires=date.today())
+        customer=customer, default={'expires':date.today()})
 
     # Create curate_query
     query = Curate_Query(

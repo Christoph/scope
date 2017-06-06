@@ -7,7 +7,7 @@
     {{ dashboard.media }}
 {% endblock %}
 {% block content %}
-<div class="controlcenter" id="{{ dashboard.slug }}">
+<div class="controlcenter dashwidth" id="{{ dashboard.slug }}">
     {% if dashboards|length > 1 %}
         <nav class="controlcenter__nav">
             {% for item in dashboards %}

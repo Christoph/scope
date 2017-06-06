@@ -33,8 +33,8 @@ DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql_psycopg2',
                          'PORT': ''}}
 
 
-# STATICFILES_DIRS += [
-#     os.path.join(BASE_DIR, "static"),
-# ]
+STATICFILES_DIRS += [
+    os.path.join(BASE_DIR, "static"),
+]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')

@@ -1,0 +1,18 @@
+{% load controlcenter_tags %}
+
+<div align="center" style="margin: 25px; font-size: 13px;"> 
+
+{% for obj in widget.values %}
+    {% for attr in widget.list_display %}
+        {% attrvalue widget obj attr %}
+{% if obj|is_sequence %}
+                        {% for value in obj %}
+                        {{ value }}
+
+                        {% endfor %}
+                        {% endif %}
+
+    {% endfor %}
+    
+{% endfor %}
+</div>

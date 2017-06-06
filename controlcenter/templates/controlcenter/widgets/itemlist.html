@@ -16,7 +16,7 @@
     <tbody class="controlcenter__table__tbody">
         {% for obj in widget.values %}
             <tr class="controlcenter__table__tr">
-                {% change_url widget obj as url %}
+               {% change_url widget obj as url %}
                 {% for attr in widget.list_display %}
                     <td class="controlcenter__table__td controlcenter__table__td--{% if attr == sharp %}row-counter{% else %}{{ attr }}{% endif %}">
                         {% if attr == sharp %}

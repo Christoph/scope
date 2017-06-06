@@ -44,22 +44,30 @@
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                     <!-- {% url 'explore:customsearch' %} -->
-                        <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a>
+                        <!-- <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a>
                             <title>Custom Search</title>
-                        </li>
+                        </li> -->
+                        {% if customer_key %}
+                        <li><a href="{% url 'curate:interface' %}"><i class="fa fa-list-ol" aria-hidden="true"></i></a></li>
+                        <li><a href="{% url 'curate:controlcenter:dashboard' pk=1 %}"><i class="fa fa-tachometer" 
+                        aria-hidden="true"></i></a></li>
+                         <li><a href="{% url 'curate:mail' %}"><i class="fa fa-envelope-o" aria-hidden="true"></i></a></li>
+                        {% endif %}
+                        
                         <!-- {% url 'explore:alert' %} -->
-                        <li><a href="#"><i class="fa fa-envelope-o" aria-hidden="true"></i></a></li>
+                        {# <li><a href="#"><i class="fa fa-envelope-o" aria-hidden="true"></i></a></li> #}
     <!-- {% url 'homepage:how_it_works' %} -->
-                        <li><a href="#"><i class="fa fa-info" aria-hidden="true"></i></a></li>
+                        {# <li><a href="#"><i class="fa fa-info" aria-hidden="true"></i></a></li> #}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user" aria-hidden="true"></i></a> 
-    <!--                         {% if log_inf %}
+                        {% if log_inf %}
                             <ul class="dropdown-menu">
-                                <li><a href="{% with log_link|first as name %}{% url name %}{% endwith %}">{{log_inf|first}}</a></li>
+                                {# <li><a href="{% with log_link|first as name %}{% url name %}{% endwith %}">{{log_inf|first}}</a></li> #}
                                 <li><a href="{% with log_link|last as name %}{% url name %}{% endwith %}">{{log_inf|last}}</a></li>
                             </ul>
-                            {% endif %} -->
+                            {% endif %} 
                         </li>
+                        <li><a href="{% url 'homepage:contact' %}"><i class="fa fa-commenting" aria-hidden="true"></i></a></li>
 
                     </ul>
                     <!-- Button trigger modal -->

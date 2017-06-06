@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
 import configparser
+from django.contrib.auth.decorators import login_required
 
 from conf.settings.importer import ImportGlobal
 from curate.tasks import send_newsletter_task, selection_made_task
@@ -8,18 +9,31 @@ from scope.methods.semantics.keywords import keywords_from_articles
 from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
 from scope.models import Customer, UserProfile
 
+
 im = ImportGlobal()
 
-def interface(request,customer_key, date_stamp=None):
-    try:
-        user_profile = UserProfile.objects.get(user=request.user)
-        if not customer_key == user_profile.customer.customer_key:
+@login_required()
+def interface(request,customer_key=None, date_stamp=None):
+    if customer_key != None:
+        print(customer_key)
+        if request.user.is_superuser:
+            key = customer_key
+        else:
+            try:
+                user_profile = UserProfile.objects.get(user=request.user)
+                if not customer_key == user_profile.customer.customer_key:
+                    return redirect('/login/?next=%s' % request.path)
+            except:
+                return redirect('/login/?next=%s' % request.path)
+    else:
+        print("None")
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+            key = user_profile.customer.customer_key
+        except:
             return redirect('/login/?next=%s' % request.path)
-    except:
-        return redirect('/login/?next=%s' % request.path)
 
-
-    customer = Customer.objects.get(customer_key=customer_key) #will be replaced by authentication
+    customer = Customer.objects.get(customer_key=key) #will be replaced by authentication
     curate_customer = Curate_Customer.objects.get(customer=customer)
     if date_stamp==None:
             query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").last()
@@ -30,8 +44,8 @@ def interface(request,customer_key, date_stamp=None):
     options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).order_by("pk")
     if request.method == 'POST':
         config = configparser.RawConfigParser()
-        config.read('curate/customers/' + customer_key +
-                         "/" + customer_key + '.cfg')
+        config.read('curate/customers/' + key +
+                         "/" + key + '.cfg')
         query.selection_made = True
         query.save()
         selected_articles = []
@@ -63,15 +77,15 @@ def interface(request,customer_key, date_stamp=None):
                     pass
                     
         try:
-            selection_made_task(customer_key, selected_articles)
-            selection_made_task.delay(customer_key, selected_articles)
+            selection_made_task(key, selected_articles)
+            selection_made_task.delay(key, selected_articles)
         except:
             pass
         try:
             print(im.get_env_variable('DJANGO_SETTINGS_MODULE'))
             print(config.getboolean('meta','direct_outlet'))
             if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment":
-                send_newsletter_task.delay(customer_key)
+                send_newsletter_task.delay(key)
         except:
             pass
 
@@ -79,17 +93,37 @@ def interface(request,customer_key, date_stamp=None):
     for option in options.all():
         stat = [i for i in suggestions if option in i.selection_options.all()]
         stats[option] = len(stat)
-    context = {"stats": stats, "suggestions": suggestions, "options": options, 'query': query, 'customer_key': customer_key}
+    context = {"stats": stats, "suggestions": suggestions, "options": options, 'query': query, 'customer_key': key}
     return render(request, 'curate/interface.html', context)
 
-def mail(request, customer_key):
-    customer = Customer.objects.get(customer_key=customer_key)
+@login_required()
+def mail(request, customer_key=None):
+    if customer_key != None:
+        print(customer_key)
+        if request.user.is_superuser:
+            key = customer_key
+        else:
+            try:
+                user_profile = UserProfile.objects.get(user=request.user)
+                if not customer_key == user_profile.customer.customer_key:
+                    return redirect('/login/?next=%s' % request.path)
+            except:
+                return redirect('/login/?next=%s' % request.path)
+    else:
+        print("None")
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+            key = user_profile.customer.customer_key
+        except:
+            return redirect('/login/?next=%s' % request.path)
+
+    customer = Customer.objects.get(customer_key=key)
     curate_customer = Curate_Customer.objects.get(customer=customer)
     query = Curate_Query.objects.filter(
         curate_customer=curate_customer).order_by("pk").last()
     config = configparser.RawConfigParser()
-    config.read('curate/customers/' + customer_key +
-                "/" + customer_key + '.cfg')
+    config.read('curate/customers/' + key +
+                "/" + key + '.cfg')
 
     # recipients = config.get('outlet', 'recipients').split(',\n')
     # template_no = config.getint('outlet', 'mail_template_no')

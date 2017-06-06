@@ -79,7 +79,7 @@
   <div ALIGN=CENTER>
     <div class="forms">
       <!-- Tab panes -->
-      <form action="{% url 'curate:interface' customer_key=customer_key %}" id="searchform" method="post">
+      <form action="{% url 'curate:interface' %}" id="searchform" method="post">
         {% csrf_token %}
         {% for suggestion in suggestions %}
           <div class="row well">

@@ -10,29 +10,71 @@ from django.core.urlresolvers import reverse
 import base64
 
 
-def get_query(request, customer_key):
+def get_query(widget):
+	customer_key = widget.init_options['customer_key']
 	customer, curate_customer, queries, articles = retrieve_objects(
 		customer_key, range=1)
-	query_id = int(request.GET.get('q', 0))
+	query_id = int(widget.request.GET.get('q', 0))
 	if query_id == 0:
 		query = Curate_Query.objects.get(pk=queries[0].pk)
 	else:
 		query = Curate_Query.objects.get(pk=int(query_id))
 	return query
 
+def get_curate_customer(widget):
+	customer_key = widget.init_options['customer_key']
+	customer, curate_customer = retrieve_objects(
+		customer_key)
+	return curate_customer
+
 
 ######### Widgets for overall Dashboard
+
+# class TotalSummaryWidget(widgets.ItemList):
+# 	title = "Total Summary"
+
+# 	def get_queryset(self):
+# 		curate_customer = get_curate_customer(self)
+# 		queryset = curate_customer
+# 	# def get_queryset(self):
+# 	# 	query = get_query(self.request, "commerzbank_germany")
+# 	# 	return 	Curate_Query.objects.filter(pk=query.pk)
+
+# 	def produce_summary(self, obj):
+# 		total_processed_words = ""
+# 		number_of_inputs = ""
+
+# 		return '<strong>Created:</strong> ' + str(obj.time_stamp.isoformat()) + '</br><strong>Processed Words:</strong> ' + str(obj.processed_words) + '</br><strong>Incoming Articles:</strong> ' + str(obj.articles_before_filtering) + '</br><strong>Selection Made: </strong>' + str(obj.selection_made)
+# 	produce_summary.short_description = ""
+# 	produce_summary.allow_tags = True
+
+# 	def creation_date(self, obj):
+# 		return ''#obj.time_stamp.isoformat()
+# 	creation_date.short_description = "Created"
+
+# 	template_name = 'single_query_overview.html'
+# 	template_name_prefix = 'controlcenter/widgets/'
+# 	width = 3
+# 	height = 120
+# 	list_display = ('creation_date', 'produce_summary')
+
+
 
 
 class IncomingArticlesWeekdayWidget(widgets.LineChart):
 	title = "Incoming articles per weekday"
-	customer, curate_customer = retrieve_objects("commerzbank_germany")
+
+	class Chartist:
+		options = {
+            'reverseData': False,
+        }
 
 	def labels(self):
-		return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+		return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
 
 	def series(self):
-		query = Curate_Query.objects.filter(curate_customer=self.curate_customer).order_by('-processed_words')
+		curate_customer = get_curate_customer(self)
+		query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by('-processed_words')
 		l = []
 		for i in range(2, 7):
 			if query.filter(time_stamp__week_day=i).aggregate(avg=Avg('articles_before_filtering'))['avg'] != None:
@@ -43,9 +85,6 @@ class IncomingArticlesWeekdayWidget(widgets.LineChart):
 
 class IncomingArticlesWidget(widgets.LineChart):
 	title = "# of incoming articles"
-	customer, curate_customer = retrieve_objects("commerzbank_germany")
-	queries = Curate_Query.objects.filter(
-		curate_customer=curate_customer).order_by('-time_stamp')
 	width = widgets.LARGE
 
 	class Chartist:
@@ -54,10 +93,21 @@ class IncomingArticlesWidget(widgets.LineChart):
 			'fullHeight': True,
 		}
 
+
+	def get_queryset(self):
+		curate_customer = get_curate_customer(self)
+		queries = Curate_Query.objects.filter(
+		curate_customer=curate_customer).order_by('-time_stamp')
+		return queries
+
 	def labels(self):
 		l = []
 		count = 1
-		for query in self.queries:
+		
+		queries = self.get_queryset()
+		# Curate_Query.objects.filter(
+		# curate_customer=curate_customer).order_by('-time_stamp')
+		for query in queries:
 			if count % 7 == 1:
 				l.append(query.time_stamp.isoformat())
 			else:
@@ -67,7 +117,11 @@ class IncomingArticlesWidget(widgets.LineChart):
 
 	def series(self):
 		k = []
-		for query in self.queries:
+		# curate_customer = get_curate_customer(self)
+		queries = self.get_queryset()
+		# Curate_Query.objects.filter(
+		# curate_customer=curate_customer).order_by('-time_stamp')
+		for query in queries:
 			if query.articles_before_filtering == None:
 				var = 0
 			else:
@@ -78,9 +132,14 @@ class IncomingArticlesWidget(widgets.LineChart):
 
 class FavoriteSourcesWidget(widgets.ItemList):
 	title = "Most selected Sources"
-	customer, curate_customer = retrieve_objects("commerzbank_germany")
-	queryset = Source.objects.all().annotate(count=Count(Case(When(article__article_curate_query__curate_query__curate_customer=curate_customer,
+	def get_queryset(self):
+		curate_customer = get_curate_customer(self)
+		# customer_key = self.init_options['customer_key']
+		# customer, curate_customer = retrieve_objects(customer_key)
+		queryset = Source.objects.all().annotate(count=Count(Case(When(article__article_curate_query__curate_query__curate_customer=curate_customer,
 																   article__article_curate_query__rank__gt=0, then=1)))).order_by('-count')
+		return queryset
+
 
 	def decoded_name(self, obj):
 		return decode_header(obj.name)[0][0]
@@ -94,9 +153,12 @@ class FavoriteSourcesWidget(widgets.ItemList):
 
 class FavoriteNewslettersWidget(widgets.ItemList):
 	title = "Most selected Newsletters"
-	customer, curate_customer = retrieve_objects("commerzbank_germany")
-	queryset = Newsletter.objects.all().annotate(count=Count(Case(When(article_curate_query__curate_query__curate_customer=curate_customer,
+	def get_queryset(self):
+		customer_key = self.init_options['customer_key']
+		customer, curate_customer = retrieve_objects(customer_key)
+		queryset = Newsletter.objects.all().annotate(count=Count(Case(When(article_curate_query__curate_query__curate_customer=curate_customer,
 																	   article_curate_query__rank__gt=0, then=1)))).order_by('-count')
+		return queryset
 
 	def decoded_name(self, obj):
 		return decode_header(obj.name)[0][0]
@@ -108,9 +170,13 @@ class FavoriteNewslettersWidget(widgets.ItemList):
 
 class WorstNewslettersWidget(widgets.ItemList):
 	title = "Newsletters with most bad articles"
-	customer, curate_customer = retrieve_objects("commerzbank_germany")
-	queryset = Newsletter.objects.all().annotate(count=Count(Case(When(article_curate_query__curate_query__curate_customer=curate_customer,
+	def get_queryset(self):
+		customer_key = self.init_options['customer_key']
+		customer, curate_customer = retrieve_objects(customer_key)
+		queryset = Newsletter.objects.all().annotate(count=Count(Case(When(article_curate_query__curate_query__curate_customer=curate_customer,
 																	   article_curate_query__bad_article=True, then=1)))).order_by('-count')
+		return queryset
+
 	def decoded_name(self, obj):
 		return decode_header(obj.name)[0][0]
 
@@ -121,9 +187,12 @@ class WorstNewslettersWidget(widgets.ItemList):
 
 class WorstSourcesWidget(widgets.ItemList):
 	title = "Sources with most bad articles"
-	customer, curate_customer = retrieve_objects("commerzbank_germany")
-	queryset = Source.objects.all().annotate(count=Count(Case(When(article__article_curate_query__curate_query__curate_customer=curate_customer,
+	def get_queryset(self):
+		customer_key = self.init_options['customer_key']
+		customer, curate_customer = retrieve_objects(customer_key)
+		queryset = Source.objects.all().annotate(count=Count(Case(When(article__article_curate_query__curate_query__curate_customer=curate_customer,
 																   article__article_curate_query__bad_article=True, then=1)))).order_by('-count')
+		return queryset
 
 	def decoded_name(self, obj):
 		return decode_header(obj.name)[0][0]
@@ -135,9 +204,12 @@ class WorstSourcesWidget(widgets.ItemList):
 
 class BadArticlesWidget(widgets.ItemList):
 	title = "Recent Bad Articles"
-	customer, curate_customer = retrieve_objects("commerzbank_germany")
-	queryset = Article_Curate_Query.objects.filter(
+	def get_queryset(self):
+		customer_key = self.init_options['customer_key']
+		customer, curate_customer = retrieve_objects(customer_key)
+		queryset = Article_Curate_Query.objects.filter(
 		curate_query__curate_customer=curate_customer, bad_article=True).order_by('curate_query__time_stamp')
+		return queryset
 
 	def get_title(self, obj):
 		return obj.article.title
@@ -158,28 +230,36 @@ class BadArticlesWidget(widgets.ItemList):
 ############ WIdgets for query specific Dashboard
 
 class SingleQueryWidget(widgets.ItemList):
-	title = "Overview over this Query"
+	title = "Summary"
+	# customer_key = self.init_options['customer_key']
 	def get_queryset(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		return 	Curate_Query.objects.filter(pk=query.pk)
 
 	def produce_summary(self, obj):
-		return '<strong>Processed_words:</strong> ' + str(obj.processed_words) + '</br><strong>Incoming Articles:</strong> ' + str(obj.articles_before_filtering) + '</br><strong>Selection Made: </strong>' + str(obj.selection_made)
+		return  '<strong>Created:</strong> ' + str(obj.time_stamp.isoformat()) + '</br><strong>Processed Words:</strong> ' + str(obj.processed_words) + '</br><strong>Incoming Articles:</strong> ' + str(obj.articles_before_filtering) + '</br><strong>Selection Made: </strong>' + str(obj.selection_made)
 	produce_summary.short_description = ""
 	produce_summary.allow_tags = True
 
 	def creation_date(self, obj):
-		return obj.time_stamp.isoformat()
+		return ''#obj.time_stamp.isoformat()
 	creation_date.short_description = "Created"
 
+	template_name = 'single_query_overview.html'
+	template_name_prefix = 'controlcenter/widgets/'
+	width = 3
+	height = 120
 	list_display = ('creation_date', 'produce_summary')
 
 
 class MovetoOtherClustersWidget(widgets.ItemList):
-	title = "Move to other clusters"
-	customer, curate_customer = retrieve_objects("commerzbank_germany")
-	queryset = Curate_Query.objects.filter(
-		curate_customer=curate_customer).order_by('-pk')
+	title = "Jump to Query"
+	def get_queryset(self):
+		customer_key = self.init_options['customer_key']
+		customer, curate_customer = retrieve_objects(customer_key)
+		queryset = Curate_Query.objects.filter(
+			curate_customer=curate_customer).order_by('-pk')
+		return queryset
 
 	def get_link_to_dashboard(self, obj):
 		link = reverse('controlcenter:dashboard', kwargs={
@@ -191,8 +271,8 @@ class MovetoOtherClustersWidget(widgets.ItemList):
 	list_display_links = ('selection_made')
 	sortable = True
 	limit_to = 500
-	height = 200
-	width = widgets.MEDIUM
+	height = 120
+	width = 2
 	list_display = ('get_link_to_dashboard', 'selection_made')
 
 
@@ -200,7 +280,7 @@ class SelectedArticlesQueryWidget(widgets.ItemList):
 	# selected articles, bad articles
 	title = "Selected articles"
 	def get_queryset(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		return query.selected_articles()
 
 	def get_title(self, obj):
@@ -227,7 +307,7 @@ class BadArticlesQueryWidget(widgets.ItemList):
 	# selected articles, bad articles
 	title = "Bad articles"
 	def get_queryset(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		return query.bad_articles()
 
 	def get_title(self, obj):
@@ -255,7 +335,7 @@ class QueryChartWidget(widgets.SingleBarChart):
 	#display the distribution of cluster sizes 
 	title = "Distribution of Cluster sizes"
 	def get_queryset(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		queryset = Curate_Query_Cluster.objects.filter(
 				center__curate_query=query).order_by('pk').annotate(count=Count('cluster_articles')).order_by('rank')
 		return queryset
@@ -283,13 +363,13 @@ class ClusterandNewsletterWidget(widgets.BarChart):
 		}
 
 	def get_queryset(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		queryset = Curate_Query_Cluster.objects.filter(
 				center__curate_query=query).order_by('pk').annotate(count=Count('cluster_articles')).order_by('rank')
 		return queryset
 
 	def legend(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		newsletters = Newsletter.objects.filter(article_curate_query__curate_query=query).distinct()
 		return [decode_header(newsletter.name)[0][0] for newsletter in newsletters]
 
@@ -297,7 +377,7 @@ class ClusterandNewsletterWidget(widgets.BarChart):
 		return [str(cluster.rank) for cluster in self.get_queryset()]
 
 	def series(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		newsletters = Newsletter.objects.filter(article_curate_query__curate_query=query).distinct()
 		ser = []
 		for newsletter in newsletters:
@@ -322,13 +402,13 @@ class ClusterandSourcesWidget(widgets.BarChart):
 		}
 
 	def get_queryset(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		queryset = Curate_Query_Cluster.objects.filter(
 				center__curate_query=query).order_by('pk').annotate(count=Count('cluster_articles')).order_by('rank')
 		return queryset
 
 	def legend(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		sources = Source.objects.filter(article__article_curate_query__curate_query=query).distinct()
 		return [decode_header(source.name)[0][0] for source in sources]
 
@@ -336,7 +416,7 @@ class ClusterandSourcesWidget(widgets.BarChart):
 		return [str(cluster.rank) for cluster in self.get_queryset()]
 
 	def series(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		sources = Source.objects.filter(article__article_curate_query__curate_query=query).distinct()
 		ser = []
 		for source in sources:
@@ -358,7 +438,7 @@ class ClusterandSourcesWidget(widgets.BarChart):
 class ClustersWidget(widgets.ItemList):
 	title = "Clusters Details "
 	def get_queryset(self):
-		query = get_query(self.request, "commerzbank_germany")
+		query = get_query(self)
 		queryset = Curate_Query_Cluster.objects.filter(
 				center__curate_query=query).select_related('center').prefetch_related('cluster_articles').order_by('pk')
 		return queryset
@@ -374,31 +454,33 @@ class ClustersWidget(widgets.ItemList):
 		return decode_header(obj.center.newsletter.name)[0][0]
 	get_central_newsletter.short_description = "Newsletter of central article"
 
-	def get_cluster_articles(self, obj):
-		info = obj.cluster_articles.all().values(
-			'article__title', 'article__source__name', 'newsletter__name')
-		s = ''
-		for item in info:
-			decoded_name = decode_header(item['newsletter__name'])[0][0]
-			if isinstance(decoded_name, bytes):
-				newsletter_name = decoded_name.decode('utf-8')
-			elif isinstance(decoded_name, str):
-				newsletter_name = decoded_name
-			else: 
-				newsletter_name = "N/A"
-			#base64.b64decode(decode_header(item['newsletter__name'])[0][0])
-				# s.append([item['article__title'],item['article__source__name']])
-			s = s + '<strong>Title</strong>: ' + item['article__title'] + ', <strong>Source</strong>: ' + item[
-			'article__source__name'] + ', <strong>Newsletter</strong>: ' + newsletter_name + '<br/>'
-		return s
-	get_cluster_articles.allow_tags = True
-	get_cluster_articles.short_description = "Cluster Articles"
+
+	# def get_cluster_articles(self, obj):
+	# 	info = obj.cluster_articles.all().values(
+	# 		'article__title', 'article__source__name', 'newsletter__name')
+	# 	s = ''
+	# 	for item in info:
+	# 		decoded_name = decode_header(item['newsletter__name'])[0][0]
+	# 		if isinstance(decoded_name, bytes):
+	# 			newsletter_name = decoded_name.decode('utf-8')
+	# 		elif isinstance(decoded_name, str):
+	# 			newsletter_name = decoded_name
+	# 		else: 
+	# 			newsletter_name = "N/A"
+	# 		#base64.b64decode(decode_header(item['newsletter__name'])[0][0])
+	# 			# s.append([item['article__title'],item['article__source__name']])
+	# 		s = s + '<strong>Title</strong>: ' + item['article__title'] + ', <strong>Source</strong>: ' + item[
+	# 		'article__source__name'] + ', <strong>Newsletter</strong>: ' + newsletter_name + '<br/>'
+	# 	return s
+
+	# get_cluster_articles.allow_tags = True
+	# get_cluster_articles.short_description = "Cluster Articles"
 
 	sortable = True
 	list_display = ('rank', 'get_central_title',
-					"get_central_source", 'get_central_newsletter', 'get_cluster_articles')
+					"get_central_source", 'get_central_newsletter', 'keywords')#'summary')#,'get_cluster_articles')
 	limit_to = 15
-	width = widgets.LARGE
+	width = 3
 
 
 ############# Dashboards
@@ -408,9 +490,16 @@ class ClustersWidget(widgets.ItemList):
 class Curate_Query_Dashboard(Dashboard):
 	title = "Single Edition Overview"
 	widgets = (
-		(ClustersWidget, QueryChartWidget, ClusterandNewsletterWidget, ClusterandSourcesWidget),
+		ClustersWidget, 
 		(SingleQueryWidget,MovetoOtherClustersWidget),
-		(SelectedArticlesQueryWidget,BadArticlesQueryWidget),
+		widgets.Group([QueryChartWidget, ClusterandNewsletterWidget, ClusterandSourcesWidget], width=3),
+		
+			
+		# (SingleQueryWidget,MovetoOtherClustersWidget)
+		
+
+		# widgets.Group([,MovetoOtherClustersWidget], width=2),
+		widgets.Group([SelectedArticlesQueryWidget,BadArticlesQueryWidget], width=3),
 	)
 
 # dashboard to evaluate a customer's overall curate history

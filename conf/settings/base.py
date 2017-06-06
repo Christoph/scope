@@ -139,7 +139,8 @@ CONTROLCENTER_DASHBOARDS = (
 CONTROLCENTER_CHARTIST_COLORS = 'material'
 
 STATIC_URL = '/static/'
-LOGIN_REDIRECT_URL = '/profile'
+LOGIN_REDIRECT_URL = '/curate/dashboard/1'
+LOGIN_URL = '/login'
 
 LOGGING = {
     'version': 1,

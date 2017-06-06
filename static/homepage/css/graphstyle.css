@@ -27,8 +27,107 @@
 }
 
 
-body {font-family: 'Source Sans Pro', sans-serif;
-font-size: 16px;}
+body {
+
+  font-family: 'Open Sans', sans-serif;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  color: var(--grey);
+  width: 100% !important;
+  height: 100% !important;
+
+  /*font-family: 'Source Sans Pro', sans-serif;*/
+font-size: 13px;
+}
+
+
+/*----------------Colors-------------*/
+
+:root {
+  --blue: #1E5184;
+  --green: #588B8B;
+  --light: #EDEDED;
+  --grey: #494949;
+  --yellow: #ffe74c;
+  --orange: #e4572e;
+  --red: #A8290D;
+
+}
+
+.blue {
+  color: #1E5184;
+}
+
+.green {
+  color: #588B8B;
+}
+
+.light {
+  color: #EDEDED;
+}
+
+.grey {
+  color: #494949;
+}
+
+.yellow {
+  color: #ffe74c;
+}
+
+.orange {
+  color: #e4572e;
+}
+
+.red {
+  color: #A8290D;
+}
+
+
+
+h1 {
+  font-weight: 700;
+}
+h1 strong {
+  font-weight: 900;
+}
+h2 {
+  /*text-transform: uppercase;*/
+  font-weight: 500;
+  margin: 0px;
+  margin-bottom: 20px;
+  margin-top: 40px;
+  color: var(--grey);
+}
+h3 {
+  /*font-size: 20px;*/
+  font-weight: 500;
+  color: var(--grey);
+}
+h4 {
+  font-weight: 500;
+  color: var(--grey);
+}
+h5 {
+  /*text-transform: uppercase;*/
+  font-weight: 700;
+  line-height: 20px;
+}
+p {
+  font-size: 14px;
+}
+a {
+  color: var(--grey);
+}
+a:hover, a:focus {
+  text-decoration: none;
+  color: var(--blue);
+}
+ul, ol {
+  list-style: none;
+}
+
+
+
 
 svg:not(:root) {
 overflow: visible
@@ -560,6 +659,19 @@ tbody >tr:nth-child(odd) {
 }
 
 /*Dashboard stuff*/
+
+/*.main > .dashwidth{
+  border: 1px solid red;
+  margin: 0 auto;*/
+  /*width:130% !important;
+  };*/
+
+
+/*.dashwidth {
+  width:80% !important;
+  overflow: visible;
+}*/
+
 
 
 .ct-octave>svg {

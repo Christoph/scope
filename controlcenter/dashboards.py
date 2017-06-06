@@ -13,6 +13,7 @@ __all__ = ['Dashboard']
 
 class Dashboard(six.with_metaclass(MediaDefiningClass, BaseModel)):
     pk = None
+    customer_key = None
     widgets = ()
 
     class Media:
@@ -35,9 +36,13 @@ class Dashboard(six.with_metaclass(MediaDefiningClass, BaseModel)):
     def __init__(self, pk):
         super(Dashboard, self).__init__()
         self.pk = self.id = pk
+        
+
+    def add_customer_key(self, customer_key):
+        self.customer_key = customer_key
 
     def get_absolute_url(self):
-        return reverse('controlcenter:dashboard', kwargs={'pk': self.pk})
+        return reverse('curate:controlcenter_with_key:dashboard', kwargs={'pk': self.pk, 'customer_key':self.customer_key})#
 
     def get_widgets(self, request, **options):
         # TODO: permission check
