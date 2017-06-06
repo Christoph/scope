@@ -138,6 +138,7 @@ def hc_create_linkage(vecs):
     except ValueError:
         print("Error using complete linkage -> Fallback to ward distance.")
         linkage_matrix = hierarchical_clustering.linkage(vecs)
+        # linkage_matrix = hierarchical_clustering.linkage(vecs, "average", "cosine")
 
     return linkage_matrix
 
