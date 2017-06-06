@@ -65,7 +65,7 @@ class Embedding():
         self.sim = cosine_similarity(self.vecs)
 
     def _select_dimension(self, tfidf, target_variance):
-        initial_dim = 10
+        initial_dim = 70
         svd = TruncatedSVD(n_components=initial_dim).fit(tfidf)
 
         var = sum(svd.explained_variance_)
