@@ -23,7 +23,7 @@ class Embedding():
 
         if model == "grammar_svd":
             self._create_svd_embeddings(articles)
-        if model == "grammar_wv":
+        elif model == "grammar_wv":
             self._create_wv_embeddings(articles)
         else:
             raise Exception("Model not known.")
