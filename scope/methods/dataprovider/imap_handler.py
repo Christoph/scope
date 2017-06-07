@@ -10,7 +10,7 @@ from . import url_extractor
 
 from scope.methods.filters import blacklist_filter, remove_duplicate_articles_from_same_newsletter
 from scope.methods.dataprovider import news_handler
-from scope.models import Newsletter
+from scope.models import Newsletter, Agent
 
 
 class ImapHandler(object):

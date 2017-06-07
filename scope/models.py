@@ -36,7 +36,7 @@ class Agent(models.Model):
     agent_object = GenericForeignKey("agent_type", "agent_id")
 
     def __str__(self):              
-        return str(self.agent_id) + ', ' + str(self.agent_type)
+        return str(self.product_customer_type.get_object_for_this_type(pk=self.product_customer_id).customer.name) + ', ' + str(self.agent_type)
 
 
 class Source(models.Model):

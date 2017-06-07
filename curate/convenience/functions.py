@@ -1,5 +1,6 @@
 from curate.models import Curate_Customer, Curate_Query, Article_Curate_Query
 from scope.models import Customer, AgentImap, Agent
+from django.contrib.contenttypes.models import ContentType
 import configparser
 import csv
 from django.utils.encoding import smart_str
@@ -30,7 +31,13 @@ def create_customer_from_config_file(customer_key):
 
     # Create Curate Customer
     curate_customer, created_customer = Curate_Customer.objects.get_or_create(
-        customer=customer, default={'expires':date.today()})
+        customer=customer, defaults={'expires':date.today()})
+
+    #create agent
+    cur_cus_contenttype = ContentType.objects.get(model="curate_customer")
+    agent_imap_contenttype = ContentType.objects.get(model="agentimap")
+    agent, created = Agent.objects.get_or_create(
+        product_customer_type=cur_cus_contenttype, product_customer_id =curate_customer.id, agent_type=agent_imap_contenttype, agent_id=agentimap.id)
 
     # Create curate_query
     query = Curate_Query(
