@@ -27,7 +27,8 @@ class Summarizer():
             vectorizer = TfidfVectorizer(sublinear_tf=True)
             summary = ""
 
-            sents, original_sents = self.preprocessor.prepare_sentences(clust[1])
+            sents, original_sents = self.preprocessor.prepare_sentences(
+                clust[1])
 
             # Normalize
             normalized_matrix = vectorizer.fit_transform(sents)
@@ -68,7 +69,7 @@ class Summarizer():
         total_tokens = tokens[0]
         sents = [0]
 
-        for i in range(1, int(len(tokens)*0.1)):
+        for i in range(1, int(len(tokens) * 0.1)):
             if self._jaccard_dist(total_tokens, tokens[i]) > 0.8:
                 temp = total_length + lengths[i]
 
@@ -85,17 +86,55 @@ class Summarizer():
         return sents
 
     def _jaccard_dist(self, a, b):
-        return (len(a.union(b)) - len(a.intersection(b)))/len(a.union(b))
+        return (len(a.union(b)) - len(a.intersection(b))) / len(a.union(b))
 
-    def get_keywords(self, clusters):
+    def _get_top_words(self, ranked, n_words):
+        words = [ranked[0]]
+        total_tokens = set(ranked[0].lower().split(" "))
+
+        for i in range(1, int(len(ranked))):
+            tokens = set(ranked[i].lower().split(" "))
+
+            if self._jaccard_dist(total_tokens, tokens) > 0.8:
+                if len(words) >= n_words:
+                    break
+
+                total_tokens = total_tokens.union(tokens)
+                words.append(ranked[i])
+
+        return words
+
+    def get_keywords(self, clusters, n_words):
         keywords = []
 
-        for clust in clusters:
-            chunks = self.preprocessor.keyword_preprocessing(clust[1])
+        for center, clust in clusters.items():
+            # vectorizer = TfidfVectorizer(sublinear_tf=True)
 
-            if chunks:
-                keywords.append(stats.mode(chunks).mode[0])
-            else:
-                keywords.append("")
+            chunks, lemmas = self.preprocessor.keyword_preprocessing(clust)
 
-        return keywords
+            # Normalize
+            # normalized_matrix = vectorizer.fit_transform(lemmas)
+
+            docs = [self.nlp(t) for t in chunks]
+            normalized_matrix = []
+
+            for doc in docs:
+                normalized_matrix.append(doc.vector)
+
+            # Similarity Graph
+            sim = cosine_similarity(normalized_matrix)
+
+            # Create graph
+            graph = nx.from_numpy_matrix(sim)
+
+            # Pagerank sentences
+            scores = nx.pagerank(graph)
+
+            # Ranked sentences
+            ranked = sorted(((scores[i], s) for i, s in
+                             enumerate(chunks)),
+                            reverse=True)
+
+            keywords.append((center, self._get_top_words([r[1] for r in ranked], n_words)))
+
+        return dict(keywords)
