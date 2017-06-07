@@ -11,7 +11,7 @@ class Customer(models.Model):
     customer_key = models.CharField(max_length=200)
     email = models.EmailField()
 
-    def __str__(self):              # __str__ on Python 2
+    def __str__(self):              
         return self.name
 
 
@@ -20,7 +20,7 @@ class UserProfile(models.Model):
     activation_key = models.CharField(max_length=40)
     expires = models.DateTimeField()
     customer = models.ForeignKey(Customer, default=None, null=True)
-    def __str__(self):              # __str__ on Python 2
+    def __str__(self):              
         return self.user.username
 
 
@@ -35,7 +35,7 @@ class Agent(models.Model):
     agent_id = models.PositiveIntegerField()
     agent_object = GenericForeignKey("agent_type", "agent_id")
 
-    def __str__(self):              # __str__ on Python 2
+    def __str__(self):              
         return str(self.agent_id) + ', ' + str(self.agent_type)
 
 
@@ -48,7 +48,7 @@ class Source(models.Model):
 class Newsletter(models.Model):
     name = models.CharField(max_length = 200)
     email = models.EmailField()
-    def __str__(self):              # __str__ on Python 2
+    def __str__(self):              
         return self.name       
 
 class AgentImap(models.Model):
@@ -57,7 +57,7 @@ class AgentImap(models.Model):
     imap = models.CharField(blank=True, max_length=100)
     mailbox = models.CharField(blank=True, max_length=100)
     interval = models.IntegerField(blank=True, default=24)
-    def __str__(self):              # __str__ on Python 2
+    def __str__(self):              
         return str(self.id) + ', ' + self.user
 
 class AgentEventRegistry(models.Model):
@@ -66,12 +66,12 @@ class AgentEventRegistry(models.Model):
     lang = models.CharField(blank=True, max_length=10)
     concepts = models.CharField(blank=True, max_length=200)
     locations = models.CharField(blank=True, max_length=200)
-    def __str__(self):              # __str__ on Python 2
+    def __str__(self):              
         return str(self.id) + ', ' + self.user
 
 class AgentNewspaper(models.Model):
     url = models.CharField(blank=True, max_length=200)
-    def __str__(self):              # __str__ on Python 2
+    def __str__(self):              
         return str(self.id) + ', ' + self.url
 
 class Article(models.Model):
@@ -85,5 +85,5 @@ class Article(models.Model):
     pubdate = models.DateTimeField(blank=True, null=True)
 
 
-    def __str__(self):              # __str__ on Python 2
+    def __str__(self):              
         return self.title

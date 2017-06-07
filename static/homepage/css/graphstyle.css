@@ -679,5 +679,10 @@ tbody >tr:nth-child(odd) {
   margin-bottom: 0px;
 }
 
+#pie-chart .ct-label {
+  fill:#fff;
+  font-size: 20px;
+}
+
 
 
