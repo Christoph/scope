@@ -117,7 +117,7 @@ class Curate(object):
 
         summary_max_len_words = 40
 
-        words = representative_model.get_keywords(cluster_articles)
+        words = representative_model.get_keywords(cluster_articles, 2)
         rep = representative_model.text_rank(cluster_articles, max_size=summary_max_len_words)
         return words, rep
 
