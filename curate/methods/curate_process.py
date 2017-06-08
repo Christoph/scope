@@ -101,8 +101,8 @@ class Curate(object):
         words = self.produce_keywords_and_summaries(labels)
         articles_dict = self._produce_cluster_dict(labels)
         counter = 1
-        for key in articles_dict:
-            cluster, created = Curate_Query_Cluster.objects.get_or_create(rank=counter, center=key, defaults={'keywords': words[counter-1]})
+        for key, value in articles_dict.items():
+            cluster, created = Curate_Query_Cluster.objects.get_or_create(rank=counter, center=key, defaults={'keywords': words[key.article]})
             cluster.cluster_articles.clear()
             for instance in articles_dict[key]:
                 cluster.cluster_articles.add(instance)
@@ -114,7 +114,7 @@ class Curate(object):
     def produce_keywords_and_summaries(self, cluster_articles):
         representative_model = summarizer.Summarizer(self.language, self.nlp)
 
-        words = representative_model.get_keywords(cluster_articles, 2)
+        words = representative_model.get_keywords(cluster_articles, 1)
 
         return words
 
