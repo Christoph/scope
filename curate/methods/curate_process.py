@@ -98,11 +98,11 @@ class Curate(object):
         return articles_dict
 
     def produce_and_save_clusters(self, labels):
-        words, rep = self.produce_keywords_and_summaries(labels)
+        words = self.produce_keywords_and_summaries(labels)
         articles_dict = self._produce_cluster_dict(labels)
         counter = 1
         for key in articles_dict:
-            cluster, created = Curate_Query_Cluster.objects.get_or_create(rank=counter, center=key, defaults={'keywords':words[counter-1], 'summary':rep[counter-1]})
+            cluster, created = Curate_Query_Cluster.objects.get_or_create(rank=counter, center=key, defaults={'keywords': words[counter-1]})
             cluster.cluster_articles.clear()
             for instance in articles_dict[key]:
                 cluster.cluster_articles.add(instance)
@@ -112,14 +112,11 @@ class Curate(object):
         self.query.save()
 
     def produce_keywords_and_summaries(self, cluster_articles):
-        nlp = spacy.load(self.language)
-        representative_model = summarizer.Summarizer(self.language, nlp)
-
-        summary_max_len_words = 40
+        representative_model = summarizer.Summarizer(self.language, self.nlp)
 
         words = representative_model.get_keywords(cluster_articles, 2)
-        rep = representative_model.text_rank(cluster_articles, max_size=summary_max_len_words)
-        return words, rep
+
+        return words
 
     def _process(self, filtered_articles):
 
@@ -135,7 +132,7 @@ class Curate(object):
 
             print([a.title for a in selected_articles])
 
-         #you can generate the dict at this point actually.
+        # you can generate the dict at this point actually.
             self.produce_and_save_clusters(cluster_articles)
         else:
             selected_articles = []
