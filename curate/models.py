@@ -11,7 +11,7 @@ class Curate_Customer(models.Model):
     expires = models.DateField(blank=True)
     bad_source = models.ManyToManyField(Source, blank=True)
 
-    def __str__(self):           
+    def __str__(self):
         return self.customer.name
 
 class Curate_Customer_Selection(models.Model):
@@ -24,7 +24,7 @@ class Curate_Customer_Selection(models.Model):
         )
     name = models.CharField(max_length=100)
     color = models.CharField(max_length=100, default="#fff")
-    def __str__(self):             
+    def __str__(self):
         return self.name + ', ' + self.curate_customer.customer.name
 
     def human_readable_name(self):
@@ -41,7 +41,7 @@ class Curate_Rejection_Reasons(models.Model):
         ), default="con"
         )
     current_members = models.ManyToManyField('Article_Curate_Query', blank=True)
-    def __str__(self):              
+    def __str__(self):
         return self.name + ', ' + self.selection.name + ', ' + self.selection.curate_customer.customer.name
     def human_readable_name(self):
         return self.name.replace('_', ' ')
@@ -55,7 +55,7 @@ class Curate_Query(models.Model):
     no_clusters = models.IntegerField(null=True, blank=True)
     selection_made = models.BooleanField(default=False)
 
-    def __str__(self):              
+    def __str__(self):
         return self.time_stamp.isoformat() + ', ' + self.curate_customer.customer.name
 
     def selected_articles(self):
@@ -73,16 +73,12 @@ class Article_Curate_Query(models.Model):
     agent = models.ForeignKey(Agent, null=True, blank=True)
     newsletter =  models.ForeignKey(Newsletter, null=True, blank=True)
     bad_article = models.BooleanField(default=False)
-    def __str__(self):              
+    def __str__(self):
         return self.article.title + ', ' + self.curate_query.time_stamp.isoformat() + ', ' + self.curate_query.curate_customer.customer.name
 
 class Curate_Query_Cluster(models.Model):
     rank = models.IntegerField(null=True, blank=True)
     center = models.ForeignKey(Article_Curate_Query)
     cluster_articles = models.ManyToManyField(Article_Curate_Query, blank=True, related_name='cluster_articles')
-    keywords = models.CharField(max_length=50)
-    summary = models.CharField(max_length=500)
-
-
-
-
+    keywords = models.CharField(max_length=50, blank=True)
+    summary = models.CharField(max_length=500, blank=True)
