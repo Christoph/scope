@@ -1,4 +1,4 @@
-from curate.models import Curate_Customer, Curate_Query, Article_Curate_Query
+from curate.models import Curate_Customer, Curate_Query, Article_Curate_Query, Curate_Customer_Selection, Curate_Rejection_Reasons
 from scope.models import Customer, AgentImap, Agent
 from django.contrib.contenttypes.models import ContentType
 import configparser
@@ -31,19 +31,39 @@ def create_customer_from_config_file(customer_key):
 
     # Create Curate Customer
     curate_customer, created_customer = Curate_Customer.objects.get_or_create(
-        customer=customer, defaults={'expires':date.today()})
+        customer=customer, defaults={'expires': date.today()})
 
-    #create agent
+    # create agent
     cur_cus_contenttype = ContentType.objects.get(model="curate_customer")
     agent_imap_contenttype = ContentType.objects.get(model="agentimap")
     agent, created = Agent.objects.get_or_create(
-        product_customer_type=cur_cus_contenttype, product_customer_id =curate_customer.id, agent_type=agent_imap_contenttype, agent_id=agentimap.id)
+        product_customer_type=cur_cus_contenttype, product_customer_id=curate_customer.id, agent_type=agent_imap_contenttype, agent_id=agentimap.id)
 
     # Create curate_query
     query = Curate_Query(
         curate_customer=curate_customer)
 
     query.save()
+
+    options = dict(
+        [['choose', {'kind': 'sel', 'color': '#30c96d'}],
+         ['avoid', {'kind': 'mis', 'color': '#f95738',
+                    'reasons': [{'name': 'bad source', 'kind': 'sou'},
+                                {'name': 'bad content', 'kind': 'con'},
+                                {'name': 'too frequent', 'kind': 'frq'}
+                                ]
+                    }
+          ]
+         ]
+    )
+
+    for key, value in options.items():
+        selection, created = Curate_Customer_Selection.objects.get_or_create(
+            curate_customer=curate_customer, name=key, defaults={'kind': value['kind'], 'color': value['color']})
+        if 'reasons' in value:
+            for reason in value['reasons']:
+                Curate_Rejection_Reasons.objects.get_or_create(
+                    selection=selection, name=reason['name'], kind=reason['kind'])
 
     # Create Source for the Curate_Customer
     # agent = Agent(
@@ -58,7 +78,8 @@ def retrieve_objects(customer_key, range=None):
     customer = Customer.objects.get(customer_key=customer_key)
     curate_customer = Curate_Customer.objects.get(customer=customer)
     if range != None:
-        # queries = Curate_Query.objects.filter(time_stamp__gt=date.today()-timedelta(days=range))
+        # queries =
+        # Curate_Query.objects.filter(time_stamp__gt=date.today()-timedelta(days=range))
         queries = Curate_Query.objects.filter(
             curate_customer=curate_customer).order_by("pk").reverse()[0:range]
         articles = Article_Curate_Query.objects.filter(

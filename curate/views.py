@@ -58,24 +58,24 @@ def interface(request,customer_key=None, date_stamp=None):
                     xx = request.POST[option.name + str(i)]
                     if xx == 'on':
                         s = suggestions[i-1]
-                        selected_articles.append({"title": s.article.title, "body": s.article.body[0:200], "selection": option.name})
+                        selected_articles.append({"title": s.center.article.title, "body": s.center.article.body[0:200], "selection": option.name})
                         for reason in option.rejection_reason.all():
                             try:
                                 yy = request.POST[option.name + str(i) + reason.name]
                                 print(yy)
                                 if  yy == "on":
                                     if reason.kind == "sou":
-                                        curate_customer.bad_source.add(s.article.source)
+                                        curate_customer.bad_source.add(s.center.article.source)
                                         curate_customer.save()
                                     else:
-                                        reason.current_members.add(s)
+                                        reason.current_members.add(s.center)
                                         reason.save()
                                         if reason.kind == "con":
-                                            s.bad_article = True
+                                            s.center.bad_article = True
                             except:
                                 pass
-                        s.selection_options.add(option)
-                        s.save()
+                        s.center.selection_options.add(option)
+                        s.center.save()
                 except:
                     pass
                     
@@ -94,7 +94,7 @@ def interface(request,customer_key=None, date_stamp=None):
 
     stats = {}
     for option in options.all():
-        stat = [i for i in suggestions if option in i.selection_options.all()]
+        stat = [i for i in suggestions if option in i.center.selection_options.all()]
         stats[option] = len(stat)
     context = {"stats": stats, "suggestions": suggestions, "options": options, 'query': query, 'customer_key': key}
     return render(request, 'curate/interface.html', context)
