@@ -8,7 +8,7 @@ EXCLUDE = set(('',
                'Seite nicht gefunden',
                '404 :: lr-online',
                'kinja.com',
-               'inFranken.de'))
+               'inFranken.de',))
 
 URL_EXCLUDE = set(('kinja.com', 'inFranken.de'))
 
@@ -67,4 +67,5 @@ URL_HOSTNAME_BLACKLIST = ["www.w3.org",
                           "www.wikipedia.org",
                           "betalist.com",
                           "searchsystem.co",
-                          "www.smashingmagazine.com"]
+                          "www.smashingmagazine.com",
+                          "t3n.de/jobs"]

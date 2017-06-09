@@ -84,86 +84,99 @@
         {% for suggestion in suggestions %}
           <div class="row well">
             <div class="col-md-8" style="word-wrap: break-word; text-align: left;">
-              <p><img class="image" src="{{suggestion.article.images}}" alt=""></p>
-              <h2><a href="{{suggestion.article.url}}">{{suggestion.article.title}}</a> </h2>
-              <h3>{{suggestion.article.source.url}}</h3>
-              <p> {{suggestion.article.body|truncatewords:50}} </p>
-            </div>
-            <div class="col-md-4" style="text-align: left; margin-top: 4%">
-              
-              <div class="row">
-                
-                <div class="btn-group selector" data-toggle="buttons">
-                  {% for option in options %}
-                    <label class="checkbox-inline btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px; border-radius:2px; margin-left: 10px;" {% if query.selection_made %}disabled="disabled"{% endif %}
-                    
-                    data-toggle="collapse" href="#{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse" aria-expanded="false" aria-controls="{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse"
-                    
-                    
-                    >
-                    <input
-                    type="checkbox"
-                    name="{{option.name}}{{ forloop.parentloop.counter }}"
-                    class="{{option.name}}-input"
-                    id="{{option.name}}-{{ forloop.parentloop.counter }}"
-                    style="margin-top: 6px; margin-left:10px; opacity: 1;"
-                    >
-                    {{option.human_readable_name|title}}
-                  </label>
-                  {% if option.rejection_reason.all.count > 0 %}
-                    <div class="collapse reasons {{option.name}}-border" id="{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse">
-                      
-                      {% for reason in option.rejection_reason.all %}
-                        <label class="checkbox-inline btn btn-option btn-{{option.name}} reason-label" style="margin-left: 5%;" {% if query.selection_made %}disabled="disabled"{% endif %}>
-                        <input
-                        type="checkbox"
-                        name="{{option.name}}{{ forloop.parentloop.parentloop.counter }}{{reason.name}}"
-                        class="{{option.name}}_reason"
-                        style="margin-top: 6px; margin-left:10px; opacity: 0;"
-                        >
-                        {{reason.human_readable_name|title}}
-                      </label>
-                      
+              <p><img class="image" src="{{suggestion.center.article.images}}" alt=""></p>
+              <h2><a href="{{suggestion.center.article.url}}">{{suggestion.center.article.title}}</a> </h2>
+              <h3>{{suggestion.center.article.source.url}}</h3>
+              <p> {{suggestion.center.article.body|truncatewords:50}} </p>
+              <p>
+                <a class="btn btn-option" role="button" data-toggle="collapse" href="#related_articles{{suggestion.rank}}" aria-expanded="false" aria-controls="collapseExample">
+                  Related Articles
+                </a>
+                <div class="collapse" id="related_articles{{suggestion.rank}}">
+                  <div class="well">
+                    {% for instance in suggestion.cluster_articles.all %}
+                      <p><a href="{{instance.article.url}}">{{instance.article.title}}</a>, {{instance.article.source.name}}</p>
                     {% endfor %}
                   </div>
-                  
-                {% endif %}
+                  </div>
+                </p>
+                </div>
+              
+              <div class="col-md-4" style="text-align: left; margin-top: 4%">
                 
-              {% endfor %}
+                <div class="row">
+                  
+                  <div class="btn-group selector" data-toggle="buttons">
+                    {% for option in options %}
+                      <label class="checkbox-inline btn btn-option btn-{{option.name}} {% if option in suggestion.selection_options.all %} active {% endif %} " style="font-size: 20px; width: 150px; border-radius:2px; margin-left: 10px;" {% if query.selection_made %}disabled="disabled"{% endif %}
+                      
+                      data-toggle="collapse" href="#{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse" aria-expanded="false" aria-controls="{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse"
+                      
+                      
+                      >
+                      <input
+                      type="checkbox"
+                      name="{{option.name}}{{ forloop.parentloop.counter }}"
+                      class="{{option.name}}-input"
+                      id="{{option.name}}-{{ forloop.parentloop.counter }}"
+                      style="margin-top: 6px; margin-left:10px; opacity: 1;"
+                      >
+                      {{option.human_readable_name|title}}
+                    </label>
+                    {% if option.rejection_reason.all.count > 0 %}
+                      <div class="collapse reasons {{option.name}}-border" id="{{option.name}}{{ forloop.parentloop.counter }}rejection_collapse">
+                        
+                        {% for reason in option.rejection_reason.all %}
+                          <label class="checkbox-inline btn btn-option btn-{{option.name}} reason-label" style="margin-left: 5%;" {% if query.selection_made %}disabled="disabled"{% endif %}>
+                          <input
+                          type="checkbox"
+                          name="{{option.name}}{{ forloop.parentloop.parentloop.counter }}{{reason.name}}"
+                          class="{{option.name}}_reason"
+                          style="margin-top: 6px; margin-left:10px; opacity: 0;"
+                          >
+                          {{reason.human_readable_name|title}}
+                        </label>
+                        
+                      {% endfor %}
+                    </div>
+                    
+                  {% endif %}
+                  
+                {% endfor %}
+              </div>
+              
             </div>
-            
           </div>
         </div>
-      </div>
-    {% endfor %}
-    {% if query.selection_made %}
-      <input class="btn btn-primary" type="button" value="Already selected" {% if query.selection_made %}disabled="disabled"{% endif %}>
-    {% else %}
-      <input class="btn btn-primary" type="submit" value="Create Newsletter" >
-    {% endif %}
-  </form>
-</div>
-{% for option in options %}
-  <div class="numberbox {{option.name}}-class" id="numberbox-{{option.name}}"></div>
-{% endfor %}
+      {% endfor %}
+      {% if query.selection_made %}
+        <input class="btn btn-primary" type="button" value="Already selected" {% if query.selection_made %}disabled="disabled"{% endif %}>
+      {% else %}
+        <input class="btn btn-primary" type="submit" value="Create Newsletter" >
+      {% endif %}
+    </form>
+  </div>
+  {% for option in options %}
+    <div class="numberbox {{option.name}}-class" id="numberbox-{{option.name}}"></div>
+  {% endfor %}
 </div>
 {% endblock content %}
 {% block scripts %}
 <script type='text/javascript'>
 {% if query.selection_made is False %}
-function eval_checkboxes() {
-{% for option in options %}
-  $('#numberbox-{{option.name}}').html(jQuery(".{{option.name}}-input:checked").length);
-  $('#numberbox-{{option.name}}').css("display","block");
-{% endfor %}
-}
-jQuery(document).ready(addClickHandlers());
-function addClickHandlers() {
-$(document).on('change', 'input', function(event) {
-eval_checkboxes()
-}
-);
-}
+  function eval_checkboxes() {
+  {% for option in options %}
+    $('#numberbox-{{option.name}}').html(jQuery(".{{option.name}}-input:checked").length);
+    $('#numberbox-{{option.name}}').css("display","block");
+  {% endfor %}
+  }
+  jQuery(document).ready(addClickHandlers());
+  function addClickHandlers() {
+  $(document).on('change', 'input', function(event) {
+  eval_checkboxes()
+  }
+  );
+  }
 {% endif %}
 </script>
 {% endblock scripts %}

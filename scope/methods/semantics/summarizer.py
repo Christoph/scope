@@ -104,12 +104,12 @@ class Summarizer():
 
         return words
 
-    def get_keywords(self, clusters, n_words):
+    def get_keywords(self, clusters, selected_articles, n_words):
         keywords = []
-
-        for center, clust in clusters.items():
+        for center in selected_articles:
+        #for center, clust in clusters.items():
             # vectorizer = TfidfVectorizer(sublinear_tf=True)
-
+            clust = clusters[center]
             chunks, lemmas = self.preprocessor.keyword_preprocessing(clust)
 
             # Normalize

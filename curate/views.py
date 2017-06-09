@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from conf.settings.importer import ImportGlobal
 from curate.tasks import send_newsletter_task, selection_made_task
 from scope.methods.semantics.keywords import keywords_from_articles
-from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection
+from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection, Curate_Query_Cluster
 from scope.models import Customer, UserProfile
 
 
@@ -40,7 +40,10 @@ def interface(request,customer_key=None, date_stamp=None):
     else:
         date_parsed = datetime.strptime(date_stamp,'%d%m%Y').date()
         query = Curate_Query.objects.filter(curate_customer=curate_customer).filter(time_stamp=date_parsed).order_by("pk").last()
-    suggestions = Article_Curate_Query.objects.filter(curate_query=query).filter(rank__gt = 0).order_by("rank")
+    suggestions = Curate_Query_Cluster.objects.filter(
+            center__curate_query=query).order_by('rank')#.values_list('center', flat=True)
+    #suggestions = Article_Curate_Query.objects.filter(curate_query=query).filter(rank__gt = 0).order_by("rank")
+    #suggestions = [cluster.center for cluster in clusters]
     options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).order_by("pk")
     if request.method == 'POST':
         config = configparser.RawConfigParser()

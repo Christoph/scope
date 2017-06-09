@@ -4,7 +4,7 @@ import spacy
 from scope.methods.semantics import document_embedding
 from scope.methods.graphs import clustering_methods
 import scope.methods.dataprovider.provider as provider
-from scope.methods.semantics import summarizer
+from scope.methods.semantics import summarizer, keywords
 
 from scope.models import Customer
 
@@ -83,10 +83,12 @@ class Curate(object):
 
         return after_bad_articles
 
-    def _produce_cluster_dict(self, article_clusters):
+    def _produce_cluster_dict(self, cluster_articles, selected_articles):
         articles_dict = {}
         # produce a dictionary of the clusters
-        for center, cluster in article_clusters.items():
+        for center in selected_articles:
+            cluster = cluster_articles[center]
+        #for center, cluster in article_clusters:
             center_instance = Article_Curate_Query.objects.filter(
                 article=center, curate_query=self.query).first()
             all_article_curate_instances = []
@@ -95,15 +97,22 @@ class Curate(object):
                     article__title=article.title, curate_query=self.query)
                 all_article_curate_instances.extend(article_curate_instances)
             articles_dict[center_instance] = list(set(all_article_curate_instances))
+            #this output is comprised of article_curate_query instances!
         return articles_dict
 
-    def produce_and_save_clusters(self, labels):
-        words = self.produce_keywords_and_summaries(labels)
-        articles_dict = self._produce_cluster_dict(labels)
+    def produce_and_save_clusters(self, cluster_articles, selected_articles):
+        words, alternative_keywords = self.produce_keywords_and_summaries(cluster_articles, selected_articles)
+        articles_dict = self._produce_cluster_dict(cluster_articles, selected_articles)
         counter = 1
+
+        #in case you go from db:
+        old_clusters = Curate_Query_Cluster.objects.filter(center__curate_query=self.query)
+        old_clusters.delete()
+
         for key, value in articles_dict.items():
-            cluster, created = Curate_Query_Cluster.objects.get_or_create(rank=counter, center=key, defaults={'keywords': words[key.article]})
-            cluster.cluster_articles.clear()
+            cluster = Curate_Query_Cluster(rank=counter, center=key, keywords= str(words[key.article]) + ',' + alternative_keywords[key.article])
+            cluster.save()
+            #cluster.cluster_articles.clear()
             for instance in articles_dict[key]:
                 cluster.cluster_articles.add(instance)
             cluster.save()
@@ -111,12 +120,13 @@ class Curate(object):
         self.query.no_clusters = counter
         self.query.save()
 
-    def produce_keywords_and_summaries(self, cluster_articles):
+    def produce_keywords_and_summaries(self, cluster_articles, selected_articles):
+        #this input dict consists of actual article objects
         representative_model = summarizer.Summarizer(self.language, self.nlp)
 
-        words = representative_model.get_keywords(cluster_articles, 1)
-
-        return words
+        words = representative_model.get_keywords(cluster_articles, selected_articles, 1)
+        alternative_keywords = keywords.keywords_from_articles(cluster_articles, selected_articles, self.language)
+        return words, alternative_keywords
 
     def _process(self, filtered_articles):
 
@@ -133,7 +143,7 @@ class Curate(object):
             print([a.title for a in selected_articles])
 
         # you can generate the dict at this point actually.
-            self.produce_and_save_clusters(cluster_articles)
+            self.produce_and_save_clusters(cluster_articles, selected_articles)
         else:
             selected_articles = []
         return selected_articles

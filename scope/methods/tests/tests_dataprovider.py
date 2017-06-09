@@ -2,7 +2,6 @@ from django.test import TestCase
 from scope.methods.dataprovider.news_handler import ScopeNewspaperArticle
 from scope.methods.dataprovider.blacklist import Blacklist
 from scope.methods.dataprovider import imap_handler, er_handler, news_handler, url_extractor
-
 import spacy
 
 from scope.models import Newsletter
@@ -49,7 +48,8 @@ class Extractor_Tests(TestCase):
 class ImapHandler_Tests(TestCase):
 	def test_merge_mails_from_same_newsletter(self):
 		agent, language = testutils.create_agent_and_language("commerzbank_germany")
-		ih = imap_handler.ImapHandler(agent,language)
+		nlp = spacy.load(language)
+		ih = imap_handler.ImapHandler(agent,language, nlp)
 	#running this test with an article_dict, since it doesn't really make a difference for that method
 		l = testutils.create_article_dict(10, 20)
 		l = [l[0],l[1],l[0]]

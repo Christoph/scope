@@ -309,7 +309,7 @@ class MovetoOtherClustersWidget(widgets.ItemList):
 	get_link_to_dashboard.allow_tags = True
 	list_display_links = ('selection_made')
 	sortable = True
-	limit_to = 500
+	limit_to = 100
 	height = 120
 	width = 2
 	list_display = ('get_link_to_dashboard', 'selection_made')
@@ -396,7 +396,6 @@ class QueryChartWidget(widgets.SingleBarChart):
 class ClusterandNewsletterWidget(widgets.BarChart):
 	# display the distribution of cluster sizes
 	title = "By Newsletter"
-
 	class Chartist:
 		options = {
 			'stackBars': True,
@@ -409,7 +408,7 @@ class ClusterandNewsletterWidget(widgets.BarChart):
 		query = get_query(self)
 		queryset = Curate_Query_Cluster.objects.filter(
 			center__curate_query=query).order_by('pk').annotate(count=Count('cluster_articles')).order_by('rank')
-		return queryset
+		return queryset[0:15]
 
 	def legend(self):
 		query = get_query(self)
@@ -438,7 +437,7 @@ class ClusterandNewsletterWidget(widgets.BarChart):
 class ClusterandSourcesWidget(widgets.BarChart):
 	# display the distribution of cluster sizes
 	title = "By Source"
-
+	limit_to = 15
 	class Chartist:
 		options = {
 			'stackBars': True,
@@ -451,7 +450,7 @@ class ClusterandSourcesWidget(widgets.BarChart):
 		query = get_query(self)
 		queryset = Curate_Query_Cluster.objects.filter(
 			center__curate_query=query).order_by('pk').annotate(count=Count('cluster_articles')).order_by('rank')
-		return queryset
+		return queryset[0:15]
 
 	def get_common_sources(self):
 		query = get_query(self)
@@ -534,6 +533,9 @@ class ClustersWidget(widgets.ItemList):
 	def get_central_newsletter(self, obj):
 		return decode_header(obj.center.newsletter.name)[0][0]
 	get_central_newsletter.short_description = "Newsletter of central article"
+
+	# def get_keywords(self,obj):
+	# 	return
 
 	sortable = True
 	list_display = ('rank', 'get_central_title',
