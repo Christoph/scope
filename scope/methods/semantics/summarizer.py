@@ -109,13 +109,8 @@ class Summarizer():
     def get_keywords(self, clusters, selected_articles, n_words, max_characters):
         keywords = []
         for center in selected_articles:
-        #for center, clust in clusters.items():
-            # vectorizer = TfidfVectorizer(sublinear_tf=True)
             clust = clusters[center]
             chunks, lemmas = self.preprocessor.keyword_preprocessing(clust)
-
-            # Normalize
-            # normalized_matrix = vectorizer.fit_transform(lemmas)
 
             docs = [self.nlp(t) for t in chunks]
             normalized_matrix = []
