@@ -94,7 +94,11 @@ print("KEYWORDS & SUMMARY/REPRESENTATIVE")
 
 representative_model = summarizer.Summarizer(language, nlp)
 
-words = representative_model.get_keywords(cluster_articles, central_articles, 2, 30)
+summaries = representative_model.text_rank(cluster_articles, central_articles, 300)
+
+words = representative_model.get_keywords(cluster_articles, central_articles, 1, 30)
+
+samples = [representative_model.create_sample_text(a.body, 300) for a in central_articles]
 
 print("RESULTS")
 out = []

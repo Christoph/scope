@@ -1,6 +1,8 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy import stats
+import numpy as np
+import re
 
 from scope.methods.semantics import preprocess
 
@@ -20,15 +22,31 @@ class Summarizer():
             lang=lang,
             nlp=self.nlp)
 
-    def text_rank(self, cluster_articles, max_size):
+    def create_sample_text(self, text, max_length):
+        doc = self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s\.,!?#]", " ", text).replace("_", " ")).strip())
+
+        temp = []
+        for sent in doc.sents:
+            if sent.text.strip()[-1] in ["?", ".", "!"]:
+                if len(" ".join(temp) + " " + sent.text) > max_length:
+                    break
+                temp.append(sent.text.strip())
+            # else:
+            #     print(sent.text)
+
+        return " ".join(temp)
+
+    def text_rank(self, cluster_articles, central_articles, max_length):
         summaries = []
 
-        for clust in cluster_articles:
+        for art in central_articles:
+            cluster = cluster_articles[art]
+
             vectorizer = TfidfVectorizer(sublinear_tf=True)
-            summary = ""
+            summary_text = ""
 
             sents, original_sents = self.preprocessor.prepare_sentences(
-                clust[1])
+                cluster)
 
             # Normalize
             normalized_matrix = vectorizer.fit_transform(sents)
@@ -41,35 +59,70 @@ class Summarizer():
 
             # Pagerank sentences
             scores = nx.pagerank(graph)
+            text_lengths = [len(s) for s in original_sents]
 
-            # Ranked sentences
-            ranked_clean = sorted(((scores[i], s) for i, s in
-                                   enumerate(sents)),
-                                  reverse=True)
+            tokens = [len(s.split(" ")) for s in original_sents]
+            indices = np.where(np.array(tokens) >= 3)[0]
 
-            ranked = sorted(((scores[i], s) for i, s in enumerate(original_sents)),
-                            reverse=True)
+            groups = []
+            for i in range(0, len(indices)):
+                summary = []
+                length = 0
+                score = []
 
-            # Prepare variables
-            token_sets = [set(s[1].split(" ")) for s in ranked_clean]
-            text_lengths = [len(s[1].split(" ")) for s in ranked]
+                for j in range(i, len(indices)):
+                    ind = indices[j]
+                    if length + text_lengths[ind] > max_length:
+                        break
 
-            # Selection
-            ind = self._get_summary_indices(token_sets, text_lengths, max_size)
+                    if original_sents[ind] in art.body and original_sents[ind] not in summary:
+                        length += text_lengths[ind]
+                        summary.append(ind)
+                        score.append(scores[ind])
 
-            for i in ind:
-                summary = summary + " " + ranked[i][1]
+                if score:
+                    mean_score = np.mean(score)
+                    groups.append((summary, mean_score))
 
-            summaries.append(summary.strip())
+            ranked = sorted(groups, key=lambda tup: tup[1], reverse=True)
+
+            for i in ranked[0][0]:
+                summary_text = summary_text + " " + original_sents[i]
+
+            # # Ranked sentences
+            # ranked_clean = sorted(((scores[i], s) for i, s in
+            #                        enumerate(sents)),
+            #                       reverse=True)
+            #
+            # ranked = sorted(((scores[i], s) for i, s in enumerate(original_sents)),
+            #                 reverse=True)
+            #
+            # # Prepare variables
+            # token_sets = [set(s[1].split(" ")) for s in ranked_clean]
+            # text_lengths = [len(s[1]) for s in ranked]
+            #
+            # # Selection
+            # ind = self._get_summary_indices(token_sets, text_lengths, max_length)
+            #
+            # for i in ind:
+            #     summary = summary + " " + ranked[i][1]
+            #
+
+            summaries.append(summary_text.strip())
 
         return summaries
 
     def _get_summary_indices(self, tokens, lengths, max_len):
-        total_length = lengths[0]
-        total_tokens = tokens[0]
-        sents = [0]
 
-        for i in range(1, int(len(tokens) * 0.1)):
+        # Use only 25th to 75th percentile
+        lengths = np.array(lengths)
+        indices = np.where(np.logical_and(lengths <= np.percentile(lengths, 75), lengths >= np.percentile(lengths, 10)))
+
+        total_length = 0
+        total_tokens = set([])
+        sents = []
+
+        for i in indices[0]:
             if self._jaccard_dist(total_tokens, tokens[i]) > 0.8:
                 temp = total_length + lengths[i]
 

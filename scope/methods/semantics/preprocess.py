@@ -24,22 +24,24 @@ class PreProcessing():
         total = [a.body for a in articles]
 
         # Convert text to spacy object
-        docs = self._generate_clean_docs(total)
+        docs = [self.nlp(t) for t in total]
 
         sents = []
         original_sents = []
 
         for doc in docs:
             for sent in doc.sents:
-                token_sent = self._noun_token_sent(sent)
+                if sent.text[-1] in ["?", ".", "!"]:
+                    print(sent.text)
+                    token_sent = self._noun_token_sent(sent)
 
-                sents.append(token_sent)
-                original_sents.append(sent.text)
+                    sents.append(token_sent)
+                    original_sents.append(sent.text)
 
         return sents, original_sents
 
     def _generate_clean_docs(self, texts):
-        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s\.,!?-]", " ", a)).strip()) for a in texts]
+        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s\.,!?]", " ", a).replace("_", " ")).strip()) for a in texts]
 
         return docs
 
@@ -57,7 +59,7 @@ class PreProcessing():
             elif t.tag_ in self.noun_tags:
                 temp.append(t.lemma_)
 
-        return " ".join(temp)
+        return " ".join(list(set(temp)))
 
     def noun_based_preprocessing(self, articles):
         docs = [self.nlp(a.body) for a in articles]
