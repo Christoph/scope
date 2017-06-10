@@ -41,7 +41,7 @@ def interface(request,customer_key=None, date_stamp=None):
         date_parsed = datetime.strptime(date_stamp,'%d%m%Y').date()
         query = Curate_Query.objects.filter(curate_customer=curate_customer).filter(time_stamp=date_parsed).order_by("pk").last()
     suggestions = Curate_Query_Cluster.objects.filter(
-            center__curate_query=query).order_by('rank')#.values_list('center', flat=True)
+            center__curate_query=query).order_by('rank')
     #suggestions = Article_Curate_Query.objects.filter(curate_query=query).filter(rank__gt = 0).order_by("rank")
     #suggestions = [cluster.center for cluster in clusters]
     options = Curate_Customer_Selection.objects.filter(curate_customer=curate_customer).order_by("pk")
@@ -128,27 +128,35 @@ def mail(request, customer_key=None):
     config.read('curate/customers/' + key +
                 "/" + key + '.cfg')
 
+    instances = query.selected_articles()
+    articles = [i.article for i in instances]
+    keywords = ""
+    ma = min(3,len(keywords))
+    keywords = [i.center.filter(center__curate_query=query).first().keywords for i in instances[:ma]]
+    
+    #keywords = [i.keywords for i in instances]
     # recipients = config.get('outlet', 'recipients').split(',\n')
     # template_no = config.getint('outlet', 'mail_template_no')
 
-    if config.get('outlet', 'options') == 'all':
-        selection_options = Curate_Customer_Selection.objects.filter(
-            curate_customer=curate_customer).filter(kind="sel").all()
-    else:
-        names = config.get('outlet', 'options').split(',')
-        selection_options = Curate_Customer_Selection.objects.filter(
-            curate_customer=curate_customer).filter(name__in=names).all()
-    articles = []
-    for option in selection_options:
-        articles.extend([i.article for i in Article_Curate_Query.objects.filter(curate_query=query).filter(
-            selection_options= option).order_by("rank").all()])
+    # if config.get('outlet', 'options') == 'all':
+    #     selection_options = Curate_Customer_Selection.objects.filter(
+    #         curate_customer=curate_customer).filter(kind="sel").all()
+    # else:
+    #     names = config.get('outlet', 'options').split(',')
+    #     selection_options = Curate_Customer_Selection.objects.filter(
+    #         curate_customer=curate_customer).filter(name__in=names).all()
+    # articles = []
+    # keywords = []
+    # for option in selection_options:
+    
+
+    
+    # articles.extend([i.center.article for i in clusters])
+    # keywords.extend([i.keywords for i in clusters])
+        # articles.extend([i.article for i in Article_Curate_Query.objects.filter(curate_query=query).filter(
+        #     selection_options= option).order_by("rank").all()])
     stats_dict = {'name': config.get('meta', 'name'), 'words': query.processed_words,
                   'no_of_articles': query.articles_before_filtering}
-    
-    lang = config.get(
-            'general', 'language')
-    ma = max(3,len(articles))
-    keywords = keywords_from_articles(articles[0:ma],lang)
 
-    context = {"articles": articles, "stats_dict": stats_dict, "keywords": ";".join(keywords)}
+    context = {"articles": articles, "stats_dict": stats_dict, "keywords": "; ".join(keywords)}
     return render(request, 'curate/mail_template.html', context)

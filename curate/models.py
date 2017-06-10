@@ -78,7 +78,16 @@ class Article_Curate_Query(models.Model):
 
 class Curate_Query_Cluster(models.Model):
     rank = models.IntegerField(null=True, blank=True)
-    center = models.ForeignKey(Article_Curate_Query)
+    center = models.ForeignKey(Article_Curate_Query, related_name='center')
     cluster_articles = models.ManyToManyField(Article_Curate_Query, blank=True, related_name='cluster_articles')
     keywords = models.CharField(max_length=50, blank=True)
     summary = models.CharField(max_length=500, blank=True)
+
+class Curate_Recipient(models.Model):
+    curate_customer = models.ForeignKey(Curate_Customer)
+    first = models.CharField(max_length=50)
+    last  = models.CharField(max_length=50, blank=True)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.first + ' ' + self.last + ', ' + self.curate_customer.customer.name

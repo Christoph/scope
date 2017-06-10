@@ -19,29 +19,33 @@ def send_newsletter(customer_key):
 	recipients = config.get('outlet', 'recipients').split(',\n')
 	template_no = config.getint('outlet', 'mail_template_no')
 
-	if config.get('outlet', 'options') == 'all':
-		selection_options = Curate_Customer_Selection.objects.filter(
-			curate_customer=curate_customer).filter(kind="sel").all()
-	else:
-		names = config.get('outlet', 'options').split(',')
-		selection_options = Curate_Customer_Selection.objects.filter(
-			curate_customer=curate_customer).filter(name__in=names).all()
+	# if config.get('outlet', 'options') == 'all':
+	# 	selection_options = Curate_Customer_Selection.objects.filter(
+	# 		curate_customer=curate_customer).filter(kind="sel").all()
+	# else:
+	# 	names = config.get('outlet', 'options').split(',')
+	# 	selection_options = Curate_Customer_Selection.objects.filter(
+	# 		curate_customer=curate_customer).filter(name__in=names).all()
 
-	send_dict = {}
-	for option in selection_options:
-		articles = [i.article for i in Article_Curate_Query.objects.filter(curate_query=query).filter(
-			selection_options=option).order_by("rank").all()]
-		send_dict[option.name] = articles
+	# send_dict = {}
+	# for option in selection_options:
+	# 	articles = [i.article for i in Article_Curate_Query.objects.filter(curate_query=query).filter(
+	# 		selection_options=option).order_by("rank").all()]
+	# 	send_dict[option.name] = articles
+	
+	instances = query.selected_articles()
+	articles = [i.article for i in instances]
+	keywords = ""
+	ma = min(3,len(keywords))
+	keywords = [i.center.filter(center__curate_query=query).first().keywords for i in instances[:ma]]
+	
+	send_dict = {'sel': articles}
 
 	stats_dict = {'words': query.processed_words,
 				  'no_of_articles': query.articles_before_filtering}
 
-	lang = config.get('general', 'language')
-	ma = max(3,len(articles))
-	keywords = keywords_from_articles(articles[0:ma],lang)
-
 	send_mail(
-		subject="Scope Today: " + ",".join(keywords),
+		subject="Scope Mail: " + "; ".join(keywords),
 		message=mail_template(stats_dict, articles, query,
 							  template_no, html=False),
 		from_email='robot@scope.ai',
