@@ -68,10 +68,12 @@ class PreProcessing():
             articles: List of article objects
         '''
         # Merge body and title
-        total = [". ".join([a.title, a.body]) for a in articles]
+        # total = [". ".join([a.title, a.body]) for a in articles]
+
+        total = [a.title for a in articles]
 
         # Convert text to spacy object
-        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s\.,!?]", " ", a))) for a in total]
+        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s\.,!?-]", " ", a))) for a in total]
 
         lemmas = []
         chunks = []

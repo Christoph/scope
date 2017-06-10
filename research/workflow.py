@@ -94,7 +94,7 @@ print("KEYWORDS & SUMMARY/REPRESENTATIVE")
 
 representative_model = summarizer.Summarizer(language, nlp)
 
-words = representative_model.get_keywords(cluster_articles, 3)
+words = representative_model.get_keywords(cluster_articles, central_articles, 2, 30)
 
 print("RESULTS")
 out = []

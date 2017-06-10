@@ -98,11 +98,12 @@ class Summarizer():
 
             if self._jaccard_dist(total_tokens, tokens) > 0.8:
                 if ranked[i] in center.body:
-                    if len(words) >= n_words or len(" ".join(words)) > max_characters:
+                    if len(words) >= n_words:
                         break
 
-                    total_tokens = total_tokens.union(tokens)
-                    words.append(ranked[i])
+                    if len(" ".join(words)+" "+ranked[i]) <= max_characters:
+                        total_tokens = total_tokens.union(tokens)
+                        words.append(ranked[i])
 
         return words
 
