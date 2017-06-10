@@ -553,18 +553,18 @@ img.img-thumbnail.team-img {
 #team_pres {
 	/*background: black;*/
 	/*background: url(../img/best_small.jpg);*/
-	background: url(../img/best_small_dark.jpg) no-repeat top right fixed;;
+	background: url(../img/best_small_dark_no_rich.jpg) no-repeat top right fixed;;
 	background-size: cover;
 	background-attachment: fixed;
 	color: #ddd;
-	padding: 20px 0;
+	padding: 40px 0;
 }
 
 
 /* Testimonials Section */
 #testimonials {
 	/*background: url(../img/best_small.jpg);*/
-	background: url(../img/best_small.jpg) no-repeat top right fixed;
+	background: url(../img/best_small_no_rich.jpg) no-repeat top right fixed;
 	background-size: cover;
 	/*background-attachment: fixed;*/
 	color: #ddd;
@@ -587,7 +587,7 @@ img.img-thumbnail.team-img {
 @media (min-width: 1100px) {
      #testimonials {
        
-       height: 70vh;
+       height: 130vh;
     }
     .team_image {
     	display: none;
@@ -624,7 +624,7 @@ img.img-thumbnail.team-img {
 #contact {
 	/*padding: 120px 0 40px 0;*/
 	 background: var(--light);
-	 min-height: 90vh;
+	 min-height: 110vh;
 }
 #contact .contact-item {
 	padding: 10px;
