@@ -88,23 +88,25 @@ class Summarizer():
     def _jaccard_dist(self, a, b):
         return (len(a.union(b)) - len(a.intersection(b))) / len(a.union(b))
 
-    def _get_top_words(self, ranked, n_words):
-        words = [ranked[0]]
-        total_tokens = set(ranked[0].lower().split(" "))
+    def _get_top_words(self, ranked, center, n_words, max_characters):
 
-        for i in range(1, int(len(ranked))):
+        words = []
+        total_tokens = set("")
+
+        for i in range(0, int(len(ranked))):
             tokens = set(ranked[i].lower().split(" "))
 
             if self._jaccard_dist(total_tokens, tokens) > 0.8:
-                if len(words) >= n_words:
-                    break
+                if ranked[i] in center.body:
+                    if len(words) >= n_words or len(" ".join(words)) > max_characters:
+                        break
 
-                total_tokens = total_tokens.union(tokens)
-                words.append(ranked[i])
+                    total_tokens = total_tokens.union(tokens)
+                    words.append(ranked[i])
 
         return words
 
-    def get_keywords(self, clusters, selected_articles, n_words):
+    def get_keywords(self, clusters, selected_articles, n_words, max_characters):
         keywords = []
         for center in selected_articles:
         #for center, clust in clusters.items():
@@ -135,6 +137,6 @@ class Summarizer():
                              enumerate(chunks)),
                             reverse=True)
 
-            keywords.append((center, self._get_top_words([r[1] for r in ranked], n_words)))
+            keywords.append((center, self._get_top_words([r[1] for r in ranked], center, n_words, max_characters)))
 
         return dict(keywords)
