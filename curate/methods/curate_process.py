@@ -124,7 +124,7 @@ class Curate(object):
         #this input dict consists of actual article objects
         representative_model = summarizer.Summarizer(self.language, self.nlp)
 
-        words = representative_model.get_keywords(cluster_articles, selected_articles, 1)
+        words = representative_model.get_keywords(cluster_articles, selected_articles, 2, 30)
         alternative_keywords = keywords.keywords_from_articles(cluster_articles, selected_articles, self.language)
         return words, alternative_keywords
 
