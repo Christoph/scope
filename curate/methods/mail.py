@@ -45,7 +45,7 @@ def send_newsletter(customer_key):
 				  'no_of_articles': query.articles_before_filtering}
 
 	send_mail(
-		subject="Scope Mail: " + "; ".join(keywords),
+		subject="Scope Neu: " + "; ".join(keywords),
 		message=mail_template(stats_dict, articles, query,
 							  template_no, html=False),
 		from_email='robot@scope.ai',

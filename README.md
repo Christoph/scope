@@ -65,3 +65,28 @@
     for first time: don't use the fake flag
 ### 5. Run the server
     * python manage.py runserver
+
+## Setting up and testing deployment environment
+
+### 1. Celery and Rabbit
+    * add /usr/local/sbin to your path
+#### Running locally
+    * sudo rabbitmq-server (starts server)
+    * sudo rabbitmqctl status (check server status)
+    * python manage.py celery -A conf worker --loglevel=info (start celery worker(this is with djcelery))
+
+#### Running on server
+    * the running of celery on the server is daemonized through supervisor
+        *the config file for supervisor is at /etc/supervisor/conf.d/celeryd.conf
+        * there is some mess with virtualenvs and the daemonization process. Essentially I haven't been able to get the ENV variables from the virtualenvwrapper into the supervisord session so they are now reproduced in the above config file. THIs is important for changing any of variables. See also    http://stackoverflow.com/questions/12900402/supervisor-and-environment-variables
+    *for running it in the shell
+        *sudo /etc/init.d/celeryd start 
+        *the config file for celeryd lies at /etc/default/celeryd
+    *management of rabbit:
+        *sudo rabbitmqctl stop_app/start_app
+
+### 2. Gunicorn
+
+### 3. Nginx
+
+
