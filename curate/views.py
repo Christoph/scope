@@ -130,9 +130,9 @@ def mail(request, customer_key=None):
 
     instances = query.selected_articles()
     articles = [i.article for i in instances]
-    keywords = ""
-    ma = min(3,len(keywords))
-    keywords = [i.center.filter(center__curate_query=query).first().keywords for i in instances[:ma]]
+    # keywords = ""
+    # ma = min(3,len(keywords))
+    # keywords = [i.center.filter(center__curate_query=query).first().keywords for i in instances[:ma]]
     
     #keywords = [i.keywords for i in instances]
     # recipients = config.get('outlet', 'recipients').split(',\n')
@@ -158,5 +158,5 @@ def mail(request, customer_key=None):
     stats_dict = {'name': config.get('meta', 'name'), 'words': query.processed_words,
                   'no_of_articles': query.articles_before_filtering}
 
-    context = {"articles": articles, "stats_dict": stats_dict, "keywords": "; ".join(keywords)}
+    context = {"articles": articles, "stats_dict": stats_dict, 'recipient_name':customer.name}
     return render(request, 'curate/mail_template.html', context)
