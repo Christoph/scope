@@ -88,6 +88,10 @@ class Curate_Recipient(models.Model):
     first = models.CharField(max_length=50)
     last  = models.CharField(max_length=50, blank=True)
     email = models.EmailField()
+    is_editor = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.first + ' ' + self.last + ', ' + self.curate_customer.customer.name
+        if self.is_editor: 
+            return '(ED)' + self.first + ' ' + self.last + ', ' + self.curate_customer.customer.name
+        else:
+            return self.first + ' ' + self.last + ', ' + self.curate_customer.customer.name
