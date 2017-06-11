@@ -26,7 +26,8 @@ def get_clustering(articles, sim, vecs, max_clusters, min_clusters):
     labels_gauss, probas_gauss = gauss(vecs, int(max_clusters*1.3))
     len_gauss = len(np.unique(labels_gauss))
     print("Gauss clusters: "+str(len_gauss))
-
+    print("Max Clusters:", max_clusters)
+    print("Min Clusters:", min_clusters)
     # if len_aff <= max_clusters and len_aff >= min_clusters:
     #     print("Affinity Propagation is used.")
     #     selected_articles = np.array(articles)[
