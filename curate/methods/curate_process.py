@@ -4,7 +4,7 @@ import spacy
 from scope.methods.semantics import document_embedding
 from scope.methods.graphs import clustering_methods
 import scope.methods.dataprovider.provider as provider
-from scope.methods.semantics import summarizer, keywords
+from scope.methods.semantics import summarizer
 
 from scope.models import Customer
 
@@ -78,8 +78,10 @@ class Curate(object):
         return sim, vecs
 
     def _filter_articles(self, all_articles, db=False):
-        after_bad_sources = filter_bad_sources(self.curate_customer, all_articles, db=False)
-        after_bad_articles = filter_bad_articles(self.curate_customer, after_bad_sources)
+        after_bad_sources = filter_bad_sources(
+            self.curate_customer, all_articles, db)
+        after_bad_articles = filter_bad_articles(
+            self.curate_customer, after_bad_sources)
 
         return after_bad_articles
 
@@ -88,7 +90,7 @@ class Curate(object):
         # produce a dictionary of the clusters
         for center in selected_articles:
             cluster = cluster_articles[center]
-        #for center, cluster in article_clusters:
+        # for center, cluster in article_clusters:
             center_instance = Article_Curate_Query.objects.filter(
                 article=center, curate_query=self.query).first()
             all_article_curate_instances = []
@@ -96,23 +98,28 @@ class Curate(object):
                 article_curate_instances = Article_Curate_Query.objects.filter(
                     article__title=article.title, curate_query=self.query)
                 all_article_curate_instances.extend(article_curate_instances)
-            articles_dict[center_instance] = list(set(all_article_curate_instances))
-            #this output is comprised of article_curate_query instances!
+            articles_dict[center_instance] = list(
+                set(all_article_curate_instances))
+            # this output is comprised of article_curate_query instances!
         return articles_dict
 
     def produce_and_save_clusters(self, cluster_articles, selected_articles):
-        words, alternative_keywords = self.produce_keywords_and_summaries(cluster_articles, selected_articles)
-        articles_dict = self._produce_cluster_dict(cluster_articles, selected_articles)
+        words = self.produce_keywords_and_summaries(
+            cluster_articles, selected_articles)
+        articles_dict = self._produce_cluster_dict(
+            cluster_articles, selected_articles)
         counter = 1
 
-        #in case you go from db:
-        old_clusters = Curate_Query_Cluster.objects.filter(center__curate_query=self.query)
+        # in case you go from db:
+        old_clusters = Curate_Query_Cluster.objects.filter(
+            center__curate_query=self.query)
         old_clusters.delete()
 
         for key, value in articles_dict.items():
-            cluster = Curate_Query_Cluster(rank=counter, center=key, keywords= str(words[key.article]) + ',' + alternative_keywords[key.article])
+            keywords = ','.join(words[key.article])
+            cluster = Curate_Query_Cluster(rank=counter, center=key, keywords=keywords)# + ',' + alternative_keywords[key.article])
             cluster.save()
-            #cluster.cluster_articles.clear()
+            # cluster.cluster_articles.clear()
             for instance in articles_dict[key]:
                 cluster.cluster_articles.add(instance)
             cluster.save()
@@ -121,14 +128,14 @@ class Curate(object):
         self.query.save()
 
     def produce_keywords_and_summaries(self, cluster_articles, selected_articles):
-        #this input dict consists of actual article objects
+        # this input dict consists of actual article objects
         representative_model = summarizer.Summarizer(self.language, self.nlp)
 
-        words = representative_model.get_keywords(cluster_articles, selected_articles, 1, 30)
+        words = representative_model.get_keywords(
+            cluster_articles, selected_articles, 2, 30)
+        #alternative_keywords = keywords.keywords_from_articles(cluster_articles, selected_articles, self.language)
 
-        alternative_keywords = keywords.keywords_from_articles(cluster_articles, selected_articles, self.language)
-
-        return words, alternative_keywords
+        return words
 
     def _process(self, filtered_articles):
 
@@ -140,7 +147,8 @@ class Curate(object):
             cluster_articles = clustering_methods.get_clustering(
                 filtered_articles, sim, vecs, self.config.getint('general', 'upper_bound'), self.config.getint('general', 'lower_bound'))
 
-            selected_articles = clustering_methods.get_central_articles(cluster_articles, self.config.getint('general', 'output_articles'))
+            selected_articles = clustering_methods.get_central_articles(
+                cluster_articles, self.config.getint('general', 'output_articles'))
 
             print([a.title for a in selected_articles])
 

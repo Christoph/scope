@@ -37,10 +37,14 @@ def send_newsletter(customer_key):
 
     instances = query.selected_articles()
     articles = [i.article for i in instances]
-    keywords = ""
-    ma = min(3, len(keywords))
-    keywords = [i.center.filter(center__curate_query=query).first(
-    ).keywords for i in instances[:ma]]
+    ma = min(3, len(instances))
+    keywords = []
+    for i in instances[:ma]:
+        try:
+            keywords.append(i.center.filter(center__curate_query=query).first(
+    ).keywords)
+        except:
+            pass
 
     send_dict = {'sel': articles}
 
