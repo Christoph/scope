@@ -10,11 +10,13 @@ class Mutual_Information(object):
 #accepts Newspaper package Articles, NOT DB Article objects, (although that could easily be fixed)
 	def __init__(self, input_docs):
 		self.input_docs = input_docs
+		self.total = set(range(len(self.input_docs)))
 
 	def preprocess(self, lang):
 		self.nlp = spacy.load(lang)
 		self.preprocessor = preprocess.PreProcessing(lang=lang, nlp=self.nlp)
 		self.input_docs = self.preprocessor.noun_based_preprocessing(self.input_docs)
+		
 
 	def ngram_based(self, lower, upper):
 		self.idf = self._get_idf(lower, upper)
@@ -71,26 +73,24 @@ class Mutual_Information(object):
 		return joint_ent - single_ent
 
 	def mutual(self, previous, y):
-		total = set(range(len(self.input_docs)))
 		first = self._conditional_ent(y, previous)
-		second = self._conditional_ent(y, total - (previous | y))
+		second = self._conditional_ent(y, self.total - (previous | y))
 		return first - second
 
 
 	def find_max(self, k):
 		#start with empty set
-		total = set(range(len(self.input_docs)))
 		selection = []
 		while len(selection) < k:
 			s = set(selection)
 			best_inf = [0,0]
-			for i in (total - s):
+			for i in (self.total - s):
 				new_inf = self.mutual(s,{i}) 
 				if new_inf > best_inf[1]:
 					best_inf = [i,new_inf]
 			selection.append(best_inf[0])
 
-		total_prob = self._get_prob(total)
+		total_prob = self._get_prob(self.total)
 		total_ent = entropy(total_prob)
 		selection_prob = self._get_prob(set(selection))
 		selection_ent = entropy(selection_prob)
@@ -104,5 +104,16 @@ class Mutual_Information(object):
 		selection, ratio = self.find_max(k)
 
 		return selection, ratio
+
+	def get_learning_curve(self,selection_list):
+		out = []
+		total_prob = self._get_prob(self.total)
+		total_ent = entropy(total_prob)
+		for i in range(len(selection_list)):	
+			selection_prob = self._get_prob(selection_list[:i])
+			selection_ent = entropy(selection_prob)
+			out.append(selection_ent/total_ent)
+			
+		return out
 
 			
