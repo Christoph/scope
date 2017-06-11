@@ -7,6 +7,7 @@ from scope.models import Customer
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
+
 def send_newsletter(customer_key):
     customer = Customer.objects.get(customer_key=customer_key)
     curate_customer = Curate_Customer.objects.get(customer=customer)
@@ -96,13 +97,15 @@ def mail_template(stats_dict, send_dict, query, no, html=True, recipient_name=""
 
     return content
 
+
 def send_notification(customer, hot=False, cc=False):
     rec = []
     if hot:
-        recipients = Curate_Recipient.objects.filter(curate_customer__customer=customer, is_editor=True).values('first','email')
+        recipients = Curate_Recipient.objects.filter(
+            curate_customer__customer=customer, is_editor=True).values('first', 'email')
         rec.extend(recipients)
     if cc:
-        rec.append({'name':'Admin', 'email':"admin@scope.ai"})
+        rec.append({'first': 'Admin', 'email': "admin@scope.ai"})
         # if len(cc) == 0:
         #     rec.append({'name':'Admin', 'email':"admin@scope.ai"})
         # else:
@@ -110,17 +113,12 @@ def send_notification(customer, hot=False, cc=False):
         #         rec.append({'name':'', 'email':i})
 
     url_interface = settings.CURRENT_DOMAIN + reverse('curate:interface')
-    url_dashboard = settings.CURRENT_DOMAIN + reverse('curate:interface')
+    url_dashboard = settings.CURRENT_DOMAIN + reverse('curate:controlcenter:dashboard', kwargs={'pk': 0})
 
     for recipient in recipients:
-        context = {'name': recipient['first'], 'url_interface': url_interface, 'url_dashboard': url_dashboard, 'customer_name':customer.name}
-        content = render_to_string('curate/notification_template.html', context)
+        context = {'name': recipient['first'], 'url_interface': url_interface,
+                   'url_dashboard': url_dashboard, 'customer_name': customer.name}
+        content = render_to_string(
+            'curate/notification_template.html', context)
         send_mail('New Scope Pre-Selection available', 'Sorry, this service works only for html-compatible mail clients',
-                  'robot@scope.ai', [recipient['email']],connection=None,html_message=content)
-    
-
-
-
-    content = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> <title>Scope brief</title> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> </head> <body style="margin: 0; padding: 0; font-family: Times New Roman, sans-serif;"> <table align="center" border="0" style="border-bottom:0px; border-top:0px; border-color:#aec7e8;" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;"> <!-- Header --> <tr><td align="center" bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;"><h2 style="font-family:Times New Roman, sans-serif;">Hi ' + customer.name + ', your new preselection is ready. Click <a href="' + settings.CURRENT_DOMAIN + '/curate/' + customer.customer_key + '/interface">here</a> to generate the newsletter<hr align="center" width="80%" style="color:#aec7e8;border-color: #aec7e8;border:2px solid;"></tr>'
-
-
+                  'robot@scope.ai', [recipient['email']], connection=None, html_message=content)
