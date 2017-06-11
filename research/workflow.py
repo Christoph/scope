@@ -20,9 +20,9 @@ from importlib import reload
 # initializations
 customer_key = "test_customer"
 
-max_clusters = 35
-min_clusters = 6
-n_centers = 5
+max_clusters = 30
+min_clusters = 10
+n_centers = 15
 summary_max_len = 100
 language = "de"
 
@@ -98,7 +98,7 @@ summaries = representative_model.text_rank(cluster_articles, central_articles, 3
 
 words = representative_model.get_keywords(cluster_articles, central_articles, 1, 30)
 
-samples = [representative_model.create_sample_text(a.body, 300) for a in central_articles]
+samples = dict([[a, representative_model.create_sample_text(a.body, 300)] for a in central_articles])
 
 print("RESULTS")
 out = []

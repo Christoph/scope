@@ -104,10 +104,11 @@ class Curate(object):
         return articles_dict
 
     def produce_and_save_clusters(self, cluster_articles, selected_articles):
-        words = self.produce_keywords_and_summaries(
+        words, samples = self.produce_keywords_and_summaries(
             cluster_articles, selected_articles)
         articles_dict = self._produce_cluster_dict(
             cluster_articles, selected_articles)
+
         counter = 1
 
         # in case you go from db:
@@ -119,6 +120,11 @@ class Curate(object):
             keywords = ','.join(words[key.article])
             cluster = Curate_Query_Cluster(rank=counter, center=key, keywords=keywords)# + ',' + alternative_keywords[key.article])
             cluster.save()
+
+            #save the sample into the article 
+            key.article.sample = samples[key.article]
+            key.article.save()
+            
             # cluster.cluster_articles.clear()
             for instance in articles_dict[key]:
                 cluster.cluster_articles.add(instance)
@@ -133,9 +139,10 @@ class Curate(object):
 
         words = representative_model.get_keywords(
             cluster_articles, selected_articles, 2, 30)
+        samples = dict([[a, representative_model.create_sample_text(a.body, 300)] for a in selected_articles])
         #alternative_keywords = keywords.keywords_from_articles(cluster_articles, selected_articles, self.language)
 
-        return words
+        return words, samples
 
     def _process(self, filtered_articles):
 
