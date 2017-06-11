@@ -21,7 +21,8 @@ def interface(request,customer_key=None, date_stamp=None):
         else:
             try:
                 user_profile = UserProfile.objects.get(user=request.user)
-                if not customer_key == user_profile.customer.customer_key:
+                key = user_profile.customer.customer_key
+                if not customer_key == key:
                     return redirect('/login/?next=%s' % request.path)
             except:
                 return redirect('/login/?next=%s' % request.path)
@@ -36,7 +37,7 @@ def interface(request,customer_key=None, date_stamp=None):
     customer = Customer.objects.get(customer_key=key) #will be replaced by authentication
     curate_customer = Curate_Customer.objects.get(customer=customer)
     if date_stamp==None:
-            query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").last()
+        query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").last()
     else:
         date_parsed = datetime.strptime(date_stamp,'%d%m%Y').date()
         query = Curate_Query.objects.filter(curate_customer=curate_customer).filter(time_stamp=date_parsed).order_by("pk").last()
@@ -87,7 +88,7 @@ def interface(request,customer_key=None, date_stamp=None):
         try:
             print(im.get_env_variable('DJANGO_SETTINGS_MODULE'))
             print(config.getboolean('meta','direct_outlet'))
-            if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment":
+            if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment" and not request.user.is_superuser:
                 send_newsletter_task.delay(key)
         except:
             pass
@@ -96,6 +97,7 @@ def interface(request,customer_key=None, date_stamp=None):
     for option in options.all():
         stat = [i for i in suggestions if option in i.center.selection_options.all()]
         stats[option] = len(stat)
+    print(suggestions, query)
     context = {"stats": stats, "suggestions": suggestions, "options": options, 'query': query, 'customer_key': key}
     return render(request, 'curate/interface.html', context)
 
