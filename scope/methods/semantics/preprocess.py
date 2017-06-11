@@ -20,45 +20,56 @@ class PreProcessing():
         else:
             raise Exception("Language not known.")
 
-    def prepare_sentences(self, cluster):
-        docs = [self.nlp(a.body) for a in cluster]
+    def prepare_sentences(self, articles):
+        total = [a.body for a in articles]
+
+        # Convert text to spacy object
+        docs = [self.nlp(t) for t in total]
 
         sents = []
         original_sents = []
+
         for doc in docs:
             for sent in doc.sents:
-                temp = []
+                if sent.text[-1] in ["?", ".", "!"]:
+                    print(sent.text)
+                    token_sent = self._noun_token_sent(sent)
 
-                for t in sent:
-                    if t.tag_ in self.noun_tags:
-                        temp.append(t.lemma_)
-
-                sents.append(" ".join(temp))
-                original_sents.append(sent.text)
+                    sents.append(token_sent)
+                    original_sents.append(sent.text)
 
         return sents, original_sents
+
+    def _generate_clean_docs(self, texts):
+        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s\.,!?]", " ", a).replace("_", " ")).strip()) for a in texts]
+
+        return docs
+
+    def _noun_token_sent(self, sent):
+        temp = []
+        for t in sent:
+            if re.findall(r"\b[12][0-9]{3}\b", t.text):
+                temp.append("-DATE-")
+            elif t.like_email:
+                temp.append("-EMAIL-")
+            elif t.like_url:
+                temp.append("-URL-")
+            elif t.like_num:
+                temp.append("-NUMBER-")
+            elif t.tag_ in self.noun_tags:
+                temp.append(t.lemma_)
+
+        return " ".join(list(set(temp)))
 
     def noun_based_preprocessing(self, articles):
         docs = [self.nlp(a.body) for a in articles]
         clean = []
 
         for doc in docs:
-            temp = []
-
             for sent in doc.sents:
-                for t in sent:
-                    if re.findall(r"\b[12][0-9]{3}\b", t.text):
-                        temp.append("-DATE-")
-                    elif t.like_email:
-                        temp.append("-EMAIL-")
-                    elif t.like_url:
-                        temp.append("-URL-")
-                    elif t.like_num:
-                        temp.append("-NUMBER-")
-                    elif t.tag_ in self.noun_tags:
-                        temp.append(t.lemma_)
+                token_sent = self._noun_token_sent(sent)
 
-            clean.append(" ".join(temp))
+            clean.append(token_sent)
         return clean
 
     def keyword_preprocessing(self, articles, max_chunk_length=5):
@@ -67,9 +78,12 @@ class PreProcessing():
 
             articles: List of article objects
         '''
+        # Merge body and title
+        # total = [". ".join([a.title, a.body]) for a in articles]
+        total = [a.title for a in articles]
 
         # Convert text to spacy object
-        docs = [self.nlp(re.sub(r" {2,}", " ", re.sub(r"[^\w\s\.,!?]", " ", a.body))) for a in articles]
+        docs = self._generate_clean_docs(total)
 
         lemmas = []
         chunks = []
