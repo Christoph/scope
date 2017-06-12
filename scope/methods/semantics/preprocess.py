@@ -65,10 +65,15 @@ class PreProcessing():
         clean = []
 
         for doc in docs:
+            temp = []
             for sent in doc.sents:
                 token_sent = self._noun_token_sent(sent)
+                if token_sent:
+                    temp.append(token_sent)
+            if not temp:
+                temp.append("-EMTPY-")
+            clean.append(" ".join(temp))
 
-            clean.append(token_sent)
         return clean
 
     def keyword_preprocessing(self, articles, max_chunk_length=5):
