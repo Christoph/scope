@@ -32,7 +32,6 @@ class PreProcessing():
         for doc in docs:
             for sent in doc.sents:
                 if sent.text[-1] in ["?", ".", "!"]:
-                    print(sent.text)
                     token_sent = self._noun_token_sent(sent)
 
                     sents.append(token_sent)
