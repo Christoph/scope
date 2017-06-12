@@ -55,11 +55,12 @@ class Embedding():
         self._create_wv_embedding(clean_text)
 
     def _create_svd_embedding(self, clean_text):
-        vectorizer = TfidfVectorizer(sublinear_tf=True)
+        vectorizer = TfidfVectorizer(sublinear_tf=False, ngram_range=(1, 1))
         tfidf = vectorizer.fit_transform(clean_text)
 
         # similarities
-        dim = self._select_dimension(tfidf, 0.7)
+        dim = self._select_dimension(tfidf, 0.15)
+        print("Selected Dimension: " + str(dim))
 
         self.vecs = TruncatedSVD(n_components=dim).fit_transform(tfidf)
         self.sim = cosine_similarity(self.vecs)
