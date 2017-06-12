@@ -99,11 +99,3 @@ summaries = representative_model.text_rank(cluster_articles, central_articles, 3
 words = representative_model.get_keywords(cluster_articles, central_articles, 1, 30)
 
 samples = dict([[a, representative_model.create_sample_text(a.body, 300)] for a in central_articles])
-
-print("RESULTS")
-out = []
-for i in range(0, len(cluster_articles)):
-    out.append({
-        "central_title": list(cluster_articles.keys())[i].title,
-        "keywords": words[list(cluster_articles.keys())[i]]
-        })
