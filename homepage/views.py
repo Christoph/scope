@@ -302,7 +302,7 @@ def contact(request):
             email = EmailMessage(
                 "New contact form submission from " + request.POST['contact_name'],
                 request.POST['content'],'',
-                ['grphtcontact@gmail.com'],
+                ['hello@scope.ai'],
                 reply_to = [request.POST['contact_email']]
             )
             email.send()

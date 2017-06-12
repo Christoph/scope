@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 if options['print']:
                     print(selected_articles)
 
-                send_notification(customer, options['hot'], options['cc'])
+                send_notification(customer_key, options['hot'], options['cc'])
     
                     
 
