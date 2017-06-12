@@ -16,9 +16,9 @@ def get_clustering(articles, sim, vecs, max_clusters, min_clusters):
         Returns clusters.
     '''
 
-    # labels_affinity, center_indices_affinity = affinity_propagation(sim)
-    # len_aff = len(np.unique(labels_affinity))
-    # print("Affinity clusters: "+str(len_aff))
+    labels_affinity, center_indices_affinity = affinity_propagation(sim)
+    len_aff = len(np.unique(labels_affinity))
+    print("Affinity clusters: "+str(len_aff))
     linkage_matrix = hc_create_linkage(vecs)
     labels_hc = hc_cluster_by_distance(linkage_matrix, 0.6)
     len_hc = len(np.unique(labels_hc))
@@ -27,13 +27,13 @@ def get_clustering(articles, sim, vecs, max_clusters, min_clusters):
     len_gauss = len(np.unique(labels_gauss))
     print("Gauss clusters: "+str(len_gauss))
 
-    # if len_aff <= max_clusters and len_aff >= min_clusters:
-    #     print("Affinity Propagation is used.")
-    #     selected_articles = np.array(articles)[
-    #         center_indices_affinity]
-    #     cluster_articles = get_clusters(
-    #         articles, vecs, selected_articles, labels_affinity)
-    if len_hc <= max_clusters and len_hc >= min_clusters:
+    if len_aff <= max_clusters and len_aff >= min_clusters:
+        print("Affinity Propagation is used.")
+        selected_articles = np.array(articles)[
+            center_indices_affinity]
+        cluster_articles = get_clusters(
+            articles, vecs, selected_articles, labels_affinity)
+    elif len_hc <= max_clusters and len_hc >= min_clusters:
         print("HC with distance measure is used.")
         selected_articles = compute_central_articles(
             articles, vecs, labels_hc)
