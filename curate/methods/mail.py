@@ -120,7 +120,7 @@ def send_notification(customer_key, hot=False, cc=False):
     url_interface = settings.CURRENT_DOMAIN + reverse('curate:interface')
     url_dashboard = settings.CURRENT_DOMAIN + reverse('curate:controlcenter:dashboard', kwargs={'pk': 0})
     url_contact = settings.CURRENT_DOMAIN + reverse('homepage:contact')
-    for recipient in recipients:
+    for recipient in rec:
         context = {'name': recipient['first'], 'url_interface': url_interface,
                    'url_dashboard': url_dashboard,'url_contact':url_contact, 'customer_name': customer.name}
         content = render_to_string(
