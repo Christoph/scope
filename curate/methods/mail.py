@@ -6,11 +6,11 @@ from curate.models import Curate_Query, Curate_Customer, Curate_Recipient
 from scope.models import Customer
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from curate.convenience.functions import retrieve_objects
 
 
 def send_newsletter(customer_key):
-    customer = Customer.objects.get(customer_key=customer_key)
-    curate_customer = Curate_Customer.objects.get(customer=customer)
+    customer, curate_customer = retrieve_objects(customer_key)
     query = Curate_Query.objects.filter(
         curate_customer=curate_customer).order_by("pk").last()
     config = configparser.RawConfigParser()
@@ -102,11 +102,12 @@ def mail_template(stats_dict, send_dict, query, no, html=True, recipient_name=""
     return content
 
 
-def send_notification(customer, hot=False, cc=False):
+def send_notification(customer_key, hot=False, cc=False):
+    customer, curate_customer = retrieve_objects(customer_key)
     rec = []
     if hot:
         recipients = Curate_Recipient.objects.filter(
-            curate_customer__customer=customer, is_editor=True).values('first', 'email')
+            curate_customer=curate_customer, is_editor=True).values('first', 'email')
         rec.extend(recipients)
     if cc:
         rec.append({'first': 'Admin', 'email': "admin@scope.ai"})
@@ -118,10 +119,10 @@ def send_notification(customer, hot=False, cc=False):
 
     url_interface = settings.CURRENT_DOMAIN + reverse('curate:interface')
     url_dashboard = settings.CURRENT_DOMAIN + reverse('curate:controlcenter:dashboard', kwargs={'pk': 0})
-
+    url_contact = settings.CURRENT_DOMAIN + reverse('homepage:contact')
     for recipient in recipients:
         context = {'name': recipient['first'], 'url_interface': url_interface,
-                   'url_dashboard': url_dashboard, 'customer_name': customer.name}
+                   'url_dashboard': url_dashboard,'url_contact':url_contact, 'customer_name': customer.name}
         content = render_to_string(
             'curate/notification_template.html', context)
         send_mail('New Scope Pre-Selection available', 'Sorry, this service works only for html-compatible mail clients',

@@ -5,8 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from conf.settings.importer import ImportGlobal
 from curate.tasks import send_newsletter_task, selection_made_task
-from scope.methods.semantics.keywords import keywords_from_articles
-from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Customer_Selection, Curate_Query_Cluster
+from curate.models import Curate_Query, Curate_Customer, Curate_Customer_Selection, Curate_Query_Cluster
 from scope.models import Customer, UserProfile
 
 
