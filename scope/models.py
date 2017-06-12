@@ -79,10 +79,10 @@ class Article(models.Model):
     title = models.CharField(max_length=500)
     url = models.CharField(max_length=1000)
     images = models.CharField(max_length=1000, blank=True)
-    keywords = models.CharField(max_length=200, blank=True)
     body = models.TextField()
     time_created = models.DateField(auto_now_add=True)
     pubdate = models.DateTimeField(blank=True, null=True)
+    sample = models.CharField(max_length=1000, blank=True)
 
 
     def __str__(self):              

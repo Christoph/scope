@@ -79,7 +79,14 @@
     * the running of celery on the server is daemonized through supervisor
         *the config file for supervisor is at /etc/supervisor/conf.d/celeryd.conf
         * there is some mess with virtualenvs and the daemonization process. Essentially I haven't been able to get the ENV variables from the virtualenvwrapper into the supervisord session so they are now reproduced in the above config file. THIs is important for changing any of variables. See also    http://stackoverflow.com/questions/12900402/supervisor-and-environment-variables
-    *for running it in the shell
+        *to restart the supervisor process after some change:
+            *sudo supervisorctl reread
+            *sudo supervisorctl update
+        *to check the status of the supervisor process
+            *sudo supervisorctl status celery
+            *sudo supervisorctl stop/start/restart celery
+        *if there are some problems with missing socket files or some SHUTDOWN STATE error, try "sudo service supervisor stop/start"
+        *for running it in the shell
         *sudo /etc/init.d/celeryd start 
         *the config file for celeryd lies at /etc/default/celeryd
     *management of rabbit:

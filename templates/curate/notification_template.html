@@ -56,7 +56,7 @@
 		color: #2BA6CB;
 	}
 	table.social {
-				/* 	padding:15px; */
+			/* 	padding:15px; */
 		background-color: #ebebeb;
 		
 	}
@@ -90,7 +90,7 @@
 	/* -------------------------------------
 			FOOTER
 	------------------------------------- */
-				table.footer-wrap { width: 100%;	clear:both!important;
+			table.footer-wrap { width: 100%;	clear:both!important;
 	}
 	.footer-wrap .container td.content  p { border-top: 1px solid rgb(215,215,215); padding-top:15px;}
 	.footer-wrap .container td.content p {
@@ -137,9 +137,9 @@
 		text-decoration:none;
 		color: #666;
 		padding:10px 16px;
-				/* 	font-weight:bold; */
+			/* 	font-weight:bold; */
 		margin-right:10px;
-				/* 	text-align:center; */
+			/* 	text-align:center; */
 		cursor:pointer;
 		border-bottom: 1px solid #777777;
 		border-top: 1px solid #FFFFFF;
@@ -236,49 +236,16 @@
 										<td>
 											
 											<p align="center" class="lead">
-												{% if recipient_name %}
-													Hi {{recipient_name}},
-												{% else %}
-													Hi,
-												{% endif %} this is your newsletter for today.
-												{% if stats_dict.words %}
-													For this edition, we processed a total of {{stats_dict.words}} words
-													{% if stats_dict.no_of_articles %}
-														from {{stats_dict.no_of_articles}} articles.
-													{% else %}
-														.
-													{% endif %}
-												{% endif %}
-												
+													Hi {{name}}, we have created a new edition of the Scope newsletter for {{customer_name}}. Please make your selection using the <a href="{{url_interface}}">interface</a> or check out the stats at the <a href="{{url_dashboard}}">dashboard</a>. 
+											</p>
+											<p align="center" class="lead">
+											Anything wrong? <a href="{{url_contact}}">Let us know</a>!
 											</p>
 											
 										</td>
 									</tr>
 								</table>
 								</div><!-- /content -->
-								{% for article in articles %}
-									<!-- content -->
-									<div class="content">
-										
-										<table bgcolor="">
-											<tr>
-												<td class="small" width="20%" style="vertical-align: top; padding-right:10px;"><img src="{{article.images}}" style="width:150px" width="150"/></td>
-												<td>
-													<h4>{{forloop.counter}}. <a href="{{article.url}}">{{article.title}}</a></h4>
-													<p><strong>{{article.source.url}}</strong></p>
-													{% if article.sample %}
-														<p> {{article.sample}}...</p>
-													{% else %}
-														<p> {{article.body}}.. </p>
-													{% endif %}
-													<p class="">{{ article.body|truncatewords:50}}</p>
-													{# <a class="btn">Clickity Click &raquo;</a> #}
-												</td>
-											</tr>
-										</table>
-										
-										</div><!-- /content -->
-									{% endfor %}
 									
 								</td>
 								<td></td>

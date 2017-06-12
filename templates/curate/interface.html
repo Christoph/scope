@@ -87,7 +87,12 @@
               <p><img class="image" src="{{suggestion.center.article.images}}" alt=""></p>
               <h2><a href="{{suggestion.center.article.url}}">{{suggestion.center.article.title}}</a> </h2>
               <h3>{{suggestion.center.article.source.url}}</h3>
+              {% if suggestion.center.article.sample %}
+                <p> {{suggestion.center.article.sample}}...</p>
+              {% else %}
               <p> {{suggestion.center.article.body|truncatewords:50}} </p>
+              {% endif %}
+
               <p>
                 <a class="btn btn-option" role="button" data-toggle="collapse" href="#related_articles{{suggestion.rank}}" aria-expanded="false" aria-controls="collapseExample">
                   Related Articles

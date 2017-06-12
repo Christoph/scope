@@ -534,9 +534,6 @@ class ClustersWidget(widgets.ItemList):
 		return decode_header(obj.center.newsletter.name)[0][0]
 	get_central_newsletter.short_description = "Newsletter of central article"
 
-	# def get_keywords(self,obj):
-	# 	return
-
 	sortable = True
 	list_display = ('rank', 'get_central_title',
 					"get_central_source", 'get_central_newsletter', 'keywords')  # 'summary')#,'get_cluster_articles')

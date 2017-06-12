@@ -12,7 +12,7 @@ def filter_bad_sources(curate_customer, incoming_articles,db=False):
                 selection_made=True)
 
         relevant_article_titles = [i.article.title for i in Article_Curate_Query.objects.filter(
-            curate_query__in=queries)]
+            curate_query__in=queries, rank__gt=0)]
 
         for a in incoming_articles:
             if a.source not in bad_sources and a.title not in relevant_article_titles:

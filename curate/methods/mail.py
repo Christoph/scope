@@ -4,11 +4,13 @@ from scope.methods.auxiliary.auxiliaryfunctions import truncate_words_and_prod_s
 from django.template.loader import render_to_string
 from curate.models import Curate_Query, Curate_Customer, Curate_Recipient
 from scope.models import Customer
+from django.conf import settings
+from django.core.urlresolvers import reverse
+from curate.convenience.functions import retrieve_objects
 
 
 def send_newsletter(customer_key):
-    customer = Customer.objects.get(customer_key=customer_key)
-    curate_customer = Curate_Customer.objects.get(customer=customer)
+    customer, curate_customer = retrieve_objects(customer_key)
     query = Curate_Query.objects.filter(
         curate_customer=curate_customer).order_by("pk").last()
     config = configparser.RawConfigParser()
@@ -35,10 +37,14 @@ def send_newsletter(customer_key):
 
     instances = query.selected_articles()
     articles = [i.article for i in instances]
-    keywords = ""
-    ma = min(3, len(keywords))
-    keywords = [i.center.filter(center__curate_query=query).first(
-    ).keywords for i in instances[:ma]]
+    ma = min(3, len(instances))
+    keywords = []
+    for i in instances[:ma]:
+        try:
+            keywords.append(i.center.filter(center__curate_query=query).first(
+    ).keywords)
+        except:
+            pass
 
     send_dict = {'sel': articles}
 
@@ -94,3 +100,30 @@ def mail_template(stats_dict, send_dict, query, no, html=True, recipient_name=""
             content = "This mail can be displayed in html-compatible mail-viewers only. Sorry!"
 
     return content
+
+
+def send_notification(customer_key, hot=False, cc=False):
+    customer, curate_customer = retrieve_objects(customer_key)
+    rec = []
+    if hot:
+        recipients = Curate_Recipient.objects.filter(
+            curate_customer=curate_customer, is_editor=True).values('first', 'email')
+        rec.extend(recipients)
+    if cc:
+        rec.append({'first': 'Admin', 'email': "admin@scope.ai"})
+        # if len(cc) == 0:
+        #     rec.append({'name':'Admin', 'email':"admin@scope.ai"})
+        # else:
+        #     for i in cc:
+        #         rec.append({'name':'', 'email':i})
+
+    url_interface = settings.CURRENT_DOMAIN + reverse('curate:interface')
+    url_dashboard = settings.CURRENT_DOMAIN + reverse('curate:controlcenter:dashboard', kwargs={'pk': 0})
+    url_contact = settings.CURRENT_DOMAIN + reverse('homepage:contact')
+    for recipient in rec:
+        context = {'name': recipient['first'], 'url_interface': url_interface,
+                   'url_dashboard': url_dashboard,'url_contact':url_contact, 'customer_name': customer.name}
+        content = render_to_string(
+            'curate/notification_template.html', context)
+        send_mail('New Scope Pre-Selection available', 'Sorry, this service works only for html-compatible mail clients',
+                  'robot@scope.ai', [recipient['email']], connection=None, html_message=content)

@@ -1,10 +1,9 @@
 from django.core.management.base import BaseCommand
-from django.core.mail import send_mail
-from django.conf import settings
 from datetime import date
 
 from curate.models import Curate_Customer
 from scope.models import Customer
+from curate.methods.mail import send_notification
 
 from curate.methods import curate_process
 
@@ -21,9 +20,10 @@ class Command(BaseCommand):
         parser.add_argument(
             '--cc', 
             dest='cc',
-            nargs='*',
+            action='store_true',
+            #nargs='*',
             default=False,
-            help='Send output to specified people',)
+            help='Send output to admin',)
         parser.add_argument(
             '--print', 
             action="store_true",
@@ -54,19 +54,8 @@ class Command(BaseCommand):
                 if options['print']:
                     print(selected_articles)
 
-                content = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> <title>Scope brief</title> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> </head> <body style="margin: 0; padding: 0; font-family: Times New Roman, sans-serif;"> <table align="center" border="0" style="border-bottom:0px; border-top:0px; border-color:#aec7e8;" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;"> <!-- Header --> <tr><td align="center" bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;"><h2 style="font-family:Times New Roman, sans-serif;">Hi ' + customer.name + ', your new preselection is ready. Click <a href="' + settings.CURRENT_DOMAIN + '/curate/' + customer.customer_key + '/interface">here</a> to generate the newsletter<hr align="center" width="80%" style="color:#aec7e8;border-color: #aec7e8;border:2px solid;"></tr>'
+                send_notification(customer_key, options['hot'], options['cc'])
+    
+                    
 
-                recipients = []
-                if options['hot']:
-                    recipients.append(customer.email) 
-                if options['cc'] != False:
-                    if len(options['cc']) == 0:
-                        recipients.append("admin@scope.ai")
-                    else:
-                        for i in options['cc']:
-                            recipients.append(i)
-
-                if len(recipients) != 0:
-                    send_mail('New Scope Pre-Selection available', 'Sorry, this service works only for html-compatible mail clients',
-                  'robot@scope.ai', recipients,connection=None,html_message=content)
 

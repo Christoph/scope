@@ -89,15 +89,23 @@ def update_mail_recipients(customer_key):
     #Create new Recipients
     recipients = config.get('outlet', 'recipients').split(';\n')
     for i in recipients:
-        l = i.split(',')
-        if len(l)==3:
-            l = [w.replace(';','').strip() for w in l]
-            rec = Curate_Recipient(curate_customer=curate_customer, email=l[0], first=l[1], last=l[2])
-            rec.save()
-            print('created recipient', rec)
-        else:
+        try:
+            l = i.split(',')
+            if len(l)==3:
+                l = [w.replace(';','').strip() for w in l]
+                rec = Curate_Recipient(curate_customer=curate_customer, email=l[0], first=l[1], last=l[2])
+                rec.save()
+                print('created recipient', rec)
+            elif len(l)==4:
+                l = [w.replace(';','').strip() for w in l]
+                if l[3] == 'ED':
+                    rec = Curate_Recipient(curate_customer=curate_customer, email=l[0], first=l[1], last=l[2], is_editor=True)
+                    rec.save()
+                    print('created editor', rec)
+            else:
+                print('problem with parsing recipient', l)
+        except:
             print('problem with parsing recipient', l)
-
 
 def retrieve_objects(customer_key, range=None):
     customer = Customer.objects.get(customer_key=customer_key)
