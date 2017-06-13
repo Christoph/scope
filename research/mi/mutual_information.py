@@ -12,13 +12,13 @@ class Mutual_Information(object):
 		self.input_docs = input_docs
 		self.total = set(range(len(self.input_docs)))
 
-	def preprocess(self, lang):
+	def _preprocess(self, lang):
 		self.nlp = spacy.load(lang)
 		self.preprocessor = preprocess.PreProcessing(lang=lang, nlp=self.nlp)
 		self.input_docs = self.preprocessor.noun_based_preprocessing(self.input_docs)
 		
 
-	def ngram_based(self, lower, upper):
+	def _ngram_based(self, lower, upper):
 		self.idf = self._get_idf(lower, upper)
 		self.count_matrix = self._get_count_matrix(lower, upper)
 
@@ -72,20 +72,28 @@ class Mutual_Information(object):
 
 		return joint_ent - single_ent
 
-	def mutual(self, previous, y):
-		first = self._conditional_ent(y, previous)
-		second = self._conditional_ent(y, self.total - (previous | y))
+	def _mutual_new(self, x, y):
+		first = self._conditional_ent(y, x)
+		second = self._conditional_ent(y, self.total - (x | y))
 		return first - second
 
+	def _mutual(self, x, y):
+		singlex = self._get_prob(x)
+		single_entx = entropy(singlex)
+		singley = self._get_prob(y)
+		single_enty = entropy(singley)
+		joint = self._get_prob(x.union(y))
+		joint_ent = entropy(joint)
+		return single_entx + single_enty - joint_ent
 
-	def find_max(self, k):
+	def _find_max(self, k):
 		#start with empty set
 		selection = []
 		while len(selection) < k:
 			s = set(selection)
 			best_inf = [0,0]
 			for i in (self.total - s):
-				new_inf = self.mutual(s,{i}) 
+				new_inf = self._mutual_new(s,{i}) 
 				if new_inf > best_inf[1]:
 					best_inf = [i,new_inf]
 			selection.append(best_inf[0])
@@ -99,9 +107,9 @@ class Mutual_Information(object):
 		return selection, ratio
 
 	def ngram_selection(self, k,lower,upper, lang):
-		self.preprocess(lang)
-		self.ngram_based(lower, upper)
-		selection, ratio = self.find_max(k)
+		self._preprocess(lang)
+		self._ngram_based(lower, upper)
+		selection, ratio = self._find_max(k)
 
 		return selection, ratio
 
@@ -116,4 +124,12 @@ class Mutual_Information(object):
 			
 		return out
 
-			
+	def find_related_articles(self, y, no):
+		s = []
+		for i in (self.total - y):
+			mutual = self._mutual(y,{i}) 
+			s.append([i,mutual])
+		return sorted(s, key= lambda el:el[1], reverse=True)[:no]
+
+
+
