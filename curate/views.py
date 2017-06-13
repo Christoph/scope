@@ -87,7 +87,7 @@ def interface(request,customer_key=None, date_stamp=None):
         try:
             print(im.get_env_variable('DJANGO_SETTINGS_MODULE'))
             #print(config.getboolean('meta','direct_outlet'))
-            if config.getboolean('meta','direct_outlet') and im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment": #and not request.user.is_superuser:
+            if im.get_env_variable('DJANGO_SETTINGS_MODULE') == "conf.settings.deployment": #and not request.user.is_superuser:
                 send_newsletter_task.delay(key)
         except:
             print('Problem with sending the mail to others')
