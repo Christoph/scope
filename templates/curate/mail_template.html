@@ -269,9 +269,8 @@
 													{% if article.sample %}
 														<p> {{article.sample}}...</p>
 													{% else %}
-														<p> {{article.body}}.. </p>
+														<p>{{ article.body|truncatewords:50}}</p>
 													{% endif %}
-													<p class="">{{ article.body|truncatewords:50}}</p>
 													{# <a class="btn">Clickity Click &raquo;</a> #}
 												</td>
 											</tr>
