@@ -240,13 +240,13 @@
 													Hi {{recipient_name}},
 												{% else %}
 													Hi,
-												{% endif %} this is your newsletter for today.
+												{% endif %} hier ist dein Newsletter für heute.
 												{% if stats_dict.words %}
-													For this edition, we processed a total of {{stats_dict.words}} words
+													Für diese Ausgabe haben wir {{stats_dict.words}} Wörter 
 													{% if stats_dict.no_of_articles %}
-														from {{stats_dict.no_of_articles}} articles.
+														aus {{stats_dict.no_of_articles}} Artikeln verarbeite.
 													{% else %}
-														.
+														verarbeitet.
 													{% endif %}
 												{% endif %}
 												
