@@ -30,5 +30,6 @@ urlpatterns = [
     url(r'^explore/', include('explore.urls',namespace="explore")),
     url(r'^', include('homepage.urls', namespace='homepage')),
     url(r'^misc/', include('misc.urls', namespace='misc')),
+    url(r'^research/', include('research.urls', namespace='research')),
 ]
 

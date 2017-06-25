@@ -67,7 +67,6 @@ class Curate(object):
         self.query.save()
         return db_articles
 
-    def _semantic_analysis(self, db_articles):
         if self.semantic_model == "grammar_svd":
             data_model = document_embedding.Embedding(
                 self.language, self.nlp, "grammar_svd", db_articles)

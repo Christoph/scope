@@ -1,15 +1,19 @@
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 import numpy as np
 import spacy
+import csv
 from collections import defaultdict
 from scipy.stats import entropy
 
 from scope.methods.semantics import preprocess
+from scope.methods.graphs.clustering_methods import hc_create_linkage, hc_cluster_by_maxclust
 
 class Mutual_Information(object):
 #accepts Newspaper package Articles, NOT DB Article objects, (although that could easily be fixed)
 	def __init__(self, input_docs):
 		self.input_docs = input_docs
+		self.titles = [i.title for i in input_docs]
+		self.bodies = [i.body[0:400] for i in input_docs]
 		self.total = set(range(len(self.input_docs)))
 
 	def _preprocess(self, lang):
@@ -77,14 +81,17 @@ class Mutual_Information(object):
 		second = self._conditional_ent(y, self.total - (x | y))
 		return first - second
 
-	def _mutual(self, x, y):
+	def _mutual(self, x, y, normalized=False):
 		singlex = self._get_prob(x)
 		single_entx = entropy(singlex)
 		singley = self._get_prob(y)
 		single_enty = entropy(singley)
 		joint = self._get_prob(x.union(y))
 		joint_ent = entropy(joint)
-		return single_entx + single_enty - joint_ent
+		if normalized:
+			return (single_entx + single_enty - joint_ent)/joint_ent
+		else:
+			return single_entx + single_enty - joint_ent
 
 	def _find_max(self, k):
 		#start with empty set
@@ -131,5 +138,32 @@ class Mutual_Information(object):
 			s.append([i,mutual])
 		return sorted(s, key= lambda el:el[1], reverse=True)[:no]
 
+
+	def get_mi_list(self, normalized=False):
+		out = []
+		for i in range(len(self.total)):
+			for j in range(i+1,len(self.total)):
+				out.append([i,j,self._mutual({i},{j},normalized)])
+		return out
+
+	def create_hc(self):
+		linkage_matrix = hc_create_linkage(vecs)
+	    labels_hc = hc_cluster_by_maxclust(linkage_matrix, 0.6)
+	    len_hc = len(np.unique(labels_hc))
+
+	def produce_heatmap_info(self):
+		#get matrix of mi for every pair
+		l = self.get_mi_list()
+		k = self.get_mi_list(normalized=True)
+		#export tsv
+		with open('static/research/mi/mi.tsv', 'w') as tsvfile:
+		    writer = csv.writer(tsvfile, delimiter='\t', lineterminator='\n')
+		    writer.writerow(["name_first", "name_second", "mi", "pk1", "pk2"])
+		    for i in l:
+		        writer.writerow([self.bodies[i[0]],self.bodies[i[1]],round(i[2],3), i[0],i[1]])
+		    for i in k:
+		        writer.writerow([self.bodies[i[1]],self.bodies[i[0]],round(i[2],3),i[1],i[0]])
+		    for i in range(len(self.total)):
+		    	writer.writerow([self.bodies[i],self.bodies[i],"1",i,i])
 
 
