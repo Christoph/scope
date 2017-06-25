@@ -9,6 +9,11 @@ q = Curate_Query.objects.filter(curate_customer=curate_customer).first()
 article_input = [i.article for i in q.article_curate_query_set.all()][:40]
 
 mut = mi.Mutual_Information(article_input)
-mut.ngram_selection(3,1,1,lang)
+selection, ratio = mut.ngram_selection(5,1,1,lang)
+learning_curve = mut.get_learning_curve(selection)
+learning_curve = learning_curve.append(ratio)
+
 mut.produce_heatmap_info()
+
+
 
