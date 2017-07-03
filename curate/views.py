@@ -127,9 +127,9 @@ def mail(request, customer_key=None):
     curate_customer = Curate_Customer.objects.get(customer=customer)
     query = Curate_Query.objects.filter(
         curate_customer=curate_customer).order_by("pk").last()
-    config = configparser.RawConfigParser()
-    config.read('curate/customers/' + key +
-                "/" + key + '.cfg')
+    # config = configparser.RawConfigParser()
+    # config.read('curate/customers/' + key +
+    #             "/" + key + '.cfg')
 
     instances = query.selected_articles()
     articles = [i.article for i in instances]
@@ -158,7 +158,7 @@ def mail(request, customer_key=None):
     # keywords.extend([i.keywords for i in clusters])
         # articles.extend([i.article for i in Article_Curate_Query.objects.filter(curate_query=query).filter(
         #     selection_options= option).order_by("rank").all()])
-    stats_dict = {'name': config.get('meta', 'name'), 'words': query.processed_words,
+    stats_dict = {'name': customer.name, 'words': query.processed_words,
                   'no_of_articles': query.articles_before_filtering}
 
     context = {"articles": articles, "stats_dict": stats_dict, 'recipient_name':customer.name}
