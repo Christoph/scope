@@ -245,7 +245,7 @@ def profile(request):
     context = {'user':user, 'recent_queries':recent_queries, 'alert_info':alert_info,'state':state,'form2':form2,'state_profile':state_profile}
     return render(request, 'homepage/profile.html', context)
 
-def logout(request):
+def logout_user(request):
     logout(request)
     return render(request, 'homepage/logout.html')
 
