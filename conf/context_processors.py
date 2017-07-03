@@ -22,7 +22,7 @@ def google_analytics(request):
 def check_login(request):
     if request.user.is_authenticated():
         log_inf = ['Profile','Logout']
-        log_link = ['homepage:profile','homepage:logout']
+        log_link = ['homepage:profile','logout_new']
     else:
         log_inf = ['Register','Login']
         log_link = ['homepage:register','login']
