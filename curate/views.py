@@ -110,7 +110,8 @@ def mail(request, customer_key=None):
         else:
             try:
                 user_profile = UserProfile.objects.get(user=request.user)
-                if not customer_key == user_profile.customer.customer_key:
+                key = user_profile.customer.customer_key
+                if not customer_key == key:
                     return redirect('/login/?next=%s' % request.path)
             except:
                 return redirect('/login/?next=%s' % request.path)

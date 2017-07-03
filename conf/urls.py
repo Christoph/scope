@@ -20,7 +20,7 @@ from controlcenter.views import controlcenter
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    url(r'^logout/$', auth_views.LogoutView.as_view(template_name='homepage/logout.html'), name='logout_new'),
+    url(r'^log_out/$', auth_views.LogoutView.as_view(template_name='homepage/logout.html'), name='logout_new'),
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^captcha/', include('captcha.urls')),
     url(r'^admin/', include(admin.site.urls)),
