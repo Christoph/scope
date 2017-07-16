@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'mathfilters',
     'djcelery',
     'controlcenter',
+    'reader',
     )
 
 

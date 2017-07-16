@@ -1,0 +1,136 @@
+{% extends "homepage/base.html" %}
+{% load widget_tweaks %}
+{% load staticfiles %}
+{% block content %}
+  <!-- Page Content -->
+  <h1 align=center class="page-title">Profile</h1>
+  <div align="center">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="profiletab" role="tablist">
+      <li role="presentation" class="active"><a href="#personal" aria-controls="personal" role="tab" data-toggle="tab">Settings</a></li>
+      <li role="presentation"><a href="#alerts" aria-controls="feeds" role="tab" data-toggle="tab" >Sources</a></li>
+    </ul>
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="personal">
+        <div class="state_profile"></div>
+        <div class="forms" id="form_details_light">
+          <form action="{% url 'reader:profile' %}" id="profileedit" method="post">
+            {% csrf_token %}
+            {% if userform.first.errors %}
+              <div class="form-group has-error">
+                <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+              {% else %}
+                <div class="form-group">
+                  {{userform.first.label_tag}}
+                {% endif %}
+                {{userform.first|add_class:"form-control"}}
+              </div>
+              {% if userform.last.errors %}
+                <div class="form-group has-error">
+                  <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+                {% else %}
+                  <div class="form-group">
+                    {{userform.last.label_tag}}
+                  {% endif %}
+                  {{userform.last|add_class:"form-control"}}
+                </div>
+                {% if userform.username.errors %}
+                  <div class="form-group has-error">
+                    <label class="control-label" for="inputError1">Invalid format, avoid special characters</label>
+                  {% else %}
+                    <div class="form-group">
+                      {{userform.username.label_tag}}
+                    {% endif %}
+                    {{userform.username|add_class:"form-control"}}
+                  </div>
+                  
+                  {% if userform.email.errors %}
+                    <div class="form-group has-error">
+                      <label class="control-label" for="inputError1">Invalid email</label>
+                    {% else %}
+                      <div class="form-group">
+                        {{userform.email.label_tag}}
+                      {% endif %}
+                      {{userform.email|add_class:"form-control"}}
+                    </div>
+                    
+                    <input class="btn btn-default profileedit" id="form_details_dark" type="submit" value="Save Change" name="change_user"/>
+                    <input class="btn btn-default" id="form_details_dark" type="submit" value="Delete profile" name="delete_profile"/>
+                  </form>
+                    <p>To change your password, please click <a href="{% url 'password_change'%}">here</a>.</p>
+                </div>
+                
+                
+              </div>
+              <div role="tabpanel" class="tab-pane" id="alerts">
+                <div class="forms" id="form_alert_light">
+                  <form action="{% url 'reader:profile' %}" id="alertedit" method="post">
+                                {% csrf_token %}
+
+                           <div class="form-group">
+                      {{readerform.feeds.label_tag}}
+                      {{readerform.feeds|add_class:"form-control selectpicker"|attr:"data-live-search:true"|attr:"multiple"}}
+                      {{readerform.feeds.errors}}
+                          </div>
+
+                          <div class="form-group">
+                                        {{readerform.no_output_articles.label_tag}}
+                                        {{readerform.no_output_articles|add_class:"form-control"}}
+                                       </div>
+
+                          <input class="btn btn-default alertedit" id="form_alert_dark" type="submit" value="Save Change" name="change_reader"/>
+                        </form>
+                      </div>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#feedModal">
+                      Add additional feeds
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <!-- Sharemodal -->
+                  <div class="modal fade" id="feedModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <h4 align=center class="modal-title" >Add feeds to database</h4>
+                        </div>
+                        <div class="modal-body share-body">
+                          
+                          <div class="forms" id="form_feeds_light">
+                            <form action="{% url 'reader:profile' %}" method="post">
+                              {% csrf_token %}
+                              <div class="form-group">
+                                {{sourceform.name.label_tag}}
+                                {{sourceform.name|add_class:"form-control"}}
+                                {{sourceform.name.errors}}
+                              </div>
+                              {% if existingfeed == 0 %}
+                                <div class="form-group">
+                                  {{sourceform.url.label_tag}}
+                                  {{sourceform.url|add_class:"form-control"}}
+                                  {{sourceform.url.errors}}
+                                </div>
+                                {%endif %}
+                                {% if existingfeed == 1 %}
+                                  <div class="form-group has-error">
+                                    <label class="control-label" for="inputError1">Feed already exists</label>
+                                    {{sourceform.url|add_class:"form-control"}}
+                                    {{sourceform.url.errors}}
+                                  </div>
+                                  {%endif %}
+                                  {% if existingfeed == 2 %}
+                                    <div class="form-group has-error">
+                                      <label class="control-label" for="inputError1">Bad feed url. Please double-check</label>
+                                      {{sourceform.url|add_class:"form-control"}}
+                                      {{sourceform.url.errors}}
+                                    </div>
+                                    {%endif %}
+                                    <input class="btn btn-default" id="form_feeds_dark" type="submit" value="Add" name="add_feed"/>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endblock content %}

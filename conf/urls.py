@@ -27,6 +27,7 @@ urlpatterns = [
     #url(r'^admin/dashboard/', include(controlcenter.urls)),
     # url(r'^admin/dashboard/(?P<query_pk>\d+)/', include(controlcenter.urls)),
     url(r'^curate/', include('curate.urls',namespace="curate")),
+    url(r'^reader/', include('reader.urls',namespace="reader")),
     url(r'^curate/dashboard/', include(controlcenter.urls)),
     url(r'^explore/', include('explore.urls',namespace="explore")),
     url(r'^', include('homepage.urls', namespace='homepage')),

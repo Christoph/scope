@@ -82,8 +82,17 @@ class Article(models.Model):
     body = models.TextField()
     time_created = models.DateField(auto_now_add=True)
     pubdate = models.DateTimeField(blank=True, null=True)
-    sample = models.CharField(max_length=1000, blank=True)
+    sample = models.CharField(max_length=3000, blank=True, null=True)
 
 
     def __str__(self):              
         return self.title
+
+class RSSFeed(models.Model):
+    """docstring for RSSFeed"""
+    name = models.CharField(max_length=200)
+    url = models.CharField(max_length=1000)
+
+    def __str__(self):              
+        return self.name
+

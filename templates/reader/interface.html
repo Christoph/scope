@@ -1,0 +1,163 @@
+{% extends "homepage/base.html" %} {% load widget_tweaks %} {% load staticfiles %} {% block content %}
+  {% load mathfilters %}
+  <style media="screen">
+  .well {
+  border: 1px solid;
+  }
+  .btn-option {
+  color: black;
+  border: 1px black solid;
+  margin: 2px;
+  }
+  .btn-option:hover {
+  color: black;
+  border: 1px black solid;
+  }
+  .reasons {
+  opacity: 0.7;
+  width: 150px;
+  position: relative;
+  float: left;
+  border: solid 1.5px;
+  margin-left: 10px;
+  } 
+  .btn-reasons {
+  width:90px;
+  text-align: center;
+  }
+  .reason-label{
+  width: 90%;
+  margin-left: 5%;
+  }
+  .bad-border {
+    border-color: #e34a33;
+    }
+    .{{option.name}}-class {
+    background-color: #e34a33;
+    }
+    {% if selection_made is False %}
+      .btn-option.btn-bad:hover {
+      background-color: #e34a33;
+      }
+    {% endif %}
+    .btn-option.btn-bad.active {
+    background-color: #e34a33;
+    }
+
+  .btn-suggest:hover {
+  color: black;
+  border: 1px black solid;
+  }
+  .image {
+  position: relative;
+  width: 100%;
+  height:100%;
+  max-width: 400px;
+  max-height: 200px;
+  overflow: hidden;
+  }
+  .numberbox {
+  border: 2px solid;
+  border-radius: 2px;
+  background: #fff;
+  opacity: 0.9;
+  position: fixed;
+  top: 10%;
+  width: 30px;
+  font-size: 30px;
+  text-align:center;
+  display:none;
+  }
+  </style>
+  <h1 align=center>Newsletter - <strong>News Selection</strong></h1>
+  <!-- .entry-header -->
+  <div ALIGN=CENTER>
+    <div class="forms">
+      <!-- Tab panes -->
+      <form action="{% url 'curate:interface_with_key' customer_key %}" id="searchform" method="post">
+        {% csrf_token %}
+        {% for suggestion in suggestions %}
+          <div class="row well">
+            <div class="col-md-8" style="word-wrap: break-word; text-align: left;">
+              <p><img class="image" src="{{suggestion.center.article.images}}" alt=""></p>
+              <h2><a href="{{suggestion.center.article.url}}">{{suggestion.center.article.title}}</a> </h2>
+              <h3>{{suggestion.center.article.source.url}}</h3>
+              {% if suggestion.center.article.sample %}
+                <p> {{suggestion.center.article.sample}}...</p>
+              {% else %}
+              <p> {{suggestion.center.article.body|truncatewords:50}} </p>
+              {% endif %}
+
+              <p>
+                <div class="collapse" id="related_articles{{suggestion.rank}}">
+                  <div class="well">
+                    {% for instance in suggestion.cluster_articles.all %}
+                      <p><a href="{{instance.article.url}}">{{instance.article.title}}</a>, {{instance.article.source.name}}</p>
+                    {% endfor %}
+                  </div>
+                  </div>
+                </p>
+                </div>
+              
+              <div class="col-md-4" style="text-align: left; margin-top: 4%">
+                
+                <div class="row">
+                  
+                  <div class="btn-group selector" data-toggle="buttons">
+                      <label class="btn btn-option btn-bad {% if suggestion.bad_article %}
+                      active {% endif %}" style="font-size: 20px; width: 150px; border-radius:2px; margin-left: 10px;" {% if query.selection_made %}disabled="disabled"{% endif %}
+                      
+                      aria-expanded="false"
+                      
+                      
+                      >
+                      <i class="fa fa-times" aria-hidden="true"></i>
+                      <input
+                      type="checkbox"
+                      name="bad{{ forloop.parentloop.counter }}"
+                      class="bad-input"
+                      id="bad-{{ forloop.parentloop.counter }}"
+                      style="margin-top: 6px; margin-left:10px; opacity: 1;"
+                      >
+                    </label>
+                         <label><a class="btn btn-option" role="button" data-toggle="collapse" href="#related_articles{{suggestion.rank}}" aria-expanded="false" aria-controls="collapseExample">
+                  Related Articles
+                </a></label>         
+                    
+                  
+              </div>       
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      {% if query.selection_made %}
+        <input class="btn btn-primary" type="button" value="Send Feedback" {% if query.selection_made %}disabled="disabled"{% endif %}>
+      {% else %}
+        <input class="btn btn-primary" type="submit" value="Feedback sent" >
+      {% endif %}
+    </form>
+  </div>
+<!--   {% for option in options %}
+    <div class="numberbox {{option.name}}-class" id="numberbox-{{option.name}}"></div>
+  {% endfor %} -->
+</div>
+{% endblock content %}
+<!-- {% block scripts %}
+<script type='text/javascript'>
+{% if query.selection_made is False %}
+  function eval_checkboxes() {
+  {% for option in options %}
+    $('#numberbox-{{option.name}}').html(jQuery(".{{option.name}}-input:checked").length);
+    $('#numberbox-{{option.name}}').css("display","block");
+  {% endfor %}
+  }
+  jQuery(document).ready(addClickHandlers());
+  function addClickHandlers() {
+  $(document).on('change', 'input', function(event) {
+  eval_checkboxes()
+  }
+  );
+  }
+{% endif %}
+</script>
+{% endblock scripts %} -->

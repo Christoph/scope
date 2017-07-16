@@ -6,7 +6,8 @@ from django.core.exceptions import ValidationError
 
 from scope.models import AgentImap, Agent, Source, Article, AgentEventRegistry
 from scope.models import AgentNewspaper
-from curate.models import Article_Curate_Query
+from curate.models import Article_Curate_Query, Curate_Query
+from reader.models import Article_Reader_Query, Reader_Query
 from tldextract import tldextract
 
 from . import imap_handler, er_handler, news_handler
@@ -51,7 +52,7 @@ class Provider(object):
 
         return db_articles
 
-    def _save_articles(self, raw_articles, curate_query, agent):
+    def _save_articles(self, raw_articles, query, agent):
         db_articles = []
 
         print("Filter duplicates before _save_articles based on the title")
@@ -85,12 +86,21 @@ class Provider(object):
                     defaults={"source": source, "body": a['body'],
                               "images": a['images'], "pubdate": a['pubdate']})
 
-                art_cur_que, art_cur_created = Article_Curate_Query.objects.get_or_create(
-                    article=art, curate_query=curate_query, agent=agent)
+                if 'summary' in a:
+                    art.sample = a['summary']
+                    art.save()
 
-                if 'newsletter' in a:
-                    art_cur_que.newsletter = a['newsletter']
-                    art_cur_que.save()
+                if isinstance(query, Curate_Query):
+                    art_cur_que, art_cur_created = Article_Curate_Query.objects.get_or_create(
+                        article=art, curate_query=query, agent=agent)
+
+                    if 'newsletter' in a:
+                        art_cur_que.newsletter = a['newsletter']
+                        art_cur_que.save()
+
+                elif isinstance(query, Reader_Query):
+                    art_cur_que, art_cur_created = Article_Reader_Query.objects.get_or_create(
+                        article=art, reader_query=query, feed=a['feed'])
 
                 # This is another instance to try and get rid of overcounting
                 # articles from the same agent/newsletter. Note that this does

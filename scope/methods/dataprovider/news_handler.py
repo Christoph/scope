@@ -113,3 +113,4 @@ class NewsSourceHandler(object):
                         "pubdate": article.publish_date,
                         "newsletter": newsletter} for article in articles])
         return out
+
