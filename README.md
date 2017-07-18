@@ -86,6 +86,10 @@
             *sudo supervisorctl status celery
             *sudo supervisorctl stop/start/restart celery
         *if there are some problems with missing socket files or some SHUTDOWN STATE error, try "sudo service supervisor stop/start"
+            *if the problems persist you may have to kill the root supervisor process with "ps -ef | grep supervisord" and  then pkill
+        *you also want to purge existing tasks (I started it with the purge flag but not sure how well this works as of now...)
+            *from the django shell, do this via "from conf.celeryapp import app, app.control-purge()"
+
         *for running it in the shell
         *sudo /etc/init.d/celeryd start 
         *the config file for celeryd lies at /etc/default/celeryd
