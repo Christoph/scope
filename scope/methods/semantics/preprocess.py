@@ -44,6 +44,25 @@ class PreProcessing():
 
         return docs
 
+    def chunk_based_preprocessing(self, articles):
+        docs = self._generate_clean_docs([a.body for a in articles])
+        clean = []
+
+        for doc in docs:
+            temp = []
+            for chunk in doc.noun_chunks:
+                for t in chunk.subtree:
+                    if t.tag_ in self.noun_tags:
+                        reduced = []
+                        for w in chunk.lemma_.split(" "):
+                            if w not in self.stopwords:
+                                reduced.append(w)
+                        temp.append("_".join(reduced))
+                        break
+            clean.append(" ".join(list(set(temp))))
+
+        return clean
+
     def _noun_token_sent(self, sent):
         temp = []
         for t in sent:
