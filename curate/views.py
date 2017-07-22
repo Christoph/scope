@@ -6,35 +6,39 @@ from django.contrib.auth.decorators import login_required
 from conf.settings.importer import ImportGlobal
 from curate.tasks import send_newsletter_task, selection_made_task
 from curate.models import Curate_Query, Curate_Customer, Curate_Customer_Selection, Curate_Query_Cluster
-from scope.models import Customer, UserProfile
+from scope.models import Customer
 
 
 im = ImportGlobal()
 
-@login_required()
-def interface(request,customer_key=None, date_stamp=None):
+def check_access_right(request, customer_key):
+    if not request.user.is_authenticated():
+        return False
     if customer_key != None:
-        print(customer_key)
         if request.user.is_superuser:
             key = customer_key
         else:
             try:
-                user_profile = UserProfile.objects.get(user=request.user)
-                key = user_profile.customer.customer_key
+                key = Customer.objects.get(user=request.user).customer_key
                 if not customer_key == key:
-                    return redirect('/login/?next=%s' % request.path)
+                    return False
             except:
-                return redirect('/login/?next=%s' % request.path)
+                return False
     else:
-        print("None")
         try:
-            user_profile = UserProfile.objects.get(user=request.user)
-            key = user_profile.customer.customer_key
+            key = Customer.objects.get(user=request.user).customer_key
         except:
-            return redirect('/login/?next=%s' % request.path)
+            return False
+    return key
 
-    customer = Customer.objects.get(customer_key=key) #will be replaced by authentication
-    curate_customer = Curate_Customer.objects.get(customer=customer)
+
+@login_required()
+def interface(request,customer_key=None, date_stamp=None):
+    key = check_access_right(request, customer_key)
+    if not key:
+        return redirect('/login/?next=%s' % request.path)
+
+    curate_customer = Curate_Customer.objects.get(customer__customer_key=key)
     if date_stamp==None:
         query = Curate_Query.objects.filter(curate_customer=curate_customer).order_by("pk").last()
     else:
@@ -103,28 +107,11 @@ def interface(request,customer_key=None, date_stamp=None):
 
 @login_required()
 def mail(request, customer_key=None):
-    if customer_key != None:
-        print(customer_key)
-        if request.user.is_superuser:
-            key = customer_key
-        else:
-            try:
-                user_profile = UserProfile.objects.get(user=request.user)
-                key = user_profile.customer.customer_key
-                if not customer_key == key:
-                    return redirect('/login/?next=%s' % request.path)
-            except:
-                return redirect('/login/?next=%s' % request.path)
-    else:
-        print("None")
-        try:
-            user_profile = UserProfile.objects.get(user=request.user)
-            key = user_profile.customer.customer_key
-        except:
-            return redirect('/login/?next=%s' % request.path)
+    key = check_access_right(request, customer_key)
+    if not key:
+        return redirect('/login/?next=%s' % request.path)
 
-    customer = Customer.objects.get(customer_key=key)
-    curate_customer = Curate_Customer.objects.get(customer=customer)
+    curate_customer = Curate_Customer.objects.get(customer__customer_key=key)
     query = Curate_Query.objects.filter(
         curate_customer=curate_customer).order_by("pk").last()
     # config = configparser.RawConfigParser()

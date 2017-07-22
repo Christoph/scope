@@ -64,8 +64,8 @@ def register(request,):
                     new_profile.save()
 
             # Send an email with the confirmation link
-                    email_subject = 'Your new Grews profile confirmation'
-                    email_body = "Hello, %s, and thanks for creating a Grews profile!\n\nTo activate your account, click this link within 48 hours:\n\n %s/confirm/%s" % (
+                    email_subject = 'Scope profile confirmation'
+                    email_body = "Hello, %s, and thanks for creating a Scope profile!\n\nTo activate your account, click this link within 48 hours:\n\n %s/confirm/%s" % (
                     new_user.username,
             settings.CURRENT_DOMAIN,
                     new_profile.activation_key)
@@ -76,11 +76,11 @@ def register(request,):
                         new_user.email
                    )
                     send_mail(email_subject,
-                          email_body,'grphtcontact@gmail.com',
+                          email_body,'robot@scope.ai',
                          [new_user.email])
                     send_mail('new user registration',
-                          email_body2,'grphtcontact@gmail.com',
-                         ['grphtcontact@gmail.com'])
+                          email_body2,'admin@scope.ai',
+                         ['admin@scope.ai'])
                     print('render created')
                     state="Great! Only one step to go. We've sent you an email with a confirmation link. Please confirm and you're set to go."
                     return render(request,'homepage/register.html', {'new':False,'state':state, })
@@ -111,8 +111,8 @@ def confirm(request, activation_key):
                         user_account.email
                    )
     send_mail('new user activation',
-                          email_body2,'grphtcontact@gmail.com',
-                         ['grphtcontact@gmail.com'])
+                          email_body2,'admin@scope.ai',
+                         ['admin@scope.ai'])
     return render_to_response('homepage/confirm.html', {'success': True, })
 
 #@login_required(login_url='/login')

@@ -30,22 +30,23 @@ def create(name, email, selection_dict={}, imap_dict={"host": "gmail"}):
     # Create User
     user, created = User.objects.get_or_create(username=proc_name)
     user.set_password(pwd)
+    user.is_active = True
     user.save()
 
     # Create Customer
     customer, created = Customer.objects.get_or_create(
-        name=name, customer_key=proc_name, email=email)
+        name=name, customer_key=proc_name, email=email, user=user)
 
     # Create UserProfile
-    userprofile, created = UserProfile.objects.get_or_create(user=user, customer=customer, defaults={
-        "activation_key": "activation_key", "expires": datetime.date.today() + datetime.timedelta(days=365)})
+    userprofile, created = UserProfile.objects.get_or_create(user=user, defaults={
+        "activation_key": "Created_from_script", "expires": datetime.date.today()})
 
     # Create Curate_Customer
     curate_customer, created = Curate_Customer.objects.get_or_create(
         customer=customer,
         key="key",
-        defaults={"expires": datetime.date.today(
-        ) + datetime.timedelta(days=365)}
+        # defaults={"expires": datetime.date.today(
+        # ) + datetime.timedelta(days=365)}
     )
 
     # Create Source for the Curate_Customer

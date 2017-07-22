@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class Customer(models.Model):
+    user = models.ForeignKey(User, default=None, null=True)
     name = models.CharField(max_length=200)
     customer_key = models.CharField(max_length=200)
     email = models.EmailField()
@@ -14,12 +15,10 @@ class Customer(models.Model):
     def __str__(self):              
         return self.name
 
-
 class UserProfile(models.Model):
     user = models.ForeignKey(User, default=None, null=True)
     activation_key = models.CharField(max_length=40)
-    expires = models.DateTimeField()
-    customer = models.ForeignKey(Customer, default=None, null=True)
+    expires = models.DateTimeField(null=True)
     def __str__(self):              
         return self.user.username
 

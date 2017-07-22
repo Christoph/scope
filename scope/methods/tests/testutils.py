@@ -45,7 +45,7 @@ def create_article_dict(no_articles1, no_articles2):
 def create_test_customer(customer_key):
 	customer = Customer(customer_key=customer_key)
 	customer.save()
-	curate_customer = Curate_Customer(customer=customer, expires=date.today())
+	curate_customer = Curate_Customer(customer=customer)
 	curate_customer.save()
 	query = Curate_Query(curate_customer=curate_customer)
 	query.save()
