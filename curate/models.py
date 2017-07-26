@@ -1,13 +1,15 @@
 # from __future__ import unicode_literals
 
 from django.db import models
-from scope.models import Article, Customer, Agent, Source, Newsletter
+from scope.models import Article, Customer, Agent, Source, Newsletter, RSSFeed
 
 # Create your models here.
 
 class Curate_Customer(models.Model):
     customer = models.ForeignKey(Customer)
     bad_source = models.ManyToManyField(Source, blank=True)
+    feeds = models.ManyToManyField(RSSFeed, blank=True)
+    newsletters = models.ManyToManyField(Newsletter, blank=True)
 
     def __str__(self):
         return self.customer.name

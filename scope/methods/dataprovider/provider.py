@@ -27,6 +27,8 @@ class Provider(object):
         connector = Agent.objects.filter(
             product_customer_id=curate_customer.id)
 
+        #newsletter_objects
+
         for con in connector:
             print("============= New Agent ===============")
             if isinstance(con.agent_object, AgentImap):

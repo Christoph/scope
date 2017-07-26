@@ -91,6 +91,7 @@
         *the config file for celeryd lies at /etc/default/celeryd
     *management of rabbit:
         *sudo rabbitmqctl stop_app/start_app
+        * I have added a 60s time to live for rabbitmq messages, so that in the case of problems old tasks do not get handed over to new celery workers (command :"rabbitmqctl set_policy TTL ".*" '{"message-ttl":60000}' --apply-to queues")
 
 ### 2. Gunicorn
 
