@@ -97,6 +97,7 @@ TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates',
                     'django.contrib.auth.context_processors.auth',
                     'conf.context_processors.site',
                     'conf.context_processors.check_login',
+                    'conf.context_processors.google_analytics',
                     'django.contrib.messages.context_processors.messages']}}]
 
 WSGI_APPLICATION = 'conf.wsgi.application'
