@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'mathfilters',
     'djcelery',
     'controlcenter',
+    'tracking'
     )
 
 
@@ -132,6 +133,7 @@ BOWER_INSTALLED_APPS = (
     "lodash",
     "font-awesome",
 )
+
 
 CONTROLCENTER_DASHBOARDS = (
     'homepage.dashboards.Curate_Query_Dashboard',

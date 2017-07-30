@@ -265,7 +265,7 @@
 												<td class="small" width="20%" style="vertical-align: top; padding-right:10px;"><img src="{{article.images}}" style="width:150px" width="150"/></td>
 												<td>
 													<h4>{{forloop.counter}}. <a href="{{article.url}}">{{article.title}}</a></h4>
-													<p><strong>{{article.source.url}}</strong></p>
+													<p><strong><a href="{{article.source.url}}">{{article.source.name}}</a></strong></p>
 													{% if article.sample %}
 														<p> {{article.sample}}...</p>
 													{% else %}

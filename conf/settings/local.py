@@ -32,6 +32,11 @@ DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql_psycopg2',
                          'HOST': 'localhost',
                          'PORT': ''}}
 
+PYTRACKING_CONFIGURATION = {
+    "base_open_tracking_url": CURRENT_DOMAIN + "/open/",
+    "base_click_tracking_url": CURRENT_DOMAIN + "/click/",
+}
+
 
 STATICFILES_DIRS += [
     os.path.join(BASE_DIR, "static"),

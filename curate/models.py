@@ -7,8 +7,8 @@ from scope.models import Article, Customer, Agent, Source, Newsletter
 
 class Curate_Customer(models.Model):
     customer = models.ForeignKey(Customer)
-    key = models.CharField(max_length=100, blank=True)
-    expires = models.DateField(blank=True)
+    # key = models.CharField(max_length=100, blank=True)
+    # expires = models.DateField(blank=True)
     bad_source = models.ManyToManyField(Source, blank=True)
 
     def __str__(self):

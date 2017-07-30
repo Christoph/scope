@@ -7,6 +7,17 @@ from scope.models import Customer
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from curate.convenience.functions import retrieve_objects
+import pytracking
+from pytracking.html import adapt_html
+
+def add_tracking(html_message, recipient, query):
+    configuration = pytracking.Configuration(
+    base_open_tracking_url= settings.CURRENT_DOMAIN + "/tracking/open/",
+    base_click_tracking_url= settings.CURRENT_DOMAIN + "/tracking/click/")
+    new_html_email_text = adapt_html(
+    html_message, extra_metadata={"recipient_pk": recipient.pk, "query_pk": query.pk},
+    click_tracking=True, open_tracking=True, configuration=configuration)
+    return new_html_email_text
 
 
 def send_newsletter(customer_key):
@@ -52,28 +63,26 @@ def send_newsletter(customer_key):
                   'no_of_articles': query.articles_before_filtering}
 
     for recipient in recipients:
+        html_message = mail_template(
+                stats_dict, send_dict, query, template_no, recipient_name=recipient.first)
+        tracking_html_message = add_tracking(html_message, recipient, query)
         send_mail(
             subject="Scope Neu: " + "; ".join(keywords),
             message=mail_template(stats_dict, articles, query,
                                   template_no, html=False, recipient_name=recipient.first),
             from_email='robot@scope.ai',
             recipient_list=[recipient.email],
-            html_message=mail_template(
-                stats_dict, send_dict, query, template_no, recipient_name=recipient.first)
+            html_message=tracking_html_message
         )
 
 
-def mail_template(stats_dict, send_dict, query, no, html=True, recipient_name=""):
+def mail_template(stats_dict, send_dict, query, no, html=True, recipient_name="", include_tracking=True):
     if no == 1:
         if html == True:
             content = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <html xmlns="http://www.w3.org/1999/xhtml"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> <title>NewsButler brief</title> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> </head> <body style="margin: 0; padding: 0; font-family: Times New Roman, sans-serif;"> <table align="center" border="0" style="border-bottom:0px; border-top:0px; border-color:#588B8B;" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;"> <!-- Header --> <tr> <td align="center" bgcolor="#588B8B" style="padding: 40px 0 30px 0;"><h1 style="font-family:Times New Roman, sans-serif;"></h1></td> </tr><tr><td align="center" bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;"><h2 style="font-family:Times New Roman, sans-serif;">This is your Scope newsletter for ' + \
                 query.time_stamp.strftime("%a %d/%m %Y") + \
                 '. Enjoy!</h2><br/><hr align="center" width="80%" style="color:#588B8B;border-color: #588B8B;border:2px solid;"></tr>'
             for item in list(send_dict.items()):
-                # content = content + '<tr border="1px solid #588B8B"
-                # style="width:80%;"><td bgcolor="#588B8B" style="color:#fff;
-                # text-align:center;"><br/><h3><strong> Selection option "' +
-                # str(item[0]) + '": </strong></h3><br/></td> </tr>'
                 articles = item[1]
                 for j in range(0, len(articles)):
                     article = articles[j]
