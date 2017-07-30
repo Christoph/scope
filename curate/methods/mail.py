@@ -2,8 +2,7 @@ import configparser
 from django.core.mail import send_mail
 from scope.methods.auxiliary.auxiliaryfunctions import truncate_words_and_prod_sentence
 from django.template.loader import render_to_string
-from curate.models import Curate_Query, Curate_Customer, Curate_Recipient
-from scope.models import Customer
+from curate.models import Curate_Query, Curate_Recipient
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from curate.convenience.functions import retrieve_objects
@@ -11,13 +10,16 @@ import pytracking
 from pytracking.html import adapt_html
 
 def add_tracking(html_message, recipient, query):
-    configuration = pytracking.Configuration(
-    base_open_tracking_url= settings.CURRENT_DOMAIN + "/tracking/open/",
-    base_click_tracking_url= settings.CURRENT_DOMAIN + "/tracking/click/")
-    new_html_email_text = adapt_html(
-    html_message, extra_metadata={"recipient_pk": recipient.pk, "query_pk": query.pk},
-    click_tracking=True, open_tracking=True, configuration=configuration)
-    return new_html_email_text
+    try:
+        configuration = pytracking.Configuration(
+        base_open_tracking_url= settings.CURRENT_DOMAIN + "/tracking/open/",
+        base_click_tracking_url= settings.CURRENT_DOMAIN + "/tracking/click/")
+        new_html_email_text = adapt_html(
+        html_message, extra_metadata={"recipient_pk": recipient.pk, "query_pk": query.pk},
+        click_tracking=True, open_tracking=True, configuration=configuration)
+        return new_html_email_text
+    except:
+        return html_message
 
 
 def send_newsletter(customer_key):
