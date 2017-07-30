@@ -29,6 +29,11 @@ ADMINS = ('GRPHT', 'grphtcontact@gmail.com', 'admin@scope.ai')
 INSTALLED_APPS += (
 )
 
+PYTRACKING_CONFIGURATION = {
+    "base_open_tracking_url": CURRENT_DOMAIN + "/open/",
+    "base_click_tracking_url": CURRENT_DOMAIN + "/click/",
+}
+
 LOCKDOWN_PASSWORDS = ('scope2016')
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOCKDOWN_URL_EXCEPTIONS = (
