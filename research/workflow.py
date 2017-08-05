@@ -2,12 +2,14 @@ import django
 django.setup()
 
 import spacy
+import json
 
 from scope.models import Agent
 
 from scope.methods.semantics import document_embedding
 from scope.methods.semantics import summarizer
 from scope.methods.dataprovider import provider
+from scope.methods.learning import quality
 
 from scope.models import Customer
 from curate.models import Article_Curate_Query, Curate_Query, Curate_Customer
@@ -76,6 +78,22 @@ print((len(filtered_articles)))
 
 # semantic analysis
 print("SEMANTIC ANALYSIS")
+# Check if its a bad article
+bad = quality.QualityManager()
+
+with open("bad_articles_coba_22072017.json", "r") as json_file:
+    bad_articles_list = json.load(json_file)
+
+with open("good_articles_coba_22072017.json", "r") as json_file:
+    good_articles_list = json.load(json_file)
+
+good_articles = [a["fields"] for a in good_articles_list]
+
+bad_articles = [a["fields"] for a in bad_articles_list]
+
+bad.find_similar(good_articles, bad_articles, nlp)
+
+out = bad.classify(good_articles, bad_articles, nlp)
 
 # Create embedding model
 data_model = document_embedding.Embedding(language, nlp, "grammar_svd", filtered_articles)

@@ -62,7 +62,7 @@ class PreProcessing():
         return " ".join(list(set(temp)))
 
     def noun_based_preprocessing(self, articles):
-        docs = [self.nlp(a.body) for a in articles]
+        docs = [self.nlp(a["body"]) for a in articles]
         clean = []
 
         for doc in docs:
