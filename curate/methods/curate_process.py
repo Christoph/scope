@@ -1,17 +1,17 @@
 import configparser
 import spacy
+from langdetect import detect
 
 from scope.methods.semantics import document_embedding
 from scope.methods.graphs import clustering_methods
-import scope.methods.dataprovider.provider as provider
 from scope.methods.semantics import summarizer
 
 from scope.models import Customer
 
 from curate.methods.filters import filter_bad_articles, filter_bad_sources
-from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Query_Cluster
+from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Query_Cluster, Curate_Retrieval
 
-
+#this class creates the selection for a given customer from the data retrievals in a given interval
 class Curate(object):
     """Curate process class."""
 
@@ -25,10 +25,26 @@ class Curate(object):
             customer_key=customer_key)
         self.curate_customer = Curate_Customer.objects.get(
             customer=self.customer)
-        self.language = self.config.get(
-            'general', 'language')
-        self.nlp = spacy.load(self.language)
-        self.provider = provider.Provider(self.nlp)
+        # self.language = self.config.get(
+        #     'general', 'language')
+        # self.nlp = spacy.load(self.language)
+        # self.provider = provider.Provider(self.nlp)
+
+    def from_db(self):
+        self._create_query_instance(db=True)
+        db_articles = self._retrieve_from_db()
+        db_articles = self._filter_articles(db_articles, db=True)
+        selected_articles = self._process(db_articles)
+
+        return selected_articles
+
+    def from_sources(self):
+        self._create_query_instance(db=False)
+        db_articles = self._retrieve_from_sources()
+        db_articles = self._filter_articles(db_articles)
+        selected_articles = self._process(db_articles)
+
+        return selected_articles
 
     def _create_query_instance(self, db=False):
         if db is False:
@@ -53,6 +69,9 @@ class Curate(object):
         return db_articles
 
     def _retrieve_from_db(self):
+        #the retrieval has stored article_curate_retrieval_objects. The task now is to find all relevant articles from the sources connected to retrievals that have not yet been turned into editions.
+        now = datetime.now()
+        retrievals = Curate_Retrieval.objects
         article_query_instances = Article_Curate_Query.objects.filter(
             curate_query=self.query)
         for i in article_query_instances:
@@ -84,6 +103,22 @@ class Curate(object):
             self.curate_customer, after_bad_sources)
 
         return after_bad_articles
+
+
+    def check_language(self, input_articles):
+        #moved this here from imap_handler, should be cuzstomer specific
+        language_filtered = []
+
+        for a in input_articles:
+            if detect(a['body']) == self.language:
+                language_filtered.append(a)
+            else:
+                print("Wrong Language")
+                print(a["title"])
+
+        print("Good articles")
+        print(len(language_filtered))
+
 
     def _produce_cluster_dict(self, cluster_articles, selected_articles):
         articles_dict = {}
@@ -163,20 +198,4 @@ class Curate(object):
             self.produce_and_save_clusters(cluster_articles, selected_articles)
         else:
             selected_articles = []
-        return selected_articles
-
-    def from_db(self):
-        self._create_query_instance(db=True)
-        db_articles = self._retrieve_from_db()
-        db_articles = self._filter_articles(db_articles, db=True)
-        selected_articles = self._process(db_articles)
-
-        return selected_articles
-
-    def from_sources(self):
-        self._create_query_instance(db=False)
-        db_articles = self._retrieve_from_sources()
-        db_articles = self._filter_articles(db_articles)
-        selected_articles = self._process(db_articles)
-
         return selected_articles

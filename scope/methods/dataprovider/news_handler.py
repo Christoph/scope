@@ -5,7 +5,6 @@ Handels newspaper crawling
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
 from lxml import etree
-
 import newspaper
 
 
@@ -101,16 +100,5 @@ class NewsSourceHandler(object):
             # else:
             #     print "Article not correctly parsed."
 
-        return out
-
-    def produce_output_dict(self, article_dict):
-        out = []
-        for articles, newsletter in article_dict:
-            out.extend([{
-                        "body": article.text, "title": article.title,
-                        "url": article.url, "images": article.top_image,
-                        "source": urlparse(article.url).netloc,
-                        "pubdate": article.publish_date,
-                        "newsletter": newsletter} for article in articles])
         return out
 

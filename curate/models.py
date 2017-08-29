@@ -10,6 +10,7 @@ class Curate_Customer(models.Model):
     bad_source = models.ManyToManyField(Source, blank=True)
     feeds = models.ManyToManyField(RSSFeed, blank=True)
     newsletters = models.ManyToManyField(Newsletter, blank=True)
+    interval = models.DurationField()
 
     def __str__(self):
         return self.customer.name
@@ -45,6 +46,16 @@ class Curate_Rejection_Reasons(models.Model):
         return self.name + ', ' + self.selection.name + ', ' + self.selection.curate_customer.customer.name
     def human_readable_name(self):
         return self.name.replace('_', ' ')
+
+class Curate_Retrieval(models.Model):
+    time_stamp = models.DateField(auto_now_add=True)
+    #already_retrieved = models.ManyToManyField(Curate_Customer, blank=True)
+
+class Article_Curate_Retrieval(models.Model):
+    retrieval = models.ForeignKey(Curate_Retrieval)
+    article = models.ForeignKey(Article)
+    newsletter =  models.ForeignKey(Newsletter, null=True, blank=True)
+    feed =  models.ForeignKey(RSSFeed, null=True, blank=True)
 
 class Curate_Query(models.Model):
     curate_customer = models.ForeignKey(Curate_Customer)

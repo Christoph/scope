@@ -4,66 +4,64 @@ Handles the different data providers and saves the articles.
 
 from django.core.exceptions import ValidationError
 
-from scope.models import AgentImap, Agent, Source, Article, AgentEventRegistry
-from scope.models import AgentNewspaper
-from curate.models import Article_Curate_Query, Curate_Query
-from reader.models import Article_Reader_Query, Reader_Query
+from scope.models import Source, Article
+from curate.models import Curate_Retrieval, Article_Curate_Retrieval
 from tldextract import tldextract
-
-from . import imap_handler, er_handler, news_handler
+from . import imap_handler, feed_handler #, er_handler, news_handler
 
 
 class Provider(object):
     """docstring for crawler."""
 
-    def __init__(self, nlp):
-        self.nlp = nlp
+    def __init__(self):
+        self.retrieval = Curate_Retrieval.objects.create()
 
-    def collect_from_agents(self, curate_customer, curate_query, language):
+    def collect_all(self, out=True):
+
         db_articles = []
-        newspaper_articles = []
+        # newspaper_articles = []
+
+        #first get all email data
+        imap = imap_handler.ImapHandler()
+        imap_out_list = imap.get_data_new()
+        db_articles.extend(self._save_articles(
+                imap_out_list))
+
+        #get event registries that are subscribed
+        # print("er")
+        # er = er_handler.EventRegistry(con.agent_object)
+        # newspaper_articles.append((er.get_data(), con))
+
+
+        #get all newspaper sources that are subsribed
+        # print("newspaper")
+        # news = news_handler.NewsSourceHandler()
+        # newspaper_articles.append((news.get_articles_from_source(
+        #             con.agent_object.url, 24), con))
 
         # Get all sources connected to the curate_customer
-        connector = Agent.objects.filter(
-            product_customer_id=curate_customer.id)
+        # connector = Agent.objects.filter(
+        #     product_customer_id=curate_customer.id)
 
-        #newsletter_objects
+        #feeds
+        feed = feed_handler.Feed_Handler()
+        feed_out_list = feed.collect_used_feeds()
+        db_articles.extend(self._save_articles(feed_out_list))
+        if out==True:
+            return db_articles
 
-        for con in connector:
-            print("============= New Agent ===============")
-            if isinstance(con.agent_object, AgentImap):
-                print("imap")
-                imap = imap_handler.ImapHandler(con.agent_object, language, self.nlp)
-
-                newspaper_articles.append((imap.get_data_new(), con))
-            if isinstance(con.agent_object, AgentEventRegistry):
-                print("er")
-                er = er_handler.EventRegistry(con.agent_object)
-
-                newspaper_articles.append((er.get_data(), con))
-            if isinstance(con.agent_object, AgentNewspaper):
-                print("newspaper")
-                news = news_handler.NewsSourceHandler()
-
-                newspaper_articles.append((news.get_articles_from_source(
-                    con.agent_object.url, 24), con))
-
-        for articles, con in newspaper_articles:
-            db_articles.extend(self._save_articles(
-                articles, curate_query, con))
-
-        return db_articles
-
-    def _save_articles(self, raw_articles, query, agent):
+    def _save_articles(self, article_list, agent):
+        #the input to this is a dict for every article of the given agent format.
         db_articles = []
 
         print("Filter duplicates before _save_articles based on the title")
         print("Initial size")
-        print(len(raw_articles))
+        print(len(article_list))
 
         articles = []
+        #this is meant to be avoiding double titles? as a hard coded check...seems less than ideal computationally
         titles = []
-        for a in raw_articles:
+        for a in article_list:
             if a['title'] not in titles:
                 titles.append(a['title'])
                 articles.append(a)
@@ -92,29 +90,17 @@ class Provider(object):
                     art.sample = a['summary']
                     art.save()
 
-                if isinstance(query, Curate_Query):
-                    art_cur_que, art_cur_created = Article_Curate_Query.objects.get_or_create(
-                        article=art, curate_query=query, agent=agent)
+                art_cur_ret, created = Article_Curate_Retrieval.objects.get_or_create(retrieval=self.retrieval, article=art)
 
-                    if 'newsletter' in a:
-                        art_cur_que.newsletter = a['newsletter']
-                        art_cur_que.save()
+                if 'newsletter' in a:
+                        art_cur_ret.newsletter = a['newsletter']
+                        art_cur_ret.save() 
+                if 'feed' in a:
+                        art_cur_ret.newsletter = a['feed']
+                        art_cur_ret.save()                
 
-                elif isinstance(query, Reader_Query):
-                    art_cur_que, art_cur_created = Article_Reader_Query.objects.get_or_create(
-                        article=art, reader_query=query, feed=a['feed'])
-
-                # This is another instance to try and get rid of overcounting
-                # articles from the same agent/newsletter. Note that this does
-                # not have the problem of list(set(db_articles)) below
-                # if art_cur_created:
                 db_articles.append(art)
 
-            # one could also call list(set(db_articles)) here but this would
-            # mean that we do not take into account the fact that the same
-            # article has been posted by two independent agents/newsletters,
-            # which however *should* double the weight that is given to this
-            # article
             except ValidationError:
                 print("Validation Error")
                 continue

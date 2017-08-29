@@ -1,29 +1,34 @@
 import imaplib
 import email
-from langdetect import detect
+import configparser
 from email.utils import getaddresses
 from email.header import decode_header
-from urllib.parse import urlparse
 from datetime import date, timedelta
-from newspaper import Article
 from . import url_extractor
+from urllib.parse import urlparse
 
 from scope.methods.filters import blacklist_filter, remove_duplicate_articles_from_same_newsletter
 from scope.methods.dataprovider import news_handler
-from scope.models import Newsletter, Agent
+from scope.models import Newsletter
 
 
 class ImapHandler(object):
     """docstring for ImapHandler."""
 
-    def __init__(self, agent, language, nlp):
-        self.url_extractor = url_extractor.Extractor(nlp)
-        self.mail_user = agent.user
-        self.mail_pwd = agent.pwd
-        self.mail_link = agent.imap
-        self.mail_box = agent.mailbox
-        self.mail_interval = agent.interval
-        self.language = language
+    def __init__(self):
+        self.config = configparser.RawConfigParser()
+        self.config.read('scope/methods/dataprovider/imap_config.cfg')
+        self.url_extractor = url_extractor.Extractor()
+        self.mail_user = self.config.get(
+            'imap', 'user')
+        self.mail_pwd = self.config.get(
+            'imap', 'pwd')
+        self.mail_link = self.config.get(
+            'imap', 'imap')
+        self.mail_box = self.config.get(
+            'imap', 'mailbox')
+        self.mail_interval = self.config.get(
+            'imap', 'interval')
 
         self.news = news_handler.NewsSourceHandler()
 
@@ -54,21 +59,8 @@ class ImapHandler(object):
         filtered_article_dict = remove_duplicate_articles_from_same_newsletter(
             downloaded_article_dict)
         blacklist_filtered = blacklist_filter(filtered_article_dict)
-        out = self.news.produce_output_dict(blacklist_filtered)
-
-        language_filtered = []
-
-        for a in out:
-            if detect(a['body']) == self.language:
-                language_filtered.append(a)
-            else:
-                print("Wrong Language")
-                print(a["title"])
-
-        print("Good articles")
-        print(len(language_filtered))
-
-        return language_filtered
+        imap_out_list = self._produce_imap_output_dict(blacklist_filtered)
+        return imap_out_list
 
     def _connect(self):
         # Connect to Mailbox
@@ -103,7 +95,6 @@ class ImapHandler(object):
             mail = email.message_from_string(email_body.decode("utf-8"))
             # All mail text/plain contents
             contents = self._get_content(mail)
-
 
             # Add urls from each content
             for content in contents:
@@ -178,3 +169,14 @@ class ImapHandler(object):
                 print("is not MIME encoded")
                 # Else - add without decoding
                 contents.append(part.get_payload())
+
+    def _produce_imap_output_dict(self, article_dict):
+        out = []
+        for articles, newsletter in article_dict:
+            out.extend([{
+                        "body": article.text, "title": article.title,
+                        "url": article.url, "images": article.top_image,
+                        "source": urlparse(article.url).netloc,
+                        "pubdate": article.publish_date,
+                        "newsletter": newsletter} for article in articles])
+        return out

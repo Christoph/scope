@@ -2,19 +2,19 @@
 Url extraction class
 '''
 
-import re
 import spacy
+from langdetect import detect
 from urllib.parse import urlparse
 import urllib.request, urllib.error, urllib.parse
 from http.cookiejar import CookieJar
 from scope.methods.dataprovider import constants
 
-
 class Extractor(object):
     """Helper methods for the data provider module."""
 
-    def __init__(self, nlp):
-        self.nlp = nlp
+    def __init__(self):
+        self.german = spacy.load('de')
+        self.english = spacy.load('en')
         self.cj = CookieJar()
         # Some pages need cookie support.
         self.url_opener = urllib.request.build_opener(
@@ -45,7 +45,13 @@ class Extractor(object):
         #     content)
 
         urls = []
-        text = self.nlp(content)
+
+        if detect(content) == "de":
+            text = self.german(content)
+        elif detect(content) == "en":
+            text = self.english(content)
+        else: 
+            text = self.english(content)
 
         for t in text:
             if t.like_url and not t.like_email:
