@@ -81,7 +81,7 @@ class Article_Curate_Query(models.Model):
     article = models.ForeignKey(Article)
     curate_query = models.ForeignKey(Curate_Query)
     selection_options = models.ManyToManyField(Curate_Customer_Selection, blank=True)
-    agent = models.ForeignKey(Agent, null=True, blank=True)
+    feed =  models.ForeignKey(RSSFeed, null=True, blank=True)
     newsletter =  models.ForeignKey(Newsletter, null=True, blank=True)
     bad_article = models.BooleanField(default=False)
     def __str__(self):

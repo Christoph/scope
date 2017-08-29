@@ -1,15 +1,15 @@
 import configparser
-import spacy
 from langdetect import detect
+from datetime import datetime
 
 from scope.methods.semantics import document_embedding
 from scope.methods.graphs import clustering_methods
 from scope.methods.semantics import summarizer
 
-from scope.models import Customer
+from scope.models import Customer, Article
 
 from curate.methods.filters import filter_bad_articles, filter_bad_sources
-from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Query_Cluster, Curate_Retrieval
+from curate.models import Curate_Query, Article_Curate_Query, Curate_Customer, Curate_Query_Cluster, Curate_Retrieval, Article_Curate_Retrieval
 
 #this class creates the selection for a given customer from the data retrievals in a given interval
 class Curate(object):
@@ -25,65 +25,47 @@ class Curate(object):
             customer_key=customer_key)
         self.curate_customer = Curate_Customer.objects.get(
             customer=self.customer)
-        # self.language = self.config.get(
-        #     'general', 'language')
+        self.language = self.config.get(
+            'general', 'language')
         # self.nlp = spacy.load(self.language)
         # self.provider = provider.Provider(self.nlp)
 
-    def from_db(self):
-        self._create_query_instance(db=True)
-        db_articles = self._retrieve_from_db()
-        db_articles = self._filter_articles(db_articles, db=True)
-        selected_articles = self._process(db_articles)
-
-        return selected_articles
-
-    def from_sources(self):
-        self._create_query_instance(db=False)
-        db_articles = self._retrieve_from_sources()
-        db_articles = self._filter_articles(db_articles)
-        selected_articles = self._process(db_articles)
+    def curate(self, db):
+        self._create_query_instance(db)
+        articles = self._retrieve(db)
+        articles = self._filter_articles(articles, db)
+        selected_articles = self._process(articles)
 
         return selected_articles
 
     def _create_query_instance(self, db=False):
-        if db is False:
+        if not db:
             self.query = Curate_Query.objects.create(
                 curate_customer=self.curate_customer)
         else:
             self.query = Curate_Query.objects.filter(
                 curate_customer=self.curate_customer).order_by("pk").last()
 
-    def _retrieve_from_sources(self):
-        # Get the articles as dict
-        db_articles = self.provider.collect_from_agents(
-            self.curate_customer, self.query, self.language)
+    def _retrieve(self, db=False):
+        if not db:
+            now = datetime.now()
+            since = now - self.curate_customer.interval
+            retrievals = Curate_Retrieval.objects.filter(time_stamp__gt = since)
+            article_retrieval_instances = Article_Curate_Retrieval.objects.filter(
+                retrieval__in=retrievals)
 
-        print("Number of distinct articles retrieved")
-        print(len(db_articles))
+            for i in article_retrieval_instances:
+                aci = Article_Curate_Query(article=i.article, rank=0,newsletter=i.newsletter, feed=i.feed, curate_query=self.query)
+                aci.save()
+            db_articles = [i.article for i in article_retrieval_instances]
+            print("Number of distinct articles retrieved for this curate query")
+            print(len(db_articles))
 
-        self.query.processed_words = sum([len(i.body) for i in db_articles])
-        self.query.articles_before_filtering = len(db_articles)
-        self.query.save()
-
-        return db_articles
-
-    def _retrieve_from_db(self):
-        #the retrieval has stored article_curate_retrieval_objects. The task now is to find all relevant articles from the sources connected to retrievals that have not yet been turned into editions.
-        now = datetime.now()
-        retrievals = Curate_Retrieval.objects
-        article_query_instances = Article_Curate_Query.objects.filter(
-            curate_query=self.query)
-        for i in article_query_instances:
-            i.rank = 0
-            i.save()
-        db_articles = [i.article for i in article_query_instances]
-        print("Number of distinct articles retrieved")
-        print(len(db_articles))
-
-        self.query.processed_words = sum([len(i.body) for i in db_articles])
-        self.query.articles_before_filtering = len(db_articles)
-        self.query.save()
+            self.query.processed_words = sum([len(i.body) for i in db_articles])
+            self.query.articles_before_filtering = len(db_articles)
+            self.query.save()
+        else:
+            db_articles = Article.objects.filter(article_curate_query__curate_query=self.query).distinct()
         return db_articles
 
     def _semantic_analysis(self, db_articles):
@@ -97,16 +79,16 @@ class Curate(object):
         return sim, vecs
 
     def _filter_articles(self, all_articles, db=False):
+        after_language = self._check_language(all_articles)
         after_bad_sources = filter_bad_sources(
-            self.curate_customer, all_articles, db)
+            self.curate_customer, after_language, db)
         after_bad_articles = filter_bad_articles(
             self.curate_customer, after_bad_sources)
 
         return after_bad_articles
 
 
-    def check_language(self, input_articles):
-        #moved this here from imap_handler, should be cuzstomer specific
+    def _check_language(self, input_articles):
         language_filtered = []
 
         for a in input_articles:

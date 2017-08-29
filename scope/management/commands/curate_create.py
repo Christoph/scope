@@ -46,11 +46,7 @@ class Command(BaseCommand):
         for customer in customers:
                 customer_key = customer.customer_key
                 curate = curate_process.Curate(customer_key=customer_key)
-                if options['db']:
-                    selected_articles = curate.from_db()
-                else:
-                    selected_articles = curate.from_sources()
-
+                selected_articles = curate.curate(db=options['db'])
                 if options['print']:
                     print(selected_articles)
 
