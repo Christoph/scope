@@ -50,7 +50,7 @@ class Provider(object):
         if out==True:
             return db_articles
 
-    def _save_articles(self, article_list, agent):
+    def _save_articles(self, article_list):
         #the input to this is a dict for every article of the given agent format.
         db_articles = []
 
@@ -96,7 +96,7 @@ class Provider(object):
                         art_cur_ret.newsletter = a['newsletter']
                         art_cur_ret.save() 
                 if 'feed' in a:
-                        art_cur_ret.newsletter = a['feed']
+                        art_cur_ret.feed = a['feed']
                         art_cur_ret.save()                
 
                 db_articles.append(art)

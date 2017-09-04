@@ -1,4 +1,5 @@
 # from __future__ import unicode_literals
+from datetime import timedelta
 
 from django.db import models
 from scope.models import Article, Customer, Agent, Source, Newsletter, RSSFeed
@@ -10,7 +11,7 @@ class Curate_Customer(models.Model):
     bad_source = models.ManyToManyField(Source, blank=True)
     feeds = models.ManyToManyField(RSSFeed, blank=True)
     newsletters = models.ManyToManyField(Newsletter, blank=True)
-    interval = models.DurationField()
+    interval = models.DurationField(default=timedelta(hours=24))
 
     def __str__(self):
         return self.customer.name

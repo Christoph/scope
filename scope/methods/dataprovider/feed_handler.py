@@ -3,12 +3,14 @@ from scope.methods.dataprovider import news_handler
 from urllib.parse import urlparse
 import feedparser
 
+from curate.models import Curate_Customer
+
 class Feed_Handler(object):
 	def __init__(self):
 		self.news = news_handler.NewsSourceHandler()
 
 	def collect_used_feeds(self):
-		used_feeds = RSSFeed.objects.filter(user_reader=user_reader).distinct()
+		used_feeds = RSSFeed.objects.filter(curate_customer__in=Curate_Customer.objects.all()).distinct()
 		article_list = self._retrieve_from_feeds(used_feeds)
 		return article_list
 

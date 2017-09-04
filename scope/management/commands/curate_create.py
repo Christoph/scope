@@ -1,5 +1,4 @@
 from django.core.management.base import BaseCommand
-from datetime import date
 
 from curate.models import Curate_Customer
 from scope.models import Customer

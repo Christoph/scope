@@ -1,6 +1,7 @@
 import configparser
 from langdetect import detect
 from datetime import datetime
+import spacy
 
 from scope.methods.semantics import document_embedding
 from scope.methods.graphs import clustering_methods
@@ -27,15 +28,14 @@ class Curate(object):
             customer=self.customer)
         self.language = self.config.get(
             'general', 'language')
-        # self.nlp = spacy.load(self.language)
-        # self.provider = provider.Provider(self.nlp)
+        self.nlp = spacy.load(self.language)
 
     def curate(self, db):
         self._create_query_instance(db)
         articles = self._retrieve(db)
         articles = self._filter_articles(articles, db)
-        selected_articles = self._process(articles)
-
+        cluster_articles, selected_articles = self._process(articles)
+        self._produce_and_save_clusters(cluster_articles, selected_articles)
         return selected_articles
 
     def _create_query_instance(self, db=False):
@@ -54,10 +54,14 @@ class Curate(object):
             article_retrieval_instances = Article_Curate_Retrieval.objects.filter(
                 retrieval__in=retrievals)
 
-            for i in article_retrieval_instances:
+            incl_newsletters = article_retrieval_instances.filter(newsletter__in = self.curate_customer.newsletters.all())
+            incl_feeds = article_retrieval_instances.filter(feed__in = self.curate_customer.feeds.all())
+            incl_newsletters.union(incl_feeds)
+
+            for i in incl_newsletters:
                 aci = Article_Curate_Query(article=i.article, rank=0,newsletter=i.newsletter, feed=i.feed, curate_query=self.query)
                 aci.save()
-            db_articles = [i.article for i in article_retrieval_instances]
+            db_articles = [i.article for i in incl_newsletters]
             print("Number of distinct articles retrieved for this curate query")
             print(len(db_articles))
 
@@ -92,17 +96,19 @@ class Curate(object):
         language_filtered = []
 
         for a in input_articles:
-            if detect(a['body']) == self.language:
+            if detect(a.body) == self.language:
                 language_filtered.append(a)
-            else:
-                print("Wrong Language")
-                print(a["title"])
+            # else:
+                # print("Wrong Language")
+                # print(a.title)
 
         print("Good articles")
         print(len(language_filtered))
+        return language_filtered
 
 
     def _produce_cluster_dict(self, cluster_articles, selected_articles):
+        #the point of this method seems to be that returns the subdict of cluster-articles for the selected articles, however, with articlue_curate_instances
         articles_dict = {}
         # produce a dictionary of the clusters
         for center in selected_articles:
@@ -120,8 +126,8 @@ class Curate(object):
             # this output is comprised of article_curate_query instances!
         return articles_dict
 
-    def produce_and_save_clusters(self, cluster_articles, selected_articles):
-        words, samples = self.produce_keywords_and_summaries(
+    def _produce_and_save_clusters(self, cluster_articles, selected_articles):
+        words, samples = self._produce_keywords_and_summaries(
             cluster_articles, selected_articles)
         articles_dict = self._produce_cluster_dict(
             cluster_articles, selected_articles)
@@ -134,23 +140,26 @@ class Curate(object):
         old_clusters.delete()
 
         for key, value in articles_dict.items():
-            keywords = ','.join(words[key.article])
-            cluster = Curate_Query_Cluster(rank=counter, center=key, keywords=keywords)# + ',' + alternative_keywords[key.article])
-            cluster.save()
+            try:
+                keywords = ','.join(words[key.article])
+                cluster = Curate_Query_Cluster(rank=counter, center=key, keywords=keywords)
+                cluster.save()
 
-            #save the sample into the article 
-            key.article.sample = samples[key.article]
-            key.article.save()
-            
-            # cluster.cluster_articles.clear()
-            for instance in articles_dict[key]:
-                cluster.cluster_articles.add(instance)
-            cluster.save()
-            counter += 1
+                #save the sample into the ar
+                key.article.sample = samples[key.article]
+                key.article.save()
+                
+                # cluster.cluster_articles.clear()
+                for instance in value:
+                    cluster.cluster_articles.add(instance)
+                cluster.save()
+                counter += 1
+            except:
+                print('Cannot save cluster')
         self.query.no_clusters = counter
         self.query.save()
 
-    def produce_keywords_and_summaries(self, cluster_articles, selected_articles):
+    def _produce_keywords_and_summaries(self, cluster_articles, selected_articles):
         # this input dict consists of actual article objects
         representative_model = summarizer.Summarizer(self.language, self.nlp)
 
@@ -175,9 +184,10 @@ class Curate(object):
                 cluster_articles, self.config.getint('general', 'output_articles'))
 
             print([a.title for a in selected_articles])
-
-        # you can generate the dict at this point actually.
-            self.produce_and_save_clusters(cluster_articles, selected_articles)
+        
         else:
+            cluster_articles = []
             selected_articles = []
-        return selected_articles
+        
+        return cluster_articles, selected_articles
+

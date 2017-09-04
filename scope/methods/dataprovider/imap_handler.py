@@ -27,13 +27,14 @@ class ImapHandler(object):
             'imap', 'imap')
         self.mail_box = self.config.get(
             'imap', 'mailbox')
-        self.mail_interval = self.config.get(
-            'imap', 'interval')
+        self.mail_interval = int(self.config.get(
+            'imap', 'interval'))
 
         self.news = news_handler.NewsSourceHandler()
 
     def get_data_new(self):
-        items = self._connect()
+        self._connect()
+        items = self._fetch_items()
         url_dict = []
         # Get the whole mail content
 
@@ -69,6 +70,7 @@ class ImapHandler(object):
         self.mailbox.login(self.mail_user, self.mail_pwd)
         self.mailbox.select("\"" + self.mail_box + "\"")
 
+    def _fetch_items(self):
         # Get all mails from the last interval hours
         if date.today().strftime('%w') == "1":
             yesterday = date.today() - timedelta(hours=self.mail_interval) - timedelta(days=2)
